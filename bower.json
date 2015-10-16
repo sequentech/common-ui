@@ -1,11 +1,13 @@
 {
-  "name": "agora-core-view",
+  "name": "avCommon",
   "version": "0.0.0",
   "main": "index.html",
   "ignore": [
     "**/.*",
     "node_modules",
-    "bower_components"
+    "bower_components",
+    "test",
+    "tests"
   ],
   "dependencies": {
     "jquery": "~2.0",
@@ -39,5 +41,13 @@
   },
   "resolutions": {
     "angular": "~1.2"
-  }
+  },
+  "homepage": "https://github.com/agoravoting/agora-gui-common",
+  "authors": [
+    "Víctor Ramírez <virako.9@gmail.com>"
+  ],
+  "description": "Library for agora-gui",
+  "moduleType": [],
+  "license": "MIT",
+  "private": true
 }
