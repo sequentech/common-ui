@@ -1,16 +1,9 @@
 {
   "name": "avCommon",
   "version": "0.0.0",
-  "main": [
-    "avUi/change-lang-directive/change-lang-directive.less",
-    "avUi/simple-error-directive/simple-error-directive.less",
-    "avUi/global.less"
-  ],
+  "main": "dist/**",
   "ignore": [
     "**/.*",
-    "node_modules",
-    "bower_components",
-    "test",
     "tests",
     "app.js",
     "app.less",
@@ -20,9 +13,7 @@
     "bower_components",
     "bower.json",
     ".bowerrc",
-    "build.sh",
     "design",
-    "dist",
     "doc",
     "e2e.conf.js",
     ".editorconfig",
