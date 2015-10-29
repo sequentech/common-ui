@@ -1,7 +1,10 @@
 {
   "name": "avCommon",
   "version": "0.0.0",
-  "main": "dist/**",
+  "main": [
+    "dist/**",
+    "themes/**",
+  ],
   "ignore": [
     "**/.*",
     "tests",
