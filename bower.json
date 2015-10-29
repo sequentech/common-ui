@@ -6,7 +6,6 @@
     "themes/**"
   ],
   "ignore": [
-    "**/.*",
     "tests",
     "app.js",
     "app.less",
@@ -37,6 +36,7 @@
     "plugins",
     "README.md",
     "temp_data",
+    "themes",
     "test",
     "vendor",
     ".yo-rc.json"
