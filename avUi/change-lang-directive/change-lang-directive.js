@@ -4,7 +4,7 @@
  * <li class="dropdown" av-change-lang></li>
  */
 angular.module('avUi')
-  .directive('avChangeLang', function($i18next, ipCookie, angularLoad, amMoment, ConfigService) {
+  .directive('avChangeLang', function($i18next, $templateCache, ipCookie, angularLoad, amMoment, ConfigService) {
     function link(scope, element, attrs) {
       scope.deflang = window.i18n.lng();
       scope.langs =  $i18next.options.lngWhitelist;
@@ -35,6 +35,6 @@ angular.module('avUi')
       restrict: 'AE',
       scope: {},
       link: link,
-      templateUrl: 'avUi/change-lang-directive/change-lang-directive.html'
+      templateUrl: $templateCache.get('avUi/change-lang-directive/change-lang-directive.html')
     };
   });

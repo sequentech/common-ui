@@ -13,7 +13,6 @@ angular.module(
   'avConfig',
   'jm.i18next',
   'avUi',
-  'avRegistration',
   'avTest',
   'angularFileUpload',
   'dndLists',
@@ -39,62 +38,6 @@ angular.module('jm.i18next').config(function ($i18nextProvider, ConfigServicePro
       defaultLoadingValue: '' // ng-i18next option, *NOT* directly supported by i18next
     },
     ConfigServiceProvider.i18nextInitOptions);
-});
-
-angular.module('agora-core-view').config(
-  function(
-    $stateProvider,
-    $urlRouterProvider,
-    $httpProvider,
-    $locationProvider,
-    ConfigServiceProvider)
-  {
-    // CSRF verification
-    $httpProvider.defaults.xsrfCookieName = 'csrftoken';
-    $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
-
-    $urlRouterProvider.otherwise(ConfigServiceProvider.defaultRoute);
-
-    // use the HTML5 History API
-    $locationProvider.html5Mode(ConfigServiceProvider.locationHtml5mode);
-
-    /* App states and urls are defined here */
-    $stateProvider
-      .state('election', {
-        abstract: true,
-        url: '/election',
-        template: '<div ui-view></div>'
-      })
-      .state('election.public.show.register', {
-        url: '/register',
-        templateUrl: 'avRegistration/register-controller/register-controller.html',
-        controller: "RegisterController"
-      })
-      .state('election.public.show.login', {
-        url: '/login',
-        templateUrl: 'avRegistration/login-controller/login-controller.html',
-        controller: "LoginController"
-      })
-      .state('election.public.show.login_email', {
-        url: '/login/:email',
-        templateUrl: 'avRegistration/login-controller/login-controller.html',
-        controller: "LoginController"
-      })
-      .state('election.public.show.login_email_code', {
-        url: '/login/:email/:code',
-        templateUrl: 'avRegistration/login-controller/login-controller.html',
-        controller: "LoginController"
-      })
-      .state('election.public.show.logout', {
-        url: '/logout',
-        controller: "LogoutController"
-      });
-    $stateProvider
-      .state('unit-test-e2e', {
-        url: '/unit-test-e2e',
-        templateUrl: 'test/unit_test_e2e.html',
-        controller: "UnitTestE2EController"
-      });
 });
 
 angular.module('agora-core-view').run(function($http, $rootScope) {

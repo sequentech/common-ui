@@ -107,6 +107,7 @@ module.exports = function (grunt) {
           {src: ['img/**'], dest: 'dist/'},
           {src: ['img/**'], dest: 'dist/'},
           {src: ['temp_data/**'], dest: 'dist/'},
+          {src: ['avUi/**/*.less'], dest: 'dist/less/'},
           {
             expand: true,
             cwd:'themes',
@@ -155,12 +156,9 @@ module.exports = function (grunt) {
         options: {
           remove: ['script[data-remove!="false"]','link[data-remove!="false"]'],
           append: [
-            {selector:'body',html:'<!--[if lte IE 8]><script src="/libcompat-v3.0.1.min.js"></script><![endif]--><!--[if gte IE 9]><script src="/libnocompat-v3.0.1.min.js"></script><![endif]--><!--[if !IE]><!--><script src="/libnocompat-v3.0.1.min.js"></script><!--<![endif]-->'},
+            {selector:'body',html:'<!--[if lte IE 8]><script src="/libcompat-v3.0.1.js"></script><![endif]--><!--[if gte IE 9]><script src="/libnocompat-v3.0.1.js"></script><![endif]--><!--[if !IE]><!--><script src="/libnocompat-v3.0.1.js"></script><!--<![endif]-->'},
             {selector:'body',html:'<!--All the source code of this program under copyright. Take a look at the license details at https://github.com/agoravoting/agora-core-view/blob/master/README.md -->'},
-            {selector:'body',html:'<script src="/lib-v3.0.1.min.js"></script>'},
-            {selector:'body',html:'<script src="/avConfig-v3.0.1.js"></script>'},
-            {selector:'body',html:'<script src="/avThemes-v3.0.1.js"></script>'},
-            {selector:'body',html:'<script src="/app-v3.0.1.min.js"></script>'},
+            {selector:'body',html:'<script src="/appCommon-v3.0.1.js"></script>'},
             {selector:'body',html:'<script src="/avPlugins-v3.0.1.js"></script>'},
             {selector:'head',html:'<link rel="stylesheet" id="theme" href="/themes/default/app.min.css">'}
           ]
@@ -226,11 +224,11 @@ module.exports = function (grunt) {
           beautify: true
         },
         files: {
-          'dist/app-v3.0.1.min.js': 'temp/app.js',
-          'dist/lib-v3.0.1.min.js': 'temp/lib.js',
-          'dist/libnocompat-v3.0.1.min.js': 'temp/libnocompat.js',
-          'dist/libcompat-v3.0.1.min.js': 'temp/libcompat.js',
-          'dist/avWidgets.min.js': 'avWidgets.js',
+          'dist/appCommon-v3.0.1.js': 'temp/app.js',
+          'dist/libCommon-v3.0.1.js': 'temp/lib.js',
+          'dist/libnocompat-v3.0.1.js': 'temp/libnocompat.js',
+          'dist/libcompat-v3.0.1.js': 'temp/libcompat.js',
+          'dist/avWidgets.js': 'avWidgets.js',
 
           "dist/locales/moment/es.js": "bower_components/moment/lang/es.js",
           "dist/locales/moment/gl.js": "bower_components/moment/lang/gl.js",
