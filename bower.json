@@ -1,10 +1,7 @@
 {
   "name": "avCommon",
   "version": "0.0.0",
-  "main": [
-    "dist/**",
-    "themes/**"
-  ],
+  "main": "index.html",
   "ignore": [
     "tests",
     "app.js",
