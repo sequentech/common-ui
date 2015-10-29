@@ -14,7 +14,6 @@
     "doc",
     "e2e.conf.js",
     ".editorconfig",
-    "external.less",
     ".git",
     ".gitignore",
     "Gruntfile.js",
