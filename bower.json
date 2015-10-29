@@ -28,7 +28,6 @@
     "README.md",
     "temp_data",
     "test",
-    "vendor",
     ".yo-rc.json"
   ],
   "dependencies": {
