@@ -30,7 +30,7 @@
     "test",
     ".yo-rc.json"
   ],
-  "dependencies": {
+  "devDependencies": {
     "jquery": "~2.0",
     "underscore": "1.8.2",
     "bootstrap": "~3.1",
