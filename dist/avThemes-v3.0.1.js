@@ -3,6 +3,7 @@
     avThemes.current = 'default';
 
     avThemes.change = function(theme) {
-        $("#theme").attr("href", "themes/"+theme+"/app.min.css");
+        var base = $("#theme").get('base');
+        $("#theme").attr("href", base + "themes/"+theme+"/app.min.css");
     };
 }).call(this);
