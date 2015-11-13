@@ -12,6 +12,7 @@ angular.module(
   'angularMoment',
   'avConfig',
   'jm.i18next',
+  'avRegistration',
   'avUi',
   'avTest',
   'angularFileUpload',
