@@ -1,4 +1,453 @@
-angular.module("avUi", []), jQuery.fn.flash = function(duration) {
+angular.module("avRegistration", [ "ui.bootstrap", "ui.utils", "ui.router" ]), angular.module("avRegistration").config(function() {}), 
+angular.module("avRegistration").controller("LoginController", [ "$scope", "$stateParams", "$filter", "ConfigService", "$i18next", function($scope, $stateParams, $filter, ConfigService, $i18next) {
+    $scope.event_id = $stateParams.id, $scope.code = $stateParams.code, $scope.email = $stateParams.email;
+} ]), angular.module("avRegistration").directive("avLogin", [ "Authmethod", "StateDataService", "$parse", "$state", "$cookies", "$i18next", "$window", "$timeout", "ConfigService", function(Authmethod, StateDataService, $parse, $state, $cookies, $i18next, $window, $timeout, ConfigService) {
+    function link(scope, element, attrs) {
+        var adminId = ConfigService.freeAuthId;
+        $cookies.authevent && $cookies.authevent === adminId + "" && $state.go("admin.elections");
+        var autheventid = attrs.eventId;
+        scope.sendingData = !1, scope.stateData = StateDataService.getData(), scope.code = null, 
+        attrs.code && attrs.code.length > 0 && (scope.code = attrs.code), scope.email = null, 
+        attrs.email && attrs.email.length > 0 && (scope.email = attrs.email), scope.isAdmin = !1, 
+        autheventid === adminId + "" && (scope.isAdmin = !0), scope.resendAuthCode = function(field) {
+            if (!scope.sendingData && "sms" === scope.method && -1 !== scope.telIndex && !scope.form["input" + scope.telIndex].$invalid) {
+                field.value = "";
+                var data = {};
+                data.tlf = scope.telField.value, scope.sendingData = !0, Authmethod.resendAuthCode(data, autheventid).success(function(rcvData) {
+                    $timeout(scope.sendingDataTimeout, 3e3);
+                }).error(function(error) {
+                    $timeout(scope.sendingDataTimeout, 3e3), scope.error = $i18next("avRegistration.errorSendingAuthCode");
+                });
+            }
+        }, scope.sendingDataTimeout = function() {
+            scope.sendingData = !1;
+        }, scope.loginUser = function(valid) {
+            if (valid && !scope.sendingData) {
+                var data = {
+                    captcha_code: Authmethod.captcha_code
+                };
+                _.each(scope.login_fields, function(field) {
+                    data[field.name] = field.value, "email" === field.name && (scope.email = field.value);
+                }), scope.sendingData = !0, Authmethod.login(data, autheventid).success(function(rcvData) {
+                    "ok" === rcvData.status ? (scope.khmac = rcvData.khmac, $cookies.authevent = autheventid, 
+                    $cookies.userid = rcvData.username, $cookies.user = scope.email, $cookies.auth = rcvData["auth-token"], 
+                    $cookies.isAdmin = scope.isAdmin, Authmethod.setAuth($cookies.auth, scope.isAdmin), 
+                    scope.isAdmin ? Authmethod.getUserInfo().success(function(d) {
+                        $cookies.user = d.email, $state.go("admin.elections");
+                    }).error(function(error) {
+                        $state.go("admin.elections");
+                    }) : angular.isDefined(rcvData["redirect-to-url"]) ? $window.location.href = rcvData["redirect-to-url"] : Authmethod.getPerm("vote", "AuthEvent", autheventid).success(function(rcvData2) {
+                        var khmac = rcvData2["permission-token"], path = khmac.split(";")[1], hash = path.split("/")[0], msg = path.split("/")[1];
+                        $state.go("election.booth", {
+                            id: autheventid,
+                            hmac: hash,
+                            message: msg
+                        });
+                    })) : (scope.sendingData = !1, scope.status = "Not found", scope.error = $i18next("avRegistration.invalidCredentials"));
+                }).error(function(error) {
+                    scope.sendingData = !1, scope.status = "Registration error: " + error.message, scope.error = $i18next("avRegistration.invalidCredentials");
+                });
+            }
+        }, scope.apply = function(authevent) {
+            scope.method = authevent.auth_method, scope.name = authevent.name, scope.registrationAllowed = "open" === authevent.census, 
+            scope.login_fields = Authmethod.getLoginFields(authevent), scope.telIndex = -1, 
+            scope.telField = null;
+            var fields = _.map(scope.login_fields, function(el, index) {
+                return scope.stateData[el.name] ? (el.value = scope.stateData[el.name], el.disabled = !0) : (el.value = null, 
+                el.disabled = !1), "email" === el.type && null !== scope.email ? (el.value = scope.email, 
+                el.disabled = !0) : "code" === el.type && null !== scope.code ? (el.value = scope.code.trim().toUpperCase(), 
+                el.disabled = !0) : "tlf" === el.type && "sms" === scope.method && (scope.telIndex = index + 1, 
+                scope.telField = el), el;
+            }), filled_fields = _.filter(fields, function(el) {
+                return null !== el.value;
+            });
+            filled_fields.length === scope.login_fields.length && scope.loginUser(!0);
+        }, scope.view = function(id) {
+            Authmethod.viewEvent(id).success(function(data) {
+                "ok" === data.status ? scope.apply(data.events) : (scope.status = "Not found", document.querySelector(".input-error").style.display = "block");
+            }).error(function(error) {
+                scope.status = "Scan error: " + error.message, document.querySelector(".input-error").style.display = "block";
+            });
+        }, scope.view(autheventid), scope.goSignup = function() {
+            $state.go("registration.register", {
+                id: autheventid
+            });
+        }, scope.forgotPassword = function() {
+            console.log("forgotPassword");
+        };
+    }
+    return {
+        restrict: "AE",
+        scope: !0,
+        link: link,
+        templateUrl: "avRegistration/login-directive/login-directive.html"
+    };
+} ]), angular.module("avRegistration").controller("LogoutController", [ "$scope", "$stateParams", "$filter", "ConfigService", "$i18next", "$state", "$cookies", function($scope, $stateParams, $filter, ConfigService, $i18next, $state, $cookies) {
+    var authevent = (ConfigService.freeAuthId, $cookies.authevent);
+    $cookies.user = "", $cookies.auth = "", $cookies.authevent = "", $cookies.userid = "", 
+    $cookies.isAdmin = !1, authevent !== ConfigService.freeAuthId + "" && authevent ? $state.go("registration.login", {
+        id: $cookies.authevent
+    }) : $state.go("admin.login");
+} ]), angular.module("avRegistration").controller("RegisterController", [ "$scope", "$stateParams", "$filter", "ConfigService", "$i18next", function($scope, $stateParams, $filter, ConfigService, $i18next) {
+    $scope.event_id = $stateParams.id, $scope.email = $stateParams.email;
+} ]), angular.module("avRegistration").directive("avRegister", [ "Authmethod", "StateDataService", "$parse", "$state", "ConfigService", "$cookies", "$i18next", "$sce", function(Authmethod, StateDataService, $parse, $state, ConfigService, $cookies, $i18next, $sce) {
+    function link(scope, element, attrs) {
+        var autheventid = attrs.eventId;
+        scope.dnieurl = ConfigService.dnieUrl + autheventid + "/", scope.register = {}, 
+        scope.sendingData = !1, scope.admin = !1, scope.email = null, attrs.email && attrs.email.length > 0 && (scope.email = attrs.email), 
+        "admin" in attrs && (scope.admin = !0), scope.getLoginDetails = function(eventId) {
+            return scope.admin ? {
+                path: "admin.login",
+                data: {}
+            } : {
+                path: "election.public.show.login",
+                data: {
+                    id: eventId
+                }
+            };
+        }, scope.signUp = function(valid) {
+            if (valid) {
+                scope.sendingData = !0;
+                var data = {
+                    captcha_code: Authmethod.captcha_code
+                };
+                _.each(scope.register_fields, function(field) {
+                    data[field.name] = field.value, "email" === field.name && (scope.email = field.value);
+                });
+                var details;
+                Authmethod.signup(data, autheventid).success(function(rcvData) {
+                    details = scope.getLoginDetails(autheventid), "ok" === rcvData.status ? (scope.user = rcvData.user, 
+                    StateDataService.go(details.path, details.data, data), scope.error = rcvData.msg || $sce.trustAsHtml($i18next("avRegistration.invalidRegisterData", {
+                        url: $state.href(details.path, details.data)
+                    }))) : (scope.sendingData = !1, scope.status = "Not found", scope.error = rcvData.msg || $sce.trustAsHtml($i18next("avRegistration.invalidRegisterData", {
+                        url: $state.href(details.path, details.data)
+                    })));
+                }).error(function(error) {
+                    details = scope.getLoginDetails(autheventid), scope.sendingData = !1, scope.status = "Registration error: " + error.message, 
+                    error.error_codename && "invalid-dni" === error.error_codename ? scope.error = $sce.trustAsHtml($i18next("avRegistration.invalidRegisterDNI")) : (scope.error = error.msg || $sce.trustAsHtml($i18next("avRegistration.invalidRegisterData", {
+                        url: $state.href(details.path, details.data)
+                    })), "Invalid captcha" === error.msg && Authmethod.newCaptcha());
+                });
+            }
+        }, scope.goLogin = function(event) {
+            console.log("goLogin"), event && event.preventDefault(), scope.authevent && (scope.authevent.id === ConfigService.freeAuthId + "" ? $state.go("admin.login") : $state.go("election.public.show.login", {
+                id: scope.authevent.id
+            }));
+        }, scope.apply = function(authevent) {
+            scope.method = authevent.auth_method, scope.name = authevent.name, scope.authevent = authevent, 
+            "open" !== authevent.census && (authevent.id === ConfigService.freeAuthId + "" ? $state.go("admin.login") : $state.go("election.public.show.login", {
+                id: authevent.id
+            })), scope.register_fields = Authmethod.getRegisterFields(authevent);
+            _.map(scope.register_fields, function(el) {
+                return el.value = null, el.disabled = !1, "email" === el.type && null !== scope.email && (el.value = scope.email, 
+                el.disabled = !0), el;
+            });
+        }, scope.view = function(id) {
+            Authmethod.viewEvent(id).success(function(data) {
+                "ok" === data.status ? scope.apply(data.events) : (scope.status = "Not found", document.querySelector(".input-error").style.display = "block");
+            }).error(function(error) {
+                scope.status = "Scan error: " + error.message, document.querySelector(".input-error").style.display = "block";
+            });
+        }, scope.view(autheventid);
+    }
+    return {
+        restrict: "AE",
+        scope: !0,
+        link: link,
+        templateUrl: "avRegistration/register-directive/register-directive.html"
+    };
+} ]), angular.module("avRegistration").factory("Patterns", function() {
+    var patterns = {};
+    return patterns.get = function(name) {
+        return "dni" === name ? /^\d{7,8}[a-zA-Z]{1}$/i : "mail" === name || "email" === name ? /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/ : /.*/;
+    }, patterns;
+}), angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "ConfigService", "$interval", function($http, $cookies, ConfigService, $interval) {
+    var backendUrl = ConfigService.authAPI, authId = ConfigService.freeAuthId, authmethod = {};
+    return authmethod.captcha_code = null, authmethod.captcha_image_url = "", authmethod.captcha_status = "", 
+    authmethod.admin = !1, authmethod.isAdmin = function() {
+        return authmethod.isLoggedIn() && authmethod.admin;
+    }, authmethod.isLoggedIn = function() {
+        var auth = $http.defaults.headers.common.Authorization;
+        return auth && auth.length > 0;
+    }, authmethod.signup = function(data, authevent) {
+        var eid = authevent || authId;
+        return $http.post(backendUrl + "auth-event/" + eid + "/register/", data);
+    }, authmethod.getUserInfo = function(userid) {
+        if (!authmethod.isLoggedIn()) {
+            var data = {
+                success: function() {
+                    return data;
+                },
+                error: function(func) {
+                    return setTimeout(function() {
+                        func({
+                            message: "not-logged-in"
+                        });
+                    }, 0), data;
+                }
+            };
+            return data;
+        }
+        return "undefined" == typeof userid ? $http.get(backendUrl + "user/", {}) : $http.get(backendUrl + "user/%d" % userid, {});
+    }, authmethod.ping = function() {
+        if (!authmethod.isLoggedIn()) {
+            var data = {
+                success: function() {
+                    return data;
+                },
+                error: function(func) {
+                    return setTimeout(function() {
+                        func({
+                            message: "not-logged-in"
+                        });
+                    }, 0), data;
+                }
+            };
+            return data;
+        }
+        return $http.get(backendUrl + "auth-event/" + authId + "/ping/");
+    }, authmethod.login = function(data, authevent) {
+        var eid = authevent || authId;
+        return delete data.authevent, $http.post(backendUrl + "auth-event/" + eid + "/authenticate/", data);
+    }, authmethod.resendAuthCode = function(data, eid) {
+        return $http.post(backendUrl + "auth-event/" + eid + "/resend_auth_code/", data);
+    }, authmethod.getPerm = function(perm, object_type, object_id) {
+        var data = {
+            permission: perm,
+            object_type: object_type,
+            object_id: object_id + ""
+        };
+        return $http.post(backendUrl + "get-perms/", data);
+    }, authmethod.viewEvent = function(id) {
+        return $http.get(backendUrl + "auth-event/" + id + "/");
+    }, authmethod.viewEvents = function() {
+        return $http.get(backendUrl + "auth-event/");
+    }, authmethod.createEvent = function(data) {
+        return $http.post(backendUrl + "auth-event/", data);
+    }, authmethod.editEvent = function(id, data) {
+        return $http.post(backendUrl + "auth-event/" + id + "/", data);
+    }, authmethod.addCensus = function(id, data, validation) {
+        angular.isDefined(validation) || (validation = "enabled");
+        var d = {
+            "field-validation": validation,
+            census: data
+        };
+        return $http.post(backendUrl + "auth-event/" + id + "/census/", d);
+    }, authmethod.getCensus = function(id, params) {
+        return angular.isObject(params) ? $http.get(backendUrl + "auth-event/" + id + "/census/", {
+            params: params
+        }) : $http.get(backendUrl + "auth-event/" + id + "/census/");
+    }, authmethod.getRegisterFields = function(viewEventData) {
+        var fields = angular.copy(viewEventData.extra_fields);
+        fields || (fields = []), "sms" === viewEventData.auth_method ? fields.push({
+            name: "tlf",
+            type: "tlf",
+            required: !0,
+            required_on_authentication: !0
+        }) : "email" === viewEventData.auth_method ? fields.push({
+            name: "email",
+            type: "email",
+            required: !0,
+            required_on_authentication: !0
+        }) : "user-and-password" === viewEventData.auth_method && (fields.push({
+            name: "email",
+            type: "email",
+            required: !0,
+            required_on_authentication: !0
+        }), fields.push({
+            name: "password",
+            type: "password",
+            required: !0,
+            required_on_authentication: !0
+        }));
+        for (var i = 0; i < fields.length; i++) if ("captcha" === fields[i].type) {
+            var captcha = fields.splice(i, 1);
+            fields.push(captcha[0]);
+            break;
+        }
+        return fields;
+    }, authmethod.getLoginFields = function(viewEventData) {
+        var fields = authmethod.getRegisterFields(viewEventData);
+        ("sms" === viewEventData.auth_method || "email" === viewEventData.auth_method) && fields.push({
+            name: "code",
+            type: "code",
+            required: !0,
+            required_on_authentication: !0
+        }), fields = _.filter(fields, function(field) {
+            return field.required_on_authentication;
+        });
+        for (var i = 0; i < fields.length; i++) if ("captcha" === fields[i].type) {
+            var captcha = fields.splice(i, 1);
+            fields.push(captcha[0]);
+            break;
+        }
+        return fields;
+    }, authmethod.newCaptcha = function(message) {
+        return authmethod.captcha_status = message, $http.get(backendUrl + "captcha/new/", {}).success(function(data) {
+            console.log(data), null !== data.captcha_code ? (authmethod.captcha_code = data.captcha_code, 
+            authmethod.captcha_image_url = data.image_url) : authmethod.captcha_status = "Not found";
+        });
+    }, authmethod.test = function() {
+        return $http.get(backendUrl);
+    }, authmethod.setAuth = function(auth, isAdmin) {
+        return authmethod.admin = isAdmin, $http.defaults.headers.common.Authorization = auth, 
+        authmethod.pingTimeout || ($interval.cancel(authmethod.pingTimeout), authmethod.launchPingDaemon(), 
+        authmethod.pingTimeout = $interval(function() {
+            authmethod.launchPingDaemon();
+        }, 500 * ConfigService.timeoutSeconds)), !1;
+    }, authmethod.electionsIds = function(page) {
+        return page || (page = 1), $http.get(backendUrl + "acl/mine/?object_type=AuthEvent&perm=edit&order=-pk&page=" + page);
+    }, authmethod.sendAuthCodes = function(eid, election, user_ids) {
+        var url = backendUrl + "auth-event/" + eid + "/census/send_auth/", data = {};
+        return angular.isDefined(election) && (data.msg = election.census.config.msg, "email" === election.census.auth_method && (data.subject = election.census.config.subject)), 
+        angular.isDefined(user_ids) && (data["user-ids"] = user_ids), $http.post(url, data);
+    }, authmethod.removeUsersIds = function(eid, election, user_ids) {
+        var url = backendUrl + "auth-event/" + eid + "/census/delete/", data = {
+            "user-ids": user_ids
+        };
+        return $http.post(url, data);
+    }, authmethod.activateUsersIds = function(eid, election, user_ids) {
+        var url = backendUrl + "auth-event/" + eid + "/census/activate/", data = {
+            "user-ids": user_ids
+        };
+        return $http.post(url, data);
+    }, authmethod.deactivateUsersIds = function(eid, election, user_ids) {
+        var url = backendUrl + "auth-event/" + eid + "/census/deactivate/", data = {
+            "user-ids": user_ids
+        };
+        return $http.post(url, data);
+    }, authmethod.changeAuthEvent = function(eid, st) {
+        var url = backendUrl + "auth-event/" + eid + "/" + st + "/", data = {};
+        return $http.post(url, data);
+    }, authmethod.launchPingDaemon = function() {
+        $cookies.isAdmin && authmethod.ping().success(function(data) {
+            $cookies.auth = data["auth-token"], authmethod.setAuth($cookies.auth, $cookies.isAdmin);
+        });
+    }, authmethod;
+} ]), angular.module("agora-core-view").config([ "$httpProvider", function($httpProvider) {
+    $httpProvider.interceptors.push([ "$q", "$injector", function($q, $injector) {
+        return {
+            responseError: function(rejection) {
+                return rejection.data && rejection.data.error_codename && _.contains([ "expired_hmac_key", "empty_hmac", "invalid_hmac_userid" ], rejection.data.error_codename) && ($httpProvider.defaults.headers.common.Authorization = "", 
+                $injector.get("$state").go("admin.logout")), $q.reject(rejection);
+            }
+        };
+    } ]);
+} ]), angular.module("agora-core-view").run([ "$cookies", "$http", "Authmethod", function($cookies, $http, Authmethod) {
+    $cookies.auth && Authmethod.setAuth($cookies.auth, $cookies.isAdmin);
+} ]), angular.module("avRegistration").directive("avrField", [ "$state", function($state) {
+    function link(scope, element, attrs) {
+        console.log("type = " + scope.field.type), scope.index = attrs.index;
+    }
+    return {
+        restrict: "AE",
+        scope: !0,
+        link: link,
+        templateUrl: "avRegistration/field-directive/field-directive.html"
+    };
+} ]), angular.module("avRegistration").directive("avrEmailField", [ "$state", "Patterns", function($state, Patterns) {
+    function link(scope, element, attrs) {
+        scope.patterns = function(name) {
+            return Patterns.get(name);
+        };
+    }
+    return {
+        restrict: "AE",
+        link: link,
+        scope: !0,
+        templateUrl: "avRegistration/fields/email-field-directive/email-field-directive.html"
+    };
+} ]), angular.module("avRegistration").directive("avrPasswordField", [ "$state", function($state) {
+    return {
+        restrict: "AE",
+        scope: !0,
+        templateUrl: "avRegistration/fields/password-field-directive/password-field-directive.html"
+    };
+} ]), angular.module("avRegistration").directive("avrTextField", [ "$state", function($state) {
+    function link(scope, element, attrs) {
+        angular.isUndefined(scope.field.regex) ? scope.re = new RegExp("") : scope.re = new RegExp(scope.field.regex), 
+        scope.getRe = function(value) {
+            return scope.re;
+        };
+    }
+    return {
+        restrict: "AE",
+        link: link,
+        scope: !0,
+        templateUrl: "avRegistration/fields/text-field-directive/text-field-directive.html"
+    };
+} ]), angular.module("avRegistration").directive("avrDniField", [ "$state", function($state) {
+    function link(scope, element, attrs) {
+        scope.dni_re = /^[XYZ]?\d{7,8}[A-Z]$/, scope.validateDni = function(str) {
+            str || (str = ""), str = str.toUpperCase().replace(/\s/, "");
+            var prefix = str.charAt(0), index = "XYZ".indexOf(prefix), niePrefix = 0;
+            index > -1 && (niePrefix = index, str = str.substr(1), "Y" === prefix ? str = "1" + str : "Z" === prefix && (str = "2" + str));
+            var dni_letters = "TRWAGMYFPDXBNJZSQVHLCKE", letter = dni_letters.charAt(parseInt(str, 10) % 23);
+            return letter === str.charAt(str.length - 1);
+        };
+    }
+    return {
+        restrict: "AE",
+        link: link,
+        scope: !0,
+        templateUrl: "avRegistration/fields/dni-field-directive/dni-field-directive.html"
+    };
+} ]), angular.module("avRegistration").directive("avrCodeField", [ "$state", function($state) {
+    function link(scope, element, attrs) {
+        scope.codePattern = /[abcdefghjklmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789]{8,8}/;
+    }
+    return {
+        restrict: "AE",
+        scope: !0,
+        link: link,
+        templateUrl: "avRegistration/fields/code-field-directive/code-field-directive.html"
+    };
+} ]), angular.module("avRegistration").directive("avrTelField", [ "$state", function($state) {
+    function link(scope, element, attrs) {
+        scope.tlfPattern = /^[+]?\d{9,14}$/;
+    }
+    return {
+        restrict: "AE",
+        scope: !0,
+        link: link,
+        templateUrl: "avRegistration/fields/tel-field-directive/tel-field-directive.html"
+    };
+} ]), angular.module("avRegistration").directive("avrBoolField", [ "$state", function($state) {
+    return {
+        restrict: "AE",
+        scope: !0,
+        templateUrl: "avRegistration/fields/bool-field-directive/bool-field-directive.html"
+    };
+} ]), angular.module("avRegistration").directive("avrIntField", [ "$state", function($state) {
+    function link(scope, element, attrs) {
+        angular.isUndefined(scope.field.regex) ? scope.re = new RegExp("") : scope.re = new RegExp(scope.field.regex), 
+        scope.getRe = function(value) {
+            return scope.re;
+        };
+    }
+    return {
+        restrict: "AE",
+        link: link,
+        scope: !0,
+        templateUrl: "avRegistration/fields/int-field-directive/int-field-directive.html"
+    };
+} ]), angular.module("avRegistration").directive("avrCaptchaField", [ "Authmethod", "$state", "$interval", function(Authmethod, $state, $interval) {
+    function link(scope, element, attrs) {
+        scope.authMethod = Authmethod, Authmethod.newCaptcha("");
+    }
+    return {
+        restrict: "AE",
+        scope: !0,
+        link: link,
+        templateUrl: "avRegistration/fields/captcha-field-directive/captcha-field-directive.html"
+    };
+} ]), angular.module("avRegistration").directive("avrTextareaField", [ "$state", function($state) {
+    return {
+        restrict: "AE",
+        scope: !0,
+        templateUrl: "avRegistration/fields/textarea-field-directive/textarea-field-directive.html"
+    };
+} ]), angular.module("avUi", []), jQuery.fn.flash = function(duration) {
     var selector = this;
     angular.isNumber(duration) || (duration = 300), "true" !== selector.attr("is-flashing") && (selector.attr("is-flashing", "true"), 
     selector.addClass("flashing").delay(duration).queue(function() {
@@ -460,6 +909,24 @@ angular.module("jm.i18next").config([ "$i18nextProvider", "ConfigServiceProvider
     ConfigService.debug && ($scope.html = $location.search().html, console.log($location.search()));
 } ]), angular.module("agora-core-view").run([ "$templateCache", function($templateCache) {
     "use strict";
+    $templateCache.put("avRegistration/error.html", '<div av-simple-error><p ng-i18next="avRegistration.errorRegistration"></p></div>'), 
+    $templateCache.put("avRegistration/field-directive/field-directive.html", '<div ng-switch="field.type"><div avr-email-field ng-switch-when="email"></div><div avr-password-field ng-switch-when="password"></div><div avr-code-field ng-switch-when="code"></div><div avr-text-field ng-switch-when="text"></div><div avr-dni-field ng-switch-when="dni"></div><div avr-tel-field ng-switch-when="tlf"></div><div avr-int-field ng-switch-when="int"></div><div avr-bool-field ng-switch-when="bool"></div><div avr-captcha-field ng-switch-when="captcha"></div><div avr-textarea-field ng-switch-when="textarea"></div></div>'), 
+    $templateCache.put("avRegistration/fields/bool-field-directive/bool-field-directive.html", '<div class="form-group"><label class="control-label col-sm-4"><input type="checkbox" class="form-control" id="{{index}}Text" ng-model="field.value" ng-disabled="field.disabled" tabindex="{{index}}" ng-required="{{field.required}}"></label><div class="col-sm-8"><label class="text-left" for="{{index}}Text"><span ng-bind-html="field.name | addTargetBlank"></span></label><p class="help-block" ng-if="field.help" ng-bind-html="field.help | addTargetBlank"></p><div class="input-error"></div></div></div>'), 
+    $templateCache.put("avRegistration/fields/captcha-field-directive/captcha-field-directive.html", '<div class="form-group"><div class="col-sm-8 col-sm-offset-4"><img ng-src="{{authMethod.captcha_image_url}}" style="width:161px;height:65px"></div><label for="{{index}}Text" class="control-label col-sm-4"><span>{{field.name}}</span></label><div class="col-sm-8"><input type="text" class="form-control" id="{{index}}Text" minlength="{{field.min}}" maxlength="{{field.max}}" ng-model="field.value" ng-disabled="field.disabled" tabindex="{{index}}" required><p class="help-block" ng-if="field.help">{{field.help}}</p><div class="input-error">{{authMethod.captcha_status}}</div></div></div>'), 
+    $templateCache.put("avRegistration/fields/code-field-directive/code-field-directive.html", '<div class="form-group"><label for="input{{index}}" class="control-label col-sm-4" ng-i18next="avRegistration.codeLabel"></label><div class="col-sm-8"><input type="text" class="form-control" id="input{{index}}" ng-model="field.value" ng-disabled="field.disabled" tabindex="{{index}}" autocomplete="off" ng-class="{\'filled\': form[\'input\' + index].$viewValue.length > 0}" minlength="8" maxlength="8" ng-pattern="codePattern" name="input{{index}}" ng-i18next="[placeholder]avRegistration.codePlaceholder" required><p class="help-block" ng-i18next="avRegistration.codeHelp"></p><p class="help-block code-help"><span ng-if="!sendingData && !form[\'input\' + telIndex].$invalid"><b ng-i18next="avRegistration.noCodeReceivedQuestion"></b> <a ng-click="resendAuthCode(field)" ng-i18next="avRegistration.sendCodeAgain"></a> <span></span></span></p><div class="input-error"></div></div></div>'), 
+    $templateCache.put("avRegistration/fields/dni-field-directive/dni-field-directive.html", '<ng-form name="fieldForm"><div class="form-group" ng-class="{\'has-error\': fieldForm.input.$dirty && fieldForm.input.$invalid}"><label for="input" class="control-label col-sm-4"><span>{{field.name}}</span></label><div class="col-sm-8"><input type="text" name="input" class="form-control" minlength="{{field.min}}" maxlength="{{field.max}}" ng-model="field.value" ng-model-options="{debounce: 500}" ng-disabled="field.disabled" tabindex="{{index}}" ui-validate="{dni: \'validateDni($value)\'}" ng-required="{{field.required}}"><p class="help-block" ng-i18next="avRegistration.dniHelp"></p><div class="input-error"><span class="error text-brand-danger" ng-show="fieldForm.input.$dirty && fieldForm.input.$invalid" ng-i18next="avRegistration.invalidDni"></span></div></div></div></ng-form>'), 
+    $templateCache.put("avRegistration/fields/email-field-directive/email-field-directive.html", '<div class="form-group" ng-class="{true: \'has-error\',false: \'is-required\'}[form.emailText.$dirty && form.emailText.$invalid]"><label for="emailText" class="control-label col-sm-4" ng-i18next="avRegistration.emailLabel"></label><div class="col-sm-8"><input type="text" class="form-control" ng-model="field.value" name="emailText" id="emailText" ng-i18next="[placeholder]avRegistration.emailPlaceholder" tabindex="{{index}}" ng-pattern="patterns(\'email\')" required ng-disabled="field.disabled"><div class="input-error"><small class="error text-danger" ng-show="form.emailText.$dirty && form.emailText.$invalid" ng-i18next="avRegistration.emailError"></small></div></div></div>'), 
+    $templateCache.put("avRegistration/fields/int-field-directive/int-field-directive.html", '<ng-form name="fieldForm"><div class="form-group" ng-class="{\'has-error\': fieldForm.input.$dirty && fieldForm.input.$invalid}"><label for="input" class="control-label col-sm-4"><span>{{field.name}}</span></label><div class="col-sm-8"><input type="number" class="form-control" name="input" min="{{field.min}}" max="{{field.max}}" ng-model="field.value" ng-model-options="{debounce: 500}" ng-disabled="field.disabled" ng-pattern="getRe()" tabindex="{{index}}" ng-required="{{field.required}}"><p class="help-block" ng-if="field.help">{{field.help}}</p><div class="input-error"><span class="error text-brand-danger" ng-show="fieldForm.input.$dirty && fieldForm.input.$invalid" ng-i18next="avRegistration.invalidDataRegEx"></span></div></div></div></ng-form>'), 
+    $templateCache.put("avRegistration/fields/password-field-directive/password-field-directive.html", '<div class="form-group" ng-class="{true: \'has-error\',false: \'is-required\'}[form.passwordText.$dirty && form.passwordText.$invalid]"><label for="passwordText" class="control-label col-sm-4"><span ng-i18next="avRegistration.passwordLabel"></span></label><div class="col-sm-8"><input type="password" class="form-control" ng-model="field.value" id="passwordText" ng-disabled="field.disabled" ng-i18next="[placeholder]avRegistration.passwordPlaceholder" tabindex="{{index}}" required><p class="help-block"><a href="#" ng-i18next="avRegistration.forgotPassword" ng-click="forgotPassword()" tabindex="{{index+1}}"></a></p><div class="input-error"><small class="error text-danger" ng-show="form.$submitted && form.$invalid" ng-i18next="avRegistration.invalidCredentials"></small></div></div></div>'), 
+    $templateCache.put("avRegistration/fields/tel-field-directive/tel-field-directive.html", '<div class="form-group"><label for="input{{index}}" class="control-label col-sm-4" ng-i18next="avRegistration.telLabel"></label><div class="col-sm-8"><input type="tel" class="form-control" id="input{{index}}" ng-model="field.value" ng-disabled="field.disabled" ng-pattern="tlfPattern" tabindex="{{index}}" name="input{{index}}" ng-i18next="[placeholder]avRegistration.telPlaceholder" required><p class="help-block" ng-i18next="avRegistration.telHelp"></p><div class="input-error"><span class="error" ng-show="form.input{{index}}.$error.pattern" ng-i18next="avRegistration.telInvalid"></span></div></div></div>'), 
+    $templateCache.put("avRegistration/fields/text-field-directive/text-field-directive.html", '<ng-form name="fieldForm"><div class="form-group" ng-class="{\'has-error\': fieldForm.input.$dirty && fieldForm.input.$invalid}"><label for="input" class="control-label col-sm-4"><span>{{field.name}}</span></label><div class="col-sm-8"><input type="text" name="input" class="form-control" minlength="{{field.min}}" maxlength="{{field.max}}" ng-model="field.value" ng-model-options="{debounce: 500}" ng-disabled="field.disabled" tabindex="{{index}}" ng-pattern="getRe()" ng-required="{{field.required}}"><p class="help-block" ng-if="field.help">{{field.help}}</p><div class="input-error"><span class="error text-brand-danger" ng-show="fieldForm.input.$dirty && fieldForm.input.$invalid" ng-i18next="avRegistration.invalidDataRegEx"></span></div></div></div></ng-form>'), 
+    $templateCache.put("avRegistration/fields/textarea-field-directive/textarea-field-directive.html", '<div class="form-group"><div class="col-sm-offset-2 col-sm-10"><textarea id="{{index}}Text" rows="5" cols="60" tabindex="{{index}}" readonly>{{field.name}}</textarea><p class="help-block" ng-if="field.help">{{field.help}}</p></div></div>'), 
+    $templateCache.put("avRegistration/loading.html", '<div avb-busy><p ng-i18next="avRegistration.loadingRegistration"></p></div>'), 
+    $templateCache.put("avRegistration/login-controller/login-controller.html", '<div class="col-xs-12 top-section"><div class="pad"><div av-login event-id="{{event_id}}" code="{{code}}" email="{{email}}"></div></div></div>'), 
+    $templateCache.put("avRegistration/login-directive/login-directive.html", '<div class="container-fluid"><div class="row"><div class="col-sm-12 loginheader"><h2 class="tex-center" ng-i18next="avRegistration.loginHeader"></h2></div><div class="col-sm-6"><form name="form" id="loginForm" role="form" class="form-horizontal"><div ng-repeat="field in login_fields" avr-field index="{{$index+1}}"></div><div class="col-sm-offset-4 col-sm-8 button-group"><div class="input-error"><div class="error text-danger" ng-if="error">{{ error }}</div></div><div class="input-warn"><span class="text-warning" ng-if="!form.$valid || sendingData" ng-i18next>avRegistration.fillValidFormText</span></div><button type="submit" class="btn btn-block btn-success" ng-i18next="avRegistration.loginButton" ng-click="loginUser(form.$valid)" tabindex="{{login_fields.length+1}}" ng-disabled="!form.$valid || sendingData"></button></div></form></div><div class="col-sm-5 col-sm-offset-1 hidden-xs" ng-if="registrationAllowed"><h3 class="help-h3" ng-i18next="avRegistration.notRegisteredYet"></h3><p><a ng-if="!isAdmin" href="#/election/{{election.id}}/public/register" ng-i18next="avRegistration.registerHere" ng-click="goSignup()" tabindex="{{login_fields.length+2}}"></a><br><a ng-if="isAdmin" ui-sref="admin.signup()" ng-i18next="avRegistration.registerHere" tabindex="{{login_fields.length+2}}"></a><br><span ng-i18next="avRegistration.fewMinutes"></span></p></div></div></div>'), 
+    $templateCache.put("avRegistration/register-controller/register-controller.html", '<div class="col-xs-12 top-section"><div class="pad"><div av-register event-id="{{event_id}}" code="{{code}}" email="{{email}}"></div></div></div>'), 
+    $templateCache.put("avRegistration/register-directive/register-directive.html", '<div class="container"><div class="row"><div class="col-sm-12"><h2 ng-if="!admin" class="registerheader" ng-i18next="avRegistration.registerHeader"></h2><h2 ng-if="admin" class="registerheader" ng-i18next="avRegistration.registerAdminHeader"></h2></div></div><div class="row"><div class="col-sm-6"><div ng-if="method == \'dnie\'"><a type="submit" class="btn btn-block btn-success" ng-i18next="avRegistration.registerButton" ng-href="{{ dnieurl }}/"></a></div><form ng-if="method != \'dnie\'" name="form" id="registerForm" role="form" class="form-horizontal"><div ng-repeat="field in register_fields" avr-field index="{{$index+1}}"></div><div class="col-sm-offset-4 col-sm-8 button-group"><div class="input-error"><div class="error text-danger" ng-if="error" ng-bind-html="error"></div></div><div class="input-warn"><span class="text-warning" ng-if="!form.$valid || sendingData" ng-i18next>avRegistration.fillValidFormText</span></div><button type="submit" class="btn btn-block btn-success" ng-i18next="avRegistration.registerButton" ng-click="signUp(form.$valid)" tabindex="{{register_fields.length+1}}" ng-disabled="!form.$valid || sendingData"></button></div></form></div><div class="col-sm-5 col-sm-offset-1 help-sidebar hidden-xs"><span ng-if="admin"><h3 class="help-h3" ng-i18next="avRegistration.registerAdminFormHelpTitle"></h3><p ng-i18next>avRegistration.helpAdminRegisterForm</p></span> <span ng-if="!admin"><p ng-i18next>avRegistration.helpRegisterForm</p><h3 class="help-h3" ng-i18next="avRegistration.alreadyRegistered"></h3><p ng-i18next>[html]avRegistration.helpAlreadyRegisteredForm</p><a href="" ng-click="goLogin($event)" ng-i18next="avRegistration.loginHere"></a><br></span></div></div></div>'), 
+    $templateCache.put("avRegistration/success.html", '<div av-success><p ng-i18next="avRegistration.successRegistration"></p></div>'), 
     $templateCache.put("avUi/change-lang-directive/change-lang-directive.html", '<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{ deflang }} <span class="caret"></span></a><ul class="dropdown-menu" role="menu"><li ng-repeat="lang in langs"><a ng-click="changeLang(lang)">{{lang}}</a></li></ul>'), 
     $templateCache.put("avUi/simple-error-directive/simple-error-directive.html", '<div class="av-simple-error-title" ng-transclude></div>'), 
     $templateCache.put("test/test_booth_widget.html", '<!DOCTYPE html><html><head><title>Test frame</title><meta charset="UTF-8"></head><script>function getCastHmac(auth_data, callback) {\n      callback("khmac:///sha-256;5e25a9af28a33d94b8c2c0edbc83d6d87355e45b93021c35a103821557ec7dc5/voter-1110-1dee0c135afeae29e208550e7258dab7b64fb008bc606fc326d41946ab8e773f:1415185712");\n    }</script><body style="overflow-y: hidden; overflow-x: hidden; padding: 0; margin: 0"><div style="width: 100%; display: block; position: absolute; top: 0; bottom: 0; scroll: none; padding: 0; margin: 0"><a class="agoravoting-voting-booth" href="http://agora.dev/#/election/1110/vote" data-authorization-funcname="getCastHmac">Votar con Agora Voting</a><script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="http://agora.dev/avWidgets.min.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","agoravoting-widgets-js");</script></div></body></html>'), 
