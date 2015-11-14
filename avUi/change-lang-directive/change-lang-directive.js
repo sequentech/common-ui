@@ -35,6 +35,6 @@ angular.module('avUi')
       restrict: 'AE',
       scope: {},
       link: link,
-      templateUrl: $templateCache.get('avUi/change-lang-directive/change-lang-directive.html')
+      templateUrl: 'avUi/change-lang-directive/change-lang-directive.html'
     };
   });

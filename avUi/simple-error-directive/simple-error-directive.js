@@ -25,6 +25,6 @@ angular.module('avUi')
       scope: {},
       link: link,
       transclude: true,
-      templateUrl: $templateCache.get('avUi/simple-error-directive/simple-error-directive.html')
+      templateUrl: 'avUi/simple-error-directive/simple-error-directive.html'
     };
   });

@@ -465,7 +465,7 @@ angular.module("avRegistration").controller("LoginController", [ "$scope", "$sta
         scope: {},
         link: link,
         transclude: !0,
-        templateUrl: $templateCache.get("avUi/simple-error-directive/simple-error-directive.html")
+        templateUrl: "avUi/simple-error-directive/simple-error-directive.html"
     };
 } ]), angular.module("avUi").directive("avChangeLang", [ "$i18next", "$templateCache", "ipCookie", "angularLoad", "amMoment", "ConfigService", function($i18next, $templateCache, ipCookie, angularLoad, amMoment, ConfigService) {
     function link(scope, element, attrs) {
@@ -482,7 +482,7 @@ angular.module("avRegistration").controller("LoginController", [ "$scope", "$sta
         restrict: "AE",
         scope: {},
         link: link,
-        templateUrl: $templateCache.get("avUi/change-lang-directive/change-lang-directive.html")
+        templateUrl: "avUi/change-lang-directive/change-lang-directive.html"
     };
 } ]), angular.module("avUi").directive("avAffixBottom", [ "$window", "$timeout", "$parse", function($window, $timeout, $parse) {
     var affixBottomClass = "affix-bottom", checkPosition = function(scope, instance, el, options) {
