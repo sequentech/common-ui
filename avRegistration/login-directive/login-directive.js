@@ -12,7 +12,7 @@ angular.module('avRegistration')
     function link(scope, element, attrs) {
         var adminId = ConfigService.freeAuthId;
         if ($cookies.authevent && $cookies.authevent === adminId + '') {
-          $state.go("admin.elections");
+          $window.location.href = '/admin/elections';
         }
         var autheventid = attrs.eventId;
         scope.sendingData = false;
@@ -99,8 +99,10 @@ angular.module('avRegistration')
                         {
                             Authmethod.getUserInfo().success(function(d) {
                                 $cookies.user = d.email;
-                                $state.go('admin.elections');
-                            }).error(function(error) { $state.go("admin.elections"); });
+                                $window.location.href = '/admin/elections';
+                            }).error(function(error) {
+                                $window.location.href = '/admin/elections';
+                            });
                         }
                         else if (angular.isDefined(rcvData['redirect-to-url']))
                         {
@@ -115,7 +117,7 @@ angular.module('avRegistration')
                                     var path = khmac.split(";")[1];
                                     var hash = path.split("/")[0];
                                     var msg = path.split("/")[1];
-                                    $state.go('election.booth', {id: autheventid, hmac: hash, message: msg});
+                                    $window.location.href = '/booth/' + autheventid + '/vote/' + hash + '/' + msg;
                                 });
                         }
                     } else {

@@ -4,7 +4,7 @@ angular.module("avRegistration").controller("LoginController", [ "$scope", "$sta
 } ]), angular.module("avRegistration").directive("avLogin", [ "Authmethod", "StateDataService", "$parse", "$state", "$cookies", "$i18next", "$window", "$timeout", "ConfigService", function(Authmethod, StateDataService, $parse, $state, $cookies, $i18next, $window, $timeout, ConfigService) {
     function link(scope, element, attrs) {
         var adminId = ConfigService.freeAuthId;
-        $cookies.authevent && $cookies.authevent === adminId + "" && $state.go("admin.elections");
+        $cookies.authevent && $cookies.authevent === adminId + "" && ($window.location.href = "/admin/elections");
         var autheventid = attrs.eventId;
         scope.sendingData = !1, scope.stateData = StateDataService.getData(), scope.code = null, 
         attrs.code && attrs.code.length > 0 && (scope.code = attrs.code), scope.email = null, 
@@ -33,16 +33,12 @@ angular.module("avRegistration").controller("LoginController", [ "$scope", "$sta
                     $cookies.userid = rcvData.username, $cookies.user = scope.email, $cookies.auth = rcvData["auth-token"], 
                     $cookies.isAdmin = scope.isAdmin, Authmethod.setAuth($cookies.auth, scope.isAdmin), 
                     scope.isAdmin ? Authmethod.getUserInfo().success(function(d) {
-                        $cookies.user = d.email, $state.go("admin.elections");
+                        $cookies.user = d.email, $window.location.href = "/admin/elections";
                     }).error(function(error) {
-                        $state.go("admin.elections");
+                        $window.location.href = "/admin/elections";
                     }) : angular.isDefined(rcvData["redirect-to-url"]) ? $window.location.href = rcvData["redirect-to-url"] : Authmethod.getPerm("vote", "AuthEvent", autheventid).success(function(rcvData2) {
                         var khmac = rcvData2["permission-token"], path = khmac.split(";")[1], hash = path.split("/")[0], msg = path.split("/")[1];
-                        $state.go("election.booth", {
-                            id: autheventid,
-                            hmac: hash,
-                            message: msg
-                        });
+                        $window.location.href = "/booth/" + autheventid + "/vote/" + hash + "/" + msg;
                     })) : (scope.sendingData = !1, scope.status = "Not found", scope.error = $i18next("avRegistration.invalidCredentials"));
                 }).error(function(error) {
                     scope.sendingData = !1, scope.status = "Registration error: " + error.message, scope.error = $i18next("avRegistration.invalidCredentials");
@@ -872,7 +868,7 @@ angular.module("avRegistration").controller("LoginController", [ "$scope", "$sta
         restrict: "EAC",
         link: link
     };
-}), angular.module("agora-core-view", [ "ui.bootstrap", "ui.utils", "ui.router", "ngAnimate", "ngResource", "ngCookies", "ipCookie", "ngSanitize", "infinite-scroll", "angularMoment", "avConfig", "jm.i18next", "avUi", "avTest", "angularFileUpload", "dndLists", "angularLoad", "angular-date-picker-polyfill", "ng-autofocus" ]), 
+}), angular.module("agora-core-view", [ "ui.bootstrap", "ui.utils", "ui.router", "ngAnimate", "ngResource", "ngCookies", "ipCookie", "ngSanitize", "infinite-scroll", "angularMoment", "avConfig", "jm.i18next", "avRegistration", "avUi", "avTest", "angularFileUpload", "dndLists", "angularLoad", "angular-date-picker-polyfill", "ng-autofocus" ]), 
 angular.module("jm.i18next").config([ "$i18nextProvider", "ConfigServiceProvider", function($i18nextProvider, ConfigServiceProvider) {
     $("#no-js").hide(), $i18nextProvider.options = _.extend({
         useCookie: !0,
