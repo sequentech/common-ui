@@ -3,6 +3,8 @@
  * in this same file, which you might want to edit and tune if needed.
  */
 
+var AV_CONFIG_VERSION = '3.1.0';
+
 var avConfigData = {
   // the base url path for ajax requests, for example for sending ballots or
   // getting info about an election. This url is usually in the form of
