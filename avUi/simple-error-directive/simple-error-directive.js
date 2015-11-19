@@ -2,7 +2,7 @@
  * Simple error directive.
  */
 angular.module('avUi')
-  .directive('avSimpleError', function($resource, $templateCache, $window) {
+  .directive('avSimpleError', function($resource, $window) {
     function link(scope, element, attrs) {
       // moves the title on top of the busy indicator
       scope.updateTitle = function() {

@@ -464,7 +464,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
     }).delay(duration).queue(function() {
         selector.removeClass("flashing flashing-out").dequeue(), selector.attr("is-flashing", "false");
     }));
-}, angular.module("avUi").directive("avSimpleError", [ "$resource", "$templateCache", "$window", function($resource, $templateCache, $window) {
+}, angular.module("avUi").directive("avSimpleError", [ "$resource", "$window", function($resource, $window) {
     function link(scope, element, attrs) {
         scope.updateTitle = function() {
             var title = element.find(".av-simple-error-title"), marginTop = -title.height() - 45, marginLeft = -title.width() / 2;
@@ -480,7 +480,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         transclude: !0,
         templateUrl: "avUi/simple-error-directive/simple-error-directive.html"
     };
-} ]), angular.module("avUi").directive("avChangeLang", [ "$i18next", "$templateCache", "ipCookie", "angularLoad", "amMoment", "ConfigService", function($i18next, $templateCache, ipCookie, angularLoad, amMoment, ConfigService) {
+} ]), angular.module("avUi").directive("avChangeLang", [ "$i18next", "ipCookie", "angularLoad", "amMoment", "ConfigService", function($i18next, ipCookie, angularLoad, amMoment, ConfigService) {
     function link(scope, element, attrs) {
         scope.deflang = window.i18n.lng(), scope.langs = $i18next.options.lngWhitelist, 
         scope.changeLang = function(lang) {
