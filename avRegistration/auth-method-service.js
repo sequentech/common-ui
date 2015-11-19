@@ -59,6 +59,10 @@ angular.module('avRegistration')
             return $http.get(backendUrl + 'auth-event/'+authId+'/ping/');
         };
 
+        authmethod.getImage = function(ev, uid) {
+            return $http.get(backendUrl + 'auth-event/'+ev+'/census/img/'+uid+'/');
+        };
+
         authmethod.login = function(data, authevent) {
             var eid = authevent || authId;
             delete data['authevent'];

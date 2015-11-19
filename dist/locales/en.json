@@ -72,7 +72,9 @@
 		"invalidCredentials": "Invalid credentials",
 		"invalidDataRegEx": "Invalid data",
 		"invalidDni": "Invalid DNI/NIE",
-		"dniHelp": "Specify a valid  DNI/NIE. Examples: 12343567R or X01234356R"
+		"dniHelp": "Specify a valid  DNI/NIE. Examples: 12343567R or X01234356R",
+		"imageHelp": "Add an image in jpg or png format",
+		"invalidImage": "Invalid Image"
 	},
 	"avCommon": {
 		"poweredBy": "Funciona amb <strong><a href=\"https://agoravoting.com\" target=\"_blank\">Agora Voting</a></strong>"

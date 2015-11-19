@@ -3,7 +3,7 @@
  * in this same file, which you might want to edit and tune if needed.
  */
 
-var AV_CONFIG_VERSION = '3.1.0';
+var AV_CONFIG_VERSION = '3.1.1';
 
 var avConfigData = {
   // the base url path for ajax requests, for example for sending ballots or
@@ -21,6 +21,17 @@ var avConfigData = {
 
   authorities: ['local-auth2'],
   director: "local-auth1",
+
+  resourceUrlWhitelist: [
+    // Allow same origin resource loads.
+    'self',
+
+    // Allow loading from our assets domain.  Notice the difference between * and **.
+    // Uncomment the following to allow youtube videos
+    //
+    // 'https://www.youtube.com/**',
+    // 'https://youtube.com/**'
+  ],
 
   // i18next language options, see http://i18next.com/pages/doc_init.html for
   // details
