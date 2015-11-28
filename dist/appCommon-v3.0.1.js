@@ -486,7 +486,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         scope.changeLang = function(lang) {
             $i18next.options.lng = lang, console.log("setting cookie"), ipCookie("lang", lang, _.extend({
                 expires: 360
-            }, ConfigService.i18nextCookieOptions)), scope.deflang = lang, angularLoad.loadScript("/locales/moment/" + lang + ".js").then(function() {
+            }, ConfigService.i18nextCookieOptions)), scope.deflang = lang, angularLoad.loadScript(ConfigService.base + "/locales/moment/" + lang + ".js").then(function() {
                 amMoment.changeLocale(lang);
             });
         };
