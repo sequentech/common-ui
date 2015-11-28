@@ -24,7 +24,7 @@ angular.module('avUi')
 
         // async load moment i18n
         angularLoad
-          .loadScript('/locales/moment/' + lang + '.js')
+          .loadScript(ConfigService.base + '/locales/moment/' + lang + '.js')
           .then(function () {
             amMoment.changeLocale(lang);
           });

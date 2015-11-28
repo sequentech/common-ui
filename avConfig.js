@@ -3,12 +3,13 @@
  * in this same file, which you might want to edit and tune if needed.
  */
 
-var AV_CONFIG_VERSION = '3.1.1';
+var AV_CONFIG_VERSION = '3.1.2';
 
 var avConfigData = {
   // the base url path for ajax requests, for example for sending ballots or
   // getting info about an election. This url is usually in the form of
   // 'https://foo/api/v3/' and always ends in '/'.
+  base: '',
   theme: "default",
   baseUrl: "https://agora/elections/api/",
   freeAuthId: 1,
