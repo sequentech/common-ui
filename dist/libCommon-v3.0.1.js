@@ -981,11 +981,11 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             (predicate(value, key, obj) ? pass : fail).push(value);
         }), [ pass, fail ];
     }, _.first = _.head = _.take = function(array, n, guard) {
-        return null == array ? void 0 : null == n || guard ? array[0] : _.initial(array, array.length - n);
+        return null != array ? null == n || guard ? array[0] : _.initial(array, array.length - n) : void 0;
     }, _.initial = function(array, n, guard) {
         return slice.call(array, 0, Math.max(0, array.length - (null == n || guard ? 1 : n)));
     }, _.last = function(array, n, guard) {
-        return null == array ? void 0 : null == n || guard ? array[array.length - 1] : _.rest(array, Math.max(0, array.length - n));
+        return null != array ? null == n || guard ? array[array.length - 1] : _.rest(array, Math.max(0, array.length - n)) : void 0;
     }, _.rest = _.tail = _.drop = function(array, n, guard) {
         return slice.call(array, null == n || guard ? 1 : n);
     }, _.compact = function(array) {
@@ -5194,7 +5194,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         f: "\f",
         r: "\r",
         t: "	",
-        v: "",
+        v: "\x0B",
         "'": "'",
         '"': '"'
     }, Lexer = function(options) {
@@ -5245,7 +5245,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             return ch >= "0" && "9" >= ch;
         },
         isWhitespace: function(ch) {
-            return " " === ch || "\r" === ch || "	" === ch || "\n" === ch || "" === ch || " " === ch;
+            return " " === ch || "\r" === ch || "	" === ch || "\n" === ch || "\x0B" === ch || " " === ch;
         },
         isIdent: function(ch) {
             return ch >= "a" && "z" >= ch || ch >= "A" && "Z" >= ch || "_" === ch || "$" === ch;
@@ -6377,9 +6377,9 @@ function(window, angular, undefined) {
         var buf = [], writer = htmlSanitizeWriter(buf, angular.noop);
         return writer.chars(chars), buf.join("");
     }
-    function makeMap(str, lowercaseKeys) {
+    function makeMap(str) {
         var i, obj = {}, items = str.split(",");
-        for (i = 0; i < items.length; i++) obj[lowercaseKeys ? angular.lowercase(items[i]) : items[i]] = !0;
+        for (i = 0; i < items.length; i++) obj[items[i]] = !0;
         return obj;
     }
     function htmlParser(html, handler) {
@@ -6406,7 +6406,7 @@ function(window, angular, undefined) {
         for (stack.last = function() {
             return stack[stack.length - 1];
         }; html; ) {
-            if (text = "", chars = !0, stack.last() && specialElements[stack.last()] ? (html = html.replace(new RegExp("([\\W\\w]*)<\\s*\\/\\s*" + stack.last() + "[^>]*>", "i"), function(all, text) {
+            if (text = "", chars = !0, stack.last() && specialElements[stack.last()] ? (html = html.replace(new RegExp("(.*)<\\s*\\/\\s*" + stack.last() + "[^>]*>", "i"), function(all, text) {
                 return text = text.replace(COMMENT_REGEXP, "$1").replace(CDATA_REGEXP, "$1"), handler.chars && handler.chars(decodeEntities(text)), 
                 "";
             }), parseEndTag("", stack.last())) : (0 === html.indexOf("<!--") ? (index = html.indexOf("--", 4), 
@@ -6424,7 +6424,10 @@ function(window, angular, undefined) {
         parseEndTag();
     }
     function decodeEntities(value) {
-        return value ? (hiddenPre.innerHTML = value.replace(/</g, "&lt;"), hiddenPre.textContent) : "";
+        if (!value) return "";
+        var parts = spaceRe.exec(value), spaceBefore = parts[1], spaceAfter = parts[3], content = parts[2];
+        return content && (hiddenPre.innerHTML = content.replace(/</g, "&lt;"), content = "textContent" in hiddenPre ? hiddenPre.textContent : hiddenPre.innerText), 
+        spaceBefore + content + spaceAfter;
     }
     function encodeEntities(value) {
         return value.replace(/&/g, "&amp;").replace(SURROGATE_PAIR_REGEXP, function(value) {
@@ -6454,21 +6457,22 @@ function(window, angular, undefined) {
             }
         };
     }
-    var $sanitizeMinErr = angular.$$minErr("$sanitize"), START_TAG_REGEXP = /^<((?:[a-zA-Z])[\w:-]*)((?:\s+[\w:-]+(?:\s*=\s*(?:(?:"[^"]*")|(?:'[^']*')|[^>\s]+))?)*)\s*(\/?)\s*(>?)/, END_TAG_REGEXP = /^<\/\s*([\w:-]+)[^>]*>/, ATTR_REGEXP = /([\w:-]+)(?:\s*=\s*(?:(?:"((?:[^"])*)")|(?:'((?:[^'])*)')|([^>\s]+)))?/g, BEGIN_TAG_REGEXP = /^</, BEGING_END_TAGE_REGEXP = /^<\//, COMMENT_REGEXP = /<!--(.*?)-->/g, DOCTYPE_REGEXP = /<!DOCTYPE([^>]*?)>/i, CDATA_REGEXP = /<!\[CDATA\[(.*?)]]>/g, SURROGATE_PAIR_REGEXP = /[\uD800-\uDBFF][\uDC00-\uDFFF]/g, NON_ALPHANUMERIC_REGEXP = /([^\#-~| |!])/g, voidElements = makeMap("area,br,col,hr,img,wbr"), optionalEndTagBlockElements = makeMap("colgroup,dd,dt,li,p,tbody,td,tfoot,th,thead,tr"), optionalEndTagInlineElements = makeMap("rp,rt"), optionalEndTagElements = angular.extend({}, optionalEndTagInlineElements, optionalEndTagBlockElements), blockElements = angular.extend({}, optionalEndTagBlockElements, makeMap("address,article,aside,blockquote,caption,center,del,dir,div,dl,figure,figcaption,footer,h1,h2,h3,h4,h5,h6,header,hgroup,hr,ins,map,menu,nav,ol,pre,script,section,table,ul")), inlineElements = angular.extend({}, optionalEndTagInlineElements, makeMap("a,abbr,acronym,b,bdi,bdo,big,br,cite,code,del,dfn,em,font,i,img,ins,kbd,label,map,mark,q,ruby,rp,rt,s,samp,small,span,strike,strong,sub,sup,time,tt,u,var")), svgElements = makeMap("circle,defs,desc,ellipse,font-face,font-face-name,font-face-src,g,glyph,hkern,image,linearGradient,line,marker,metadata,missing-glyph,mpath,path,polygon,polyline,radialGradient,rect,stop,svg,switch,text,title,tspan,use"), specialElements = makeMap("script,style"), validElements = angular.extend({}, voidElements, blockElements, inlineElements, optionalEndTagElements, svgElements), uriAttrs = makeMap("background,cite,href,longdesc,src,usemap,xlink:href"), htmlAttrs = makeMap("abbr,align,alt,axis,bgcolor,border,cellpadding,cellspacing,class,clear,color,cols,colspan,compact,coords,dir,face,headers,height,hreflang,hspace,ismap,lang,language,nohref,nowrap,rel,rev,rows,rowspan,rules,scope,scrolling,shape,size,span,start,summary,tabindex,target,title,type,valign,value,vspace,width"), svgAttrs = makeMap("accent-height,accumulate,additive,alphabetic,arabic-form,ascent,baseProfile,bbox,begin,by,calcMode,cap-height,class,color,color-rendering,content,cx,cy,d,dx,dy,descent,display,dur,end,fill,fill-rule,font-family,font-size,font-stretch,font-style,font-variant,font-weight,from,fx,fy,g1,g2,glyph-name,gradientUnits,hanging,height,horiz-adv-x,horiz-origin-x,ideographic,k,keyPoints,keySplines,keyTimes,lang,marker-end,marker-mid,marker-start,markerHeight,markerUnits,markerWidth,mathematical,max,min,offset,opacity,orient,origin,overline-position,overline-thickness,panose-1,path,pathLength,points,preserveAspectRatio,r,refX,refY,repeatCount,repeatDur,requiredExtensions,requiredFeatures,restart,rotate,rx,ry,slope,stemh,stemv,stop-color,stop-opacity,strikethrough-position,strikethrough-thickness,stroke,stroke-dasharray,stroke-dashoffset,stroke-linecap,stroke-linejoin,stroke-miterlimit,stroke-opacity,stroke-width,systemLanguage,target,text-anchor,to,transform,type,u1,u2,underline-position,underline-thickness,unicode,unicode-range,units-per-em,values,version,viewBox,visibility,width,widths,x,x-height,x1,x2,xlink:actuate,xlink:arcrole,xlink:role,xlink:show,xlink:title,xlink:type,xml:base,xml:lang,xml:space,xmlns,xmlns:xlink,y,y1,y2,zoomAndPan", !0), validAttrs = angular.extend({}, uriAttrs, svgAttrs, htmlAttrs), hiddenPre = document.createElement("pre");
+    var $sanitizeMinErr = angular.$$minErr("$sanitize"), START_TAG_REGEXP = /^<((?:[a-zA-Z])[\w:-]*)((?:\s+[\w:-]+(?:\s*=\s*(?:(?:"[^"]*")|(?:'[^']*')|[^>\s]+))?)*)\s*(\/?)\s*(>?)/, END_TAG_REGEXP = /^<\/\s*([\w:-]+)[^>]*>/, ATTR_REGEXP = /([\w:-]+)(?:\s*=\s*(?:(?:"((?:[^"])*)")|(?:'((?:[^'])*)')|([^>\s]+)))?/g, BEGIN_TAG_REGEXP = /^</, BEGING_END_TAGE_REGEXP = /^<\//, COMMENT_REGEXP = /<!--(.*?)-->/g, DOCTYPE_REGEXP = /<!DOCTYPE([^>]*?)>/i, CDATA_REGEXP = /<!\[CDATA\[(.*?)]]>/g, SURROGATE_PAIR_REGEXP = /[\uD800-\uDBFF][\uDC00-\uDFFF]/g, NON_ALPHANUMERIC_REGEXP = /([^\#-~| |!])/g, voidElements = makeMap("area,br,col,hr,img,wbr"), optionalEndTagBlockElements = makeMap("colgroup,dd,dt,li,p,tbody,td,tfoot,th,thead,tr"), optionalEndTagInlineElements = makeMap("rp,rt"), optionalEndTagElements = angular.extend({}, optionalEndTagInlineElements, optionalEndTagBlockElements), blockElements = angular.extend({}, optionalEndTagBlockElements, makeMap("address,article,aside,blockquote,caption,center,del,dir,div,dl,figure,figcaption,footer,h1,h2,h3,h4,h5,h6,header,hgroup,hr,ins,map,menu,nav,ol,pre,script,section,table,ul")), inlineElements = angular.extend({}, optionalEndTagInlineElements, makeMap("a,abbr,acronym,b,bdi,bdo,big,br,cite,code,del,dfn,em,font,i,img,ins,kbd,label,map,mark,q,ruby,rp,rt,s,samp,small,span,strike,strong,sub,sup,time,tt,u,var")), specialElements = makeMap("script,style"), validElements = angular.extend({}, voidElements, blockElements, inlineElements, optionalEndTagElements), uriAttrs = makeMap("background,cite,href,longdesc,src,usemap"), validAttrs = angular.extend({}, uriAttrs, makeMap("abbr,align,alt,axis,bgcolor,border,cellpadding,cellspacing,class,clear,color,cols,colspan,compact,coords,dir,face,headers,height,hreflang,hspace,ismap,lang,language,nohref,nowrap,rel,rev,rows,rowspan,rules,scope,scrolling,shape,size,span,start,summary,target,title,type,valign,value,vspace,width")), hiddenPre = document.createElement("pre"), spaceRe = /^(\s*)([\s\S]*?)(\s*)$/;
     angular.module("ngSanitize", []).provider("$sanitize", $SanitizeProvider), angular.module("ngSanitize").filter("linky", [ "$sanitize", function($sanitize) {
-        var LINKY_URL_REGEXP = /((ftp|https?):\/\/|(www\.)|(mailto:)?[A-Za-z0-9._%+-]+@)\S*[^\s.;,(){}<>"\u201d\u2019]/i, MAILTO_REGEXP = /^mailto:/i;
+        var LINKY_URL_REGEXP = /((ftp|https?):\/\/|(mailto:)?[A-Za-z0-9._%+-]+@)\S*[^\s.;,(){}<>"]/, MAILTO_REGEXP = /^mailto:/;
         return function(text, target) {
             function addText(text) {
                 text && html.push(sanitizeText(text));
             }
             function addLink(url, text) {
-                html.push("<a "), angular.isDefined(target) && html.push('target="', target, '" '), 
-                html.push('href="', url.replace(/"/g, "&quot;"), '">'), addText(text), html.push("</a>");
+                html.push("<a "), angular.isDefined(target) && (html.push('target="'), html.push(target), 
+                html.push('" ')), html.push('href="', url.replace('"', "&quot;"), '">'), addText(text), 
+                html.push("</a>");
             }
             if (!text) return text;
             for (var match, url, i, raw = text, html = []; match = raw.match(LINKY_URL_REGEXP); ) url = match[0], 
-            match[2] || match[4] || (url = (match[3] ? "http://" : "mailto:") + url), i = match.index, 
-            addText(raw.substr(0, i)), addLink(url, match[0].replace(MAILTO_REGEXP, "")), raw = raw.substring(i + match[0].length);
+            match[2] == match[3] && (url = "mailto:" + url), i = match.index, addText(raw.substr(0, i)), 
+            addLink(url, match[0].replace(MAILTO_REGEXP, "")), raw = raw.substring(i + match[0].length);
             return addText(raw), $sanitize(html.join(""));
         };
     } ]);
@@ -7956,7 +7960,7 @@ function(window, angular, undefined) {
                 encode: valToString,
                 decode: valFromString,
                 is: regexpMatches,
-                pattern: /[^/]*/
+                pattern: /[^\/]*/
             },
             "int": {
                 encode: valToString,
@@ -8003,7 +8007,7 @@ function(window, angular, undefined) {
                 decode: angular.fromJson,
                 is: angular.isObject,
                 equals: angular.equals,
-                pattern: /[^/]*/
+                pattern: /[^\/]*/
             },
             any: {
                 encode: angular.identity,
