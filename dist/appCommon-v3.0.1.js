@@ -881,7 +881,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         restrict: "EAC",
         link: link
     };
-}), angular.module("agora-core-view", [ "ui.bootstrap", "ui.utils", "ui.router", "ngAnimate", "ngResource", "ngCookies", "ipCookie", "ngSanitize", "infinite-scroll", "angularMoment", "avConfig", "jm.i18next", "avRegistration", "avUi", "avTest", "angularFileUpload", "dndLists", "angularLoad", "angular-date-picker-polyfill", "ng-autofocus" ]), 
+}), angular.module("agora-gui-common", [ "ui.bootstrap", "ui.utils", "ui.router", "ngAnimate", "ngResource", "ngCookies", "ipCookie", "ngSanitize", "infinite-scroll", "angularMoment", "avConfig", "jm.i18next", "avRegistration", "avUi", "avTest", "angularFileUpload", "dndLists", "angularLoad", "angular-date-picker-polyfill", "ng-autofocus" ]), 
 angular.module("jm.i18next").config([ "$i18nextProvider", "ConfigServiceProvider", function($i18nextProvider, ConfigServiceProvider) {
     $("#no-js").hide(), $i18nextProvider.options = _.extend({
         useCookie: !0,
@@ -893,7 +893,7 @@ angular.module("jm.i18next").config([ "$i18nextProvider", "ConfigServiceProvider
         resGetPath: "/locales/__lng__.json",
         defaultLoadingValue: ""
     }, ConfigServiceProvider.i18nextInitOptions);
-} ]), angular.module("agora-core-view").run([ "$http", "$rootScope", function($http, $rootScope) {
+} ]), angular.module("agora-gui-common").run([ "$http", "$rootScope", function($http, $rootScope) {
     $rootScope.safeApply = function(fn) {
         var phase = $rootScope.$$phase;
         "$apply" === phase || "$digest" === phase ? fn && "function" == typeof fn && fn() : this.$apply(fn);
@@ -902,7 +902,7 @@ angular.module("jm.i18next").config([ "$i18nextProvider", "ConfigServiceProvider
     }), $rootScope.$on("$stateChangeSuccess", function(event, toState, toParams, fromState, fromParams) {
         console.log("change success"), $("#angular-preloading").hide();
     });
-} ]), angular.module("agora-core-view").directive("ngEnter", function() {
+} ]), angular.module("agora-gui-common").directive("ngEnter", function() {
     return function(scope, element, attrs) {
         element.bind("keydown keypress", function(event) {
             13 === event.which && (scope.$apply(function() {
@@ -910,13 +910,13 @@ angular.module("jm.i18next").config([ "$i18nextProvider", "ConfigServiceProvider
             }), event.preventDefault());
         });
     };
-}), angular.module("agora-core-view").filter("truncate", function() {
+}), angular.module("agora-gui-common").filter("truncate", function() {
     return function(text, length, end) {
         return isNaN(length) && (length = 10), void 0 === end && (end = "..."), text.length <= length || text.length - end.length <= length ? text : String(text).substring(0, length - end.length) + end;
     };
 }), angular.module("avTest", []), angular.module("avTest").controller("UnitTestE2EController", [ "$scope", "$location", "ConfigService", function($scope, $location, ConfigService) {
     ConfigService.debug && ($scope.html = $location.search().html, console.log($location.search()));
-} ]), angular.module("agora-core-view").run([ "$templateCache", function($templateCache) {
+} ]), angular.module("agora-gui-common").run([ "$templateCache", function($templateCache) {
     "use strict";
     $templateCache.put("avRegistration/error.html", '<div av-simple-error><p ng-i18next="avRegistration.errorRegistration"></p></div>'), 
     $templateCache.put("avRegistration/field-directive/field-directive.html", '<div ng-switch="field.type"><div avr-email-field ng-switch-when="email"></div><div avr-password-field ng-switch-when="password"></div><div avr-code-field ng-switch-when="code"></div><div avr-text-field ng-switch-when="text"></div><div avr-dni-field ng-switch-when="dni"></div><div avr-tel-field ng-switch-when="tlf"></div><div avr-int-field ng-switch-when="int"></div><div avr-bool-field ng-switch-when="bool"></div><div avr-captcha-field ng-switch-when="captcha"></div><div avr-textarea-field ng-switch-when="textarea"></div><div avr-image-field ng-switch-when="image"></div></div>'), 

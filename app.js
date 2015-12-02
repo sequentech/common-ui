@@ -1,5 +1,5 @@
 angular.module(
-  'agora-core-view',
+  'agora-gui-common',
   ['ui.bootstrap',
   'ui.utils',
   'ui.router',
@@ -41,7 +41,7 @@ angular.module('jm.i18next').config(function ($i18nextProvider, ConfigServicePro
     ConfigServiceProvider.i18nextInitOptions);
 });
 
-angular.module('agora-core-view').run(function($http, $rootScope) {
+angular.module('agora-gui-common').run(function($http, $rootScope) {
 
   $rootScope.safeApply = function(fn) {
     var phase = $rootScope.$$phase;
@@ -70,7 +70,7 @@ angular.module('agora-core-view').run(function($http, $rootScope) {
 /*
 This directive allows us to pass a function in on an enter key to do what we want.
  */
-angular.module('agora-core-view').directive('ngEnter', function () {
+angular.module('agora-gui-common').directive('ngEnter', function () {
     return function (scope, element, attrs) {
         element.bind("keydown keypress", function (event) {
             if(event.which === 13) {
@@ -91,7 +91,7 @@ angular.module('agora-core-view').directive('ngEnter', function () {
  * @Param end, default is "..."
  * @return string
  */
-angular.module('agora-core-view').filter('truncate', function () {
+angular.module('agora-gui-common').filter('truncate', function () {
         return function (text, length, end) {
             if (isNaN(length)) {
                 length = 10;

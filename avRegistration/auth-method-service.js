@@ -283,7 +283,7 @@ angular.module('avRegistration')
 /**
  * Caching http response error to deauthenticate
  */
-//angular.module('agora-core-view').config(
+//angular.module('avRegistration').config(
 //  function($httpProvider) {
 //    $httpProvider.interceptors.push(function($q, $injector) {
 //      return {
@@ -305,7 +305,7 @@ angular.module('avRegistration')
 /**
  * IF the cookie is there we make the autologin
  */
-//angular.module('agora-core-view').run(function($cookies, $http, Authmethod) {
+//angular.module('avRegistration').run(function($cookies, $http, Authmethod) {
 //    if ($cookies.auth) {
 //        Authmethod.setAuth($cookies.auth, $cookies.isAdmin);
 //    }
