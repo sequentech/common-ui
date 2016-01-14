@@ -88,6 +88,9 @@ a:hover, a:active {
 }
 
 .modal-dialog {
+  // for some reason the cursor needs to be reset or otherwise it will be
+  // "pointer" by default when the modal is being shown
+  cursor: initial;
   margin-top: 10%;
 
   .dialog-header-warning {
