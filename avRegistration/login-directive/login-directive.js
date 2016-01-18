@@ -10,11 +10,15 @@ angular.module('avRegistration')
                                  ConfigService) {
     // we use it as something similar to a controller here
     function link(scope, element, attrs) {
-        var adminId = ConfigService.freeAuthId;
-        if ($cookies.authevent && $cookies.authevent === adminId + '') {
+        var adminId = ConfigService.freeAuthId + '';
+        var autheventid = attrs.eventId;
+
+        // redirect from admin login to admin elections if login is not needed
+        if ($cookies.authevent && $cookies.authevent === adminId &&
+          autheventid === adminId)
+        {
           $window.location.href = '/admin/elections';
         }
-        var autheventid = attrs.eventId;
         scope.sendingData = false;
 
         scope.stateData = StateDataService.getData();
@@ -29,7 +33,7 @@ angular.module('avRegistration')
         }
 
         scope.isAdmin = false;
-        if (autheventid === adminId + "") {
+        if (autheventid === adminId) {
             scope.isAdmin = true;
         }
 
