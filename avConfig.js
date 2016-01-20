@@ -3,7 +3,7 @@
  * in this same file, which you might want to edit and tune if needed.
  */
 
-var AV_CONFIG_VERSION = '3.1.2';
+var AV_CONFIG_VERSION = '3.1.3';
 
 var avConfigData = {
   // the base url path for ajax requests, for example for sending ballots or
@@ -19,6 +19,9 @@ var avConfigData = {
   dnieUrl: "https://agora.dev/authapi/api/authmethod/dnie/auth/",
   // Agora Elections base url
   electionsAPI: "https://agora/elections/api/",
+
+  // Agora Admin help url
+  helpUrl: "https://agoravoting.com/help",
 
   authorities: ['local-auth2'],
   director: "local-auth1",
