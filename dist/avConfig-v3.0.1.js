@@ -126,7 +126,7 @@ var avConfigData = {
 
   tos: {
     text:"",
-    tile: ""
+    title: ""
   }
 };
 

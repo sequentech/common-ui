@@ -226,7 +226,7 @@ angular.module('avRegistration')
             return $http.get(backendUrl + 'acl/mine/?object_type=AuthEvent&perm=edit&order=-pk&page='+page);
         };
 
-        authmethod.sendAuthCodes = function(eid, election, user_ids) {
+        authmethod.sendAuthCodes = function(eid, election, user_ids, extra) {
             var url = backendUrl + 'auth-event/'+eid+'/census/send_auth/';
             var data = {};
             if (angular.isDefined(election)) {
@@ -237,6 +237,9 @@ angular.module('avRegistration')
             }
             if (angular.isDefined(user_ids)) {
               data["user-ids"] = user_ids;
+            }
+            if (extra) {
+              data["extra"] = JSON.stringify(extra);
             }
             return $http.post(url, data);
         };
