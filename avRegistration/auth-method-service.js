@@ -239,7 +239,7 @@ angular.module('avRegistration')
               data["user-ids"] = user_ids;
             }
             if (extra) {
-              data["extra"] = JSON.stringify(extra);
+              data["extra"] = extra;
             }
             return $http.post(url, data);
         };

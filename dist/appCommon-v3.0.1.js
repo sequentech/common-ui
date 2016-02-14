@@ -140,7 +140,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
     }, authmethod.sendAuthCodes = function(eid, election, user_ids, extra) {
         var url = backendUrl + "auth-event/" + eid + "/census/send_auth/", data = {};
         return angular.isDefined(election) && (data.msg = election.census.config.msg, "email" === election.census.auth_method && (data.subject = election.census.config.subject)), 
-        angular.isDefined(user_ids) && (data["user-ids"] = user_ids), extra && (data.extra = JSON.stringify(extra)), 
+        angular.isDefined(user_ids) && (data["user-ids"] = user_ids), extra && (data.extra = extra), 
         $http.post(url, data);
     }, authmethod.removeUsersIds = function(eid, election, user_ids) {
         var url = backendUrl + "auth-event/" + eid + "/census/delete/", data = {
