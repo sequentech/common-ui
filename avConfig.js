@@ -133,7 +133,7 @@ var avConfigData = {
   
   // legality footer links
   legal: {
-    tos: "https://agoravoting.com/tos/",
+    terms_of_service: "https://agoravoting.com/tos/",
     cookies: "https://agoravoting.com/cookies/",
     privacy: "https://agoravoting.com/privacy/",
     security_contact: "https://agoravoting.com/security_contact/",
