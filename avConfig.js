@@ -106,7 +106,10 @@ var avConfigData = {
 
   // contact data where users can reach to a human when they need it
   contact: {
+    // Support contact email displayed in the footer links
     email: "contact@example.com",
+    // Sales contact email displayed in the footer links
+    sales: "sales@example.com",
     twitter: "twitter",
     tlf: "-no tlf-"
   },
