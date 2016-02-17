@@ -106,11 +106,40 @@ var avConfigData = {
 
   // contact data where users can reach to a human when they need it
   contact: {
+    // Support contact email displayed in the footer links
     email: "contact@example.com",
-    twitter: "twitter",
+    // Sales contact email displayed in the footer links
+    sales: "sales@example.com",
     tlf: "-no tlf-"
   },
-
+  
+  // social networks footer links
+  social: {
+      facebook: "https://www.facebook.com/AgoraVoting",
+      twitter: "https://twitter.com/agoravoting",
+      googleplus: "https://plus.google.com/101939665794445172389/posts",
+      youtube: "https://www.youtube.com/results?search_query=Agora+Voting",
+      github: "https://github.com/agoravoting/"
+  },
+  
+  // technology footer links
+  technology: {
+    aboutus: "https://agoravoting.com/#aboutus",
+    pricing: "https://agoravoting.com/#pricing",
+    overview: "https://agoravoting.com/overview/",
+    solutions: "https://agoravoting.com/solutions/",
+    admin_manual: "https://bit.ly/avguiadeuso"
+  },
+  
+  // legality footer links
+  legal: {
+    terms_of_service: "https://agoravoting.com/tos/",
+    cookies: "https://agoravoting.com/cookies/",
+    privacy: "https://agoravoting.com/privacy/",
+    security_contact: "https://agoravoting.com/security_contact/",
+    community_website: "https://agoravoting.org"
+  },
+    
   verifier: {
     link: "",
     hash: ""
