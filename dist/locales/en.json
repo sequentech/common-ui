@@ -19,7 +19,7 @@
 		"name": "Agora Voting"
 	},
 	"avRegistration": {
-		"loginHeader": "Login to your Agora Voting account",
+		"loginHeader": "Login to your __name__ account",
 		"helpRegisterForm": "To be able to vote, you need to register first. Some fields are required, so please look carefully at the help information.",
 		"helpAdminRegisterForm": "To be able to create elections, you need to register first. Please look carefully at the help information.",
 		"registerFormHelpTitle": "Registering to vote",
@@ -77,7 +77,7 @@
 		"invalidImage": "Invalid Image"
 	},
 	"avCommon": {
-		"poweredBy": "Powered by <strong><a href=\"https://agoravoting.com\" target=\"_blank\">Agora Voting</a></strong>"
+		"poweredBy": "Powered by <strong><a href=\"__url__\" target=\"_blank\">__name__</a></strong>"
 	},
 	"cookies-eu": {
 		"text": "COOOOOKIES"

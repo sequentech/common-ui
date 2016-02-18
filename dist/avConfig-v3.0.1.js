@@ -140,8 +140,15 @@ var avConfigData = {
     community_website: "https://agoravoting.org"
   },
 
-  // organization name, appears in some texts like for example "powered by"
-  organizationName: 'Agora Voting',
+  // Details pertaining to the organization that runs the software
+  organization: {
+    // Name of the organization, appears in the logo mouse hover, in the login
+    // page ("Login into __NAME__ admin account"), in the poweredBy, etc
+    orgName: 'Agora Voting',
+
+    // URL that the logo links to
+    orgUrl: 'https://agoravoting.com'
+  },
     
   verifier: {
     link: "",

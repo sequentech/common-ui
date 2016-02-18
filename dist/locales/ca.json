@@ -17,7 +17,7 @@
 		"name": "Agora Voting"
 	},
 	"avRegistration": {
-		"loginHeader": "Entrar en tu cuenta de Agora Voting",
+		"loginHeader": "Entrar en tu cuenta de __name__",
 		"helpRegisterForm": "Per poder votar, has de registrar-te abans mitjançant aquest formulari. Alguns dels camps són obligatoris: llegeix bé la informació d'ajuda",
 		"helpAdminRegisterForm": "Para poder crear votaciones tienes que registrarte primero mediante este formulario. Lee bien la información de ayuda",
 		"registerFormHelpTitle": "Registrándote para votar",
@@ -67,6 +67,6 @@
 		"invalidImage": "Invalid Image"
 	},
 	"avCommon": {
-		"poweredBy": "Funciona amb <strong><a href=\"https://agoravoting.com\" target=\"_blank\">Agora Voting</a></strong>"
+		"poweredBy": "Funciona amb <strong><a href=\"__url__\" target=\"_blank\">__name__</a></strong>"
 	}
 }
