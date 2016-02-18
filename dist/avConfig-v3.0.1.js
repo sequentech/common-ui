@@ -117,6 +117,7 @@ var avConfigData = {
   social: {
       facebook: "https://www.facebook.com/AgoraVoting",
       twitter: "https://twitter.com/agoravoting",
+      twitterHandle: "agoravoting",
       googleplus: "https://plus.google.com/101939665794445172389/posts",
       youtube: "https://www.youtube.com/results?search_query=Agora+Voting",
       github: "https://github.com/agoravoting/"
