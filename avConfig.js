@@ -139,6 +139,9 @@ var avConfigData = {
     security_contact: "https://agoravoting.com/security_contact/",
     community_website: "https://agoravoting.org"
   },
+
+  // organization name, appears in some texts like for example "powered by"
+  organizationName: 'Agora Voting',
     
   verifier: {
     link: "",
