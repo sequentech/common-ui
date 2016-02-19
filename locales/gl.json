@@ -18,7 +18,7 @@
     "name": "Agora Voting"
   },
   "avRegistration": {
-    "loginHeader": "Entrar na túa conta de Agora Voting",
+    "loginHeader": "Entrar na túa conta de __name__",
     "helpRegisterForm": "Para poder votar, tes que rexistrarte primeiro mediante este formulario. Algúns dos campos son obrigatorios: le ben a información de axuda",
     "helpAdminRegisterForm": "Para poder crear votacións tes que rexistrarche primeiro mediante este formulario. Le ben a información de axuda",
     "registerFormHelpTitle": "Rexistrándote para votar",
@@ -82,6 +82,6 @@
 
   },
   "avCommon": {
-    "poweredBy": "Funciona amb <strong><a href=\"https://agoravoting.com\" target=\"_blank\">Agora Voting</a></strong>"
+    "poweredBy": "Funciona amb <strong><a href=\"__url__\" target=\"_blank\">__name__</a></strong>"
   }
 }

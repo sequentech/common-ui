@@ -117,6 +117,7 @@ var avConfigData = {
   social: {
       facebook: "https://www.facebook.com/AgoraVoting",
       twitter: "https://twitter.com/agoravoting",
+      twitterHandle: "agoravoting",
       googleplus: "https://plus.google.com/101939665794445172389/posts",
       youtube: "https://www.youtube.com/results?search_query=Agora+Voting",
       github: "https://github.com/agoravoting/"
@@ -138,6 +139,16 @@ var avConfigData = {
     privacy: "https://agoravoting.com/privacy/",
     security_contact: "https://agoravoting.com/security_contact/",
     community_website: "https://agoravoting.org"
+  },
+
+  // Details pertaining to the organization that runs the software
+  organization: {
+    // Name of the organization, appears in the logo mouse hover, in the login
+    // page ("Login into __NAME__ admin account"), in the poweredBy, etc
+    orgName: 'Agora Voting',
+
+    // URL that the logo links to
+    orgUrl: 'https://agoravoting.com'
   },
     
   verifier: {

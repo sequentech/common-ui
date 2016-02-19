@@ -19,7 +19,7 @@
 		"name": "Agora Voting"
 	},
 	"avRegistration": {
-		"loginHeader": "Entrar en tu cuenta de Agora Voting",
+		"loginHeader": "Entrar en tu cuenta de __name__",
 		"helpRegisterForm": "Para poder votar, tienes que registrarte primero mediante este formulario. Algunos de los campos son obligatorios: lee bien la información de ayuda",
 		"helpAdminRegisterForm": "Para poder crear votaciones tienes que registrarte primero mediante este formulario. Lee bien la información de ayuda",
 		"registerFormHelpTitle": "Registrándote para votar",
@@ -77,7 +77,7 @@
 		"invalidImage": "Imagen inválida"
 	},
 	"avCommon": {
-		"poweredBy": "Funciona con <strong><a href=\"https://agoravoting.com\" target=\"_blank\">Agora Voting</a></strong>"
+		"poweredBy": "Funciona con <strong><a href=\"__url__\" target=\"_blank\">__name__</a></strong>"
 	},
 	"cookies-eu": {
 		"text": "COOOOOKIES"
