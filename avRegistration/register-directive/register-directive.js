@@ -80,13 +80,14 @@ angular.module('avRegistration')
           console.log("goLogin");
           if (event) {
             event.preventDefault();
+            event.stopPropagation();
           }
 
           if (!scope.authevent) {
             return;
           }
 
-          if (scope.authevent['id'] === ConfigService.freeAuthId+'') {
+          if (scope.authevent['id'] === ConfigService.freeAuthId) {
               $state.go("admin.login");
           } else {
               $state.go("election.public.show.login", {id: scope.authevent['id']});
@@ -100,7 +101,7 @@ angular.module('avRegistration')
 
             // if registration is closed, redirect to login
             if (authevent['census'] !== 'open') {
-              if (authevent['id'] === ConfigService.freeAuthId+'') {
+              if (authevent['id'] === ConfigService.freeAuthId) {
                   $state.go("admin.login");
               } else {
                   $state.go("election.public.show.login", {id: authevent['id']});
