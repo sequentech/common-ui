@@ -38,7 +38,7 @@
 		"telLabel": " Número de teléfono móvil",
 		"telInvalid": " Número de teléfono inválido. Ejemplo de número válido: 666666666",
 		"telPlaceholder": "Ejemplo: 666666666",
-		"telHelp": "Ssólo números, sin espacios ni guiones. Para números extranjeros, usa un prefijo tipo +34",
+		"telHelp": "Sólo números, sin espacios ni guiones. Usa un prefijo telefónico internacional de tu país, por ejemplo +44 para Reino Unido o +34 para España.",
 		"emailPlaceholder": "fulanito@ejemplo.com",
 		"passwordLabel": "Contraseña",
 		"passwordPlaceholder": "contraseña",

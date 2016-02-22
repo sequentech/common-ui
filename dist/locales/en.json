@@ -36,7 +36,7 @@
 		"telLabel": " Mobile telephone number",
 		"telInvalid": " Invalid telephone number. Example of valid number: +34666666666",
 		"telPlaceholder": "Example: +34666666666",
-		"telHelp": "Only numbers, with no spaces or hyphens. For numbers outside Spain, use the country prefix, for example +34.",
+		"telHelp": "Only numbers, with no spaces or hyphens. Always use your country telephone international prefix, for example +44 for UK or +34 for Spain.",
 		"errorSendingAuthCode": "Error sending the code. Please review that you wrote correctly your phone, or maybe you sent the code too many times. If the problem persist, contact with the organization.",
 		"codeLabel": "Authentication Code",
 		"emailPlaceholder": "john@example.com",
