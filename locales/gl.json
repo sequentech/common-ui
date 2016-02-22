@@ -37,7 +37,7 @@
     "telLabel": " Número de teléfono móbil",
     "telInvalid": " Número de teléfono inválido. Exemplo de número válido: 666666666",
     "telPlaceholder": "Exemplo: 666666666",
-    "telHelp": "Só números, sen espazos nin guións. Para números estranxeiros, usa un prefixo tipo +34",
+    "telHelp": "Só números, sen espazos nin guións. Usa un prefijo telefónico internacional de tu país, por ejemplo +44 para Reino Unido o +34 para España.",
     "emailPlaceholder": "fulanito@exemplo.com",
     "passwordLabel": "Contrasinal",
     "passwordPlaceholder": "Contrasinal",
