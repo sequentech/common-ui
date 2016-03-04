@@ -16,6 +16,9 @@ var avConfigData = {
   
   // Webpage title
   webTitle: "Agora Voting",
+  
+  // Show 'Success Action' tab in admin agora_gui
+  showSuccessAction: false,
 
   // AuthApi base url
   authAPI: "https://agora/authapi/api/",
