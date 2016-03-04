@@ -111,7 +111,11 @@ angular.module('avUi')
 
         } else if (item.check === "lambda") {
           if (!item.validator(d.data[item.key])) {
-            error(item.check, {key: item.key}, item.postfix);
+            var errorData = {key: item.key};
+            if (!angular.isUndefined(item.appendOnErrorLambda)) {
+              errorData = item.appendOnErrorLambda(d.data[item.key]);
+            }
+            error(item.check, errorData, item.postfix);
           }
 
         } else if (item.check === "is-string") {
@@ -136,10 +140,10 @@ angular.module('avUi')
                 item.postfix);
             }
             if (!max) {
-              var errorData = {key: item.key, max: itemMax, num: d.data[item.key].length};
+              var itemErrorData = {key: item.key, max: itemMax, num: d.data[item.key].length};
               error(
                 "array-length-max",
-                errorData,
+                itemErrorData,
                 item.postfix);
             }
           }
