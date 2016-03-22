@@ -1,11 +1,14 @@
 angular.module('avRegistration')
   .directive('avrCodeField', function($state) {
-    function link(scope, element, attrs) {
+    function link(scope, element, attrs, Plugins) {
       scope.codePattern = /[abcdefghjklmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789]{8,8}/;
-      /var myData = {hideUserSendAuthCode: false};
-      AdminPlugins.hook('hide-user-send-auth-code', myData);
-      scope.hideUserSendAuthCode = myData.hideUserSendAuthCode;*/
-      scope.hideUserSendAuthCode = false;
+      
+      var myData = false;
+      scope.showResendAuthCode = function ()
+      {   
+        Plugins.hook('hide-user-send-auth-code', myData);
+        return myData;
+      };
     }
     return {
       restrict: 'AE',
