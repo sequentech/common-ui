@@ -14,10 +14,3 @@ angular.module('avRegistration')
       templateUrl: 'avRegistration/fields/code-field-directive/code-field-directive.html'
     };
   });
-  
-angular.module('avRegistration')
-  .run(function(AdminPlugins) {
-    var myData = {hideUserSendAuthCode: false};
-    AdminPlugins.hook('hide-user-send-auth-code', myData);
-    console.log("FELIX: " + myData.hideUserSendAuthCode);
-});
