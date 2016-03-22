@@ -1,8 +1,10 @@
 angular.module('avRegistration')
-  .directive('avrCodeField', function($state) {
+  .directive('avrCodeField', function($state, AdminPlugins) {
     function link(scope, element, attrs) {
       scope.codePattern = /[abcdefghjklmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789]{8,8}/;
-      scope.hideUserSendAuthCode = false;
+      var myData = {hideUserSendAuthCode: false};
+      AdminPlugins.hook('hide-user-send-auth-code', myData);
+      scope.hideUserSendAuthCode = myData.hideUserSendAuthCode;
     }
     return {
       restrict: 'AE',
