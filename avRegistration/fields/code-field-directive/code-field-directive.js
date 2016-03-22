@@ -2,7 +2,7 @@ angular.module('avRegistration')
   .directive('avrCodeField', function($state) {
     function link(scope, element, attrs) {
       scope.codePattern = /[abcdefghjklmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789]{8,8}/;
-      scope.hideUserSendAuthCode = true;
+      scope.hideUserSendAuthCode = false;
     }
     return {
       restrict: 'AE',
