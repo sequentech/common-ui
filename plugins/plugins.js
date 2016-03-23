@@ -125,7 +125,7 @@ angular.module('avRegistration')
  * This directive is based on the stackoverflow thread:
  * http://stackoverflow.com/questions/17417607/angular-ng-bind-html-unsafe-and-directive-within-it
  **/
-angular.module('agora-gui-admin')
+angular.module('avRegistration')
 .directive(
   'avPluginHtml',
   function ($compile, $sce, $parse)
