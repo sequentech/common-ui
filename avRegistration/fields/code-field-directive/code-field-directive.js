@@ -1,6 +1,6 @@
 angular.module('avRegistration')
-  .directive('avrCodeField', function($state) {
-    function link(scope, element, attrs, Plugins) {
+  .directive('avrCodeField', function($state, Plugins) {
+    function link(scope, element, attrs) {
       scope.codePattern = /[abcdefghjklmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789]{8,8}/;
       
       var myData = true;
