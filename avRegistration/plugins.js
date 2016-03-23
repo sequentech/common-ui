@@ -1,5 +1,143 @@
 /**
  * @description Service that manages the Plugins extension points.
+ *
+ * These are the hooks called by agora-gui-admin:
+ *
+ * - Name: election-modified
+ *
+ *   Description: called by @a ElectionsApi.setCurrent service before the new
+ *   election is set.
+ *
+ *   Input data: {
+ *      // old election object (before setCurrent was called)
+ *      "old": Election,
+ *
+ *      // old new election object that is going to be set
+ *      "el": Election
+ *   }
+ *
+ * - Name: send-auth-codes-steps
+ *
+ *   Description: called by @a SendMsg.calculateSteps service before calculating
+ *   the number of steps of the send authentication codes dialog. It's a good
+ *   way of modifying @a SendMsg.steps.extra.
+ *
+ *   Input data: {
+ *      // current election object
+ *      "el": Election,
+ *
+ *      // ids of the electorate to which the authentication message is going
+ *      // to be set. Might be null if it's all the electorate.
+ *      "user_ids": List[Integer]
+ *   }
+ *
+ * - Name: send-auth-codes-confirm-extra
+ *
+ *   Description: called by @a SendMsg.confirmAuthCodesModal service before
+ *   showing the @a SendAuthCodesModalConfirm window when sending authentication
+ *   codes to the electorate. This hook allows to set some html to be shown in
+ *   the modal window. Note that the html will not be trusted unless you
+ *   explicitly make it trusted with @a $sce.
+ *
+ *   Input data: {
+ *      // modifiable list of html strings to shown in the modal confirm window.
+ *      // starts empty, but other hook handlers might modify it. It's used as
+ *      // the hook's output.
+ *      "html": []
+ *   }
+ *
+ * - Name: send-auth-codes-confirm-close
+ *
+ *   Description: Called by @a .confirmAuthCodesModal service after
+ *   closing the @a SendAuthCodesModalConfirm window to process the result of
+ *   the modal (this result is the input of the hook) and decide what to do.
+ *
+ *   Input data: string
+ *
+ * - Name: send-auth-codes-pre
+ *
+ *   Description: Called by @a SendMsg.sendAuthCodes before sending auth codes.
+ *   Used to decide whether or not to send them - if any hook handler returns
+ *   a value interpretable as false, won't send it.
+ *
+ *   Input data: {
+ *      // current election object
+ *      "el": Election,
+ *
+ *      // ids of the electorate to which the authentication message is going
+ *      // to be set. Might be null if it's all the electorate.
+ *      "user_ids": List[Integer]
+ *   }
+ *
+ * - Name: send-auth-codes-success
+ *
+ *   Description: Called by @a SendMsg.sendAuthCodes after sending auth codes
+ *   when the sending was successful.
+ *
+ *   Input data: {
+ *      // current election object
+ *      "el": Election,
+ *
+ *      // ids of the electorate to which the authentication message is going
+ *      // to be set. Might be null if it's all the electorate.
+ *      "ids": List[Integer]
+ *
+ *      // response object from jquery
+ *      "response": ResponseObject
+ *   }
+ *
+ * - Name: send-auth-codes-error
+ *
+ *   Description: Called by @a SendMsg.sendAuthCodes after sending auth codes
+ *   when the sending had an error.
+ *
+ *   Input data: {
+ *      // current election object
+ *      "el": Election,
+ *
+ *      // ids of the electorate to which the authentication message is going
+ *      // to be set. Might be null if it's all the electorate.
+ *      "ids": List[Integer]
+ *
+ *      // response object from jquery
+ *      "response": ResponseObject
+ *
+ * - Name: add-to-census-pre
+ *
+ *   Description: Called by @a avAdminElcensus.censusCall just before adding
+ *   some electors to the election. A hook handler can cancel the add to census
+ *   action return a value interpretable as false.
+ *
+ *   // List of electors that are about to be added
+ *   Input data: List[NewElectorMetadata]
+ *
+ * - Name: add-to-census-success
+ *
+ *   Description: Called by @a avAdminElcensus.censusCall after adding
+ *   some electors to the election when the call to the API was successful.
+ *   Allows the hook handler process the api result.
+ *
+ *   Input data: {
+ *      // List of electors that are about to be added
+ *      "data": List[NewElectorMetadata],
+ *
+ *      // response object from jquery
+ *      "response": ResponseObject
+ *   }
+ *
+ * - Name: add-to-census-error
+ *
+ *   Description: Called by @a avAdminElcensus.censusCall after adding
+ *   some electors to the election when the call to the api produced an error.
+ *   Allows the hook handler process the api result.
+ *
+ *   Input data: {
+ *      // List of electors that are about to be added
+ *      "data": List[NewElectorMetadata],
+ *
+ *      // response object from jquery
+ *      "response": ResponseObject
+ *   }
  */
 angular.module('avRegistration')
     .factory('Plugins', function() {
@@ -41,7 +179,7 @@ angular.module('avRegistration')
          *    };
          *
          *    // add the handler
-         *    AdminPlugins.hooks.push(fooHookHandler);
+         *    Plugins.hooks.push(fooHookHandler);
          * </code>
          */
         plugins.hooks = [];
