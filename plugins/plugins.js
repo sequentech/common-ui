@@ -1,7 +1,7 @@
 /**
  * @description Service that manages the Plugins extension points.
  */
-angular.module('agora-gui-admin')
+angular.module('avRegistration')
     .factory('Plugins', function() {
         var plugins = {};
         // TODO: What are plugins used for exactly? Please explain
