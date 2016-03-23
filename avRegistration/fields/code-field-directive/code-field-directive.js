@@ -6,9 +6,7 @@ angular.module('avRegistration')
       scope.showResendAuthCode = function ()
       { 
         var data = {showUserSendAuthCode: true};
-        console.log("1 got " + data.showUserSendAuthCode);
         Plugins.hook('hide-user-send-auth-code', data);
-        console.log("2 got " + data.showUserSendAuthCode);
         return data.showUserSendAuthCode;
       };
     }

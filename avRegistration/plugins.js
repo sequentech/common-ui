@@ -244,7 +244,6 @@ angular.module('avRegistration')
          * @returns false if any of the hooks returns false, or true otherwise.
          */
         plugins.hook = function(hookname, data) {
-            console.log("number of hooks: " + plugins.hooks.length);
             for (var i=0; i<plugins.hooks.length; i++) {
                 var h = plugins.hooks[i];
                 var ret = h(hookname, data);
