@@ -3,14 +3,14 @@ angular.module('avRegistration')
     function link(scope, element, attrs) {
       scope.codePattern = /[abcdefghjklmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789]{8,8}/;
       
-      //var myData = true;
+      var myData = {};
+      myData.data = true;
       scope.showResendAuthCode = function ()
       {   
-        var myData = true;
-        console.log("1 got " + myData);
+        console.log("1 got " + myData.data);
         Plugins.hook('hide-user-send-auth-code', myData);
-        console.log("2 got " + myData);
-        return myData;
+        console.log("2 got " + myData.data);
+        return myData.data;
       };
     }
     return {
