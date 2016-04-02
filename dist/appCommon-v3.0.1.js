@@ -217,8 +217,8 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                 return scope.stateData[el.name] ? (el.value = scope.stateData[el.name], el.disabled = !0) : (el.value = null, 
                 el.disabled = !1), "email" === el.type && null !== scope.email ? (el.value = scope.email, 
                 el.disabled = !0) : "code" === el.type && null !== scope.code ? (el.value = scope.code.trim().toUpperCase(), 
-                el.disabled = !0) : "tlf" === el.type && "sms" === scope.method && (scope.telIndex = index + 1, 
-                scope.telField = el), el;
+                el.disabled = !0) : "tlf" === el.type && "sms" === scope.method && (null !== scope.email && (el.value = scope.email, 
+                el.disabled = !0), scope.telIndex = index + 1, scope.telField = el), el;
             }), filled_fields = _.filter(fields, function(el) {
                 return null !== el.value;
             });

@@ -163,6 +163,10 @@ angular.module('avRegistration')
                   el.value = scope.code.trim().toUpperCase();
                   el.disabled = true;
                 } else if (el.type === "tlf" && scope.method === "sms") {
+                  if (scope.email !== null) {
+                    el.value = scope.email;
+                    el.disabled = true;
+                  }
                   scope.telIndex = index+1;
                   scope.telField = el;
                 }
