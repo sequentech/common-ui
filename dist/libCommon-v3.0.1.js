@@ -8005,7 +8005,7 @@ function(window, angular, undefined) {
                 encode: valToString,
                 decode: valFromString,
                 is: regexpMatches,
-                pattern: /[^\/]*/
+                pattern: /[^/]*/
             },
             "int": {
                 encode: valToString,
@@ -8052,7 +8052,7 @@ function(window, angular, undefined) {
                 decode: angular.fromJson,
                 is: angular.isObject,
                 equals: angular.equals,
-                pattern: /[^\/]*/
+                pattern: /[^/]*/
             },
             any: {
                 encode: angular.identity,
@@ -14326,105 +14326,110 @@ mod.directive("infiniteScroll", [ "$rootScope", "$window", "$interval", "THROTTL
     a.prototype.constructor = a;
 }("undefined" != typeof window ? window : this);
 
-var saveAs = saveAs || function(e) {
+var saveAs = saveAs || function(view) {
     "use strict";
     if ("undefined" == typeof navigator || !/MSIE [1-9]\./.test(navigator.userAgent)) {
-        var t = e.document, n = function() {
-            return e.URL || e.webkitURL || e;
-        }, r = t.createElementNS("http://www.w3.org/1999/xhtml", "a"), i = "download" in r, o = function(e) {
-            var t = new MouseEvent("click");
-            e.dispatchEvent(t);
-        }, a = /Version\/[\d\.]+.*Safari/.test(navigator.userAgent), f = e.webkitRequestFileSystem, u = e.requestFileSystem || f || e.mozRequestFileSystem, s = function(t) {
-            (e.setImmediate || e.setTimeout)(function() {
-                throw t;
+        var doc = view.document, get_URL = function() {
+            return view.URL || view.webkitURL || view;
+        }, save_link = doc.createElementNS("http://www.w3.org/1999/xhtml", "a"), can_use_save_link = "download" in save_link, click = function(node) {
+            var event = new MouseEvent("click");
+            node.dispatchEvent(event);
+        }, is_safari = /Version\/[\d\.]+.*Safari/.test(navigator.userAgent), webkit_req_fs = view.webkitRequestFileSystem, req_fs = view.requestFileSystem || webkit_req_fs || view.mozRequestFileSystem, throw_outside = function(ex) {
+            (view.setImmediate || view.setTimeout)(function() {
+                throw ex;
             }, 0);
-        }, c = "application/octet-stream", d = 0, l = 500, w = function(t) {
-            var r = function() {
-                "string" == typeof t ? n().revokeObjectURL(t) : t.remove();
+        }, force_saveable_type = "application/octet-stream", fs_min_size = 0, arbitrary_revoke_timeout = 500, revoke = function(file) {
+            var revoker = function() {
+                "string" == typeof file ? get_URL().revokeObjectURL(file) : file.remove();
             };
-            e.chrome ? r() : setTimeout(r, l);
-        }, p = function(e, t, n) {
-            t = [].concat(t);
-            for (var r = t.length; r--; ) {
-                var i = e["on" + t[r]];
-                if ("function" == typeof i) try {
-                    i.call(e, n || e);
-                } catch (o) {
-                    s(o);
+            view.chrome ? revoker() : setTimeout(revoker, arbitrary_revoke_timeout);
+        }, dispatch = function(filesaver, event_types, event) {
+            event_types = [].concat(event_types);
+            for (var i = event_types.length; i--; ) {
+                var listener = filesaver["on" + event_types[i]];
+                if ("function" == typeof listener) try {
+                    listener.call(filesaver, event || filesaver);
+                } catch (ex) {
+                    throw_outside(ex);
                 }
             }
-        }, v = function(e) {
-            return /^\s*(?:text\/\S*|application\/xml|\S*\/\S*\+xml)\s*;.*charset\s*=\s*utf-8/i.test(e.type) ? new Blob([ "\ufeff", e ], {
-                type: e.type
-            }) : e;
-        }, y = function(t, s, l) {
-            l || (t = v(t));
-            var h, R, N, y = this, m = t.type, S = !1, O = function() {
-                p(y, "writestart progress write writeend".split(" "));
-            }, g = function() {
-                if (R && a && "undefined" != typeof FileReader) {
-                    var r = new FileReader();
-                    return r.onloadend = function() {
-                        var e = r.result;
-                        R.location.href = "data:attachment/file" + e.slice(e.search(/[,;]/)), y.readyState = y.DONE, 
-                        O();
-                    }, r.readAsDataURL(t), void (y.readyState = y.INIT);
+        }, auto_bom = function(blob) {
+            return /^\s*(?:text\/\S*|application\/xml|\S*\/\S*\+xml)\s*;.*charset\s*=\s*utf-8/i.test(blob.type) ? new Blob([ "\ufeff", blob ], {
+                type: blob.type
+            }) : blob;
+        }, FileSaver = function(blob, name, no_auto_bom) {
+            no_auto_bom || (blob = auto_bom(blob));
+            var object_url, target_view, slice, filesaver = this, type = blob.type, blob_changed = !1, dispatch_all = function() {
+                dispatch(filesaver, "writestart progress write writeend".split(" "));
+            }, fs_error = function() {
+                if (target_view && is_safari && "undefined" != typeof FileReader) {
+                    var reader = new FileReader();
+                    return reader.onloadend = function() {
+                        var base64Data = reader.result;
+                        target_view.location.href = "data:attachment/file" + base64Data.slice(base64Data.search(/[,;]/)), 
+                        filesaver.readyState = filesaver.DONE, dispatch_all();
+                    }, reader.readAsDataURL(blob), void (filesaver.readyState = filesaver.INIT);
                 }
-                if ((S || !h) && (h = n().createObjectURL(t)), R) R.location.href = h; else {
-                    var i = e.open(h, "_blank");
-                    void 0 == i && a && (e.location.href = h);
+                if ((blob_changed || !object_url) && (object_url = get_URL().createObjectURL(blob)), 
+                target_view) target_view.location.href = object_url; else {
+                    var new_tab = view.open(object_url, "_blank");
+                    void 0 == new_tab && is_safari && (view.location.href = object_url);
                 }
-                y.readyState = y.DONE, O(), w(h);
-            }, b = function(e) {
+                filesaver.readyState = filesaver.DONE, dispatch_all(), revoke(object_url);
+            }, abortable = function(func) {
                 return function() {
-                    return y.readyState !== y.DONE ? e.apply(this, arguments) : void 0;
+                    return filesaver.readyState !== filesaver.DONE ? func.apply(this, arguments) : void 0;
                 };
-            }, E = {
+            }, create_if_not_found = {
                 create: !0,
                 exclusive: !1
             };
-            return y.readyState = y.INIT, s || (s = "download"), i ? (h = n().createObjectURL(t), 
-            r.href = h, r.download = s, void setTimeout(function() {
-                o(r), O(), w(h), y.readyState = y.DONE;
-            })) : (e.chrome && m && m !== c && (N = t.slice || t.webkitSlice, t = N.call(t, 0, t.size, c), 
-            S = !0), f && "download" !== s && (s += ".download"), (m === c || f) && (R = e), 
-            u ? (d += t.size, void u(e.TEMPORARY, d, b(function(e) {
-                e.root.getDirectory("saved", E, b(function(e) {
-                    var n = function() {
-                        e.getFile(s, E, b(function(e) {
-                            e.createWriter(b(function(n) {
-                                n.onwriteend = function(t) {
-                                    R.location.href = e.toURL(), y.readyState = y.DONE, p(y, "writeend", t), w(e);
-                                }, n.onerror = function() {
-                                    var e = n.error;
-                                    e.code !== e.ABORT_ERR && g();
-                                }, "writestart progress write abort".split(" ").forEach(function(e) {
-                                    n["on" + e] = y["on" + e];
-                                }), n.write(t), y.abort = function() {
-                                    n.abort(), y.readyState = y.DONE;
-                                }, y.readyState = y.WRITING;
-                            }), g);
-                        }), g);
+            return filesaver.readyState = filesaver.INIT, name || (name = "download"), can_use_save_link ? (object_url = get_URL().createObjectURL(blob), 
+            void setTimeout(function() {
+                save_link.href = object_url, save_link.download = name, click(save_link), dispatch_all(), 
+                revoke(object_url), filesaver.readyState = filesaver.DONE;
+            })) : (view.chrome && type && type !== force_saveable_type && (slice = blob.slice || blob.webkitSlice, 
+            blob = slice.call(blob, 0, blob.size, force_saveable_type), blob_changed = !0), 
+            webkit_req_fs && "download" !== name && (name += ".download"), (type === force_saveable_type || webkit_req_fs) && (target_view = view), 
+            req_fs ? (fs_min_size += blob.size, void req_fs(view.TEMPORARY, fs_min_size, abortable(function(fs) {
+                fs.root.getDirectory("saved", create_if_not_found, abortable(function(dir) {
+                    var save = function() {
+                        dir.getFile(name, create_if_not_found, abortable(function(file) {
+                            file.createWriter(abortable(function(writer) {
+                                writer.onwriteend = function(event) {
+                                    target_view.location.href = file.toURL(), filesaver.readyState = filesaver.DONE, 
+                                    dispatch(filesaver, "writeend", event), revoke(file);
+                                }, writer.onerror = function() {
+                                    var error = writer.error;
+                                    error.code !== error.ABORT_ERR && fs_error();
+                                }, "writestart progress write abort".split(" ").forEach(function(event) {
+                                    writer["on" + event] = filesaver["on" + event];
+                                }), writer.write(blob), filesaver.abort = function() {
+                                    writer.abort(), filesaver.readyState = filesaver.DONE;
+                                }, filesaver.readyState = filesaver.WRITING;
+                            }), fs_error);
+                        }), fs_error);
                     };
-                    e.getFile(s, {
+                    dir.getFile(name, {
                         create: !1
-                    }, b(function(e) {
-                        e.remove(), n();
-                    }), b(function(e) {
-                        e.code === e.NOT_FOUND_ERR ? n() : g();
+                    }, abortable(function(file) {
+                        file.remove(), save();
+                    }), abortable(function(ex) {
+                        ex.code === ex.NOT_FOUND_ERR ? save() : fs_error();
                     }));
-                }), g);
-            }), g)) : void g());
-        }, m = y.prototype, S = function(e, t, n) {
-            return new y(e, t, n);
+                }), fs_error);
+            }), fs_error)) : void fs_error());
+        }, FS_proto = FileSaver.prototype, saveAs = function(blob, name, no_auto_bom) {
+            return new FileSaver(blob, name, no_auto_bom);
         };
-        return "undefined" != typeof navigator && navigator.msSaveOrOpenBlob ? function(e, t, n) {
-            return n || (e = v(e)), navigator.msSaveOrOpenBlob(e, t || "download");
-        } : (m.abort = function() {
-            var e = this;
-            e.readyState = e.DONE, p(e, "abort");
-        }, m.readyState = m.INIT = 0, m.WRITING = 1, m.DONE = 2, m.error = m.onwritestart = m.onprogress = m.onwrite = m.onabort = m.onerror = m.onwriteend = null, 
-        S);
+        return "undefined" != typeof navigator && navigator.msSaveOrOpenBlob ? function(blob, name, no_auto_bom) {
+            return no_auto_bom || (blob = auto_bom(blob)), navigator.msSaveOrOpenBlob(blob, name || "download");
+        } : (FS_proto.abort = function() {
+            var filesaver = this;
+            filesaver.readyState = filesaver.DONE, dispatch(filesaver, "abort");
+        }, FS_proto.readyState = FS_proto.INIT = 0, FS_proto.WRITING = 1, FS_proto.DONE = 2, 
+        FS_proto.error = FS_proto.onwritestart = FS_proto.onprogress = FS_proto.onwrite = FS_proto.onabort = FS_proto.onerror = FS_proto.onwriteend = null, 
+        saveAs);
     }
 }("undefined" != typeof self && self || "undefined" != typeof window && window || this.content);
 

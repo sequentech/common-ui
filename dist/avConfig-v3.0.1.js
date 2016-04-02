@@ -13,6 +13,9 @@ var avConfigData = {
   theme: "default",
   baseUrl: "https://agora/elections/api/",
   freeAuthId: 1,
+  
+  // Webpage title
+  webTitle: "Agora Voting",
 
   // AuthApi base url
   authAPI: "https://agora/authapi/api/",
