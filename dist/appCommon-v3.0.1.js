@@ -729,9 +729,15 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             }, item.postfix); else if ("is-array" === item.check) pass = angular.isArray(d.data[item.key], item.postfix), 
             pass || error(item.check, {
                 key: item.key
-            }, item.postfix); else if ("lambda" === item.check) item.validator(d.data[item.key]) || error(item.check, {
-                key: item.key
-            }, item.postfix); else if ("is-string" === item.check) pass = angular.isString(d.data[item.key], item.postfix), 
+            }, item.postfix); else if ("lambda" === item.check) {
+                if (!item.validator(d.data[item.key])) {
+                    var errorData = {
+                        key: item.key
+                    };
+                    angular.isUndefined(item.appendOnErrorLambda) || (errorData = item.appendOnErrorLambda(d.data[item.key])), 
+                    error(item.check, errorData, item.postfix);
+                }
+            } else if ("is-string" === item.check) pass = angular.isString(d.data[item.key], item.postfix), 
             pass || error(item.check, {
                 key: item.key
             }, item.postfix); else if ("array-length" === item.check) {
@@ -743,12 +749,12 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                     min: itemMin,
                     num: d.data[item.key].length
                 }, item.postfix), !max)) {
-                    var errorData = {
+                    var itemErrorData = {
                         key: item.key,
                         max: itemMax,
                         num: d.data[item.key].length
                     };
-                    error("array-length-max", errorData, item.postfix);
+                    error("array-length-max", itemErrorData, item.postfix);
                 }
             } else "int-size" === item.check ? (itemMin = evalValue(item.min, d.data), itemMax = evalValue(item.max, d.data), 
             min = angular.isUndefined(item.min) || d.data[item.key] >= itemMin, max = angular.isUndefined(item.max) || d.data[item.key] <= itemMax, 
