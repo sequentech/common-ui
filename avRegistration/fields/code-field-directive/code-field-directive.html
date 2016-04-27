@@ -18,7 +18,7 @@
             required />
         <p class="help-block" ng-i18next="avRegistration.codeHelp">
         <p class="help-block code-help">
-          <span ng-if="!sendingData && !form['input' + telIndex].$invalid">
+          <span ng-if="showResendAuthCode() && !sendingData && !form['input' + telIndex].$invalid">
             <b ng-i18next="avRegistration.noCodeReceivedQuestion"></b>
             <a
               ng-click="resendAuthCode(field)"
