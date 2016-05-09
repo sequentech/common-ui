@@ -1,7 +1,7 @@
-angular.module('avAdmin').run(function(AdminPlugins) {
+angular.module('avAdmin').run(function(Plugins) {
     // Adding to the sidebar params:
     // name, icon-name (fa), head or sub, text to show
-    AdminPlugins.add("test", "check", true, "testplugin.text");
+    Plugins.add("test", "check", true, "testplugin.text");
 
     var p = {
              name: 'test',
@@ -13,7 +13,7 @@ angular.module('avAdmin').run(function(AdminPlugins) {
              }
             };
 
-    AdminPlugins.add(p);
+    Plugins.add(p);
 });
 
 // Using the admin controller to get the topbar and the sidebar

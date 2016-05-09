@@ -23,11 +23,47 @@
 
 @import "../../app.less";
 
-[av-booth] .navbar-unfixed-top a {
+[av-booth] .navbar-unfixed-top a
+{
   color: white;
   text-decoration: underline;
 
-  &:hover {
+  &:hover
+  {
     text-decoration: none;
   }
 }
+
+.container-fluid.background.first a
+{
+  color: #fff;
+  text-decoration: underline;
+}
+
+[av-change-lang]:hover
+{
+  background-color: #eee;
+}
+.navbar-admin.adminhead .nav > li > a:focus,
+.navbar-admin.adminhead .nav > li > a:hover
+{
+  color: #000;
+}
+
+.navbar-admin.adminhead .nav > li
+{
+  a
+  {
+    color: @av-primary-contrast;
+  }
+
+  background-color: @av-primary;
+
+  &.open
+  {
+    a {
+      color: #000;
+    }
+  }
+}
+
