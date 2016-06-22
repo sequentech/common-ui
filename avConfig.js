@@ -1,17 +1,41 @@
+/**
+ * This file is part of agora-gui-common.
+ * Copyright (C) 2015-2016  Agora Voting SL <agora@agoravoting.com>
+
+ * agora-gui-common is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License.
+
+ * agora-gui-common  is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+
+ * You should have received a copy of the GNU Affero General Public License
+ * along with agora-gui-common.  If not, see <http://www.gnu.org/licenses/>.
+**/
+
 /*
  * ConfigService is a function that returns the configuration that exists
  * in this same file, which you might want to edit and tune if needed.
  */
 
-var AV_CONFIG_VERSION = '3.1.0';
+var AV_CONFIG_VERSION = '3.2.0';
 
 var avConfigData = {
   // the base url path for ajax requests, for example for sending ballots or
   // getting info about an election. This url is usually in the form of
   // 'https://foo/api/v3/' and always ends in '/'.
+  base: '',
   theme: "default",
   baseUrl: "https://agora/elections/api/",
   freeAuthId: 1,
+  
+  // Webpage title
+  webTitle: "Agora Voting",
+  
+  // Show 'Success Action' tab in admin agora_gui
+  showSuccessAction: false,
 
   // AuthApi base url
   authAPI: "https://agora/authapi/api/",
@@ -19,8 +43,22 @@ var avConfigData = {
   // Agora Elections base url
   electionsAPI: "https://agora/elections/api/",
 
+  // Agora Admin help url
+  helpUrl: "https://agoravoting.com/help",
+
   authorities: ['local-auth2'],
   director: "local-auth1",
+
+  resourceUrlWhitelist: [
+    // Allow same origin resource loads.
+    'self',
+
+    // Allow loading from our assets domain.  Notice the difference between * and **.
+    // Uncomment the following to allow youtube videos
+    //
+    // 'https://www.youtube.com/**',
+    // 'https://youtube.com/**'
+  ],
 
   // i18next language options, see http://i18next.com/pages/doc_init.html for
   // details
@@ -91,11 +129,51 @@ var avConfigData = {
 
   // contact data where users can reach to a human when they need it
   contact: {
+    // Support contact email displayed in the footer links
     email: "contact@example.com",
-    twitter: "twitter",
+    // Sales contact email displayed in the footer links
+    sales: "sales@example.com",
     tlf: "-no tlf-"
   },
+  
+  // social networks footer links
+  social: {
+      facebook: "https://www.facebook.com/AgoraVoting",
+      twitter: "https://twitter.com/agoravoting",
+      twitterHandle: "agoravoting",
+      googleplus: "https://plus.google.com/101939665794445172389/posts",
+      youtube: "https://www.youtube.com/results?search_query=Agora+Voting",
+      github: "https://github.com/agoravoting/"
+  },
+  
+  // technology footer links
+  technology: {
+    aboutus: "https://agoravoting.com/#aboutus",
+    pricing: "https://agoravoting.com/#pricing",
+    overview: "https://agoravoting.com/overview/",
+    solutions: "https://agoravoting.com/solutions/",
+    admin_manual: "https://bit.ly/avguiadeuso"
+  },
+  
+  // legality footer links
+  legal: {
+    terms_of_service: "https://agoravoting.com/tos/",
+    cookies: "https://agoravoting.com/cookies/",
+    privacy: "https://agoravoting.com/privacy/",
+    security_contact: "https://agoravoting.com/security_contact/",
+    community_website: "https://agoravoting.org"
+  },
 
+  // Details pertaining to the organization that runs the software
+  organization: {
+    // Name of the organization, appears in the logo mouse hover, in the login
+    // page ("Login into __NAME__ admin account"), in the poweredBy, etc
+    orgName: 'Agora Voting',
+
+    // URL that the logo links to
+    orgUrl: 'https://agoravoting.com'
+  },
+    
   verifier: {
     link: "",
     hash: ""
@@ -111,7 +189,7 @@ var avConfigData = {
 
   tos: {
     text:"",
-    tile: ""
+    title: ""
   }
 };
 

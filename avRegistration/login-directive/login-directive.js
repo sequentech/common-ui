@@ -1,3 +1,20 @@
+/**
+ * This file is part of agora-gui-common.
+ * Copyright (C) 2015-2016  Agora Voting SL <agora@agoravoting.com>
+
+ * agora-gui-common is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License.
+
+ * agora-gui-common  is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+
+ * You should have received a copy of the GNU Affero General Public License
+ * along with agora-gui-common.  If not, see <http://www.gnu.org/licenses/>.
+**/
+
 angular.module('avRegistration')
   .directive('avLogin', function(Authmethod,
                                  StateDataService,
@@ -10,11 +27,16 @@ angular.module('avRegistration')
                                  ConfigService) {
     // we use it as something similar to a controller here
     function link(scope, element, attrs) {
-        var adminId = ConfigService.freeAuthId;
-        if ($cookies.authevent && $cookies.authevent === adminId + '') {
+        var adminId = ConfigService.freeAuthId + '';
+        var autheventid = attrs.eventId;
+        scope.orgName = ConfigService.organization.orgName;
+
+        // redirect from admin login to admin elections if login is not needed
+        if ($cookies.authevent && $cookies.authevent === adminId &&
+          autheventid === adminId)
+        {
           $window.location.href = '/admin/elections';
         }
-        var autheventid = attrs.eventId;
         scope.sendingData = false;
 
         scope.stateData = StateDataService.getData();
@@ -29,7 +51,7 @@ angular.module('avRegistration')
         }
 
         scope.isAdmin = false;
-        if (autheventid === adminId + "") {
+        if (autheventid === adminId) {
             scope.isAdmin = true;
         }
 
@@ -158,6 +180,10 @@ angular.module('avRegistration')
                   el.value = scope.code.trim().toUpperCase();
                   el.disabled = true;
                 } else if (el.type === "tlf" && scope.method === "sms") {
+                  if (scope.email !== null && scope.email.indexOf('@') === -1) {
+                    el.value = scope.email;
+                    el.disabled = true;
+                  }
                   scope.telIndex = index+1;
                   scope.telField = el;
                 }

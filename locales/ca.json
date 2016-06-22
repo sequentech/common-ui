@@ -18,7 +18,7 @@
     "name": "Agora Voting"
   },
   "avRegistration": {
-    "loginHeader": "Entrar en tu cuenta de Agora Voting",
+    "loginHeader": "Entrar en tu cuenta de __name__",
     "helpRegisterForm": "Per poder votar, has de registrar-te abans mitjançant aquest formulari. Alguns dels camps són obligatoris: llegeix bé la informació d'ajuda",
     "helpAdminRegisterForm": "Para poder crear votaciones tienes que registrarte primero mediante este formulario. Lee bien la información de ayuda",
     "registerFormHelpTitle": "Registrándote para votar",
@@ -29,6 +29,9 @@
     "codeLabel": "Código de Autenticación",
     "emailLabel": "Correo electrónico",
     "telLabel": "Telèfon",
+    "telInvalid": " Número de teléfono inválido. Ejemplo de número válido: 666666666",
+    "telPlaceholder": "Ejemplo: 666666666",
+    "telHelp": "Sólo números, sin espacios ni guiones. Usa un prefijo telefónico internacional de tu país, por ejemplo +44 para Reino Unido o +34 para España.",
     "emailPlaceholder": "fulanito@ejemplo.com",
     "passwordLabel": "Contraseña",
     "passwordPlaceholder": "contraseña",
@@ -68,9 +71,11 @@
     "invalidCredentials": "Credenciales no válidas",
     "invalidDataRegEx": "dades no vàlids",
     "invalidDni": "DNI/NIE no vàlids",
-    "dniHelp": "Especifica un DNI/NIE vàlid. Exemples: 1234567R o X0123456R"
+    "dniHelp": "Especifica un DNI/NIE vàlid. Exemples: 1234567R o X0123456R",
+    "imageHelp": "Add an image in jpg or png format",
+    "invalidImage": "Invalid Image"
   },
   "avCommon": {
-    "poweredBy": "Funciona amb <strong><a href=\"https://agoravoting.com\" target=\"_blank\">Agora Voting</a></strong>"
+    "poweredBy": "Funciona amb <strong><a href=\"__url__\" target=\"_blank\">__name__</a></strong>"
   }
 }

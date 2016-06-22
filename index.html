@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html id="ng-app" ng-app="agora-core-view">
+<html id="ng-app" ng-app="agora-gui-common">
   <head>
     <title>Agora Voting</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
@@ -49,6 +49,8 @@
   <script src="vendor/jquery.nanoscroller/nanoscroller.js" class="lib"></script>
   <script src="vendor/jquery.actual/jquery.actual.js" class="lib"></script>
   <script src="vendor/iframe-resizer/iframeResizer.contentWindow.min.js" class="lib"></script>
+  <script src="vendor/crypto/sjcl.js" class="lib"></script>
+  <script src="vendor/crypto/random.js" class="lib"></script>
   <!-- Add New Vendor Component JS Above -->
 
   <!-- Configuration file JS -->
@@ -80,6 +82,8 @@
   <script src="avRegistration/fields/int-field-directive/int-field-directive.js" class="app"></script>
   <script src="avRegistration/fields/captcha-field-directive/captcha-field-directive.js" class="app"></script>
   <script src="avRegistration/fields/textarea-field-directive/textarea-field-directive.js" class="app"></script>
+  <script src="avRegistration/fields/image-field-directive/image-field-directive.js" class="app"></script>
+  <script src="avRegistration/plugins.js" class="app"></script>
 
   <!-- ui -->
   <script src="avUi/avUi.js" class="app"></script>
@@ -104,7 +108,7 @@
   <script src="avUi/html-to-text-filter.js" class="app"></script>
   <script src="avUi/custom-delegates.js" class="app"></script>
   <script src="avUi/learn-more-directive.js" class="app"></script>
-
+  
   <script src="app.js" class="app"></script>
 
   <script src="test/test.js" class="app"></script>

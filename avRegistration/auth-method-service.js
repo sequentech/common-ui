@@ -1,3 +1,20 @@
+/**
+ * This file is part of agora-gui-common.
+ * Copyright (C) 2015-2016  Agora Voting SL <agora@agoravoting.com>
+
+ * agora-gui-common is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License.
+
+ * agora-gui-common  is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+
+ * You should have received a copy of the GNU Affero General Public License
+ * along with agora-gui-common.  If not, see <http://www.gnu.org/licenses/>.
+**/
+
 angular.module('avRegistration')
 
     .factory('Authmethod', function($http, $cookies, ConfigService, $interval) {
@@ -57,6 +74,10 @@ angular.module('avRegistration')
               return data;
             }
             return $http.get(backendUrl + 'auth-event/'+authId+'/ping/');
+        };
+
+        authmethod.getImage = function(ev, uid) {
+            return $http.get(backendUrl + 'auth-event/'+ev+'/census/img/'+uid+'/');
         };
 
         authmethod.login = function(data, authevent) {
@@ -222,7 +243,7 @@ angular.module('avRegistration')
             return $http.get(backendUrl + 'acl/mine/?object_type=AuthEvent&perm=edit&order=-pk&page='+page);
         };
 
-        authmethod.sendAuthCodes = function(eid, election, user_ids) {
+        authmethod.sendAuthCodes = function(eid, election, user_ids, extra) {
             var url = backendUrl + 'auth-event/'+eid+'/census/send_auth/';
             var data = {};
             if (angular.isDefined(election)) {
@@ -233,6 +254,9 @@ angular.module('avRegistration')
             }
             if (angular.isDefined(user_ids)) {
               data["user-ids"] = user_ids;
+            }
+            if (extra) {
+              data["extra"] = extra;
             }
             return $http.post(url, data);
         };
@@ -279,7 +303,7 @@ angular.module('avRegistration')
 /**
  * Caching http response error to deauthenticate
  */
-//angular.module('agora-core-view').config(
+//angular.module('avRegistration').config(
 //  function($httpProvider) {
 //    $httpProvider.interceptors.push(function($q, $injector) {
 //      return {
@@ -301,7 +325,7 @@ angular.module('avRegistration')
 /**
  * IF the cookie is there we make the autologin
  */
-//angular.module('agora-core-view').run(function($cookies, $http, Authmethod) {
+//angular.module('avRegistration').run(function($cookies, $http, Authmethod) {
 //    if ($cookies.auth) {
 //        Authmethod.setAuth($cookies.auth, $cookies.isAdmin);
 //    }

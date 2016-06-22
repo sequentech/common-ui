@@ -19,14 +19,14 @@
 		"name": "Agora Voting"
 	},
 	"avRegistration": {
-		"loginHeader": "Login to your Agora Voting account",
+		"loginHeader": "Login to your __name__ account",
 		"helpRegisterForm": "To be able to vote, you need to register first. Some fields are required, so please look carefully at the help information.",
 		"helpAdminRegisterForm": "To be able to create elections, you need to register first. Please look carefully at the help information.",
 		"registerFormHelpTitle": "Registering to vote",
 		"registerAdminFormHelpTitle": "Registering to create elections",
 		"fillValidFormText": "To be able to send the form, please fill correctly first all the fields.",
-		"invalidRegisterData": "No ha sido posible registrarte con los datos aportados. <strong>Lo más probable es que ya estés registrado, <a href=\"__url__\">accede usando tus credenciales pinchando aquí</a></strong>. También puede que el periodo de votación haya finalizado. Comprueba todo lo anterior, y en caso de que sigas teniendo problemas, revisa tus datos, o ponte en contacto con los administradores de la votación,",
-		"invalidRegisterDNI": "No ha sido posible registrarte con los datos aportados. <strong>Has insertado un número de DNI inválido</strong>. Por favor, revísalo.",
+		"invalidRegisterData": "There was an error doing the registration with the data you provided. <strong>Most probably you are already registered, <a href=\"__url__\">access using with your credentials clicking here</a></strong>. It's possible that the election has finished. Check all the above, and if you continue having trouble in the registration, review the data you provided, or contact with the election administrators,",
+		"invalidRegisterDNI": "We couldn't registered you with the data you provided. <strong>You inserted an invalid ID number</strong>. Please, review it.",
 		"logout": "Logout",
 		"emailLabel": "Email",
 		"codePlaceholder": "Insert the code",
@@ -36,7 +36,7 @@
 		"telLabel": " Mobile telephone number",
 		"telInvalid": " Invalid telephone number. Example of valid number: +34666666666",
 		"telPlaceholder": "Example: +34666666666",
-		"telHelp": "Only numbers, with no spaces or hyphens. For numbers outside Spain, use the country prefix, for example +34.",
+		"telHelp": "Only numbers, with no spaces or hyphens. Always use your country telephone international prefix, for example +44 for UK or +34 for Spain.",
 		"errorSendingAuthCode": "Error sending the code. Please review that you wrote correctly your phone, or maybe you sent the code too many times. If the problem persist, contact with the organization.",
 		"codeLabel": "Authentication Code",
 		"emailPlaceholder": "john@example.com",
@@ -72,10 +72,12 @@
 		"invalidCredentials": "Invalid credentials",
 		"invalidDataRegEx": "Invalid data",
 		"invalidDni": "Invalid DNI/NIE",
-		"dniHelp": "Specify a valid  DNI/NIE. Examples: 12343567R or X01234356R"
+		"dniHelp": "Specify a valid  DNI/NIE. Examples: 12343567R or X01234356R",
+		"imageHelp": "Add an image in jpg or png format",
+		"invalidImage": "Invalid Image"
 	},
 	"avCommon": {
-		"poweredBy": "Funciona amb <strong><a href=\"https://agoravoting.com\" target=\"_blank\">Agora Voting</a></strong>"
+		"poweredBy": "Powered by <strong><a href=\"__url__\" target=\"_blank\">__name__</a></strong>"
 	},
 	"cookies-eu": {
 		"text": "COOOOOKIES"

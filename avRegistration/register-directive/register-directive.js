@@ -1,3 +1,20 @@
+/**
+ * This file is part of agora-gui-common.
+ * Copyright (C) 2015-2016  Agora Voting SL <agora@agoravoting.com>
+
+ * agora-gui-common is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License.
+
+ * agora-gui-common  is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+
+ * You should have received a copy of the GNU Affero General Public License
+ * along with agora-gui-common.  If not, see <http://www.gnu.org/licenses/>.
+**/
+
 angular.module('avRegistration')
   .directive('avRegister', function(Authmethod, StateDataService, $parse, $state, ConfigService, $cookies, $i18next, $sce) {
     // we use it as something similar to a controller here
@@ -80,13 +97,14 @@ angular.module('avRegistration')
           console.log("goLogin");
           if (event) {
             event.preventDefault();
+            event.stopPropagation();
           }
 
           if (!scope.authevent) {
             return;
           }
 
-          if (scope.authevent['id'] === ConfigService.freeAuthId+'') {
+          if (scope.authevent['id'] === ConfigService.freeAuthId) {
               $state.go("admin.login");
           } else {
               $state.go("election.public.show.login", {id: scope.authevent['id']});
@@ -100,7 +118,7 @@ angular.module('avRegistration')
 
             // if registration is closed, redirect to login
             if (authevent['census'] !== 'open') {
-              if (authevent['id'] === ConfigService.freeAuthId+'') {
+              if (authevent['id'] === ConfigService.freeAuthId) {
                   $state.go("admin.login");
               } else {
                   $state.go("election.public.show.login", {id: authevent['id']});

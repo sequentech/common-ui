@@ -2,7 +2,7 @@
     <label for="input{{index}}" class="control-label col-sm-4" ng-i18next="avRegistration.codeLabel"></label>
     <div class="col-sm-8">
         <input
-            type="text"
+            type="password"
             class="form-control"
             id="input{{index}}"
             ng-model="field.value"
@@ -18,7 +18,7 @@
             required />
         <p class="help-block" ng-i18next="avRegistration.codeHelp">
         <p class="help-block code-help">
-          <span ng-if="!sendingData && !form['input' + telIndex].$invalid">
+          <span ng-if="showResendAuthCode() && !sendingData && !form['input' + telIndex].$invalid">
             <b ng-i18next="avRegistration.noCodeReceivedQuestion"></b>
             <a
               ng-click="resendAuthCode(field)"
