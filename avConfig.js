@@ -167,7 +167,8 @@ var avConfigData = {
   documentation: {
     faq: 'https://nvotes.com/doc/en/',
     overview: 'https://agoravoting.com/overview/',
-    technical: 'https://agoravoting.com/static/generic_tech_overview_20_08_15.pdf'
+    technical: 'https://agoravoting.com/static/generic_tech_overview_20_08_15.pdf',
+    security_contact: "https://agoravoting.com/security_contact/"
   },
   
   documentation_html_include: '',
