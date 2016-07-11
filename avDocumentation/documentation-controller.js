@@ -1,5 +1,5 @@
  /**
- * This file is part of agora-gui-elections.
+ * This file is part of agora-gui-common.
  * Copyright (C) 2015-2016  Agora Voting SL <agora@agoravoting.com>
 
  * agora-gui-elections is free software: you can redistribute it and/or modify
@@ -39,6 +39,7 @@ angular.module('avDocumentation').controller('DocumentationController',
     $scope.documentation = ConfigService.documentation;
     $scope.documentation.security_contact = ConfigService.legal.security_contact;
     $scope.documentation_html_include = ConfigService.documentation_html_include;
+    $scope.auths_url = 'election/' + $stateParams.id + '/public/authorities';
 
     Authmethod.viewEvent($stateParams.id)
       .success(function(data) {
