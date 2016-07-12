@@ -49,3 +49,12 @@ angular.module('avDocumentation').controller('DocumentationController',
       });
   }
 );
+
+angular.module('avDocumentation')
+  .directive('documentationDetail', function(){
+    return {
+      restrict: 'AE',
+      templateUrl: 'avDocumentation/documentation-controller.html',
+      controller: 'DocumentationController'
+    };
+  });
