@@ -1,3 +1,20 @@
+/**
+ * This file is part of agora-dev-box.
+ * Copyright (C) 2014-2016  Agora Voting SL <agora@agoravoting.com>
+
+ * agora-dev-box is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License.
+
+ * agora-dev-box is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+
+ * You should have received a copy of the GNU Affero General Public License
+ * along with agora-dev-box.  If not, see <http://www.gnu.org/licenses/>.
+**/
+
 /*
  * ConfigService is a function that returns the configuration that exists
  * in this same file, which you might want to edit and tune if needed.
@@ -13,6 +30,7 @@ var avConfigData = {
   theme: "default",
   baseUrl: "https://agora/elections/api/",
   freeAuthId: 1,
+stripe: "pk_test_xxxxxxxxxxxxxxxxxxxxxxxx",
   
   // Webpage title
   webTitle: "Agora Voting",
@@ -27,10 +45,10 @@ var avConfigData = {
   electionsAPI: "https://agora/elections/api/",
 
   // Agora Admin help url
-  helpUrl: "https://agoravoting.com/help",
+  helpUrl: "https://bit.ly/avguiadeuso",
 
-  authorities: ['local-auth2'],
-  director: "local-auth1",
+  authorities: ['auth2'],
+  director: "auth1",
 
   resourceUrlWhitelist: [
     // Allow same origin resource loads.
@@ -50,14 +68,14 @@ var avConfigData = {
     //
     // Default: 'en'
     //
-    language: "es",
+    language: "en",
 
 
     // Forces a specific language.
     //
     // Default: not set
     //
-    lng: "es",
+    lng: "en",
 
 
     // specifies the set language query string.
@@ -105,8 +123,8 @@ var avConfigData = {
 
   timeoutSeconds: 3600,
 
-  publicURL: "https://agora/elections/public/",
-
+    publicURL: "https://agora/elections/public/",
+  
   // if we are in debug mode or not
   debug: true,
 
@@ -116,9 +134,9 @@ var avConfigData = {
     email: "contact@example.com",
     // Sales contact email displayed in the footer links
     sales: "sales@example.com",
-    tlf: "-no tlf-"
+    tlf: ""
   },
-  
+
   // social networks footer links
   social: {
       facebook: "https://www.facebook.com/AgoraVoting",
@@ -128,7 +146,7 @@ var avConfigData = {
       youtube: "https://www.youtube.com/results?search_query=Agora+Voting",
       github: "https://github.com/agoravoting/"
   },
-  
+
   // technology footer links
   technology: {
     aboutus: "https://agoravoting.com/#aboutus",
@@ -137,7 +155,7 @@ var avConfigData = {
     solutions: "https://agoravoting.com/solutions/",
     admin_manual: "https://bit.ly/avguiadeuso"
   },
-  
+
   // legality footer links
   legal: {
     terms_of_service: "https://agoravoting.com/tos/",
@@ -146,6 +164,17 @@ var avConfigData = {
     security_contact: "https://agoravoting.com/security_contact/",
     community_website: "https://agoravoting.org"
   },
+  
+  documentation: {
+    faq: "https://nvotes.com/doc/en/",
+    overview: "https://agoravoting.com/overview/",
+    technical: "https://agoravoting.com/static/generic_tech_overview_20_08_15.pdf",
+    security_contact: "https://agoravoting.com/security_contact/"
+  },
+  
+  documentation_html_include: "<p>In this page we will describe the process through which it is possible to verify that the result of an election is valid. Each voter can verify that his/her cast ballot is included in the tally, and can also verify mathematically the result of the tally.</p><p>\n\n<strong>To perform that verification it is required to have a technical background. If you do not have it, we recommend to execute this verification process with the help of somebody with a technical background.</strong></p>",
+  
+  legal_html_include: "<p>In this page we will describe the process through which it is possible to verify that the result of an election is valid. Each voter can verify that his/her cast ballot is included in the tally, and can also verify mathematically the result of the tally.</p><p>\n\n<strong>To perform that verification it is required to have a technical background. If you do not have it, we recommend to execute this verification process with the help of somebody with a technical background.</strong></p>",
 
   // Details pertaining to the organization that runs the software
   organization: {
@@ -156,7 +185,7 @@ var avConfigData = {
     // URL that the logo links to
     orgUrl: 'https://agoravoting.com'
   },
-    
+
   verifier: {
     link: "",
     hash: ""
