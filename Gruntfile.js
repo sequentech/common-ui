@@ -143,6 +143,14 @@ module.exports = function (grunt) {
         },
         src: [createFolderGlobs('*.html'),'!index.html','!_SpecRunner.html'],
         dest: 'temp/templates.js'
+      },
+      common: {
+        options: {
+            module: pkg.name,
+            htmlmin:'<%= htmlmin.main.options %>'
+        },
+        src: ["avDocumentation/**/*.html"],
+        dest: 'temp/templates-common.js'
       }
     },
     copy: {
@@ -307,6 +315,7 @@ module.exports = function (grunt) {
           'avWidgets.js',
           '<%= dom_munger.data.appjs %>',
           '<%= ngtemplates.main.dest %>',
+          '<%= ngtemplates.common.dest %>',
           'bower_components/angular-mocks/angular-mocks.js',
           createFolderGlobs('*-spec.js')
         ],
@@ -374,6 +383,7 @@ module.exports = function (grunt) {
         files.push('avWidgets.js');
         files.concat(grunt.config('dom_munger.data.appjs'));
         files.concat(grunt.config('ngtemplates.main.dest'));
+        files.concat(grunt.config('ngtemplates.common.dest'));
         files.push(spec);
         grunt.config('karma.options.files', files);
         tasksToRun.push('karma:during_watch');
