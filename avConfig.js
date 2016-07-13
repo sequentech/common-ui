@@ -190,10 +190,6 @@ var avConfigData = {
     hash: ""
   },
 
-  help: {
-    info:""
-  },
-
   success: {
     text: ""
   },
