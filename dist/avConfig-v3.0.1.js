@@ -1,18 +1,18 @@
 /**
- * This file is part of agora-dev-box.
- * Copyright (C) 2014-2016  Agora Voting SL <agora@agoravoting.com>
+ * This file is part of agora-gui-common.
+ * Copyright (C) 2015-2016  Agora Voting SL <agora@agoravoting.com>
 
- * agora-dev-box is free software: you can redistribute it and/or modify
+ * agora-gui-common is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License.
 
- * agora-dev-box is distributed in the hope that it will be useful,
+ * agora-gui-common  is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
 
  * You should have received a copy of the GNU Affero General Public License
- * along with agora-dev-box.  If not, see <http://www.gnu.org/licenses/>.
+ * along with agora-gui-common.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
 /*
@@ -30,7 +30,6 @@ var avConfigData = {
   theme: "default",
   baseUrl: "https://agora/elections/api/",
   freeAuthId: 1,
-stripe: "pk_test_xxxxxxxxxxxxxxxxxxxxxxxx",
   
   // Webpage title
   webTitle: "Agora Voting",
@@ -45,10 +44,10 @@ stripe: "pk_test_xxxxxxxxxxxxxxxxxxxxxxxx",
   electionsAPI: "https://agora/elections/api/",
 
   // Agora Admin help url
-  helpUrl: "https://bit.ly/avguiadeuso",
+  helpUrl: "https://agoravoting.com/help",
 
-  authorities: ['auth2'],
-  director: "auth1",
+  authorities: ['local-auth2'],
+  director: "local-auth1",
 
   resourceUrlWhitelist: [
     // Allow same origin resource loads.
@@ -68,14 +67,14 @@ stripe: "pk_test_xxxxxxxxxxxxxxxxxxxxxxxx",
     //
     // Default: 'en'
     //
-    language: "en",
+    language: "es",
 
 
     // Forces a specific language.
     //
     // Default: not set
     //
-    lng: "en",
+    lng: "es",
 
 
     // specifies the set language query string.
@@ -123,8 +122,8 @@ stripe: "pk_test_xxxxxxxxxxxxxxxxxxxxxxxx",
 
   timeoutSeconds: 3600,
 
-    publicURL: "https://agora/elections/public/",
-  
+  publicURL: "https://agora/elections/public/",
+
   // if we are in debug mode or not
   debug: true,
 
@@ -134,9 +133,9 @@ stripe: "pk_test_xxxxxxxxxxxxxxxxxxxxxxxx",
     email: "contact@example.com",
     // Sales contact email displayed in the footer links
     sales: "sales@example.com",
-    tlf: ""
+    tlf: "-no tlf-"
   },
-
+  
   // social networks footer links
   social: {
       facebook: "https://www.facebook.com/AgoraVoting",
@@ -146,7 +145,7 @@ stripe: "pk_test_xxxxxxxxxxxxxxxxxxxxxxxx",
       youtube: "https://www.youtube.com/results?search_query=Agora+Voting",
       github: "https://github.com/agoravoting/"
   },
-
+  
   // technology footer links
   technology: {
     aboutus: "https://agoravoting.com/#aboutus",
@@ -155,7 +154,7 @@ stripe: "pk_test_xxxxxxxxxxxxxxxxxxxxxxxx",
     solutions: "https://agoravoting.com/solutions/",
     admin_manual: "https://bit.ly/avguiadeuso"
   },
-
+  
   // legality footer links
   legal: {
     terms_of_service: "https://agoravoting.com/tos/",
@@ -166,15 +165,15 @@ stripe: "pk_test_xxxxxxxxxxxxxxxxxxxxxxxx",
   },
   
   documentation: {
-    faq: "https://nvotes.com/doc/en/",
-    overview: "https://agoravoting.com/overview/",
-    technical: "https://agoravoting.com/static/generic_tech_overview_20_08_15.pdf",
+    faq: 'https://nvotes.com/doc/en/',
+    overview: 'https://agoravoting.com/overview/',
+    technical: 'https://agoravoting.com/static/generic_tech_overview_20_08_15.pdf',
     security_contact: "https://agoravoting.com/security_contact/"
   },
   
-  documentation_html_include: "<p>In this page we will describe the process through which it is possible to verify that the result of an election is valid. Each voter can verify that his/her cast ballot is included in the tally, and can also verify mathematically the result of the tally.</p><p>\n\n<strong>To perform that verification it is required to have a technical background. If you do not have it, we recommend to execute this verification process with the help of somebody with a technical background.</strong></p>",
+  documentation_html_include: '',
   
-  legal_html_include: "<p>In this page we will describe the process through which it is possible to verify that the result of an election is valid. Each voter can verify that his/her cast ballot is included in the tally, and can also verify mathematically the result of the tally.</p><p>\n\n<strong>To perform that verification it is required to have a technical background. If you do not have it, we recommend to execute this verification process with the help of somebody with a technical background.</strong></p>",
+  legal_html_include: '',
 
   // Details pertaining to the organization that runs the software
   organization: {
@@ -185,14 +184,10 @@ stripe: "pk_test_xxxxxxxxxxxxxxxxxxxxxxxx",
     // URL that the logo links to
     orgUrl: 'https://agoravoting.com'
   },
-
+    
   verifier: {
     link: "",
     hash: ""
-  },
-
-  help: {
-    info:""
   },
 
   success: {
