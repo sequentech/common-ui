@@ -31,7 +31,6 @@ angular.module(
   'jm.i18next',
   'avRegistration',
   'avUi',
-  'avDocumentation',
   'avTest',
   'angularFileUpload',
   'dndLists',
