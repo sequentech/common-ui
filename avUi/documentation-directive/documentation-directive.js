@@ -20,7 +20,7 @@
  * loading config, showing results, showing error if needed.
  */
 angular.module('avUi').controller('DocumentationController',
-  function($state, $stateParams, $http, $scope, $i18next, ConfigService, InsideIframeService, Authmethod) {
+  function(/*$state, $stateParams, $http, $scope,$i18next, ConfigService, InsideIframeService, Authmethod*/) {
 //     $state.go('election.public.loading');
 
     /*var mapLayouts = {
