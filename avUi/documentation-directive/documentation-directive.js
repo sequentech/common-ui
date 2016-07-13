@@ -19,8 +19,8 @@
  * Shows the public view of an election. Controls mainly the changing inner states
  * loading config, showing results, showing error if needed.
  */
-angular.module('avUi').controller('DocumentationController',
-  function(/*$state, $stateParams, $http, $scope,$i18next, ConfigService, InsideIframeService, Authmethod*/) {
+angular.module('avUi').controller('DocumentationUiController',
+  function($state, $stateParams, $http, $scope,$i18next, ConfigService, InsideIframeService, Authmethod) {
 //     $state.go('election.public.loading');
 
     /*var mapLayouts = {
@@ -32,10 +32,10 @@ angular.module('avUi').controller('DocumentationController',
       "ahoram-primaries": "default"
     };
     $("#theme").attr("href", "election/themes/" + ConfigService.theme + "/app.min.css");
-    //window.avThemes.change(ConfigService.theme);
+    window.avThemes.change(ConfigService.theme);
     $scope.layout = mapLayouts["simple"];
-    $scope.statePrefix = "election.public.show.home";
-        $scope.inside_iframe = InsideIframeService();
+    $scope.statePrefix = "election.public.show.home";*/
+    $scope.inside_iframe = InsideIframeService();
     $scope.documentation = ConfigService.documentation;
     $scope.documentation.security_contact = ConfigService.legal.security_contact;
     $scope.documentation_html_include = ConfigService.documentation_html_include;
@@ -46,7 +46,7 @@ angular.module('avUi').controller('DocumentationController',
         if (data.status === "ok") {
           $scope.authEvent = data.events;
         }
-      });*/
+      });
   }
 );
 
@@ -55,6 +55,6 @@ angular.module('avUi')
     return {
       restrict: 'AE',
       templateUrl: 'avUi/documentation-directive/documentation-directive.html',
-      controller: 'DocumentationController'
+      controller: 'DocumentationUiController'
     };
   });
