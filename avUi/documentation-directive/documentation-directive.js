@@ -23,7 +23,7 @@ angular.module('avUi').controller('DocumentationController',
   function($state, $stateParams, $http, $scope, $i18next, ConfigService, InsideIframeService, Authmethod) {
 //     $state.go('election.public.loading');
 
-    var mapLayouts = {
+    /*var mapLayouts = {
       "": "default",
       "simple": "default",
       "pcandidates-election": "default",
@@ -46,7 +46,7 @@ angular.module('avUi').controller('DocumentationController',
         if (data.status === "ok") {
           $scope.authEvent = data.events;
         }
-      });
+      });*/
   }
 );
 
