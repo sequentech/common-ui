@@ -21,25 +21,12 @@
  */
 angular.module('avUi').controller('DocumentationUiController',
   function($state, $stateParams, $http, $scope,$i18next, ConfigService, InsideIframeService, Authmethod) {
-//     $state.go('election.public.loading');
-
-    /*var mapLayouts = {
-      "": "default",
-      "simple": "default",
-      "pcandidates-election": "default",
-      "2questions-conditional": "default",
-      "conditional-accordion": "default",
-      "ahoram-primaries": "default"
-    };
-    $("#theme").attr("href", "election/themes/" + ConfigService.theme + "/app.min.css");
-    window.avThemes.change(ConfigService.theme);
-    $scope.layout = mapLayouts["simple"];
-    $scope.statePrefix = "election.public.show.home";*/
     $scope.inside_iframe = InsideIframeService();
     $scope.documentation = ConfigService.documentation;
     $scope.documentation.security_contact = ConfigService.legal.security_contact;
     $scope.documentation_html_include = ConfigService.documentation_html_include;
-    $scope.auths_url = 'election/' + $stateParams.id + '/public/authorities';
+    $scope.auths_url = '/election/' + $stateParams.id + '/public/authorities/';
+    $scope.legal_url = '/election/' + $stateParams.id + '/public/legal/';
 
     Authmethod.viewEvent($stateParams.id)
       .success(function(data) {
