@@ -89,6 +89,29 @@
 		}
 	},
 	"avCommon": {
-		"poweredBy": "Funciona amb <strong><a href=\"__url__\" target=\"_blank\">__name__</a></strong>"
+		"poweredBy": "Funciona amb <strong><a href=\"__url__\" target=\"_blank\">__name__</a></strong>",
+		"foot": {
+			"contact": "Contacto",
+			"contactsupport": "Contacto de soporte",
+			"contactsales": "Contacto de ventas",
+			"callsales": "Ventas:",
+			"aboutus": "Acerca de",
+			"pricing": "Prezos",
+			"technology": "Tecnología",
+			"solutions": "Soluciones",
+			"adminManual": "Manual de admin",
+			"electionTypes": "Tipos de votación",
+			"primaries": "Primarias y elecciones de candidatos",
+			"participatoryBudgeting": "Presupuestos participativos",
+			"referendums": "Referéndums y consultas",
+			"professional": "Elecciones profesionales y sindicales",
+			"universities": "Universidades",
+			"legal": "Legal",
+			"tos": "Condiciones de uso",
+			"cookies": "Política de Cookies",
+			"privacy": "Política de Privacidad",
+			"securitycontact": "Contacto de seguridad",
+			"communitywebsite": "Sitio web del proyecto"
+		}
 	}
 }
