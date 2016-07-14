@@ -83,6 +83,23 @@
     "invalidImage": "Imagen inválida"
 
   },
+  
+  "avDocumentation": {
+    "legal": {
+        "title": "Legal"
+    },
+    
+    "documentation": { 
+      "title": "Documentación",
+      "first_line": "Puedes encontrar más información sobre la votación en los siguientes enlaces:",
+      "faq": "Preguntas Frecuentes",
+      "overview": "Esquema General",
+      "authorities": "Lista de Autoridades",
+      "technical": "Descripción técnica",
+      "security_contact": "Contacto de seguridad"
+    }
+  },
+  
   "avCommon": {
     "poweredBy": "Funciona con <strong><a href=\"__url__\" target=\"_blank\">__name__</a></strong>"
   }

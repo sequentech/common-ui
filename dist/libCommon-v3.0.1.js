@@ -46,7 +46,7 @@ function uiUploader($log) {
 
 function RC4(seed) {
     this.s = new Array(256), this.i = 0, this.j = 0;
-    for (var i = 0; 256 > i; i++) this.s[i] = i;
+    for (var i = 0; i < 256; i++) this.s[i] = i;
     seed && this.mix(seed);
 }
 
@@ -69,7 +69,7 @@ function y(a, b, c) {
     var h, l, k, m, n = d.length / 4 - 2, p = 4, s = [ 0, 0, 0, 0 ];
     h = a.j[c], a = h[0];
     var r = h[1], v = h[2], w = h[3], x = h[4];
-    for (m = 0; n > m; m++) h = a[e >>> 24] ^ r[f >> 16 & 255] ^ v[g >> 8 & 255] ^ w[255 & b] ^ d[p], 
+    for (m = 0; m < n; m++) h = a[e >>> 24] ^ r[f >> 16 & 255] ^ v[g >> 8 & 255] ^ w[255 & b] ^ d[p], 
     l = a[f >>> 24] ^ r[g >> 16 & 255] ^ v[b >> 8 & 255] ^ w[255 & e] ^ d[p + 1], k = a[g >>> 24] ^ r[b >> 16 & 255] ^ v[e >> 8 & 255] ^ w[255 & f] ^ d[p + 2], 
     b = a[b >>> 24] ^ r[e >> 16 & 255] ^ v[f >> 8 & 255] ^ w[255 & g] ^ d[p + 3], p += 4, 
     e = h, f = l, g = k;
@@ -211,16 +211,16 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         this.$items.index(this.$active);
     }, Carousel.prototype.to = function(pos) {
         var that = this, activeIndex = this.getActiveIndex();
-        return pos > this.$items.length - 1 || 0 > pos ? void 0 : this.sliding ? this.$element.one("slid.bs.carousel", function() {
+        if (!(pos > this.$items.length - 1 || pos < 0)) return this.sliding ? this.$element.one("slid.bs.carousel", function() {
             that.to(pos);
         }) : activeIndex == pos ? this.pause().cycle() : this.slide(pos > activeIndex ? "next" : "prev", $(this.$items[pos]));
     }, Carousel.prototype.pause = function(e) {
         return e || (this.paused = !0), this.$element.find(".next, .prev").length && $.support.transition && (this.$element.trigger($.support.transition.end), 
         this.cycle(!0)), this.interval = clearInterval(this.interval), this;
     }, Carousel.prototype.next = function() {
-        return this.sliding ? void 0 : this.slide("next");
+        if (!this.sliding) return this.slide("next");
     }, Carousel.prototype.prev = function() {
-        return this.sliding ? void 0 : this.slide("prev");
+        if (!this.sliding) return this.slide("prev");
     }, Carousel.prototype.slide = function(type, next) {
         var $active = this.$element.find(".item.active"), $next = next || $active[type](), isCycling = this.interval, direction = "next" == type ? "left" : "right", fallback = "next" == type ? "first" : "last", that = this;
         if (!$next.length) {
@@ -566,7 +566,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         if ("top" == placement && actualHeight != height && (replace = !0, offset.top = offset.top + height - actualHeight), 
         /bottom|top/.test(placement)) {
             var delta = 0;
-            offset.left < 0 && (delta = -2 * offset.left, offset.left = 0, $tip.offset(offset), 
+            offset.left < 0 && (delta = offset.left * -2, offset.left = 0, $tip.offset(offset), 
             actualWidth = $tip[0].offsetWidth, actualHeight = $tip[0].offsetHeight), this.replaceArrow(delta - width + actualWidth, actualWidth, "left");
         } else this.replaceArrow(actualHeight - height, actualHeight, "top");
         replace && $tip.offset(offset);
@@ -580,9 +580,9 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             "in" != that.hoverState && $tip.detach(), that.$element.trigger("hidden.bs." + that.type);
         }
         var that = this, $tip = this.tip(), e = $.Event("hide.bs." + this.type);
-        return this.$element.trigger(e), e.isDefaultPrevented() ? void 0 : ($tip.removeClass("in"), 
+        if (this.$element.trigger(e), !e.isDefaultPrevented()) return $tip.removeClass("in"), 
         $.support.transition && this.$tip.hasClass("fade") ? $tip.one($.support.transition.end, complete).emulateTransitionEnd(150) : complete(), 
-        this.hoverState = null, this);
+        this.hoverState = null, this;
     }, Tooltip.prototype.fixTitle = function() {
         var $e = this.$element;
         ($e.attr("title") || "string" != typeof $e.attr("data-original-title")) && $e.attr("data-original-title", $e.attr("title") || "").attr("title", "");
@@ -791,7 +791,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             var scrollHeight = $(document).height(), scrollTop = this.$window.scrollTop(), position = this.$element.offset(), offset = this.options.offset, offsetTop = offset.top, offsetBottom = offset.bottom;
             "top" == this.affixed && (position.top += scrollTop), "object" != typeof offset && (offsetBottom = offsetTop = offset), 
             "function" == typeof offsetTop && (offsetTop = offset.top(this.$element)), "function" == typeof offsetBottom && (offsetBottom = offset.bottom(this.$element));
-            var affix = null != this.unpin && scrollTop + this.unpin <= position.top ? !1 : null != offsetBottom && position.top + this.$element.height() >= scrollHeight - offsetBottom ? "bottom" : null != offsetTop && offsetTop >= scrollTop ? "top" : !1;
+            var affix = !(null != this.unpin && scrollTop + this.unpin <= position.top) && (null != offsetBottom && position.top + this.$element.height() >= scrollHeight - offsetBottom ? "bottom" : null != offsetTop && scrollTop <= offsetTop && "top");
             if (this.affixed !== affix) {
                 this.unpin && this.$element.css("top", "");
                 var affixType = "affix" + (affix ? "-" + affix : ""), e = $.Event(affixType + ".bs.affix");
@@ -821,7 +821,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
 }(jQuery), function() {
     function createReduce(dir) {
         function iterator(obj, iteratee, memo, keys, index, length) {
-            for (;index >= 0 && length > index; index += dir) {
+            for (;index >= 0 && index < length; index += dir) {
                 var currentKey = keys ? keys[index] : index;
                 memo = iteratee(memo, obj[currentKey], currentKey, obj);
             }
@@ -837,7 +837,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
     function createIndexFinder(dir) {
         return function(array, predicate, context) {
             predicate = cb(predicate, context);
-            for (var length = null != array && array.length, index = dir > 0 ? 0 : length - 1; index >= 0 && length > index; index += dir) if (predicate(array[index], index, array)) return index;
+            for (var length = null != array && array.length, index = dir > 0 ? 0 : length - 1; index >= 0 && index < length; index += dir) if (predicate(array[index], index, array)) return index;
             return -1;
         };
     }
@@ -886,8 +886,8 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
     var createAssigner = function(keysFunc, undefinedOnly) {
         return function(obj) {
             var length = arguments.length;
-            if (2 > length || null == obj) return obj;
-            for (var index = 1; length > index; index++) for (var source = arguments[index], keys = keysFunc(source), l = keys.length, i = 0; l > i; i++) {
+            if (length < 2 || null == obj) return obj;
+            for (var index = 1; index < length; index++) for (var source = arguments[index], keys = keysFunc(source), l = keys.length, i = 0; i < l; i++) {
                 var key = keys[i];
                 undefinedOnly && void 0 !== obj[key] || (obj[key] = source[key]);
             }
@@ -901,19 +901,19 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         return Ctor.prototype = null, result;
     }, MAX_ARRAY_INDEX = Math.pow(2, 53) - 1, isArrayLike = function(collection) {
         var length = collection && collection.length;
-        return "number" == typeof length && length >= 0 && MAX_ARRAY_INDEX >= length;
+        return "number" == typeof length && length >= 0 && length <= MAX_ARRAY_INDEX;
     };
     _.each = _.forEach = function(obj, iteratee, context) {
         iteratee = optimizeCb(iteratee, context);
         var i, length;
-        if (isArrayLike(obj)) for (i = 0, length = obj.length; length > i; i++) iteratee(obj[i], i, obj); else {
+        if (isArrayLike(obj)) for (i = 0, length = obj.length; i < length; i++) iteratee(obj[i], i, obj); else {
             var keys = _.keys(obj);
-            for (i = 0, length = keys.length; length > i; i++) iteratee(obj[keys[i]], keys[i], obj);
+            for (i = 0, length = keys.length; i < length; i++) iteratee(obj[keys[i]], keys[i], obj);
         }
         return obj;
     }, _.map = _.collect = function(obj, iteratee, context) {
         iteratee = cb(iteratee, context);
-        for (var keys = !isArrayLike(obj) && _.keys(obj), length = (keys || obj).length, results = Array(length), index = 0; length > index; index++) {
+        for (var keys = !isArrayLike(obj) && _.keys(obj), length = (keys || obj).length, results = Array(length), index = 0; index < length; index++) {
             var currentKey = keys ? keys[index] : index;
             results[index] = iteratee(obj[currentKey], currentKey, obj);
         }
@@ -921,8 +921,8 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
     }, _.reduce = _.foldl = _.inject = createReduce(1), _.reduceRight = _.foldr = createReduce(-1), 
     _.find = _.detect = function(obj, predicate, context) {
         var key;
-        return key = isArrayLike(obj) ? _.findIndex(obj, predicate, context) : _.findKey(obj, predicate, context), 
-        void 0 !== key && -1 !== key ? obj[key] : void 0;
+        if (key = isArrayLike(obj) ? _.findIndex(obj, predicate, context) : _.findKey(obj, predicate, context), 
+        void 0 !== key && key !== -1) return obj[key];
     }, _.filter = _.select = function(obj, predicate, context) {
         var results = [];
         return predicate = cb(predicate, context), _.each(obj, function(value, index, list) {
@@ -932,14 +932,14 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         return _.filter(obj, _.negate(cb(predicate)), context);
     }, _.every = _.all = function(obj, predicate, context) {
         predicate = cb(predicate, context);
-        for (var keys = !isArrayLike(obj) && _.keys(obj), length = (keys || obj).length, index = 0; length > index; index++) {
+        for (var keys = !isArrayLike(obj) && _.keys(obj), length = (keys || obj).length, index = 0; index < length; index++) {
             var currentKey = keys ? keys[index] : index;
             if (!predicate(obj[currentKey], currentKey, obj)) return !1;
         }
         return !0;
     }, _.some = _.any = function(obj, predicate, context) {
         predicate = cb(predicate, context);
-        for (var keys = !isArrayLike(obj) && _.keys(obj), length = (keys || obj).length, index = 0; length > index; index++) {
+        for (var keys = !isArrayLike(obj) && _.keys(obj), length = (keys || obj).length, index = 0; index < length; index++) {
             var currentKey = keys ? keys[index] : index;
             if (predicate(obj[currentKey], currentKey, obj)) return !0;
         }
@@ -962,7 +962,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         var value, computed, result = -(1 / 0), lastComputed = -(1 / 0);
         if (null == iteratee && null != obj) {
             obj = isArrayLike(obj) ? obj : _.values(obj);
-            for (var i = 0, length = obj.length; length > i; i++) value = obj[i], value > result && (result = value);
+            for (var i = 0, length = obj.length; i < length; i++) value = obj[i], value > result && (result = value);
         } else iteratee = cb(iteratee, context), _.each(obj, function(value, index, list) {
             computed = iteratee(value, index, list), (computed > lastComputed || computed === -(1 / 0) && result === -(1 / 0)) && (result = value, 
             lastComputed = computed);
@@ -972,14 +972,14 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         var value, computed, result = 1 / 0, lastComputed = 1 / 0;
         if (null == iteratee && null != obj) {
             obj = isArrayLike(obj) ? obj : _.values(obj);
-            for (var i = 0, length = obj.length; length > i; i++) value = obj[i], result > value && (result = value);
+            for (var i = 0, length = obj.length; i < length; i++) value = obj[i], value < result && (result = value);
         } else iteratee = cb(iteratee, context), _.each(obj, function(value, index, list) {
-            computed = iteratee(value, index, list), (lastComputed > computed || computed === 1 / 0 && result === 1 / 0) && (result = value, 
+            computed = iteratee(value, index, list), (computed < lastComputed || computed === 1 / 0 && result === 1 / 0) && (result = value, 
             lastComputed = computed);
         });
         return result;
     }, _.shuffle = function(obj) {
-        for (var rand, set = isArrayLike(obj) ? obj : _.values(obj), length = set.length, shuffled = Array(length), index = 0; length > index; index++) rand = _.random(0, index), 
+        for (var rand, set = isArrayLike(obj) ? obj : _.values(obj), length = set.length, shuffled = Array(length), index = 0; index < length; index++) rand = _.random(0, index), 
         rand !== index && (shuffled[index] = shuffled[rand]), shuffled[rand] = set[index];
         return shuffled;
     }, _.sample = function(obj, n, guard) {
@@ -995,7 +995,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             var a = left.criteria, b = right.criteria;
             if (a !== b) {
                 if (a > b || void 0 === a) return 1;
-                if (b > a || void 0 === b) return -1;
+                if (a < b || void 0 === b) return -1;
             }
             return left.index - right.index;
         }), "value");
@@ -1026,23 +1026,23 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             (predicate(value, key, obj) ? pass : fail).push(value);
         }), [ pass, fail ];
     }, _.first = _.head = _.take = function(array, n, guard) {
-        return null != array ? null == n || guard ? array[0] : _.initial(array, array.length - n) : void 0;
+        if (null != array) return null == n || guard ? array[0] : _.initial(array, array.length - n);
     }, _.initial = function(array, n, guard) {
         return slice.call(array, 0, Math.max(0, array.length - (null == n || guard ? 1 : n)));
     }, _.last = function(array, n, guard) {
-        return null != array ? null == n || guard ? array[array.length - 1] : _.rest(array, Math.max(0, array.length - n)) : void 0;
+        if (null != array) return null == n || guard ? array[array.length - 1] : _.rest(array, Math.max(0, array.length - n));
     }, _.rest = _.tail = _.drop = function(array, n, guard) {
         return slice.call(array, null == n || guard ? 1 : n);
     }, _.compact = function(array) {
         return _.filter(array, _.identity);
     };
     var flatten = function(input, shallow, strict, startIndex) {
-        for (var output = [], idx = 0, i = startIndex || 0, length = input && input.length; length > i; i++) {
+        for (var output = [], idx = 0, i = startIndex || 0, length = input && input.length; i < length; i++) {
             var value = input[i];
             if (isArrayLike(value) && (_.isArray(value) || _.isArguments(value))) {
                 shallow || (value = flatten(value, shallow, strict));
                 var j = 0, len = value.length;
-                for (output.length += len; len > j; ) output[idx++] = value[j++];
+                for (output.length += len; j < len; ) output[idx++] = value[j++];
             } else strict || (output[idx++] = value);
         }
         return output;
@@ -1055,7 +1055,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         if (null == array) return [];
         _.isBoolean(isSorted) || (context = iteratee, iteratee = isSorted, isSorted = !1), 
         null != iteratee && (iteratee = cb(iteratee, context));
-        for (var result = [], seen = [], i = 0, length = array.length; length > i; i++) {
+        for (var result = [], seen = [], i = 0, length = array.length; i < length; i++) {
             var value = array[i], computed = iteratee ? iteratee(value, i, array) : value;
             isSorted ? (i && seen === computed || result.push(value), seen = computed) : iteratee ? _.contains(seen, computed) || (seen.push(computed), 
             result.push(value)) : _.contains(result, value) || result.push(value);
@@ -1065,10 +1065,10 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         return _.uniq(flatten(arguments, !0, !0));
     }, _.intersection = function(array) {
         if (null == array) return [];
-        for (var result = [], argsLength = arguments.length, i = 0, length = array.length; length > i; i++) {
+        for (var result = [], argsLength = arguments.length, i = 0, length = array.length; i < length; i++) {
             var item = array[i];
             if (!_.contains(result, item)) {
-                for (var j = 1; argsLength > j && _.contains(arguments[j], item); j++) ;
+                for (var j = 1; j < argsLength && _.contains(arguments[j], item); j++) ;
                 j === argsLength && result.push(item);
             }
         }
@@ -1081,35 +1081,35 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
     }, _.zip = function() {
         return _.unzip(arguments);
     }, _.unzip = function(array) {
-        for (var length = array && _.max(array, "length").length || 0, result = Array(length), index = 0; length > index; index++) result[index] = _.pluck(array, index);
+        for (var length = array && _.max(array, "length").length || 0, result = Array(length), index = 0; index < length; index++) result[index] = _.pluck(array, index);
         return result;
     }, _.object = function(list, values) {
-        for (var result = {}, i = 0, length = list && list.length; length > i; i++) values ? result[list[i]] = values[i] : result[list[i][0]] = list[i][1];
+        for (var result = {}, i = 0, length = list && list.length; i < length; i++) values ? result[list[i]] = values[i] : result[list[i][0]] = list[i][1];
         return result;
     }, _.indexOf = function(array, item, isSorted) {
         var i = 0, length = array && array.length;
-        if ("number" == typeof isSorted) i = 0 > isSorted ? Math.max(0, length + isSorted) : isSorted; else if (isSorted && length) return i = _.sortedIndex(array, item), 
+        if ("number" == typeof isSorted) i = isSorted < 0 ? Math.max(0, length + isSorted) : isSorted; else if (isSorted && length) return i = _.sortedIndex(array, item), 
         array[i] === item ? i : -1;
         if (item !== item) return _.findIndex(slice.call(array, i), _.isNaN);
-        for (;length > i; i++) if (array[i] === item) return i;
+        for (;i < length; i++) if (array[i] === item) return i;
         return -1;
     }, _.lastIndexOf = function(array, item, from) {
         var idx = array ? array.length : 0;
-        if ("number" == typeof from && (idx = 0 > from ? idx + from + 1 : Math.min(idx, from + 1)), 
+        if ("number" == typeof from && (idx = from < 0 ? idx + from + 1 : Math.min(idx, from + 1)), 
         item !== item) return _.findLastIndex(slice.call(array, 0, idx), _.isNaN);
         for (;--idx >= 0; ) if (array[idx] === item) return idx;
         return -1;
     }, _.findIndex = createIndexFinder(1), _.findLastIndex = createIndexFinder(-1), 
     _.sortedIndex = function(array, obj, iteratee, context) {
         iteratee = cb(iteratee, context, 1);
-        for (var value = iteratee(obj), low = 0, high = array.length; high > low; ) {
+        for (var value = iteratee(obj), low = 0, high = array.length; low < high; ) {
             var mid = Math.floor((low + high) / 2);
             iteratee(array[mid]) < value ? low = mid + 1 : high = mid;
         }
         return low;
     }, _.range = function(start, stop, step) {
         arguments.length <= 1 && (stop = start || 0, start = 0), step = step || 1;
-        for (var length = Math.max(Math.ceil((stop - start) / step), 0), range = Array(length), idx = 0; length > idx; idx++, 
+        for (var length = Math.max(Math.ceil((stop - start) / step), 0), range = Array(length), idx = 0; idx < length; idx++, 
         start += step) range[idx] = start;
         return range;
     };
@@ -1127,15 +1127,15 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         return bound;
     }, _.partial = function(func) {
         var boundArgs = slice.call(arguments, 1), bound = function() {
-            for (var position = 0, length = boundArgs.length, args = Array(length), i = 0; length > i; i++) args[i] = boundArgs[i] === _ ? arguments[position++] : boundArgs[i];
+            for (var position = 0, length = boundArgs.length, args = Array(length), i = 0; i < length; i++) args[i] = boundArgs[i] === _ ? arguments[position++] : boundArgs[i];
             for (;position < arguments.length; ) args.push(arguments[position++]);
             return executeBound(func, bound, this, this, args);
         };
         return bound;
     }, _.bindAll = function(obj) {
         var i, key, length = arguments.length;
-        if (1 >= length) throw new Error("bindAll must be passed function names");
-        for (i = 1; length > i; i++) key = arguments[i], obj[key] = _.bind(obj[key], obj);
+        if (length <= 1) throw new Error("bindAll must be passed function names");
+        for (i = 1; i < length; i++) key = arguments[i], obj[key] = _.bind(obj[key], obj);
         return obj;
     }, _.memoize = function(func, hasher) {
         var memoize = function(key) {
@@ -1160,14 +1160,14 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             var now = _.now();
             previous || options.leading !== !1 || (previous = now);
             var remaining = wait - (now - previous);
-            return context = this, args = arguments, 0 >= remaining || remaining > wait ? (timeout && (clearTimeout(timeout), 
+            return context = this, args = arguments, remaining <= 0 || remaining > wait ? (timeout && (clearTimeout(timeout), 
             timeout = null), previous = now, result = func.apply(context, args), timeout || (context = args = null)) : timeout || options.trailing === !1 || (timeout = setTimeout(later, remaining)), 
             result;
         };
     }, _.debounce = function(func, wait, immediate) {
         var timeout, args, context, timestamp, result, later = function() {
             var last = _.now() - timestamp;
-            wait > last && last >= 0 ? timeout = setTimeout(later, wait - last) : (timeout = null, 
+            last < wait && last >= 0 ? timeout = setTimeout(later, wait - last) : (timeout = null, 
             immediate || (result = func.apply(context, args), timeout || (context = args = null)));
         };
         return function() {
@@ -1190,12 +1190,12 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         };
     }, _.after = function(times, func) {
         return function() {
-            return --times < 1 ? func.apply(this, arguments) : void 0;
+            if (--times < 1) return func.apply(this, arguments);
         };
     }, _.before = function(times, func) {
         var memo;
         return function() {
-            return --times > 0 && (memo = func.apply(this, arguments)), 1 >= times && (func = null), 
+            return --times > 0 && (memo = func.apply(this, arguments)), times <= 1 && (func = null), 
             memo;
         };
     }, _.once = _.partial(_.before, 2);
@@ -1214,18 +1214,18 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         for (var key in obj) keys.push(key);
         return hasEnumBug && collectNonEnumProps(obj, keys), keys;
     }, _.values = function(obj) {
-        for (var keys = _.keys(obj), length = keys.length, values = Array(length), i = 0; length > i; i++) values[i] = obj[keys[i]];
+        for (var keys = _.keys(obj), length = keys.length, values = Array(length), i = 0; i < length; i++) values[i] = obj[keys[i]];
         return values;
     }, _.mapObject = function(obj, iteratee, context) {
         iteratee = cb(iteratee, context);
-        for (var currentKey, keys = _.keys(obj), length = keys.length, results = {}, index = 0; length > index; index++) currentKey = keys[index], 
+        for (var currentKey, keys = _.keys(obj), length = keys.length, results = {}, index = 0; index < length; index++) currentKey = keys[index], 
         results[currentKey] = iteratee(obj[currentKey], currentKey, obj);
         return results;
     }, _.pairs = function(obj) {
-        for (var keys = _.keys(obj), length = keys.length, pairs = Array(length), i = 0; length > i; i++) pairs[i] = [ keys[i], obj[keys[i]] ];
+        for (var keys = _.keys(obj), length = keys.length, pairs = Array(length), i = 0; i < length; i++) pairs[i] = [ keys[i], obj[keys[i]] ];
         return pairs;
     }, _.invert = function(obj) {
-        for (var result = {}, keys = _.keys(obj), i = 0, length = keys.length; length > i; i++) result[obj[keys[i]]] = keys[i];
+        for (var result = {}, keys = _.keys(obj), i = 0, length = keys.length; i < length; i++) result[obj[keys[i]]] = keys[i];
         return result;
     }, _.functions = _.methods = function(obj) {
         var names = [];
@@ -1234,7 +1234,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
     }, _.extend = createAssigner(_.allKeys), _.extendOwn = _.assign = createAssigner(_.keys), 
     _.findKey = function(obj, predicate, context) {
         predicate = cb(predicate, context);
-        for (var key, keys = _.keys(obj), i = 0, length = keys.length; length > i; i++) if (key = keys[i], 
+        for (var key, keys = _.keys(obj), i = 0, length = keys.length; i < length; i++) if (key = keys[i], 
         predicate(obj[key], key, obj)) return key;
     }, _.pick = function(object, oiteratee, context) {
         var iteratee, keys, result = {}, obj = object;
@@ -1243,7 +1243,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         iteratee = function(value, key, obj) {
             return key in obj;
         }, obj = Object(obj));
-        for (var i = 0, length = keys.length; length > i; i++) {
+        for (var i = 0, length = keys.length; i < length; i++) {
             var key = keys[i], value = obj[key];
             iteratee(value, key, obj) && (result[key] = value);
         }
@@ -1263,7 +1263,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
     }, _.isMatch = function(object, attrs) {
         var keys = _.keys(attrs), length = keys.length;
         if (null == object) return !length;
-        for (var obj = Object(object), i = 0; length > i; i++) {
+        for (var obj = Object(object), i = 0; i < length; i++) {
             var key = keys[i];
             if (attrs[key] !== obj[key] || !(key in obj)) return !1;
         }
@@ -1308,7 +1308,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
     _.isEqual = function(a, b) {
         return eq(a, b);
     }, _.isEmpty = function(obj) {
-        return null == obj ? !0 : isArrayLike(obj) && (_.isArray(obj) || _.isString(obj) || _.isArguments(obj)) ? 0 === obj.length : 0 === _.keys(obj).length;
+        return null == obj || (isArrayLike(obj) && (_.isArray(obj) || _.isString(obj) || _.isArguments(obj)) ? 0 === obj.length : 0 === _.keys(obj).length);
     }, _.isElement = function(obj) {
         return !(!obj || 1 !== obj.nodeType);
     }, _.isArray = nativeIsArray || function(obj) {
@@ -1359,7 +1359,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
     }, _.times = function(n, iteratee, context) {
         var accum = Array(Math.max(0, n));
         iteratee = optimizeCb(iteratee, context, 1);
-        for (var i = 0; n > i; i++) accum[i] = iteratee(i);
+        for (var i = 0; i < n; i++) accum[i] = iteratee(i);
         return accum;
     }, _.random = function(min, max) {
         return null == max && (max = min, min = 0), min + Math.floor(Math.random() * (max - min + 1));
@@ -1474,7 +1474,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
     function isArrayLike(obj) {
         if (null == obj || isWindow(obj)) return !1;
         var length = obj.length;
-        return 1 === obj.nodeType && length ? !0 : isString(obj) || isArray(obj) || 0 === length || "number" == typeof length && length > 0 && length - 1 in obj;
+        return !(1 !== obj.nodeType || !length) || (isString(obj) || isArray(obj) || 0 === length || "number" == typeof length && length > 0 && length - 1 in obj);
     }
     function forEach(obj, iterator, context) {
         var key;
@@ -1581,7 +1581,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         }), results;
     }
     function includes(array, obj) {
-        return -1 != indexOf(array, obj);
+        return indexOf(array, obj) != -1;
     }
     function indexOf(array, obj) {
         if (array.indexOf) return array.indexOf(obj);
@@ -1598,7 +1598,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             if (source === destination) throw ngMinErr("cpi", "Can't copy! Source and destination are identical.");
             if (stackSource = stackSource || [], stackDest = stackDest || [], isObject(source)) {
                 var index = indexOf(stackSource, source);
-                if (-1 !== index) return stackDest[index];
+                if (index !== -1) return stackDest[index];
                 stackSource.push(source), stackDest.push(destination);
             }
             var result;
@@ -1637,7 +1637,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         var length, key, keySet, t1 = typeof o1, t2 = typeof o2;
         if (t1 == t2 && "object" == t1) {
             if (!isArray(o1)) {
-                if (isDate(o1)) return isDate(o2) ? isNaN(o1.getTime()) && isNaN(o2.getTime()) || o1.getTime() === o2.getTime() : !1;
+                if (isDate(o1)) return !!isDate(o2) && (isNaN(o1.getTime()) && isNaN(o2.getTime()) || o1.getTime() === o2.getTime());
                 if (isRegExp(o1) && isRegExp(o2)) return o1.toString() == o2.toString();
                 if (isScope(o1) || isScope(o2) || isWindow(o1) || isWindow(o2) || isArray(o2)) return !1;
                 keySet = {};
@@ -1650,7 +1650,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             }
             if (!isArray(o2)) return !1;
             if ((length = o1.length) == o2.length) {
-                for (key = 0; length > key; key++) if (!equals(o1[key], o2[key])) return !1;
+                for (key = 0; key < length; key++) if (!equals(o1[key], o2[key])) return !1;
                 return !0;
             }
         }
@@ -1712,7 +1712,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         return forEach((keyValue || "").split("&"), function(keyValue) {
             if (keyValue && (key_value = keyValue.replace(/\+/g, "%20").split("="), key = tryDecodeURIComponent(key_value[0]), 
             isDefined(key))) {
-                var val = isDefined(key_value[1]) ? tryDecodeURIComponent(key_value[1]) : !0;
+                var val = !isDefined(key_value[1]) || tryDecodeURIComponent(key_value[1]);
                 hasOwnProperty.call(obj, key) ? isArray(obj[key]) ? obj[key].push(val) : obj[key] = [ obj[key], val ] : obj[key] = val;
             }
         }), obj;
@@ -1800,7 +1800,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
     }
     function getter(obj, path, bindFnToScope) {
         if (!path) return obj;
-        for (var key, keys = path.split("."), lastInstance = obj, len = keys.length, i = 0; len > i; i++) key = keys[i], 
+        for (var key, keys = path.split("."), lastInstance = obj, len = keys.length, i = 0; i < len; i++) key = keys[i], 
         obj && (obj = (lastInstance = obj)[key]);
         return !bindFnToScope && isFunction(obj) ? bind(lastInstance, obj) : obj;
     }
@@ -1978,9 +1978,9 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         function removePatch(param) {
             var set, setIndex, setLength, element, childIndex, childLength, children, list = filterElems && param ? [ this.filter(param) ] : [ this ], fireEvent = dispatchThis;
             if (!getterIfNoArguments || null != param) for (;list.length; ) for (set = list.shift(), 
-            setIndex = 0, setLength = set.length; setLength > setIndex; setIndex++) for (element = jqLite(set[setIndex]), 
+            setIndex = 0, setLength = set.length; setIndex < setLength; setIndex++) for (element = jqLite(set[setIndex]), 
             fireEvent ? element.triggerHandler("$destroy") : fireEvent = !fireEvent, childIndex = 0, 
-            childLength = (children = element.children()).length; childLength > childIndex; childIndex++) list.push(jQuery(children[childIndex]));
+            childLength = (children = element.children()).length; childIndex < childLength; childIndex++) list.push(jQuery(children[childIndex]));
             return originalJqFn.apply(this, arguments);
         }
         var originalJqFn = jQuery.fn[name];
@@ -1996,7 +1996,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             for (tmp = fragment.appendChild(context.createElement("div")), tag = (TAG_NAME_REGEXP.exec(html) || [ "", "" ])[1].toLowerCase(), 
             wrap = wrapMap[tag] || wrapMap._default, tmp.innerHTML = "<div>&#160;</div>" + wrap[1] + html.replace(XHTML_TAG_REGEXP, "<$1></$2>") + wrap[2], 
             tmp.removeChild(tmp.firstChild), i = wrap[0]; i--; ) tmp = tmp.lastChild;
-            for (j = 0, jj = tmp.childNodes.length; jj > j; ++j) nodes.push(tmp.childNodes[j]);
+            for (j = 0, jj = tmp.childNodes.length; j < jj; ++j) nodes.push(tmp.childNodes[j]);
             tmp = fragment.firstChild, tmp.textContent = "";
         }
         return fragment.textContent = "", fragment.innerHTML = "", nodes;
@@ -2056,7 +2056,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         }
     }
     function jqLiteHasClass(element, selector) {
-        return element.getAttribute ? (" " + (element.getAttribute("class") || "") + " ").replace(/[\n\t]/g, " ").indexOf(" " + selector + " ") > -1 : !1;
+        return !!element.getAttribute && (" " + (element.getAttribute("class") || "") + " ").replace(/[\n\t]/g, " ").indexOf(" " + selector + " ") > -1;
     }
     function jqLiteRemoveClass(element, cssClasses) {
         cssClasses && element.setAttribute && forEach(cssClasses.split(" "), function(cssClass) {
@@ -2067,7 +2067,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         if (cssClasses && element.setAttribute) {
             var existingClasses = (" " + (element.getAttribute("class") || "") + " ").replace(/[\n\t]/g, " ");
             forEach(cssClasses.split(" "), function(cssClass) {
-                cssClass = trim(cssClass), -1 === existingClasses.indexOf(" " + cssClass + " ") && (existingClasses += cssClass + " ");
+                cssClass = trim(cssClass), existingClasses.indexOf(" " + cssClass + " ") === -1 && (existingClasses += cssClass + " ");
             }), element.setAttribute("class", trim(existingClasses));
         }
     }
@@ -2083,7 +2083,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
     function jqLiteInheritedData(element, name, value) {
         9 == element.nodeType && (element = element.documentElement);
         for (var names = isArray(name) ? name : [ name ]; element; ) {
-            for (var i = 0, ii = names.length; ii > i; i++) if ((value = jqLite.data(element, names[i])) !== undefined) return value;
+            for (var i = 0, ii = names.length; i < ii; i++) if ((value = jqLite.data(element, names[i])) !== undefined) return value;
             element = element.parentNode || 11 === element.nodeType && element.host;
         }
     }
@@ -2113,7 +2113,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             var eventHandlersCopy = shallowCopy(events[type || event.type] || []);
             forEach(eventHandlersCopy, function(fn) {
                 fn.call(element, event);
-            }), 8 >= msie ? (event.preventDefault = null, event.stopPropagation = null, event.isDefaultPrevented = null) : (delete event.preventDefault, 
+            }), msie <= 8 ? (event.preventDefault = null, event.stopPropagation = null, event.isDefaultPrevented = null) : (delete event.preventDefault, 
             delete event.stopPropagation, delete event.isDefaultPrevented);
         };
         return eventHandler.elem = element, eventHandler;
@@ -2185,12 +2185,12 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                     loadedModules.put(module, !0);
                     try {
                         if (isString(module)) for (moduleFn = angularModule(module), runBlocks = runBlocks.concat(loadModules(moduleFn.requires)).concat(moduleFn._runBlocks), 
-                        invokeQueue = moduleFn._invokeQueue, i = 0, ii = invokeQueue.length; ii > i; i++) {
+                        invokeQueue = moduleFn._invokeQueue, i = 0, ii = invokeQueue.length; i < ii; i++) {
                             var invokeArgs = invokeQueue[i], provider = providerInjector.get(invokeArgs[0]);
                             provider[invokeArgs[1]].apply(provider, invokeArgs[2]);
                         } else isFunction(module) ? runBlocks.push(providerInjector.invoke(module)) : isArray(module) ? runBlocks.push(providerInjector.invoke(module)) : assertArgFn(module, "module");
                     } catch (e) {
-                        throw isArray(module) && (module = module[module.length - 1]), e.message && e.stack && -1 == e.stack.indexOf(e.message) && (e = e.message + "\n" + e.stack), 
+                        throw isArray(module) && (module = module[module.length - 1]), e.message && e.stack && e.stack.indexOf(e.message) == -1 && (e = e.message + "\n" + e.stack), 
                         $injectorMinErr("modulerr", "Failed to instantiate module {0} due to:\n{1}", module, e.stack || e.message || e);
                     }
                 }
@@ -2212,7 +2212,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             }
             function invoke(fn, self, locals) {
                 var length, i, key, args = [], $inject = annotate(fn);
-                for (i = 0, length = $inject.length; length > i; i++) {
+                for (i = 0, length = $inject.length; i < length; i++) {
                     if (key = $inject[i], "string" != typeof key) throw $injectorMinErr("itkn", "Incorrect injection token! Expected service name as string, got {0}", key);
                     args.push(locals && locals.hasOwnProperty(key) ? locals[key] : getService(key));
                 }
@@ -2233,7 +2233,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                 }
             };
         }
-        var INSTANTIATING = {}, providerSuffix = "Provider", path = [], loadedModules = new HashMap([], !0), providerCache = {
+        var INSTANTIATING = {}, providerSuffix = "Provider", path = [], loadedModules = new HashMap([], (!0)), providerCache = {
             $provide: {
                 provider: supportObject(provider),
                 factory: supportObject(factory),
@@ -2298,7 +2298,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         }
         function getHash(url) {
             var index = url.indexOf("#");
-            return -1 === index ? "" : url.substr(index + 1);
+            return index === -1 ? "" : url.substr(index + 1);
         }
         function startPoller(interval, setTimeout) {
             !function check() {
@@ -2367,8 +2367,8 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                 delete pendingDeferIds[timeoutId], completeOutstandingRequest(fn);
             }, delay || 0), pendingDeferIds[timeoutId] = !0, timeoutId;
         }, self.defer.cancel = function(deferId) {
-            return pendingDeferIds[deferId] ? (delete pendingDeferIds[deferId], clearTimeout(deferId), 
-            completeOutstandingRequest(noop), !0) : !1;
+            return !!pendingDeferIds[deferId] && (delete pendingDeferIds[deferId], clearTimeout(deferId), 
+            completeOutstandingRequest(noop), !0);
         };
     }
     function $BrowserProvider() {
@@ -2486,9 +2486,9 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                     forEach(transcludeControllers, function(instance, name) {
                         $linkNode.data("$" + name + "Controller", instance);
                     });
-                    for (var i = 0, ii = $linkNode.length; ii > i; i++) {
+                    for (var i = 0, ii = $linkNode.length; i < ii; i++) {
                         var node = $linkNode[i], nodeType = node.nodeType;
-                        (1 === nodeType || 9 === nodeType) && $linkNode.eq(i).data("$scope", scope);
+                        1 !== nodeType && 9 !== nodeType || $linkNode.eq(i).data("$scope", scope);
                     }
                     return cloneConnectFn && cloneConnectFn($linkNode, scope), compositeLinkFn && compositeLinkFn(scope, $linkNode, $linkNode, parentBoundTranscludeFn), 
                     $linkNode;
@@ -2502,8 +2502,8 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             function compileNodes(nodeList, transcludeFn, $rootElement, maxPriority, ignoreDirective, previousCompileContext) {
                 function compositeLinkFn(scope, nodeList, $rootElement, parentBoundTranscludeFn) {
                     var nodeLinkFn, childLinkFn, node, childScope, i, ii, n, childBoundTranscludeFn, nodeListLength = nodeList.length, stableNodeList = new Array(nodeListLength);
-                    for (i = 0; nodeListLength > i; i++) stableNodeList[i] = nodeList[i];
-                    for (i = 0, n = 0, ii = linkFns.length; ii > i; n++) node = stableNodeList[n], nodeLinkFn = linkFns[i++], 
+                    for (i = 0; i < nodeListLength; i++) stableNodeList[i] = nodeList[i];
+                    for (i = 0, n = 0, ii = linkFns.length; i < ii; n++) node = stableNodeList[n], nodeLinkFn = linkFns[i++], 
                     childLinkFn = linkFns[i++], nodeLinkFn ? (nodeLinkFn.scope ? (childScope = scope.$new(), 
                     jqLite.data(node, "$scope", childScope)) : childScope = scope, childBoundTranscludeFn = nodeLinkFn.transcludeOnThisElement ? createBoundTranscludeFn(scope, nodeLinkFn.transclude, parentBoundTranscludeFn) : !nodeLinkFn.templateOnThisElement && parentBoundTranscludeFn ? parentBoundTranscludeFn : !parentBoundTranscludeFn && transcludeFn ? createBoundTranscludeFn(scope, transcludeFn) : null, 
                     nodeLinkFn(childLinkFn, childScope, node, $rootElement, childBoundTranscludeFn)) : childLinkFn && childLinkFn(scope, node.childNodes, undefined, parentBoundTranscludeFn);
@@ -2533,7 +2533,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                 switch (nodeType) {
                   case 1:
                     addDirective(directives, directiveNormalize(nodeName_(node).toLowerCase()), "E", maxPriority, ignoreDirective);
-                    for (var attr, name, nName, ngAttrName, value, isNgAttr, nAttrs = node.attributes, j = 0, jj = nAttrs && nAttrs.length; jj > j; j++) {
+                    for (var attr, name, nName, ngAttrName, value, isNgAttr, nAttrs = node.attributes, j = 0, jj = nAttrs && nAttrs.length; j < jj; j++) {
                         var attrStartName = !1, attrEndName = !1;
                         if (attr = nAttrs[j], !msie || msie >= 8 || attr.specified) {
                             name = attr.name, value = trim(attr.value), ngAttrName = directiveNormalize(name), 
@@ -2541,7 +2541,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                             var directiveNName = ngAttrName.replace(/(Start|End)$/, "");
                             ngAttrName === directiveNName + "Start" && (attrStartName = name, attrEndName = name.substr(0, name.length - 5) + "end", 
                             name = name.substr(0, name.length - 6)), nName = directiveNormalize(name.toLowerCase()), 
-                            attrsMap[nName] = name, (isNgAttr || !attrs.hasOwnProperty(nName)) && (attrs[nName] = value, 
+                            attrsMap[nName] = name, !isNgAttr && attrs.hasOwnProperty(nName) || (attrs[nName] = value, 
                             getBooleanAttrName(node, nName) && (attrs[nName] = !0)), addAttrInterpolateDirective(node, directives, value, nName), 
                             addDirective(directives, nName, "A", maxPriority, ignoreDirective, attrStartName, attrEndName);
                         }
@@ -2659,7 +2659,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                         controllerInstance = $controller(controller, locals), elementControllers[directive.name] = controllerInstance, 
                         hasElementTranscludeDirective || $element.data("$" + directive.name + "Controller", controllerInstance), 
                         directive.controllerAs && (locals.$scope[directive.controllerAs] = controllerInstance);
-                    }), i = 0, ii = preLinkFns.length; ii > i; i++) try {
+                    }), i = 0, ii = preLinkFns.length; i < ii; i++) try {
                         linkFn = preLinkFns[i], linkFn(linkFn.isolateScope ? isolateScope : scope, $element, attrs, linkFn.require && getControllers(linkFn.directiveName, linkFn.require, $element, elementControllers), transcludeFn);
                     } catch (e) {
                         $exceptionHandler(e, startingTag($element));
@@ -2674,7 +2674,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                     }
                 }
                 previousCompileContext = previousCompileContext || {};
-                for (var newScopeDirective, directive, directiveName, $template, linkFn, directiveValue, terminalPriority = -Number.MAX_VALUE, controllerDirectives = previousCompileContext.controllerDirectives, newIsolateScopeDirective = previousCompileContext.newIsolateScopeDirective, templateDirective = previousCompileContext.templateDirective, nonTlbTranscludeDirective = previousCompileContext.nonTlbTranscludeDirective, hasTranscludeDirective = !1, hasTemplate = !1, hasElementTranscludeDirective = previousCompileContext.hasElementTranscludeDirective, $compileNode = templateAttrs.$$element = jqLite(compileNode), replaceDirective = originalReplaceDirective, childTranscludeFn = transcludeFn, i = 0, ii = directives.length; ii > i; i++) {
+                for (var newScopeDirective, directive, directiveName, $template, linkFn, directiveValue, terminalPriority = -Number.MAX_VALUE, controllerDirectives = previousCompileContext.controllerDirectives, newIsolateScopeDirective = previousCompileContext.newIsolateScopeDirective, templateDirective = previousCompileContext.templateDirective, nonTlbTranscludeDirective = previousCompileContext.nonTlbTranscludeDirective, hasTranscludeDirective = !1, hasTemplate = !1, hasElementTranscludeDirective = previousCompileContext.hasElementTranscludeDirective, $compileNode = templateAttrs.$$element = jqLite(compileNode), replaceDirective = originalReplaceDirective, childTranscludeFn = transcludeFn, i = 0, ii = directives.length; i < ii; i++) {
                     directive = directives[i];
                     var attrStart = directive.$$start, attrEnd = directive.$$end;
                     if (attrStart && ($compileNode = groupScan(compileNode, attrStart, attrEnd)), $template = undefined, 
@@ -2725,15 +2725,15 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                 nodeLinkFn;
             }
             function markDirectivesAsIsolate(directives) {
-                for (var j = 0, jj = directives.length; jj > j; j++) directives[j] = inherit(directives[j], {
+                for (var j = 0, jj = directives.length; j < jj; j++) directives[j] = inherit(directives[j], {
                     $$isolateScope: !0
                 });
             }
             function addDirective(tDirectives, name, location, maxPriority, ignoreDirective, startAttrName, endAttrName) {
                 if (name === ignoreDirective) return null;
                 var match = null;
-                if (hasDirectives.hasOwnProperty(name)) for (var directive, directives = $injector.get(name + Suffix), i = 0, ii = directives.length; ii > i; i++) try {
-                    directive = directives[i], (maxPriority === undefined || maxPriority > directive.priority) && -1 != directive.restrict.indexOf(location) && (startAttrName && (directive = inherit(directive, {
+                if (hasDirectives.hasOwnProperty(name)) for (var directive, directives = $injector.get(name + Suffix), i = 0, ii = directives.length; i < ii; i++) try {
+                    directive = directives[i], (maxPriority === undefined || maxPriority > directive.priority) && directive.restrict.indexOf(location) != -1 && (startAttrName && (directive = inherit(directive, {
                         $$start: startAttrName,
                         $$end: endAttrName
                     })), tDirectives.push(directive), match = directive);
@@ -2748,7 +2748,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                     "$" != key.charAt(0) && (src[key] && src[key] !== value && (value += ("style" === key ? ";" : " ") + src[key]), 
                     dst.$set(key, value, !0, srcAttr[key]));
                 }), forEach(src, function(value, key) {
-                    "class" == key ? (safeAddClass($element, value), dst["class"] = (dst["class"] ? dst["class"] + " " : "") + value) : "style" == key ? ($element.attr("style", $element.attr("style") + ";" + value), 
+                    "class" == key ? (safeAddClass($element, value), dst.class = (dst.class ? dst.class + " " : "") + value) : "style" == key ? ($element.attr("style", $element.attr("style") + ";" + value), 
                     dst.style = (dst.style ? dst.style + ";" : "") + value) : "$" == key.charAt(0) || dst.hasOwnProperty(key) || (dst[key] = value, 
                     dstAttr[key] = srcAttr[key]);
                 });
@@ -2848,17 +2848,17 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             }
             function replaceWith($rootElement, elementsToRemove, newNode) {
                 var i, ii, firstElementToRemove = elementsToRemove[0], removeCount = elementsToRemove.length, parent = firstElementToRemove.parentNode;
-                if ($rootElement) for (i = 0, ii = $rootElement.length; ii > i; i++) if ($rootElement[i] == firstElementToRemove) {
+                if ($rootElement) for (i = 0, ii = $rootElement.length; i < ii; i++) if ($rootElement[i] == firstElementToRemove) {
                     $rootElement[i++] = newNode;
-                    for (var j = i, j2 = j + removeCount - 1, jj = $rootElement.length; jj > j; j++, 
-                    j2++) jj > j2 ? $rootElement[j] = $rootElement[j2] : delete $rootElement[j];
+                    for (var j = i, j2 = j + removeCount - 1, jj = $rootElement.length; j < jj; j++, 
+                    j2++) j2 < jj ? $rootElement[j] = $rootElement[j2] : delete $rootElement[j];
                     $rootElement.length -= removeCount - 1;
                     break;
                 }
                 parent && parent.replaceChild(newNode, firstElementToRemove);
                 var fragment = document.createDocumentFragment();
                 fragment.appendChild(firstElementToRemove), newNode[jqLite.expando] = firstElementToRemove[jqLite.expando];
-                for (var k = 1, kk = elementsToRemove.length; kk > k; k++) {
+                for (var k = 1, kk = elementsToRemove.length; k < kk; k++) {
                     var element = elementsToRemove[k];
                     jqLite(element).remove(), fragment.appendChild(element), delete elementsToRemove[k];
                 }
@@ -2972,7 +2972,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         }), data);
     }
     function isSuccess(status) {
-        return status >= 200 && 300 > status;
+        return 200 <= status && status < 300;
     }
     function $HttpProvider() {
         var JSON_START = /^\s*(\[|\{[^\{])/, JSON_END = /[\}\]]\s*$/, PROTECTION_PREFIX = /^\)\]\}',?\n/, CONTENT_TYPE_APPLICATION_JSON = {
@@ -3088,7 +3088,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                 }
                 function removePendingReq() {
                     var idx = indexOf($http.pendingRequests, config);
-                    -1 !== idx && $http.pendingRequests.splice(idx, 1);
+                    idx !== -1 && $http.pendingRequests.splice(idx, 1);
                 }
                 var cache, cachedResp, deferred = $q.defer(), promise = deferred.promise, url = buildUrl(config.url, config.params);
                 if ($http.pendingRequests.push(config), promise.then(removePendingReq, removePendingReq), 
@@ -3113,7 +3113,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                     forEach(value, function(v) {
                         isObject(v) && (v = isDate(v) ? v.toISOString() : toJson(v)), parts.push(encodeUriQuery(key) + "=" + encodeUriQuery(v));
                     }));
-                }), parts.length > 0 && (url += (-1 == url.indexOf("?") ? "?" : "&") + parts.join("&")), 
+                }), parts.length > 0 && (url += (url.indexOf("?") == -1 ? "?" : "&") + parts.join("&")), 
                 url;
             }
             var defaultCache = $cacheFactory("$http"), reversedInterceptors = [];
@@ -3134,7 +3134,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         } ];
     }
     function createXhr(method) {
-        if (8 >= msie && (!method.match(/^(get|post|head|put|delete|options)$/i) || !window.XMLHttpRequest)) return new window.ActiveXObject("Microsoft.XMLHTTP");
+        if (msie <= 8 && (!method.match(/^(get|post|head|put|delete|options)$/i) || !window.XMLHttpRequest)) return new window.ActiveXObject("Microsoft.XMLHTTP");
         if (window.XMLHttpRequest) return new window.XMLHttpRequest();
         throw minErr("$httpBackend")("noxhr", "This browser does not support XMLHttpRequest.");
     }
@@ -3154,7 +3154,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                     type: "error"
                 }), text = event.type, status = "error" === event.type ? 404 : 200), done && done(status, text);
             }, addEventListenerFn(script, "load", callback), addEventListenerFn(script, "error", callback), 
-            8 >= msie && (script.onreadystatechange = function() {
+            msie <= 8 && (script.onreadystatechange = function() {
                 isString(script.readyState) && /loaded|complete/.test(script.readyState) && (script.onreadystatechange = null, 
                 callback({
                     type: "load"
@@ -3188,7 +3188,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                     if (xhr && 4 == xhr.readyState) {
                         var responseHeaders = null, response = null, statusText = "";
                         status !== ABORTED && (responseHeaders = xhr.getAllResponseHeaders(), response = "response" in xhr ? xhr.response : xhr.responseText), 
-                        status === ABORTED && 10 > msie || (statusText = xhr.statusText), completeRequest(callback, status || xhr.status, response, responseHeaders, statusText);
+                        status === ABORTED && msie < 10 || (statusText = xhr.statusText), completeRequest(callback, status || xhr.status, response, responseHeaders, statusText);
                     }
                 }, withCredentials && (xhr.withCredentials = !0), responseType) try {
                     xhr.responseType = responseType;
@@ -3208,14 +3208,14 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             return value ? (endSymbol = value, this) : endSymbol;
         }, this.$get = [ "$parse", "$exceptionHandler", "$sce", function($parse, $exceptionHandler, $sce) {
             function $interpolate(text, mustHaveExpression, trustedContext) {
-                for (var startIndex, endIndex, fn, exp, index = 0, parts = [], length = text.length, hasInterpolation = !1, concat = []; length > index; ) -1 != (startIndex = text.indexOf(startSymbol, index)) && -1 != (endIndex = text.indexOf(endSymbol, startIndex + startSymbolLength)) ? (index != startIndex && parts.push(text.substring(index, startIndex)), 
+                for (var startIndex, endIndex, fn, exp, index = 0, parts = [], length = text.length, hasInterpolation = !1, concat = []; index < length; ) (startIndex = text.indexOf(startSymbol, index)) != -1 && (endIndex = text.indexOf(endSymbol, startIndex + startSymbolLength)) != -1 ? (index != startIndex && parts.push(text.substring(index, startIndex)), 
                 parts.push(fn = $parse(exp = text.substring(startIndex + startSymbolLength, endIndex))), 
                 fn.exp = exp, index = endIndex + endSymbolLength, hasInterpolation = !0) : (index != length && parts.push(text.substring(index)), 
                 index = length);
                 if ((length = parts.length) || (parts.push(""), length = 1), trustedContext && parts.length > 1) throw $interpolateMinErr("noconcat", "Error while interpolating: {0}\nStrict Contextual Escaping disallows interpolations that concatenate multiple expressions when a trusted value is required.  See http://docs.angularjs.org/api/ng.$sce", text);
-                return !mustHaveExpression || hasInterpolation ? (concat.length = length, fn = function(context) {
+                if (!mustHaveExpression || hasInterpolation) return concat.length = length, fn = function(context) {
                     try {
-                        for (var part, i = 0, ii = length; ii > i; i++) {
+                        for (var part, i = 0, ii = length; i < ii; i++) {
                             if ("function" == typeof (part = parts[i])) if (part = part(context), part = trustedContext ? $sce.getTrusted(trustedContext, part) : $sce.valueOf(part), 
                             null == part) part = ""; else switch (typeof part) {
                               case "string":
@@ -3235,7 +3235,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                         var newErr = $interpolateMinErr("interr", "Can't interpolate: {0}\n{1}", text, err.toString());
                         $exceptionHandler(newErr);
                     }
-                }, fn.exp = text, fn.parts = parts, fn) : void 0;
+                }, fn.exp = text, fn.parts = parts, fn;
             }
             var startSymbolLength = startSymbol.length, endSymbolLength = endSymbol.length;
             return $interpolate.startSymbol = function() {
@@ -3256,9 +3256,9 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             }
             var intervals = {};
             return interval.cancel = function(promise) {
-                return promise && promise.$$intervalId in intervals ? (intervals[promise.$$intervalId].reject("canceled"), 
+                return !!(promise && promise.$$intervalId in intervals) && (intervals[promise.$$intervalId].reject("canceled"), 
                 $window.clearInterval(promise.$$intervalId), delete intervals[promise.$$intervalId], 
-                !0) : !1;
+                !0);
             }, interval;
         } ];
     }
@@ -3299,7 +3299,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                     SHORTDAY: "Sun,Mon,Tue,Wed,Thu,Fri,Sat".split(","),
                     AMPMS: [ "AM", "PM" ],
                     medium: "MMM d, y h:mm:ss a",
-                    "short": "M/d/yy h:mm a",
+                    short: "M/d/yy h:mm a",
                     fullDate: "EEEE, MMMM d, y",
                     longDate: "MMMM d, y",
                     mediumDate: "MMM d, y",
@@ -3331,11 +3331,11 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         locationObj.$$path && "/" != locationObj.$$path.charAt(0) && (locationObj.$$path = "/" + locationObj.$$path);
     }
     function beginsWith(begin, whole) {
-        return 0 === whole.indexOf(begin) ? whole.substr(begin.length) : void 0;
+        if (0 === whole.indexOf(begin)) return whole.substr(begin.length);
     }
     function stripHash(url) {
         var index = url.indexOf("#");
-        return -1 == index ? url : url.substr(0, index);
+        return index == -1 ? url : url.substr(0, index);
     }
     function trimEmptyHash(url) {
         return url.replace(/(#.+)|#$/, "$1");
@@ -3379,7 +3379,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             var search = toKeyValue(this.$$search), hash = this.$$hash ? "#" + encodeUriSegment(this.$$hash) : "";
             this.$$url = encodePath(this.$$path) + (search ? "?" + search : "") + hash, this.$$absUrl = appBase + (this.$$url ? hashPrefix + this.$$url : "");
         }, this.$$parseLinkUrl = function(url, relHref) {
-            return stripHash(appBase) == stripHash(url) ? (this.$$parse(url), !0) : !1;
+            return stripHash(appBase) == stripHash(url) && (this.$$parse(url), !0);
         };
     }
     function LocationHashbangInHtml5Url(appBase, hashPrefix) {
@@ -3451,7 +3451,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             return isDefined(flag) ? (debug = flag, this) : debug;
         }, this.$get = [ "$window", function($window) {
             function formatError(arg) {
-                return arg instanceof Error && (arg.stack ? arg = arg.message && -1 === arg.stack.indexOf(arg.message) ? "Error: " + arg.message + "\n" + arg.stack : arg.stack : arg.sourceURL && (arg = arg.message + "\n" + arg.sourceURL + ":" + arg.line)), 
+                return arg instanceof Error && (arg.stack ? arg = arg.message && arg.stack.indexOf(arg.message) === -1 ? "Error: " + arg.message + "\n" + arg.stack : arg.stack : arg.sourceURL && (arg = arg.message + "\n" + arg.sourceURL + ":" + arg.line)), 
                 arg;
             }
             function consoleLog(type) {
@@ -3567,10 +3567,10 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         var expensiveChecks = options.expensiveChecks, getterFnCache = expensiveChecks ? getterFnCacheExpensive : getterFnCacheDefault;
         if (getterFnCache.hasOwnProperty(path)) return getterFnCache[path];
         var fn, pathKeys = path.split("."), pathKeysLength = pathKeys.length;
-        if (options.csp) fn = 6 > pathKeysLength ? cspSafeGetterFn(pathKeys[0], pathKeys[1], pathKeys[2], pathKeys[3], pathKeys[4], fullExp, options) : function(scope, locals) {
+        if (options.csp) fn = pathKeysLength < 6 ? cspSafeGetterFn(pathKeys[0], pathKeys[1], pathKeys[2], pathKeys[3], pathKeys[4], fullExp, options) : function(scope, locals) {
             var val, i = 0;
             do val = cspSafeGetterFn(pathKeys[i++], pathKeys[i++], pathKeys[i++], pathKeys[i++], pathKeys[i++], fullExp, options)(scope, locals), 
-            locals = undefined, scope = val; while (pathKeysLength > i);
+            locals = undefined, scope = val; while (i < pathKeysLength);
             return val;
         }; else {
             var code = "var p;\n";
@@ -3660,7 +3660,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                     if (pending) {
                         var callbacks = pending;
                         pending = undefined, value = ref(val), callbacks.length && nextTick(function() {
-                            for (var callback, i = 0, ii = callbacks.length; ii > i; i++) callback = callbacks[i], 
+                            for (var callback, i = 0, ii = callbacks.length; i < ii; i++) callback = callbacks[i], 
                             value.then(callback[0], callback[1], callback[2]);
                         });
                     }
@@ -3672,7 +3672,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                     if (pending) {
                         var callbacks = pending;
                         pending.length && nextTick(function() {
-                            for (var callback, i = 0, ii = callbacks.length; ii > i; i++) callback = callbacks[i], 
+                            for (var callback, i = 0, ii = callbacks.length; i < ii; i++) callback = callbacks[i], 
                             callback[2](progress);
                         });
                     }
@@ -3701,10 +3701,10 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                         return pending ? pending.push([ wrappedCallback, wrappedErrback, wrappedProgressback ]) : value.then(wrappedCallback, wrappedErrback, wrappedProgressback), 
                         result.promise;
                     },
-                    "catch": function(callback) {
+                    catch: function(callback) {
                         return this.then(null, callback);
                     },
-                    "finally": function(callback) {
+                    finally: function(callback) {
                         function makePromise(value, resolved) {
                             var result = defer();
                             return resolved ? result.resolve(value) : result.reject(value), result.promise;
@@ -3815,8 +3815,8 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         }, this.$get = [ "$injector", "$exceptionHandler", "$parse", "$browser", function($injector, $exceptionHandler, $parse, $browser) {
             function Scope() {
                 this.$id = nextUid(), this.$$phase = this.$parent = this.$$watchers = this.$$nextSibling = this.$$prevSibling = this.$$childHead = this.$$childTail = null, 
-                this["this"] = this.$root = this, this.$$destroyed = !1, this.$$asyncQueue = [], 
-                this.$$postDigestQueue = [], this.$$listeners = {}, this.$$listenerCount = {}, this.$$isolateBindings = {};
+                this.this = this.$root = this, this.$$destroyed = !1, this.$$asyncQueue = [], this.$$postDigestQueue = [], 
+                this.$$listeners = {}, this.$$listenerCount = {}, this.$$isolateBindings = {};
             }
             function beginPhase(phase) {
                 if ($rootScope.$$phase) throw $rootScopeMinErr("inprog", "{0} already in progress", $rootScope.$$phase);
@@ -3842,7 +3842,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                         this.$$watchers = this.$$nextSibling = this.$$childHead = this.$$childTail = null, 
                         this.$$listeners = {}, this.$$listenerCount = {}, this.$id = nextUid(), this.$$childScopeClass = null;
                     }, this.$$childScopeClass.prototype = this), child = new this.$$childScopeClass()), 
-                    child["this"] = child, child.$parent = this, child.$$prevSibling = this.$$childTail, 
+                    child.this = child, child.$parent = this, child.$$prevSibling = this.$$childTail, 
                     this.$$childHead ? (this.$$childTail.$$nextSibling = child, this.$$childTail = child) : this.$$childHead = this.$$childTail = child, 
                     child;
                 },
@@ -3878,7 +3878,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                             oldValue !== internalArray && (oldValue = internalArray, oldLength = oldValue.length = 0, 
                             changeDetected++), newLength = newValue.length, oldLength !== newLength && (changeDetected++, 
                             oldValue.length = oldLength = newLength);
-                            for (var i = 0; newLength > i; i++) bothNaN = oldValue[i] !== oldValue[i] && newValue[i] !== newValue[i], 
+                            for (var i = 0; i < newLength; i++) bothNaN = oldValue[i] !== oldValue[i] && newValue[i] !== newValue[i], 
                             bothNaN || oldValue[i] === newValue[i] || (changeDetected++, oldValue[i] = newValue[i]);
                         } else {
                             oldValue !== internalObject && (oldValue = internalObject = {}, oldLength = 0, changeDetected++), 
@@ -3927,7 +3927,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                                         break traverseScopesLoop;
                                     }
                                 } else dirty = !0, lastDirtyWatch = watch, watch.last = watch.eq ? copy(value, null) : value, 
-                                watch.fn(value, last === initWatchVal ? value : last, current), 5 > ttl && (logIdx = 4 - ttl, 
+                                watch.fn(value, last === initWatchVal ? value : last, current), ttl < 5 && (logIdx = 4 - ttl, 
                                 watchLog[logIdx] || (watchLog[logIdx] = []), logMsg = isFunction(watch.exp) ? "fn: " + (watch.exp.name || watch.exp.toString()) : watch.exp, 
                                 logMsg += "; newVal: " + toJson(value) + "; oldVal: " + toJson(last), watchLog[logIdx].push(logMsg));
                             } catch (e) {
@@ -3992,7 +3992,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                     var self = this;
                     return function() {
                         var indexOfListener = indexOf(namedListeners, listener);
-                        -1 !== indexOfListener && (namedListeners[indexOfListener] = null, decrementListenerCount(self, 1, name));
+                        indexOfListener !== -1 && (namedListeners[indexOfListener] = null, decrementListenerCount(self, 1, name));
                     };
                 },
                 $emit: function(name, args) {
@@ -4009,7 +4009,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                     }, listenerArgs = concat([ event ], arguments, 1);
                     do {
                         for (namedListeners = scope.$$listeners[name] || empty, event.currentScope = scope, 
-                        i = 0, length = namedListeners.length; length > i; i++) if (namedListeners[i]) try {
+                        i = 0, length = namedListeners.length; i < length; i++) if (namedListeners[i]) try {
                             namedListeners[i].apply(null, listenerArgs);
                         } catch (e) {
                             $exceptionHandler(e);
@@ -4029,7 +4029,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                         defaultPrevented: !1
                     }, listenerArgs = concat([ event ], arguments, 1); current = next; ) {
                         for (event.currentScope = current, listeners = current.$$listeners[name] || [], 
-                        i = 0, length = listeners.length; length > i; i++) if (listeners[i]) try {
+                        i = 0, length = listeners.length; i < length; i++) if (listeners[i]) try {
                             listeners[i].apply(null, listenerArgs);
                         } catch (e) {
                             $exceptionHandler(e);
@@ -4088,11 +4088,11 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             }
             function isResourceUrlAllowedByPolicy(url) {
                 var i, n, parsedUrl = urlResolve(url.toString()), allowed = !1;
-                for (i = 0, n = resourceUrlWhitelist.length; n > i; i++) if (matchUrl(resourceUrlWhitelist[i], parsedUrl)) {
+                for (i = 0, n = resourceUrlWhitelist.length; i < n; i++) if (matchUrl(resourceUrlWhitelist[i], parsedUrl)) {
                     allowed = !0;
                     break;
                 }
-                if (allowed) for (i = 0, n = resourceUrlBlacklist.length; n > i; i++) if (matchUrl(resourceUrlBlacklist[i], parsedUrl)) {
+                if (allowed) for (i = 0, n = resourceUrlBlacklist.length; i < n; i++) if (matchUrl(resourceUrlBlacklist[i], parsedUrl)) {
                     allowed = !1;
                     break;
                 }
@@ -4191,7 +4191,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                 animations = isString(document.body.style.webkitAnimation));
             }
             return {
-                history: !(!$window.history || !$window.history.pushState || 4 > android || boxee),
+                history: !(!$window.history || !$window.history.pushState || android < 4 || boxee),
                 hashchange: "onhashchange" in $window && (!documentMode || documentMode > 7),
                 hasEvent: function(event) {
                     if ("input" == event && 9 == msie) return !1;
@@ -4228,8 +4228,8 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             }
             var deferreds = {};
             return timeout.cancel = function(promise) {
-                return promise && promise.$$timeoutId in deferreds ? (deferreds[promise.$$timeoutId].reject("canceled"), 
-                delete deferreds[promise.$$timeoutId], $browser.defer.cancel(promise.$$timeoutId)) : !1;
+                return !!(promise && promise.$$timeoutId in deferreds) && (deferreds[promise.$$timeoutId].reject("canceled"), 
+                delete deferreds[promise.$$timeoutId], $browser.defer.cancel(promise.$$timeoutId));
             }, timeout;
         } ];
     }
@@ -4359,15 +4359,15 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
     }
     function formatNumber(number, pattern, groupSep, decimalSep, fractionSize) {
         if (null == number || !isFinite(number) || isObject(number)) return "";
-        var isNegative = 0 > number;
+        var isNegative = number < 0;
         number = Math.abs(number);
         var numStr = number + "", formatedText = "", parts = [], hasExponent = !1;
-        if (-1 !== numStr.indexOf("e")) {
+        if (numStr.indexOf("e") !== -1) {
             var match = numStr.match(/([\d\.]+)e(-?)(\d+)/);
             match && "-" == match[2] && match[3] > fractionSize + 1 ? (numStr = "0", number = 0) : (formatedText = numStr, 
             hasExponent = !0);
         }
-        if (hasExponent) fractionSize > 0 && number > -1 && 1 > number && (formatedText = number.toFixed(fractionSize)); else {
+        if (hasExponent) fractionSize > 0 && number > -1 && number < 1 && (formatedText = number.toFixed(fractionSize)); else {
             var fractionLen = (numStr.split(DECIMAL_SEP)[1] || "").length;
             isUndefined(fractionSize) && (fractionSize = Math.min(Math.max(pattern.minFrac, fractionLen), pattern.maxFrac)), 
             number = +(Math.round(+(number.toString() + "e" + fractionSize)).toString() + "e" + -fractionSize), 
@@ -4375,7 +4375,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             var fraction = ("" + number).split(DECIMAL_SEP), whole = fraction[0];
             fraction = fraction[1] || "";
             var i, pos = 0, lgroup = pattern.lgSize, group = pattern.gSize;
-            if (whole.length >= lgroup + group) for (pos = whole.length - lgroup, i = 0; pos > i; i++) (pos - i) % group === 0 && 0 !== i && (formatedText += groupSep), 
+            if (whole.length >= lgroup + group) for (pos = whole.length - lgroup, i = 0; i < pos; i++) (pos - i) % group === 0 && 0 !== i && (formatedText += groupSep), 
             formatedText += whole.charAt(i);
             for (i = pos; i < whole.length; i++) (whole.length - i) % lgroup === 0 && 0 !== i && (formatedText += groupSep), 
             formatedText += whole.charAt(i);
@@ -4387,13 +4387,13 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
     }
     function padNumber(num, digits, trim) {
         var neg = "";
-        for (0 > num && (neg = "-", num = -num), num = "" + num; num.length < digits; ) num = "0" + num;
+        for (num < 0 && (neg = "-", num = -num), num = "" + num; num.length < digits; ) num = "0" + num;
         return trim && (num = num.substr(num.length - digits)), neg + num;
     }
     function dateGetter(name, size, offset, trim) {
         return offset = offset || 0, function(date) {
             var value = date["get" + name]();
-            return (offset > 0 || value > -offset) && (value += offset), 0 === value && -12 == offset && (value = 12), 
+            return (offset > 0 || value > -offset) && (value += offset), 0 === value && offset == -12 && (value = 12), 
             padNumber(value, size, trim);
         };
     }
@@ -4463,13 +4463,13 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             function compare(v1, v2) {
                 var t1 = typeof v1, t2 = typeof v2;
                 return t1 == t2 ? (isDate(v1) && isDate(v2) && (v1 = v1.valueOf(), v2 = v2.valueOf()), 
-                "string" == t1 && (v1 = v1.toLowerCase(), v2 = v2.toLowerCase()), v1 === v2 ? 0 : v2 > v1 ? -1 : 1) : t2 > t1 ? -1 : 1;
+                "string" == t1 && (v1 = v1.toLowerCase(), v2 = v2.toLowerCase()), v1 === v2 ? 0 : v1 < v2 ? -1 : 1) : t1 < t2 ? -1 : 1;
             }
             return isArrayLike(array) ? (sortPredicate = isArray(sortPredicate) ? sortPredicate : [ sortPredicate ], 
             0 === sortPredicate.length && (sortPredicate = [ "+" ]), sortPredicate = map(sortPredicate, function(predicate) {
                 var descending = !1, get = predicate || identity;
                 if (isString(predicate)) {
-                    if (("+" == predicate.charAt(0) || "-" == predicate.charAt(0)) && (descending = "-" == predicate.charAt(0), 
+                    if ("+" != predicate.charAt(0) && "-" != predicate.charAt(0) || (descending = "-" == predicate.charAt(0), 
                     predicate = predicate.substring(1)), "" === predicate) return reverseComparator(function(a, b) {
                         return compare(a, b);
                     }, descending);
@@ -4573,7 +4573,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             };
             element.on("keydown", function(event) {
                 var key = event.keyCode;
-                91 === key || key > 15 && 19 > key || key >= 37 && 40 >= key || deferListener();
+                91 === key || 15 < key && key < 19 || 37 <= key && key <= 40 || deferListener();
             }), $sniffer.hasEvent("paste") && element.on("paste cut", deferListener);
         }
         element.on("change", listener), ctrl.$render = function() {
@@ -4624,7 +4624,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         if (attr.max) {
             var maxValidator = function(value) {
                 var max = parseFloat(attr.max);
-                return validate(ctrl, "max", ctrl.$isEmpty(value) || max >= value, value);
+                return validate(ctrl, "max", ctrl.$isEmpty(value) || value <= max, value);
             };
             ctrl.$parsers.push(maxValidator), ctrl.$formatters.push(maxValidator);
         }
@@ -4753,7 +4753,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         }) : s;
     }, manualUppercase = function(s) {
         return isString(s) ? s.replace(/[a-z]/g, function(ch) {
-            return String.fromCharCode(-33 & ch.charCodeAt(0));
+            return String.fromCharCode(ch.charCodeAt(0) & -33);
         }) : s;
     };
     "i" !== "I".toLowerCase() && (lowercase = manualLowercase, uppercase = manualUppercase);
@@ -4771,7 +4771,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             return isString(value) ? value.replace(/^\s\s*/, "").replace(/\s\s*$/, "") : value;
         };
     }();
-    nodeName_ = 9 > msie ? function(element) {
+    nodeName_ = msie < 9 ? function(element) {
         return element = element.nodeName ? element : element[0], element.scopeName && "HTML" != element.scopeName ? uppercase(element.scopeName + ":" + element.nodeName) : element.nodeName;
     } : function(element) {
         return element.nodeName ? element.nodeName : element[0].nodeName;
@@ -4867,8 +4867,8 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         css: function(element, name, value) {
             if (name = camelCase(name), !isDefined(value)) {
                 var val;
-                return 8 >= msie && (val = element.currentStyle && element.currentStyle[name], "" === val && (val = "auto")), 
-                val = val || element.style[name], 8 >= msie && (val = "" === val ? undefined : val), 
+                return msie <= 8 && (val = element.currentStyle && element.currentStyle[name], "" === val && (val = "auto")), 
+                val = val || element.style[name], msie <= 8 && (val = "" === val ? undefined : val), 
                 val;
             }
             element.style[name] = value;
@@ -4893,7 +4893,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                 return isUndefined(value) ? textProp ? element[textProp] : "" : void (element[textProp] = value);
             }
             var NODE_TYPE_TEXT_PROPERTY = [];
-            return 9 > msie ? (NODE_TYPE_TEXT_PROPERTY[1] = "innerText", NODE_TYPE_TEXT_PROPERTY[3] = "nodeValue") : NODE_TYPE_TEXT_PROPERTY[1] = NODE_TYPE_TEXT_PROPERTY[3] = "textContent", 
+            return msie < 9 ? (NODE_TYPE_TEXT_PROPERTY[1] = "innerText", NODE_TYPE_TEXT_PROPERTY[3] = "nodeValue") : NODE_TYPE_TEXT_PROPERTY[1] = NODE_TYPE_TEXT_PROPERTY[3] = "textContent", 
             getText.$dv = "", getText;
         }(),
         val: function(element, value) {
@@ -4919,16 +4919,16 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             var i, key, nodeCount = this.length;
             if (fn !== jqLiteEmpty && (2 == fn.length && fn !== jqLiteHasClass && fn !== jqLiteController ? arg1 : arg2) === undefined) {
                 if (isObject(arg1)) {
-                    for (i = 0; nodeCount > i; i++) if (fn === jqLiteData) fn(this[i], arg1); else for (key in arg1) fn(this[i], key, arg1[key]);
+                    for (i = 0; i < nodeCount; i++) if (fn === jqLiteData) fn(this[i], arg1); else for (key in arg1) fn(this[i], key, arg1[key]);
                     return this;
                 }
-                for (var value = fn.$dv, jj = value === undefined ? Math.min(nodeCount, 1) : nodeCount, j = 0; jj > j; j++) {
+                for (var value = fn.$dv, jj = value === undefined ? Math.min(nodeCount, 1) : nodeCount, j = 0; j < jj; j++) {
                     var nodeValue = fn(this[j], arg1, arg2);
                     value = value ? value + nodeValue : nodeValue;
                 }
                 return value;
             }
-            for (i = 0; nodeCount > i; i++) fn(this[i], arg1, arg2);
+            for (i = 0; i < nodeCount; i++) fn(this[i], arg1, arg2);
             return this;
         };
     }), forEach({
@@ -4956,7 +4956,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                         };
                         onFn(element, eventmap[type], function(event) {
                             var target = this, related = event.relatedTarget;
-                            (!related || related !== target && !contains(target, related)) && handle(event, type);
+                            related && (related === target || contains(target, related)) || handle(event, type);
                         });
                     } else addEventListenerFn(element, type, handle), events[type] = [];
                     eventFns = events[type];
@@ -4988,7 +4988,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         },
         append: function(element, node) {
             forEach(new JQLite(node), function(child) {
-                (1 === element.nodeType || 11 === element.nodeType) && element.appendChild(child);
+                1 !== element.nodeType && 11 !== element.nodeType || element.appendChild(child);
             });
         },
         prepend: function(element, node) {
@@ -5166,13 +5166,13 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         }
     };
     var promiseWarning, $parseMinErr = minErr("$parse"), promiseWarningCache = {}, CALL = Function.prototype.call, APPLY = Function.prototype.apply, BIND = Function.prototype.bind, OPERATORS = {
-        "null": function() {
+        null: function() {
             return null;
         },
-        "true": function() {
+        true: function() {
             return !0;
         },
-        "false": function() {
+        false: function() {
             return !1;
         },
         undefined: noop,
@@ -5238,8 +5238,8 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         n: "\n",
         f: "\f",
         r: "\r",
-        t: "	",
-        v: "\x0B",
+        t: "\t",
+        v: "\v",
         "'": "'",
         '"': '"'
     }, Lexer = function(options) {
@@ -5277,23 +5277,23 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             return this.tokens;
         },
         is: function(chars) {
-            return -1 !== chars.indexOf(this.ch);
+            return chars.indexOf(this.ch) !== -1;
         },
         was: function(chars) {
-            return -1 !== chars.indexOf(this.lastCh);
+            return chars.indexOf(this.lastCh) !== -1;
         },
         peek: function(i) {
             var num = i || 1;
-            return this.index + num < this.text.length ? this.text.charAt(this.index + num) : !1;
+            return this.index + num < this.text.length && this.text.charAt(this.index + num);
         },
         isNumber: function(ch) {
-            return ch >= "0" && "9" >= ch;
+            return "0" <= ch && ch <= "9";
         },
         isWhitespace: function(ch) {
-            return " " === ch || "\r" === ch || "	" === ch || "\n" === ch || "\x0B" === ch || " " === ch;
+            return " " === ch || "\r" === ch || "\t" === ch || "\n" === ch || "\v" === ch || " " === ch;
         },
         isIdent: function(ch) {
-            return ch >= "a" && "z" >= ch || ch >= "A" && "Z" >= ch || "_" === ch || "$" === ch;
+            return "a" <= ch && ch <= "z" || "A" <= ch && ch <= "Z" || "_" === ch || "$" === ch;
         },
         isExpOperator: function(ch) {
             return "-" === ch || "+" === ch || this.isNumber(ch);
@@ -5437,7 +5437,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         },
         expect: function(e1, e2, e3, e4) {
             var token = this.peek(e1, e2, e3, e4);
-            return token ? (this.tokens.shift(), token) : !1;
+            return !!token && (this.tokens.shift(), token);
         },
         consume: function(e1) {
             this.expect(e1) || this.throwError("is unexpected, expecting [" + e1 + "]", this.peek());
@@ -5658,8 +5658,8 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
     var htmlAnchorDirective = valueFn({
         restrict: "E",
         compile: function(element, attr) {
-            return 8 >= msie && (attr.href || attr.name || attr.$set("href", ""), element.append(document.createComment("IE fix"))), 
-            attr.href || attr.xlinkHref || attr.name ? void 0 : function(scope, element) {
+            if (msie <= 8 && (attr.href || attr.name || attr.$set("href", ""), element.append(document.createComment("IE fix"))), 
+            !attr.href && !attr.xlinkHref && !attr.name) return function(scope, element) {
                 var href = "[object SVGAnimatedString]" === toString.call(element.prop("href")) ? "xlink:href" : "href";
                 element.on("click", function(event) {
                     element.attr(href) || event.preventDefault();
@@ -6070,7 +6070,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                         collectionKeys.sort();
                     }
                     for (arrayLength = collectionKeys.length, length = nextBlockOrder.length = collectionKeys.length, 
-                    index = 0; length > index; index++) if (key = collection === collectionKeys ? index : collectionKeys[index], 
+                    index = 0; index < length; index++) if (key = collection === collectionKeys ? index : collectionKeys[index], 
                     value = collection[key], trackById = trackByIdFn(key, value, index), assertNotHasOwnProperty(trackById, "`track by` id"), 
                     lastBlockMap.hasOwnProperty(trackById)) block = lastBlockMap[trackById], delete lastBlockMap[trackById], 
                     nextBlockMap[trackById] = block, nextBlockOrder[index] = block; else {
@@ -6086,7 +6086,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                     forEach(elementsToRemove, function(element) {
                         element[NG_REMOVED] = !0;
                     }), block.scope.$destroy());
-                    for (index = 0, length = collectionKeys.length; length > index; index++) {
+                    for (index = 0, length = collectionKeys.length; index < length; index++) {
                         if (key = collection === collectionKeys ? index : collectionKeys[index], value = collection[key], 
                         block = nextBlockOrder[index], nextBlockOrder[index - 1] && (previousNode = getBlockEnd(nextBlockOrder[index - 1])), 
                         block.scope) {
@@ -6137,8 +6137,8 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                 var watchExpr = attr.ngSwitch || attr.on, selectedTranscludes = [], selectedElements = [], previousElements = [], selectedScopes = [];
                 scope.$watch(watchExpr, function(value) {
                     var i, ii;
-                    for (i = 0, ii = previousElements.length; ii > i; ++i) previousElements[i].remove();
-                    for (previousElements.length = 0, i = 0, ii = selectedScopes.length; ii > i; ++i) {
+                    for (i = 0, ii = previousElements.length; i < ii; ++i) previousElements[i].remove();
+                    for (previousElements.length = 0, i = 0, ii = selectedScopes.length; i < ii; ++i) {
                         var selected = selectedElements[i];
                         selectedScopes[i].$destroy(), previousElements[i] = selected, $animate.leave(selected, function() {
                             previousElements.splice(i, 1);
@@ -6269,7 +6269,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                         var optionGroupName, optionGroup, option, existingParent, existingOptions, existingOption, key, groupLength, length, groupIndex, index, selected, lastElement, element, label, optionGroups = {
                             "": []
                         }, optionGroupNames = [ "" ], modelValue = ctrl.$modelValue, values = valuesFn(scope) || [], keys = keyName ? sortedKeys(values) : values, locals = {}, selectedSet = getSelectedSet();
-                        for (index = 0; length = keys.length, length > index; index++) {
+                        for (index = 0; length = keys.length, index < length; index++) {
                             if (key = index, keyName) {
                                 if (key = keys[index], "$" === key.charAt(0)) continue;
                                 locals[keyName] = key;
@@ -6297,7 +6297,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                             id: "?",
                             label: "",
                             selected: !0
-                        })), groupIndex = 0, groupLength = optionGroupNames.length; groupLength > groupIndex; groupIndex++) {
+                        })), groupIndex = 0, groupLength = optionGroupNames.length; groupIndex < groupLength; groupIndex++) {
                             for (optionGroupName = optionGroupNames[groupIndex], optionGroup = optionGroups[optionGroupName], 
                             optionGroupsCache.length <= groupIndex ? (existingParent = {
                                 element: optGroupTemplate.clone().attr("label", optionGroupName),
@@ -6305,7 +6305,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                             }, existingOptions = [ existingParent ], optionGroupsCache.push(existingOptions), 
                             selectElement.append(existingParent.element)) : (existingOptions = optionGroupsCache[groupIndex], 
                             existingParent = existingOptions[0], existingParent.label != optionGroupName && existingParent.element.attr("label", existingParent.label = optionGroupName)), 
-                            lastElement = null, index = 0, length = optionGroup.length; length > index; index++) option = optionGroup[index], 
+                            lastElement = null, index = 0, length = optionGroup.length; index < length; index++) option = optionGroup[index], 
                             (existingOption = existingOptions[index + 1]) ? (lastElement = existingOption.element, 
                             existingOption.label !== option.label && (lastElement.text(existingOption.label = option.label), 
                             lastElement.prop("label", existingOption.label)), existingOption.id !== option.id && lastElement.val(existingOption.id = option.id), 
@@ -6334,8 +6334,8 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                         scope.$apply(function() {
                             var optionGroup, key, value, optionElement, index, groupIndex, length, groupLength, trackIndex, collection = valuesFn(scope) || [], locals = {};
                             if (multiple) {
-                                for (value = [], groupIndex = 0, groupLength = optionGroupsCache.length; groupLength > groupIndex; groupIndex++) for (optionGroup = optionGroupsCache[groupIndex], 
-                                index = 1, length = optionGroup.length; length > index; index++) if ((optionElement = optionGroup[index].element)[0].selected) {
+                                for (value = [], groupIndex = 0, groupLength = optionGroupsCache.length; groupIndex < groupLength; groupIndex++) for (optionGroup = optionGroupsCache[groupIndex], 
+                                index = 1, length = optionGroup.length; index < length; index++) if ((optionElement = optionGroup[index].element)[0].selected) {
                                     if (key = optionElement.val(), keyName && (locals[keyName] = key), trackFn) for (trackIndex = 0; trackIndex < collection.length && (locals[valueName] = collection[trackIndex], 
                                     trackFn(scope, locals) != key); trackIndex++) ; else locals[valueName] = collection[key];
                                     value.push(valueFn(scope, locals));
@@ -6353,7 +6353,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                     }), ctrl.$render = render, scope.$watchCollection(valuesFn, render), scope.$watchCollection(function() {
                         var locals = {}, values = valuesFn(scope);
                         if (values) {
-                            for (var toDisplay = new Array(values.length), i = 0, ii = values.length; ii > i; i++) locals[valueName] = values[i], 
+                            for (var toDisplay = new Array(values.length), i = 0, ii = values.length; i < ii; i++) locals[valueName] = values[i], 
                             toDisplay[i] = displayFn(scope, locals);
                             return toDisplay;
                         }
@@ -6362,7 +6362,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                     }, render);
                 }
                 if (ctrls[1]) {
-                    for (var emptyOption, selectCtrl = ctrls[0], ngModelCtrl = ctrls[1], multiple = attr.multiple, optionsExp = attr.ngOptions, nullOption = !1, optionTemplate = jqLite(document.createElement("option")), optGroupTemplate = jqLite(document.createElement("optgroup")), unknownOption = optionTemplate.clone(), i = 0, children = element.children(), ii = children.length; ii > i; i++) if ("" === children[i].value) {
+                    for (var emptyOption, selectCtrl = ctrls[0], ngModelCtrl = ctrls[1], multiple = attr.multiple, optionsExp = attr.ngOptions, nullOption = !1, optionTemplate = jqLite(document.createElement("option")), optGroupTemplate = jqLite(document.createElement("optgroup")), unknownOption = optionTemplate.clone(), i = 0, children = element.children(), ii = children.length; i < ii; i++) if ("" === children[i].value) {
                         emptyOption = nullOption = children.eq(i);
                         break;
                     }
@@ -6462,7 +6462,7 @@ function(window, angular, undefined) {
             chars = !1)) : BEGIN_TAG_REGEXP.test(html) && (match = html.match(START_TAG_REGEXP), 
             match ? (match[4] && (html = html.substring(match[0].length), match[0].replace(START_TAG_REGEXP, parseStartTag)), 
             chars = !1) : (text += "<", html = html.substring(1))), chars && (index = html.indexOf("<"), 
-            text += 0 > index ? html : html.substring(0, index), html = 0 > index ? "" : html.substring(index), 
+            text += index < 0 ? html : html.substring(0, index), html = index < 0 ? "" : html.substring(index), 
             handler.chars && handler.chars(decodeEntities(text)))), html == last) throw $sanitizeMinErr("badparse", "The sanitizer was unable to parse the following block of html: {0}", html);
             last = html;
         }
@@ -6567,7 +6567,7 @@ function(window, angular, undefined) {
         return result;
     }
     function absRound(number) {
-        return 0 > number ? Math.ceil(number) : Math.floor(number);
+        return number < 0 ? Math.ceil(number) : Math.floor(number);
     }
     function leftZeroFill(number, targetLength, forceSign) {
         for (var output = "" + Math.abs(number), sign = number >= 0; output.length < targetLength; ) output = "0" + output;
@@ -6588,7 +6588,7 @@ function(window, angular, undefined) {
     }
     function compareArrays(array1, array2, dontConvert) {
         var i, len = Math.min(array1.length, array2.length), lengthDiff = Math.abs(array1.length - array2.length), diffs = 0;
-        for (i = 0; len > i; i++) (dontConvert && array1[i] !== array2[i] || !dontConvert && toInt(array1[i]) !== toInt(array2[i])) && diffs++;
+        for (i = 0; i < len; i++) (dontConvert && array1[i] !== array2[i] || !dontConvert && toInt(array1[i]) !== toInt(array2[i])) && diffs++;
         return diffs + lengthDiff;
     }
     function normalizeUnits(units) {
@@ -6616,7 +6616,7 @@ function(window, angular, undefined) {
                 var m = moment().utc().set(setter, i);
                 return method.call(moment.fn._lang, m, format || "");
             }, null != index) return getter(index);
-            for (i = 0; count > i; i++) results.push(getter(i));
+            for (i = 0; i < count; i++) results.push(getter(i));
             return results;
         };
     }
@@ -6636,8 +6636,8 @@ function(window, angular, undefined) {
     }
     function checkOverflow(m) {
         var overflow;
-        m._a && -2 === m._pf.overflow && (overflow = m._a[MONTH] < 0 || m._a[MONTH] > 11 ? MONTH : m._a[DATE] < 1 || m._a[DATE] > daysInMonth(m._a[YEAR], m._a[MONTH]) ? DATE : m._a[HOUR] < 0 || m._a[HOUR] > 23 ? HOUR : m._a[MINUTE] < 0 || m._a[MINUTE] > 59 ? MINUTE : m._a[SECOND] < 0 || m._a[SECOND] > 59 ? SECOND : m._a[MILLISECOND] < 0 || m._a[MILLISECOND] > 999 ? MILLISECOND : -1, 
-        m._pf._overflowDayOfYear && (YEAR > overflow || overflow > DATE) && (overflow = DATE), 
+        m._a && m._pf.overflow === -2 && (overflow = m._a[MONTH] < 0 || m._a[MONTH] > 11 ? MONTH : m._a[DATE] < 1 || m._a[DATE] > daysInMonth(m._a[YEAR], m._a[MONTH]) ? DATE : m._a[HOUR] < 0 || m._a[HOUR] > 23 ? HOUR : m._a[MINUTE] < 0 || m._a[MINUTE] > 59 ? MINUTE : m._a[SECOND] < 0 || m._a[SECOND] > 59 ? SECOND : m._a[MILLISECOND] < 0 || m._a[MILLISECOND] > 999 ? MILLISECOND : -1, 
+        m._pf._overflowDayOfYear && (overflow < YEAR || overflow > DATE) && (overflow = DATE), 
         m._pf.overflow = overflow);
     }
     function isValid(m) {
@@ -6686,10 +6686,10 @@ function(window, angular, undefined) {
     }
     function makeFormatFunction(format) {
         var i, length, array = format.match(formattingTokens);
-        for (i = 0, length = array.length; length > i; i++) formatTokenFunctions[array[i]] ? array[i] = formatTokenFunctions[array[i]] : array[i] = removeFormattingTokens(array[i]);
+        for (i = 0, length = array.length; i < length; i++) formatTokenFunctions[array[i]] ? array[i] = formatTokenFunctions[array[i]] : array[i] = removeFormattingTokens(array[i]);
         return function(mom) {
             var output = "";
-            for (i = 0; length > i; i++) output += array[i] instanceof Function ? array[i].call(mom, format) : array[i];
+            for (i = 0; i < length; i++) output += array[i] instanceof Function ? array[i].call(mom, format) : array[i];
             return output;
         };
     }
@@ -6903,8 +6903,8 @@ function(window, angular, undefined) {
             config._a[YEAR] = temp.year, config._dayOfYear = temp.dayOfYear), config._dayOfYear && (yearToUse = null == config._a[YEAR] ? currentDate[YEAR] : config._a[YEAR], 
             config._dayOfYear > daysInYear(yearToUse) && (config._pf._overflowDayOfYear = !0), 
             date = makeUTCDate(yearToUse, 0, config._dayOfYear), config._a[MONTH] = date.getUTCMonth(), 
-            config._a[DATE] = date.getUTCDate()), i = 0; 3 > i && null == config._a[i]; ++i) config._a[i] = input[i] = currentDate[i];
-            for (;7 > i; i++) config._a[i] = input[i] = null == config._a[i] ? 2 === i ? 1 : 0 : config._a[i];
+            config._a[DATE] = date.getUTCDate()), i = 0; i < 3 && null == config._a[i]; ++i) config._a[i] = input[i] = currentDate[i];
+            for (;i < 7; i++) config._a[i] = input[i] = null == config._a[i] ? 2 === i ? 1 : 0 : config._a[i];
             input[HOUR] += toInt((config._tzm || 0) / 60), input[MINUTE] += toInt((config._tzm || 0) % 60), 
             config._d = (config._useUTC ? makeUTCDate : makeDate).apply(null, input);
         }
@@ -6944,18 +6944,18 @@ function(window, angular, undefined) {
         for (i = 0; i < config._f.length; i++) currentScore = 0, tempConfig = extend({}, config), 
         tempConfig._pf = defaultParsingFlags(), tempConfig._f = config._f[i], makeDateFromStringAndFormat(tempConfig), 
         isValid(tempConfig) && (currentScore += tempConfig._pf.charsLeftOver, currentScore += 10 * tempConfig._pf.unusedTokens.length, 
-        tempConfig._pf.score = currentScore, (null == scoreToBeat || scoreToBeat > currentScore) && (scoreToBeat = currentScore, 
+        tempConfig._pf.score = currentScore, (null == scoreToBeat || currentScore < scoreToBeat) && (scoreToBeat = currentScore, 
         bestMoment = tempConfig));
         extend(config, bestMoment || tempConfig);
     }
     function makeDateFromString(config) {
         var i, l, string = config._i, match = isoRegex.exec(string);
         if (match) {
-            for (config._pf.iso = !0, i = 0, l = isoDates.length; l > i; i++) if (isoDates[i][1].exec(string)) {
+            for (config._pf.iso = !0, i = 0, l = isoDates.length; i < l; i++) if (isoDates[i][1].exec(string)) {
                 config._f = isoDates[i][0] + (match[6] || " ");
                 break;
             }
-            for (i = 0, l = isoTimes.length; l > i; i++) if (isoTimes[i][1].exec(string)) {
+            for (i = 0, l = isoTimes.length; i < l; i++) if (isoTimes[i][1].exec(string)) {
                 config._f += isoTimes[i][0];
                 break;
             }
@@ -6964,16 +6964,16 @@ function(window, angular, undefined) {
     }
     function makeDateFromInput(config) {
         var input = config._i, matched = aspNetJsonRegex.exec(input);
-        input === undefined ? config._d = new Date() : matched ? config._d = new Date(+matched[1]) : "string" == typeof input ? makeDateFromString(config) : isArray(input) ? (config._a = input.slice(0), 
-        dateFromConfig(config)) : isDate(input) ? config._d = new Date(+input) : "object" == typeof input ? dateFromObject(config) : config._d = new Date(input);
+        input === undefined ? config._d = new Date() : matched ? config._d = new Date((+matched[1])) : "string" == typeof input ? makeDateFromString(config) : isArray(input) ? (config._a = input.slice(0), 
+        dateFromConfig(config)) : isDate(input) ? config._d = new Date((+input)) : "object" == typeof input ? dateFromObject(config) : config._d = new Date(input);
     }
     function makeDate(y, m, d, h, M, s, ms) {
         var date = new Date(y, m, d, h, M, s, ms);
-        return 1970 > y && date.setFullYear(y), date;
+        return y < 1970 && date.setFullYear(y), date;
     }
     function makeUTCDate(y) {
         var date = new Date(Date.UTC.apply(null, arguments));
-        return 1970 > y && date.setUTCFullYear(y), date;
+        return y < 1970 && date.setUTCFullYear(y), date;
     }
     function parseWeekday(input, language) {
         if ("string" == typeof input) if (isNaN(input)) {
@@ -6985,12 +6985,12 @@ function(window, angular, undefined) {
         return lang.relativeTime(number || 1, !!withoutSuffix, string, isFuture);
     }
     function relativeTime(milliseconds, withoutSuffix, lang) {
-        var seconds = round(Math.abs(milliseconds) / 1e3), minutes = round(seconds / 60), hours = round(minutes / 60), days = round(hours / 24), years = round(days / 365), args = 45 > seconds && [ "s", seconds ] || 1 === minutes && [ "m" ] || 45 > minutes && [ "mm", minutes ] || 1 === hours && [ "h" ] || 22 > hours && [ "hh", hours ] || 1 === days && [ "d" ] || 25 >= days && [ "dd", days ] || 45 >= days && [ "M" ] || 345 > days && [ "MM", round(days / 30) ] || 1 === years && [ "y" ] || [ "yy", years ];
+        var seconds = round(Math.abs(milliseconds) / 1e3), minutes = round(seconds / 60), hours = round(minutes / 60), days = round(hours / 24), years = round(days / 365), args = seconds < 45 && [ "s", seconds ] || 1 === minutes && [ "m" ] || minutes < 45 && [ "mm", minutes ] || 1 === hours && [ "h" ] || hours < 22 && [ "hh", hours ] || 1 === days && [ "d" ] || days <= 25 && [ "dd", days ] || days <= 45 && [ "M" ] || days < 345 && [ "MM", round(days / 30) ] || 1 === years && [ "y" ] || [ "yy", years ];
         return args[2] = withoutSuffix, args[3] = milliseconds > 0, args[4] = lang, substituteTimeAgo.apply({}, args);
     }
     function weekOfYear(mom, firstDayOfWeek, firstDayOfWeekOfYear) {
         var adjustedMoment, end = firstDayOfWeekOfYear - firstDayOfWeek, daysToDayOfWeek = firstDayOfWeekOfYear - mom.day();
-        return daysToDayOfWeek > end && (daysToDayOfWeek -= 7), end - 7 > daysToDayOfWeek && (daysToDayOfWeek += 7), 
+        return daysToDayOfWeek > end && (daysToDayOfWeek -= 7), daysToDayOfWeek < end - 7 && (daysToDayOfWeek += 7), 
         adjustedMoment = moment(mom).add("d", daysToDayOfWeek), {
             week: Math.ceil(adjustedMoment.dayOfYear() / 7),
             year: adjustedMoment.year()
@@ -6998,7 +6998,7 @@ function(window, angular, undefined) {
     }
     function dayOfYearFromWeeks(year, week, weekday, firstDayOfWeekOfYear, firstDayOfWeek) {
         var daysToAdd, dayOfYear, d = makeUTCDate(year, 0, 1).getUTCDay();
-        return weekday = null != weekday ? weekday : firstDayOfWeek, daysToAdd = firstDayOfWeek - d + (d > firstDayOfWeekOfYear ? 7 : 0) - (firstDayOfWeek > d ? 7 : 0), 
+        return weekday = null != weekday ? weekday : firstDayOfWeek, daysToAdd = firstDayOfWeek - d + (d > firstDayOfWeekOfYear ? 7 : 0) - (d < firstDayOfWeek ? 7 : 0), 
         dayOfYear = 7 * (week - 1) + (weekday - firstDayOfWeek) + daysToAdd + 1, {
             year: dayOfYear > 0 ? year : year - 1,
             dayOfYear: dayOfYear > 0 ? dayOfYear : daysInYear(year - 1) + dayOfYear
@@ -7009,7 +7009,7 @@ function(window, angular, undefined) {
         return null === input ? moment.invalid({
             nullInput: !0
         }) : ("string" == typeof input && (config._i = input = getLangDefinition().preparse(input)), 
-        moment.isMoment(input) ? (config = cloneMoment(input), config._d = new Date(+input._d)) : format ? isArray(format) ? makeDateFromStringAndArray(config) : makeDateFromStringAndFormat(config) : makeDateFromInput(config), 
+        moment.isMoment(input) ? (config = cloneMoment(input), config._d = new Date((+input._d))) : format ? isArray(format) ? makeDateFromStringAndArray(config) : makeDateFromStringAndFormat(config) : makeDateFromInput(config), 
         new Moment(config));
     }
     function makeGetterAndSetter(name, key) {
@@ -7179,11 +7179,11 @@ function(window, angular, undefined) {
         },
         Z: function() {
             var a = -this.zone(), b = "+";
-            return 0 > a && (a = -a, b = "-"), b + leftZeroFill(toInt(a / 60), 2) + ":" + leftZeroFill(toInt(a) % 60, 2);
+            return a < 0 && (a = -a, b = "-"), b + leftZeroFill(toInt(a / 60), 2) + ":" + leftZeroFill(toInt(a) % 60, 2);
         },
         ZZ: function() {
             var a = -this.zone(), b = "+";
-            return 0 > a && (a = -a, b = "-"), b + leftZeroFill(toInt(a / 60), 2) + leftZeroFill(toInt(a) % 60, 2);
+            return a < 0 && (a = -a, b = "-"), b + leftZeroFill(toInt(a / 60), 2) + leftZeroFill(toInt(a) % 60, 2);
         },
         z: function() {
             return this.zoneAbbr();
@@ -7215,7 +7215,7 @@ function(window, angular, undefined) {
         },
         monthsParse: function(monthName) {
             var i, mom, regex;
-            for (this._monthsParse || (this._monthsParse = []), i = 0; 12 > i; i++) if (this._monthsParse[i] || (mom = moment.utc([ 2e3, i ]), 
+            for (this._monthsParse || (this._monthsParse = []), i = 0; i < 12; i++) if (this._monthsParse[i] || (mom = moment.utc([ 2e3, i ]), 
             regex = "^" + this.months(mom, "") + "|^" + this.monthsShort(mom, ""), this._monthsParse[i] = new RegExp(regex.replace(".", ""), "i")), 
             this._monthsParse[i].test(monthName)) return i;
         },
@@ -7233,7 +7233,7 @@ function(window, angular, undefined) {
         },
         weekdaysParse: function(weekdayName) {
             var i, mom, regex;
-            for (this._weekdaysParse || (this._weekdaysParse = []), i = 0; 7 > i; i++) if (this._weekdaysParse[i] || (mom = moment([ 2e3, 1 ]).day(i), 
+            for (this._weekdaysParse || (this._weekdaysParse = []), i = 0; i < 7; i++) if (this._weekdaysParse[i] || (mom = moment([ 2e3, 1 ]).day(i), 
             regex = "^" + this.weekdays(mom, "") + "|^" + this.weekdaysShort(mom, "") + "|^" + this.weekdaysMin(mom, ""), 
             this._weekdaysParse[i] = new RegExp(regex.replace(".", ""), "i")), this._weekdaysParse[i].test(weekdayName)) return i;
         },
@@ -7387,7 +7387,7 @@ function(window, angular, undefined) {
             return this.clone().lang("en").format("ddd MMM DD YYYY HH:mm:ss [GMT]ZZ");
         },
         toDate: function() {
-            return this._offset ? new Date(+this) : this._d;
+            return this._offset ? new Date((+this)) : this._d;
         },
         toISOString: function() {
             var m = moment(this).utc();
@@ -7401,7 +7401,7 @@ function(window, angular, undefined) {
             return isValid(this);
         },
         isDSTShifted: function() {
-            return this._a ? this.isValid() && compareArrays(this._a, (this._isUTC ? moment.utc(this._a) : moment(this._a)).toArray()) > 0 : !1;
+            return !!this._a && (this.isValid() && compareArrays(this._a, (this._isUTC ? moment.utc(this._a) : moment(this._a)).toArray()) > 0);
         },
         parsingFlags: function() {
             return extend({}, this._pf);
@@ -7444,7 +7444,7 @@ function(window, angular, undefined) {
             return this.from(moment(), withoutSuffix);
         },
         calendar: function() {
-            var sod = makeAs(moment(), this).startOf("day"), diff = this.diff(sod, "days", !0), format = -6 > diff ? "sameElse" : -1 > diff ? "lastWeek" : 0 > diff ? "lastDay" : 1 > diff ? "sameDay" : 2 > diff ? "nextDay" : 7 > diff ? "nextWeek" : "sameElse";
+            var sod = makeAs(moment(), this).startOf("day"), diff = this.diff(sod, "days", !0), format = diff < -6 ? "sameElse" : diff < -1 ? "lastWeek" : diff < 0 ? "lastDay" : diff < 1 ? "sameDay" : diff < 2 ? "nextDay" : diff < 7 ? "nextWeek" : "sameElse";
             return this.format(this.lang().calendar(format, this));
         },
         isLeapYear: function() {
@@ -7504,7 +7504,7 @@ function(window, angular, undefined) {
             return units = units || "ms", +this.clone().startOf(units) === +makeAs(input, this).startOf(units);
         },
         min: function(other) {
-            return other = moment.apply(null, arguments), this > other ? this : other;
+            return other = moment.apply(null, arguments), other < this ? this : other;
         },
         max: function(other) {
             return other = moment.apply(null, arguments), other > this ? this : other;
@@ -7657,7 +7657,7 @@ function(window, angular, undefined) {
                     if (element.text(momentInstance.from(getNow(), withoutSuffix)), titleFormat && !element.attr("title") && element.attr("title", momentInstance.local().format(titleFormat)), 
                     !isBindOnce) {
                         var howOld = Math.abs(getNow().diff(momentInstance, "minute")), secondsUntilUpdate = 3600;
-                        1 > howOld ? secondsUntilUpdate = 1 : 60 > howOld ? secondsUntilUpdate = 30 : 180 > howOld && (secondsUntilUpdate = 300), 
+                        howOld < 1 ? secondsUntilUpdate = 1 : howOld < 60 ? secondsUntilUpdate = 30 : howOld < 180 && (secondsUntilUpdate = 300), 
                         activeTimeout = $window.setTimeout(function() {
                             updateTime(momentInstance);
                         }, 1e3 * secondsUntilUpdate);
@@ -7771,7 +7771,7 @@ function(window, angular, undefined) {
     function indexOf(array, value) {
         if (Array.prototype.indexOf) return array.indexOf(value, Number(arguments[2]) || 0);
         var len = array.length >>> 0, from = Number(arguments[2]) || 0;
-        for (from = 0 > from ? Math.ceil(from) : Math.floor(from), 0 > from && (from += len); len > from; from++) if (from in array && array[from] === value) return from;
+        for (from = from < 0 ? Math.ceil(from) : Math.floor(from), from < 0 && (from += len); from < len; from++) if (from in array && array[from] === value) return from;
         return -1;
     }
     function inheritParams(currentParams, newParams, $current, $to) {
@@ -7800,7 +7800,7 @@ function(window, angular, undefined) {
     }
     function omit(obj) {
         var copy = {}, keys = Array.prototype.concat.apply(Array.prototype, Array.prototype.slice.call(arguments, 1));
-        for (var key in obj) -1 == indexOf(keys, key) && (copy[key] = obj[key]);
+        for (var key in obj) indexOf(keys, key) == -1 && (copy[key] = obj[key]);
         return copy;
     }
     function filter(collection, callback) {
@@ -7882,7 +7882,7 @@ function(window, angular, undefined) {
                 extend(promises, parent.$$promises), parent.$$values ? (merged = merge(values, omit(parent.$$values, invocableKeys)), 
                 result.$$inheritedValues = omit(parent.$$values, invocableKeys), done()) : (parent.$$inheritedValues && (result.$$inheritedValues = omit(parent.$$inheritedValues, invocableKeys)), 
                 parent.then(done, fail));
-                for (var i = 0, ii = plan.length; ii > i; i += 3) locals.hasOwnProperty(plan[i]) ? done() : invoke(plan[i], plan[i + 1], plan[i + 2]);
+                for (var i = 0, ii = plan.length; i < ii; i += 3) locals.hasOwnProperty(plan[i]) ? done() : invoke(plan[i], plan[i + 1], plan[i + 2]);
                 return result;
             };
         }, this.resolve = function(invocables, locals, parent, self) {
@@ -8005,9 +8005,9 @@ function(window, angular, undefined) {
                 encode: valToString,
                 decode: valFromString,
                 is: regexpMatches,
-                pattern: /[^\/]*/
+                pattern: /[^/]*/
             },
-            "int": {
+            int: {
                 encode: valToString,
                 decode: function(val) {
                     return parseInt(val, 10);
@@ -8052,7 +8052,7 @@ function(window, angular, undefined) {
                 decode: angular.fromJson,
                 is: angular.isObject,
                 equals: angular.equals,
-                pattern: /[^\/]*/
+                pattern: /[^/]*/
             },
             any: {
                 encode: angular.identity,
@@ -8101,7 +8101,7 @@ function(window, angular, undefined) {
             }), this;
         } ], this.Param = function(id, type, config, location) {
             function unwrapShorthand(config) {
-                var keys = isObject(config) ? objectKeys(config) : [], isShorthand = -1 === indexOf(keys, "value") && -1 === indexOf(keys, "type") && -1 === indexOf(keys, "squash") && -1 === indexOf(keys, "array");
+                var keys = isObject(config) ? objectKeys(config) : [], isShorthand = indexOf(keys, "value") === -1 && indexOf(keys, "type") === -1 && indexOf(keys, "squash") === -1 && indexOf(keys, "array") === -1;
                 return isShorthand && (config = {
                     value: config
                 }), config.$$fn = isInjectable(config.value) ? config.value : function() {
@@ -8114,7 +8114,7 @@ function(window, angular, undefined) {
             }
             function getArrayMode() {
                 var arrayDefaults = {
-                    array: "search" === location ? "auto" : !1
+                    array: "search" === location && "auto"
                 }, arrayParamNomenclature = id.match(/\[\]$/) ? {
                     array: !0
                 } : {};
@@ -8141,7 +8141,7 @@ function(window, angular, undefined) {
                 }), configuredKeys = map(replace, function(item) {
                     return item.from;
                 }), filter(defaultPolicy, function(item) {
-                    return -1 === indexOf(configuredKeys, item.from);
+                    return indexOf(configuredKeys, item.from) === -1;
                 }).concat(replace);
             }
             function $$getDefaultValue() {
@@ -8194,7 +8194,7 @@ function(window, angular, undefined) {
                 parent = parent.$$parent;
                 return chain.reverse(), forEach(chain, function(paramset) {
                     forEach(objectKeys(paramset), function(key) {
-                        -1 === indexOf(keys, key) && -1 === indexOf(ignore, key) && keys.push(key);
+                        indexOf(keys, key) === -1 && indexOf(ignore, key) === -1 && keys.push(key);
                     });
                 }), keys;
             },
@@ -8236,7 +8236,7 @@ function(window, angular, undefined) {
             var result = $injector.invoke(handler, handler, {
                 $match: match
             });
-            return isDefined(result) ? result : !0;
+            return !isDefined(result) || result;
         }
         function $get($location, $rootScope, $injector, $browser) {
             function appendBasePath(url, isHtml5, absolute) {
@@ -8245,13 +8245,13 @@ function(window, angular, undefined) {
             function update(evt) {
                 function check(rule) {
                     var handled = rule($injector, $location);
-                    return handled ? (isString(handled) && $location.replace().url(handled), !0) : !1;
+                    return !!handled && (isString(handled) && $location.replace().url(handled), !0);
                 }
                 if (!evt || !evt.defaultPrevented) {
                     var ignoreUpdate = lastPushedUrl && $location.url() === lastPushedUrl;
                     if (lastPushedUrl = undefined, ignoreUpdate) return !0;
                     var i, n = rules.length;
-                    for (i = 0; n > i; i++) if (check(rules[i])) return;
+                    for (i = 0; i < n; i++) if (check(rules[i])) return;
                     otherwise && check(otherwise);
                 }
             }
@@ -8341,7 +8341,7 @@ function(window, angular, undefined) {
             if (path) {
                 if (!base) throw new Error("No reference point given for path '" + name + "'");
                 base = findState(base);
-                for (var rel = name.split("."), i = 0, pathLength = rel.length, current = base; pathLength > i; i++) if ("" !== rel[i] || 0 !== i) {
+                for (var rel = name.split("."), i = 0, pathLength = rel.length, current = base; i < pathLength; i++) if ("" !== rel[i] || 0 !== i) {
                     if ("^" !== rel[i]) break;
                     if (!current.parent) throw new Error("Path '" + name + "' not valid for state '" + base.name + "'");
                     current = current.parent;
@@ -8368,7 +8368,7 @@ function(window, angular, undefined) {
             var name = state.name;
             if (!isString(name) || name.indexOf("@") >= 0) throw new Error("State must have a valid name");
             if (states.hasOwnProperty(name)) throw new Error("State '" + name + "'' is already defined");
-            var parentName = -1 !== name.indexOf(".") ? name.substring(0, name.lastIndexOf(".")) : isString(state.parent) ? state.parent : isObject(state.parent) && isString(state.parent.name) ? state.parent.name : "";
+            var parentName = name.indexOf(".") !== -1 ? name.substring(0, name.lastIndexOf(".")) : isString(state.parent) ? state.parent : isObject(state.parent) && isString(state.parent.name) ? state.parent.name : "";
             if (parentName && !states[parentName]) return queueState(parentName, state.self);
             for (var key in stateBuilder) isFunction(stateBuilder[key]) && (state[key] = stateBuilder[key](state, stateBuilder.$delegates[key]));
             return states[name] = state, !state[abstractKey] && state.url && $urlRouterProvider.when(state.url, [ "$match", "$stateParams", function($match, $stateParams) {
@@ -8386,7 +8386,7 @@ function(window, angular, undefined) {
             if ("**" === globSegments[0] && (segments = segments.slice(indexOf(segments, globSegments[1])), 
             segments.unshift("**")), "**" === globSegments[globSegments.length - 1] && (segments.splice(indexOf(segments, globSegments[globSegments.length - 2]) + 1, Number.MAX_VALUE), 
             segments.push("**")), globSegments.length != segments.length) return !1;
-            for (var i = 0, l = globSegments.length; l > i; i++) "*" === globSegments[i] && (segments[i] = "*");
+            for (var i = 0, l = globSegments.length; i < l; i++) "*" === globSegments[i] && (segments[i] = "*");
             return segments.join("") === globSegments.join("");
         }
         function decorator(name, func) {
@@ -8522,7 +8522,7 @@ function(window, angular, undefined) {
                     relative: $state.$current
                 }, options || {});
                 var state = findState(stateOrName, options.relative);
-                return isDefined(state) ? $state.$current !== state ? !1 : params ? equalForKeys(state.params.$$values(params), $stateParams) : !0 : undefined;
+                return isDefined(state) ? $state.$current === state && (!params || equalForKeys(state.params.$$values(params), $stateParams)) : undefined;
             }, $state.includes = function(stateOrName, params, options) {
                 if (options = extend({
                     relative: $state.$current
@@ -8531,7 +8531,7 @@ function(window, angular, undefined) {
                     stateOrName = $state.$current.name;
                 }
                 var state = findState(stateOrName, options.relative);
-                return isDefined(state) ? isDefined($state.$current.includes[state.name]) ? params ? equalForKeys(state.params.$$values(params), $stateParams, objectKeys(params)) : !0 : !1 : undefined;
+                return isDefined(state) ? !!isDefined($state.$current.includes[state.name]) && (!params || equalForKeys(state.params.$$values(params), $stateParams, objectKeys(params))) : undefined;
             }, $state.href = function(stateOrName, params, options) {
                 options = extend({
                     lossy: !0,
@@ -8555,7 +8555,7 @@ function(window, angular, undefined) {
             }, $state;
         }
         function shouldTriggerReload(to, from, locals, options) {
-            return to !== from || (locals !== from.locals || options.reload) && to.self.reloadOnSearch !== !1 ? void 0 : !0;
+            if (to === from && (locals === from.locals && !options.reload || to.self.reloadOnSearch === !1)) return !0;
         }
         var root, $state, states = {}, queue = {}, abstractKey = "abstract", stateBuilder = {
             parent: function(state) {
@@ -8608,7 +8608,7 @@ function(window, angular, undefined) {
             name: "",
             url: "^",
             views: null,
-            "abstract": !0
+            abstract: !0
         }), root.navigable = null, this.decorator = decorator, this.state = state, this.$get = $get, 
         $get.$inject = [ "$rootScope", "$q", "$view", "$injector", "$resolve", "$stateParams", "$urlRouter", "$location", "$urlMatcherFactory" ];
     }
@@ -8769,7 +8769,7 @@ function(window, angular, undefined) {
     }
     function stateContext(el) {
         var stateData = el.parent().inheritedData("$uiView");
-        return stateData && stateData.state && stateData.state.name ? stateData.state : void 0;
+        if (stateData && stateData.state && stateData.state.name) return stateData.state;
     }
     function $StateRefDirective($state, $timeout) {
         var allowedOptions = [ "location", "inherit", "reload" ];
@@ -8872,13 +8872,13 @@ function(window, angular, undefined) {
         searchParams = searchParams || {};
         var i, j, paramName, paramNames = this.parameters(), nTotal = paramNames.length, nPath = this.segments.length - 1, values = {};
         if (nPath !== m.length - 1) throw new Error("Unbalanced capture group in route '" + this.source + "'");
-        for (i = 0; nPath > i; i++) {
+        for (i = 0; i < nPath; i++) {
             paramName = paramNames[i];
             var param = this.params[paramName], paramVal = m[i + 1];
             for (j = 0; j < param.replace; j++) param.replace[j].from === paramVal && (paramVal = param.replace[j].to);
             paramVal && param.array === !0 && (paramVal = decodePathArray(paramVal)), values[paramName] = param.value(paramVal);
         }
-        for (;nTotal > i; i++) paramName = paramNames[i], values[paramName] = this.params[paramName].value(searchParams[paramName]);
+        for (;i < nTotal; i++) paramName = paramNames[i], values[paramName] = this.params[paramName].value(searchParams[paramName]);
         return values;
     }, UrlMatcher.prototype.parameters = function(param) {
         return isDefined(param) ? this.params[param] || null : this.$$paramNames;
@@ -8894,8 +8894,8 @@ function(window, angular, undefined) {
         var segments = this.segments, params = this.parameters(), paramset = this.params;
         if (!this.validates(values)) return null;
         var i, search = !1, nPath = segments.length - 1, nTotal = params.length, result = segments[0];
-        for (i = 0; nTotal > i; i++) {
-            var isPathParam = nPath > i, name = params[i], param = paramset[name], value = param.value(values[name]), isDefaultValue = param.isOptional && param.type.equals(param.value(), value), squash = isDefaultValue ? param.squash : !1, encoded = param.type.encode(value);
+        for (i = 0; i < nTotal; i++) {
+            var isPathParam = i < nPath, name = params[i], param = paramset[name], value = param.value(values[name]), isDefaultValue = param.isOptional && param.type.equals(param.value(), value), squash = !!isDefaultValue && param.squash, encoded = param.type.encode(value);
             if (isPathParam) {
                 var nextSegment = segments[i + 1];
                 if (squash === !1) null != encoded && (result += isArray(encoded) ? map(encoded, encodeDashes).join("-") : encodeURIComponent(encoded)), 
@@ -9040,14 +9040,14 @@ function(window, angular, undefined) {
             function animationRunner(element, animationEvent, className) {
                 function registerAnimation(animationFactory, event) {
                     var afterFn = animationFactory[event], beforeFn = animationFactory["before" + event.charAt(0).toUpperCase() + event.substr(1)];
-                    return afterFn || beforeFn ? ("leave" == event && (beforeFn = afterFn, afterFn = null), 
+                    if (afterFn || beforeFn) return "leave" == event && (beforeFn = afterFn, afterFn = null), 
                     after.push({
                         event: event,
                         fn: afterFn
                     }), before.push({
                         event: event,
                         fn: beforeFn
-                    }), !0) : void 0;
+                    }), !0;
                 }
                 function run(fns, cancellations, allCompleteFn) {
                     function afterAnimationComplete(index) {
@@ -9226,7 +9226,7 @@ function(window, angular, undefined) {
                 rootAnimateState.structural = !1); else if (className) {
                     var data = element.data(NG_ANIMATE_STATE) || {}, removeAnimations = className === !0;
                     !removeAnimations && data.active && data.active[className] && (data.totalActive--, 
-                    delete data.active[className]), (removeAnimations || !data.totalActive) && (element.removeClass(NG_ANIMATE_CLASS_NAME), 
+                    delete data.active[className]), !removeAnimations && data.totalActive || (element.removeClass(NG_ANIMATE_CLASS_NAME), 
                     element.removeData(NG_ANIMATE_STATE));
                 }
             }
@@ -9335,7 +9335,7 @@ function(window, angular, undefined) {
                 var node = extractElementNode(element);
                 element = angular.element(node), animationElementQueue.push(element);
                 var futureTimestamp = Date.now() + totalTime;
-                closingTimestamp >= futureTimestamp || ($timeout.cancel(closingTimer), closingTimestamp = futureTimestamp, 
+                futureTimestamp <= closingTimestamp || ($timeout.cancel(closingTimer), closingTimestamp = futureTimestamp, 
                 closingTimer = $timeout(function() {
                     closeAllAnimations(animationElementQueue), animationElementQueue = [];
                 }, totalTime, !1));
@@ -9443,7 +9443,7 @@ function(window, angular, undefined) {
                     Math.max(timeStamp - startTime, 0) >= maxDelayTime && elapsedTime >= maxDuration && activeAnimationComplete();
                 }
                 var node = extractElementNode(element), elementData = element.data(NG_ANIMATE_CSS_DATA_KEY);
-                if (-1 == node.getAttribute("class").indexOf(className) || !elementData) return void activeAnimationComplete();
+                if (node.getAttribute("class").indexOf(className) == -1 || !elementData) return void activeAnimationComplete();
                 var activeClassName = "";
                 forEach(className.split(" "), function(klass, i) {
                     activeClassName += (i > 0 ? " " : "") + klass + "-active";
@@ -9451,7 +9451,7 @@ function(window, angular, undefined) {
                 var stagger = elementData.stagger, timings = elementData.timings, itemIndex = elementData.itemIndex, maxDuration = Math.max(timings.transitionDuration, timings.animationDuration), maxDelay = Math.max(timings.transitionDelay, timings.animationDelay), maxDelayTime = maxDelay * ONE_SECOND, startTime = Date.now(), css3AnimationEvents = ANIMATIONEND_EVENT + " " + TRANSITIONEND_EVENT, style = "", appliedStyles = [];
                 if (timings.transitionDuration > 0) {
                     var propertyStyle = timings.transitionPropertyStyle;
-                    -1 == propertyStyle.indexOf("all") && (style += CSS_PREFIX + "transition-property: " + propertyStyle + ";", 
+                    propertyStyle.indexOf("all") == -1 && (style += CSS_PREFIX + "transition-property: " + propertyStyle + ";", 
                     style += CSS_PREFIX + "transition-duration: " + timings.transitionDurationStyle + ";", 
                     appliedStyles.push(CSS_PREFIX + "transition-property"), appliedStyles.push(CSS_PREFIX + "transition-duration"));
                 }
@@ -9482,9 +9482,9 @@ function(window, angular, undefined) {
                 }), style;
             }
             function animateBefore(animationEvent, element, className, calculationDecorator) {
-                return animateSetup(animationEvent, element, className, calculationDecorator) ? function(cancelled) {
+                if (animateSetup(animationEvent, element, className, calculationDecorator)) return function(cancelled) {
                     cancelled && animateClose(element, className);
-                } : void 0;
+                };
             }
             function animateAfter(animationEvent, element, className, afterAnimationComplete) {
                 return element.data(NG_ANIMATE_CSS_DATA_KEY) ? animateRun(animationEvent, element, className, afterAnimationComplete) : (animateClose(element, className), 
@@ -9581,7 +9581,7 @@ function(window, angular, undefined) {
     }
     function lookupDottedPath(obj, path) {
         if (!isValidDottedPath(path)) throw $resourceMinErr("badmember", 'Dotted member path "@{0}" is invalid.', path);
-        for (var keys = path.split("."), i = 0, ii = keys.length; ii > i && obj !== undefined; i++) {
+        for (var keys = path.split("."), i = 0, ii = keys.length; i < ii && obj !== undefined; i++) {
             var key = keys[i];
             obj = null !== obj ? obj[key] : undefined;
         }
@@ -9693,7 +9693,7 @@ function(window, angular, undefined) {
             remove: {
                 method: "DELETE"
             },
-            "delete": {
+            delete: {
                 method: "DELETE"
             }
         }, noop = angular.noop, forEach = angular.forEach, extend = angular.extend, copy = angular.copy, isFunction = angular.isFunction;
@@ -9808,7 +9808,7 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
         });
     }, this.removeGroup = function(group) {
         var index = this.groups.indexOf(group);
-        -1 !== index && this.groups.splice(this.groups.indexOf(group), 1);
+        index !== -1 && this.groups.splice(this.groups.indexOf(group), 1);
     };
 } ]).directive("accordion", function() {
     return {
@@ -10002,10 +10002,10 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
         return slides.indexOf(slide);
     }, $scope.next = function() {
         var newIndex = (currentIndex + 1) % slides.length;
-        return $scope.$currentTransition ? void 0 : self.select(slides[newIndex], "next");
+        if (!$scope.$currentTransition) return self.select(slides[newIndex], "next");
     }, $scope.prev = function() {
-        var newIndex = 0 > currentIndex - 1 ? slides.length - 1 : currentIndex - 1;
-        return $scope.$currentTransition ? void 0 : self.select(slides[newIndex], "prev");
+        var newIndex = currentIndex - 1 < 0 ? slides.length - 1 : currentIndex - 1;
+        if (!$scope.$currentTransition) return self.select(slides[newIndex], "prev");
     }, $scope.select = function(slide) {
         self.select(slide);
     }, $scope.isActive = function(slide) {
@@ -10119,7 +10119,7 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
         return new Date(year, month, 0).getDate();
     }
     function getDates(startDate, n) {
-        for (var dates = new Array(n), current = startDate, i = 0; n > i; ) dates[i++] = new Date(current), 
+        for (var dates = new Array(n), current = startDate, i = 0; i < n; ) dates[i++] = new Date(current), 
         current.setDate(current.getDate() + 1);
         return dates;
     }
@@ -10147,11 +10147,11 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
             numDisplayedFromPreviousMonth > 0 && (firstDate.setDate(-numDisplayedFromPreviousMonth + 1), 
             numDates += numDisplayedFromPreviousMonth), numDates += getDaysInMonth(year, month + 1), 
             numDates += (7 - numDates % 7) % 7;
-            for (var days = getDates(firstDate, numDates), labels = new Array(7), i = 0; numDates > i; i++) {
+            for (var days = getDates(firstDate, numDates), labels = new Array(7), i = 0; i < numDates; i++) {
                 var dt = new Date(days[i]);
                 days[i] = makeDate(dt, format.day, selected && selected.getDate() === dt.getDate() && selected.getMonth() === dt.getMonth() && selected.getFullYear() === dt.getFullYear(), dt.getMonth() !== month);
             }
-            for (var j = 0; 7 > j; j++) labels[j] = dateFilter(days[j].date, format.dayHeader);
+            for (var j = 0; j < 7; j++) labels[j] = dateFilter(days[j].date, format.dayHeader);
             return {
                 objects: days,
                 title: dateFilter(date, format.dayTitle),
@@ -10168,7 +10168,7 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
     }, {
         name: "month",
         getVisibleDates: function(date, selected) {
-            for (var months = new Array(12), year = date.getFullYear(), i = 0; 12 > i; i++) {
+            for (var months = new Array(12), year = date.getFullYear(), i = 0; i < 12; i++) {
                 var dt = new Date(year, i, 1);
                 months[i] = makeDate(dt, format.month, selected && selected.getMonth() === i && selected.getFullYear() === year);
             }
@@ -10187,7 +10187,7 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
     }, {
         name: "year",
         getVisibleDates: function(date, selected) {
-            for (var years = new Array(yearRange), year = date.getFullYear(), startYear = parseInt((year - 1) / yearRange, 10) * yearRange + 1, i = 0; yearRange > i; i++) {
+            for (var years = new Array(yearRange), year = date.getFullYear(), startYear = parseInt((year - 1) / yearRange, 10) * yearRange + 1, i = 0; i < yearRange; i++) {
                 var dt = new Date(startYear + i, 0, 1);
                 years[i] = makeDate(dt, format.year, selected && selected.getFullYear() === dt.getFullYear());
             }
@@ -10335,7 +10335,7 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
             attrs.isOpen && (getIsOpen = $parse(attrs.isOpen), setIsOpen = getIsOpen.assign, 
             originalScope.$watch(getIsOpen, function(value) {
                 scope.isOpen = !!value;
-            })), scope.isOpen = getIsOpen ? getIsOpen(originalScope) : !1;
+            })), scope.isOpen = !!getIsOpen && getIsOpen(originalScope);
             var documentClickBind = function(event) {
                 scope.isOpen && event.target !== element[0] && scope.$apply(function() {
                     setOpen(!1);
@@ -10489,7 +10489,7 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
         body.toggleClass(OPENED_MODAL_CLASS, openedWindows.length() > 0);
     }
     function checkRemoveBackdrop() {
-        if (backdropDomEl && -1 == backdropIndex()) {
+        if (backdropDomEl && backdropIndex() == -1) {
             var backdropScopeRef = backdropScope;
             removeAfterAnimate(backdropDomEl, backdropScope, 150, function() {
                 backdropScopeRef.$destroy(), backdropScopeRef = null;
@@ -10670,12 +10670,12 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
             paginationCtrl.init(config.itemsPerPage), attrs.maxSize && scope.$parent.$watch($parse(attrs.maxSize), function(value) {
                 maxSize = parseInt(value, 10), paginationCtrl.render();
             }), paginationCtrl.getPages = function(currentPage, totalPages) {
-                var pages = [], startPage = 1, endPage = totalPages, isMaxSized = angular.isDefined(maxSize) && totalPages > maxSize;
+                var pages = [], startPage = 1, endPage = totalPages, isMaxSized = angular.isDefined(maxSize) && maxSize < totalPages;
                 isMaxSized && (rotate ? (startPage = Math.max(currentPage - Math.floor(maxSize / 2), 1), 
                 endPage = startPage + maxSize - 1, endPage > totalPages && (endPage = totalPages, 
                 startPage = endPage - maxSize + 1)) : (startPage = (Math.ceil(currentPage / maxSize) - 1) * maxSize + 1, 
                 endPage = Math.min(startPage + maxSize - 1, totalPages)));
-                for (var number = startPage; endPage >= number; number++) {
+                for (var number = startPage; number <= endPage; number++) {
                     var page = makePage(number, number, paginationCtrl.isActive(number), !1);
                     pages.push(page);
                 }
@@ -10684,7 +10684,7 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
                         var previousPageSet = makePage(startPage - 1, "...", !1, !1);
                         pages.unshift(previousPageSet);
                     }
-                    if (totalPages > endPage) {
+                    if (endPage < totalPages) {
                         var nextPageSet = makePage(endPage + 1, "...", !1, !1);
                         pages.push(nextPageSet);
                     }
@@ -10777,7 +10777,7 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
                             scope.tt_isOpen ? hideTooltipBind() : showTooltipBind();
                         }
                         function showTooltipBind() {
-                            (!hasEnableExp || scope.$eval(attrs[prefix + "Enable"])) && (scope.tt_popupDelay ? (popupTimeout = $timeout(show, scope.tt_popupDelay, !1), 
+                            hasEnableExp && !scope.$eval(attrs[prefix + "Enable"]) || (scope.tt_popupDelay ? (popupTimeout = $timeout(show, scope.tt_popupDelay, !1), 
                             popupTimeout.then(function(reposition) {
                                 reposition();
                             })) : show()());
@@ -10805,7 +10805,7 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
                         function removeTooltip() {
                             tooltip && (tooltip.remove(), tooltip = null);
                         }
-                        var tooltip, transitionTimeout, popupTimeout, appendToBody = angular.isDefined(options.appendToBody) ? options.appendToBody : !1, triggers = getTriggers(void 0), hasRegisteredTriggers = !1, hasEnableExp = angular.isDefined(attrs[prefix + "Enable"]), positionTooltip = function() {
+                        var tooltip, transitionTimeout, popupTimeout, appendToBody = !!angular.isDefined(options.appendToBody) && options.appendToBody, triggers = getTriggers(void 0), hasRegisteredTriggers = !1, hasEnableExp = angular.isDefined(attrs[prefix + "Enable"]), positionTooltip = function() {
                             var position, ttWidth, ttHeight, ttPosition;
                             switch (position = appendToBody ? $position.offset(element) : $position.position(element), 
                             ttWidth = tooltip.prop("offsetWidth"), ttHeight = tooltip.prop("offsetHeight"), 
@@ -10992,7 +10992,7 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
         for (var defaultOptions = {
             stateOn: this.stateOn,
             stateOff: this.stateOff
-        }, i = 0, n = states.length; n > i; i++) states[i] = angular.extend({
+        }, i = 0, n = states.length; i < n; i++) states[i] = angular.extend({
             index: i
         }, defaultOptions, states[i]);
         return states;
@@ -11047,8 +11047,8 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
         controller: "TabsetController",
         templateUrl: "template/tabs/tabset.html",
         link: function(scope, element, attrs) {
-            scope.vertical = angular.isDefined(attrs.vertical) ? scope.$parent.$eval(attrs.vertical) : !1, 
-            scope.justified = angular.isDefined(attrs.justified) ? scope.$parent.$eval(attrs.justified) : !1, 
+            scope.vertical = !!angular.isDefined(attrs.vertical) && scope.$parent.$eval(attrs.vertical), 
+            scope.justified = !!angular.isDefined(attrs.justified) && scope.$parent.$eval(attrs.justified), 
             scope.type = angular.isDefined(attrs.type) ? scope.$parent.$eval(attrs.type) : "tabs";
         }
     };
@@ -11126,13 +11126,13 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
         templateUrl: "template/timepicker/timepicker.html",
         link: function(scope, element, attrs, ngModel) {
             function getHoursFromTemplate() {
-                var hours = parseInt(scope.hours, 10), valid = scope.showMeridian ? hours > 0 && 13 > hours : hours >= 0 && 24 > hours;
-                return valid ? (scope.showMeridian && (12 === hours && (hours = 0), scope.meridian === meridians[1] && (hours += 12)), 
-                hours) : void 0;
+                var hours = parseInt(scope.hours, 10), valid = scope.showMeridian ? hours > 0 && hours < 13 : hours >= 0 && hours < 24;
+                if (valid) return scope.showMeridian && (12 === hours && (hours = 0), scope.meridian === meridians[1] && (hours += 12)), 
+                hours;
             }
             function getMinutesFromTemplate() {
                 var minutes = parseInt(scope.minutes, 10);
-                return minutes >= 0 && 60 > minutes ? minutes : void 0;
+                return minutes >= 0 && minutes < 60 ? minutes : void 0;
             }
             function pad(value) {
                 return angular.isDefined(value) && value.toString().length < 2 ? "0" + value : value;
@@ -11241,7 +11241,7 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
     return {
         require: "ngModel",
         link: function(originalScope, element, attrs, modelCtrl) {
-            var hasFocus, minSearch = originalScope.$eval(attrs.typeaheadMinLength) || 1, waitTime = originalScope.$eval(attrs.typeaheadWaitMs) || 0, isEditable = originalScope.$eval(attrs.typeaheadEditable) !== !1, isLoadingSetter = $parse(attrs.typeaheadLoading).assign || angular.noop, onSelectCallback = $parse(attrs.typeaheadOnSelect), inputFormatter = attrs.typeaheadInputFormatter ? $parse(attrs.typeaheadInputFormatter) : void 0, appendToBody = attrs.typeaheadAppendToBody ? $parse(attrs.typeaheadAppendToBody) : !1, $setModelValue = $parse(attrs.ngModel).assign, parserResult = typeaheadParser.parse(attrs.typeahead), popUpEl = angular.element("<div typeahead-popup></div>");
+            var hasFocus, minSearch = originalScope.$eval(attrs.typeaheadMinLength) || 1, waitTime = originalScope.$eval(attrs.typeaheadWaitMs) || 0, isEditable = originalScope.$eval(attrs.typeaheadEditable) !== !1, isLoadingSetter = $parse(attrs.typeaheadLoading).assign || angular.noop, onSelectCallback = $parse(attrs.typeaheadOnSelect), inputFormatter = attrs.typeaheadInputFormatter ? $parse(attrs.typeaheadInputFormatter) : void 0, appendToBody = !!attrs.typeaheadAppendToBody && $parse(attrs.typeaheadAppendToBody), $setModelValue = $parse(attrs.ngModel).assign, parserResult = typeaheadParser.parse(attrs.typeahead), popUpEl = angular.element("<div typeahead-popup></div>");
             popUpEl.attr({
                 matches: "matches",
                 active: "activeIdx",
@@ -11300,7 +11300,7 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
                     $label: parserResult.viewMapper(originalScope, locals)
                 }), resetMatches(), element[0].focus();
             }, element.bind("keydown", function(evt) {
-                0 !== scope.matches.length && -1 !== HOT_KEYS.indexOf(evt.which) && (evt.preventDefault(), 
+                0 !== scope.matches.length && HOT_KEYS.indexOf(evt.which) !== -1 && (evt.preventDefault(), 
                 40 === evt.which ? (scope.activeIdx = (scope.activeIdx + 1) % scope.matches.length, 
                 scope.$digest()) : 38 === evt.which ? (scope.activeIdx = (scope.activeIdx ? scope.activeIdx : scope.matches.length) - 1, 
                 scope.$digest()) : 13 === evt.which || 9 === evt.which ? scope.$apply(function() {
@@ -11370,7 +11370,7 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
         return query ? matchItem.replace(new RegExp(escapeRegexp(query), "gi"), "<strong>$&</strong>") : matchItem;
     };
 }), angular.module("template/accordion/accordion-group.html", []).run([ "$templateCache", function($templateCache) {
-    $templateCache.put("template/accordion/accordion-group.html", '<div class="panel panel-default">\n  <div class="panel-heading">\n    <h4 class="panel-title">\n      <a class="accordion-toggle" ng-click="isOpen = !isOpen" accordion-transclude="heading">{{heading}}</a>\n    </h4>\n  </div>\n  <div class="panel-collapse" collapse="!isOpen">\n	  <div class="panel-body" ng-transclude></div>\n  </div>\n</div>');
+    $templateCache.put("template/accordion/accordion-group.html", '<div class="panel panel-default">\n  <div class="panel-heading">\n    <h4 class="panel-title">\n      <a class="accordion-toggle" ng-click="isOpen = !isOpen" accordion-transclude="heading">{{heading}}</a>\n    </h4>\n  </div>\n  <div class="panel-collapse" collapse="!isOpen">\n\t  <div class="panel-body" ng-transclude></div>\n  </div>\n</div>');
 } ]), angular.module("template/accordion/accordion.html", []).run([ "$templateCache", function($templateCache) {
     $templateCache.put("template/accordion/accordion.html", '<div class="panel-group" ng-transclude></div>');
 } ]), angular.module("template/alert/alert.html", []).run([ "$templateCache", function($templateCache) {
@@ -11382,7 +11382,7 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
 } ]), angular.module("template/datepicker/datepicker.html", []).run([ "$templateCache", function($templateCache) {
     $templateCache.put("template/datepicker/datepicker.html", '<table>\n  <thead>\n    <tr>\n      <th><button type="button" class="btn btn-default btn-sm pull-left" ng-click="move(-1)"><i class="glyphicon glyphicon-chevron-left"></i></button></th>\n      <th colspan="{{rows[0].length - 2 + showWeekNumbers}}"><button type="button" class="btn btn-default btn-sm btn-block" ng-click="toggleMode()"><strong>{{title}}</strong></button></th>\n      <th><button type="button" class="btn btn-default btn-sm pull-right" ng-click="move(1)"><i class="glyphicon glyphicon-chevron-right"></i></button></th>\n    </tr>\n    <tr ng-show="labels.length > 0" class="h6">\n      <th ng-show="showWeekNumbers" class="text-center">#</th>\n      <th ng-repeat="label in labels" class="text-center">{{label}}</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr ng-repeat="row in rows">\n      <td ng-show="showWeekNumbers" class="text-center"><em>{{ getWeekNumber(row) }}</em></td>\n      <td ng-repeat="dt in row" class="text-center">\n        <button type="button" style="width:100%;" class="btn btn-default btn-sm" ng-class="{\'btn-info\': dt.selected}" ng-click="select(dt.date)" ng-disabled="dt.disabled"><span ng-class="{\'text-muted\': dt.secondary}">{{dt.label}}</span></button>\n      </td>\n    </tr>\n  </tbody>\n</table>\n');
 } ]), angular.module("template/datepicker/popup.html", []).run([ "$templateCache", function($templateCache) {
-    $templateCache.put("template/datepicker/popup.html", "<ul class=\"dropdown-menu\" ng-style=\"{display: (isOpen && 'block') || 'none', top: position.top+'px', left: position.left+'px'}\">\n	<li ng-transclude></li>\n" + '	<li ng-show="showButtonBar" style="padding:10px 9px 2px">\n		<span class="btn-group">\n			<button type="button" class="btn btn-sm btn-info" ng-click="today()">{{currentText}}</button>\n			<button type="button" class="btn btn-sm btn-default" ng-click="showWeeks = ! showWeeks" ng-class="{active: showWeeks}">{{toggleWeeksText}}</button>\n			<button type="button" class="btn btn-sm btn-danger" ng-click="clear()">{{clearText}}</button>\n		</span>\n		<button type="button" class="btn btn-sm btn-success pull-right" ng-click="isOpen = false">{{closeText}}</button>\n	</li>\n</ul>\n');
+    $templateCache.put("template/datepicker/popup.html", "<ul class=\"dropdown-menu\" ng-style=\"{display: (isOpen && 'block') || 'none', top: position.top+'px', left: position.left+'px'}\">\n\t<li ng-transclude></li>\n" + '\t<li ng-show="showButtonBar" style="padding:10px 9px 2px">\n\t\t<span class="btn-group">\n\t\t\t<button type="button" class="btn btn-sm btn-info" ng-click="today()">{{currentText}}</button>\n\t\t\t<button type="button" class="btn btn-sm btn-default" ng-click="showWeeks = ! showWeeks" ng-class="{active: showWeeks}">{{toggleWeeksText}}</button>\n\t\t\t<button type="button" class="btn btn-sm btn-danger" ng-click="clear()">{{clearText}}</button>\n\t\t</span>\n\t\t<button type="button" class="btn btn-sm btn-success pull-right" ng-click="isOpen = false">{{closeText}}</button>\n\t</li>\n</ul>\n');
 } ]), angular.module("template/modal/backdrop.html", []).run([ "$templateCache", function($templateCache) {
     $templateCache.put("template/modal/backdrop.html", '<div class="modal-backdrop fade" ng-class="{in: animate}" ng-style="{\'z-index\': 1040 + index*10}"></div>');
 } ]), angular.module("template/modal/window.html", []).run([ "$templateCache", function($templateCache) {
@@ -11412,7 +11412,7 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
 } ]), angular.module("template/tabs/tabset.html", []).run([ "$templateCache", function($templateCache) {
     $templateCache.put("template/tabs/tabset.html", '\n<div class="tabbable">\n  <ul class="nav {{type && \'nav-\' + type}}" ng-class="{\'nav-stacked\': vertical, \'nav-justified\': justified}" ng-transclude></ul>\n  <div class="tab-content">\n    <div class="tab-pane" \n         ng-repeat="tab in tabs" \n         ng-class="{active: tab.active}"\n         tab-content-transclude="tab">\n    </div>\n  </div>\n</div>\n');
 } ]), angular.module("template/timepicker/timepicker.html", []).run([ "$templateCache", function($templateCache) {
-    $templateCache.put("template/timepicker/timepicker.html", '<table>\n	<tbody>\n		<tr class="text-center">\n			<td><a ng-click="incrementHours()" class="btn btn-link"><span class="glyphicon glyphicon-chevron-up"></span></a></td>\n			<td>&nbsp;</td>\n			<td><a ng-click="incrementMinutes()" class="btn btn-link"><span class="glyphicon glyphicon-chevron-up"></span></a></td>\n			<td ng-show="showMeridian"></td>\n		</tr>\n		<tr>\n			<td style="width:50px;" class="form-group" ng-class="{\'has-error\': invalidHours}">\n				<input type="text" ng-model="hours" ng-change="updateHours()" class="form-control text-center" ng-mousewheel="incrementHours()" ng-readonly="readonlyInput" maxlength="2">\n			</td>\n			<td>:</td>\n			<td style="width:50px;" class="form-group" ng-class="{\'has-error\': invalidMinutes}">\n				<input type="text" ng-model="minutes" ng-change="updateMinutes()" class="form-control text-center" ng-readonly="readonlyInput" maxlength="2">\n			</td>\n			<td ng-show="showMeridian"><button type="button" class="btn btn-default text-center" ng-click="toggleMeridian()">{{meridian}}</button></td>\n		</tr>\n		<tr class="text-center">\n			<td><a ng-click="decrementHours()" class="btn btn-link"><span class="glyphicon glyphicon-chevron-down"></span></a></td>\n			<td>&nbsp;</td>\n			<td><a ng-click="decrementMinutes()" class="btn btn-link"><span class="glyphicon glyphicon-chevron-down"></span></a></td>\n			<td ng-show="showMeridian"></td>\n		</tr>\n	</tbody>\n</table>\n');
+    $templateCache.put("template/timepicker/timepicker.html", '<table>\n\t<tbody>\n\t\t<tr class="text-center">\n\t\t\t<td><a ng-click="incrementHours()" class="btn btn-link"><span class="glyphicon glyphicon-chevron-up"></span></a></td>\n\t\t\t<td>&nbsp;</td>\n\t\t\t<td><a ng-click="incrementMinutes()" class="btn btn-link"><span class="glyphicon glyphicon-chevron-up"></span></a></td>\n\t\t\t<td ng-show="showMeridian"></td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style="width:50px;" class="form-group" ng-class="{\'has-error\': invalidHours}">\n\t\t\t\t<input type="text" ng-model="hours" ng-change="updateHours()" class="form-control text-center" ng-mousewheel="incrementHours()" ng-readonly="readonlyInput" maxlength="2">\n\t\t\t</td>\n\t\t\t<td>:</td>\n\t\t\t<td style="width:50px;" class="form-group" ng-class="{\'has-error\': invalidMinutes}">\n\t\t\t\t<input type="text" ng-model="minutes" ng-change="updateMinutes()" class="form-control text-center" ng-readonly="readonlyInput" maxlength="2">\n\t\t\t</td>\n\t\t\t<td ng-show="showMeridian"><button type="button" class="btn btn-default text-center" ng-click="toggleMeridian()">{{meridian}}</button></td>\n\t\t</tr>\n\t\t<tr class="text-center">\n\t\t\t<td><a ng-click="decrementHours()" class="btn btn-link"><span class="glyphicon glyphicon-chevron-down"></span></a></td>\n\t\t\t<td>&nbsp;</td>\n\t\t\t<td><a ng-click="decrementMinutes()" class="btn btn-link"><span class="glyphicon glyphicon-chevron-down"></span></a></td>\n\t\t\t<td ng-show="showMeridian"></td>\n\t\t</tr>\n\t</tbody>\n</table>\n');
 } ]), angular.module("template/typeahead/typeahead-match.html", []).run([ "$templateCache", function($templateCache) {
     $templateCache.put("template/typeahead/typeahead-match.html", '<a tabindex="-1" bind-html-unsafe="match.label | typeaheadHighlight:query"></a>');
 } ]), angular.module("template/typeahead/typeahead-popup.html", []).run([ "$templateCache", function($templateCache) {
@@ -11449,7 +11449,7 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
         if (angular.isString(target) && void 0 !== replace) if (angular.isArray(replace) || angular.isObject(replace) || (replace = [ replace ]), 
         angular.isArray(replace)) {
             var rlen = replace.length, rfx = function(str, i) {
-                return i = parseInt(i, 10), i >= 0 && rlen > i ? replace[i] : str;
+                return i = parseInt(i, 10), i >= 0 && i < rlen ? replace[i] : str;
             };
             target = target.replace(/\$([0-9]+)/g, rfx);
         } else angular.forEach(replace, function(value, key) {
@@ -11595,7 +11595,7 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
             });
         }), elm.bind(mode, function(event) {
             var metaPressed = !(!event.metaKey || event.ctrlKey), altPressed = !!event.altKey, ctrlPressed = !!event.ctrlKey, shiftPressed = !!event.shiftKey, keyCode = event.keyCode;
-            "keypress" === mode && !shiftPressed && keyCode >= 97 && 122 >= keyCode && (keyCode -= 32), 
+            "keypress" === mode && !shiftPressed && keyCode >= 97 && keyCode <= 122 && (keyCode -= 32), 
             angular.forEach(combinations, function(combination) {
                 var mainKeyPressed = combination.keys[keysByCode[keyCode]] || combination.keys[keyCode.toString()], metaRequired = !!combination.keys.meta, altRequired = !!combination.keys.alt, ctrlRequired = !!combination.keys.ctrl, shiftRequired = !!combination.keys.shift;
                 mainKeyPressed && metaRequired === metaPressed && altRequired === altPressed && ctrlRequired === ctrlPressed && shiftRequired === shiftPressed && scope.$apply(function() {
@@ -11684,7 +11684,7 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
                     iElement.unbind("focus", eventHandler), eventsBound = !1);
                 }
                 function validateValue(value) {
-                    return value.length ? value.length >= minRequiredLength : !0;
+                    return !value.length || value.length >= minRequiredLength;
                 }
                 function unmaskValue(value) {
                     var valueUnmasked = "", maskPatternsCopy = maskPatterns.slice();
@@ -11721,7 +11721,7 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
                         });
                     }
                     maskCaretMap.push(maskCaretMap.slice().pop() + 1), maskComponents = getMaskComponents(), 
-                    maskProcessed = maskCaretMap.length > 1 ? !0 : !1;
+                    maskProcessed = maskCaretMap.length > 1;
                 }
                 function blurHandler() {
                     linkOptions.clearOnBlur && (oldCaretPosition = 0, oldSelectionLength = 0, isValid && 0 !== value.length || (valueMasked = "", 
@@ -11739,11 +11739,11 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
                     e = e || {};
                     var eventWhich = e.which, eventType = e.type;
                     if (16 !== eventWhich && 91 !== eventWhich) {
-                        var valMasked, val = iElement.val(), valOld = oldValue, valUnmasked = unmaskValue(val), valUnmaskedOld = oldValueUnmasked, valAltered = !1, caretPos = getCaretPosition(this) || 0, caretPosOld = oldCaretPosition || 0, caretPosDelta = caretPos - caretPosOld, caretPosMin = maskCaretMap[0], caretPosMax = maskCaretMap[valUnmasked.length] || maskCaretMap.slice().shift(), selectionLenOld = oldSelectionLength || 0, isSelected = getSelectionLength(this) > 0, wasSelected = selectionLenOld > 0, isAddition = val.length > valOld.length || selectionLenOld && val.length > valOld.length - selectionLenOld, isDeletion = val.length < valOld.length || selectionLenOld && val.length === valOld.length - selectionLenOld, isSelection = eventWhich >= 37 && 40 >= eventWhich && e.shiftKey, isKeyLeftArrow = 37 === eventWhich, isKeyBackspace = 8 === eventWhich || "keyup" !== eventType && isDeletion && -1 === caretPosDelta, isKeyDelete = 46 === eventWhich || "keyup" !== eventType && isDeletion && 0 === caretPosDelta && !wasSelected, caretBumpBack = (isKeyLeftArrow || isKeyBackspace || "click" === eventType) && caretPos > caretPosMin;
+                        var valMasked, val = iElement.val(), valOld = oldValue, valUnmasked = unmaskValue(val), valUnmaskedOld = oldValueUnmasked, valAltered = !1, caretPos = getCaretPosition(this) || 0, caretPosOld = oldCaretPosition || 0, caretPosDelta = caretPos - caretPosOld, caretPosMin = maskCaretMap[0], caretPosMax = maskCaretMap[valUnmasked.length] || maskCaretMap.slice().shift(), selectionLenOld = oldSelectionLength || 0, isSelected = getSelectionLength(this) > 0, wasSelected = selectionLenOld > 0, isAddition = val.length > valOld.length || selectionLenOld && val.length > valOld.length - selectionLenOld, isDeletion = val.length < valOld.length || selectionLenOld && val.length === valOld.length - selectionLenOld, isSelection = eventWhich >= 37 && eventWhich <= 40 && e.shiftKey, isKeyLeftArrow = 37 === eventWhich, isKeyBackspace = 8 === eventWhich || "keyup" !== eventType && isDeletion && caretPosDelta === -1, isKeyDelete = 46 === eventWhich || "keyup" !== eventType && isDeletion && 0 === caretPosDelta && !wasSelected, caretBumpBack = (isKeyLeftArrow || isKeyBackspace || "click" === eventType) && caretPos > caretPosMin;
                         if (oldSelectionLength = getSelectionLength(this), !isSelection && (!isSelected || "click" !== eventType && "keyup" !== eventType)) {
                             if ("input" === eventType && isDeletion && !wasSelected && valUnmasked === valUnmaskedOld) {
                                 for (;isKeyBackspace && caretPos > caretPosMin && !isValidCaretPosition(caretPos); ) caretPos--;
-                                for (;isKeyDelete && caretPosMax > caretPos && -1 === maskCaretMap.indexOf(caretPos); ) caretPos++;
+                                for (;isKeyDelete && caretPos < caretPosMax && maskCaretMap.indexOf(caretPos) === -1; ) caretPos++;
                                 var charIndex = maskCaretMap.indexOf(caretPos);
                                 valUnmasked = valUnmasked.substring(0, charIndex) + valUnmasked.substring(charIndex + 1), 
                                 valAltered = !0;
@@ -11751,9 +11751,9 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
                             for (valMasked = maskValue(valUnmasked), oldValue = valMasked, oldValueUnmasked = valUnmasked, 
                             iElement.val(valMasked), valAltered && scope.$apply(function() {
                                 controller.$setViewValue(valUnmasked);
-                            }), isAddition && caretPosMin >= caretPos && (caretPos = caretPosMin + 1), caretBumpBack && caretPos--, 
-                            caretPos = caretPos > caretPosMax ? caretPosMax : caretPosMin > caretPos ? caretPosMin : caretPos; !isValidCaretPosition(caretPos) && caretPos > caretPosMin && caretPosMax > caretPos; ) caretPos += caretBumpBack ? -1 : 1;
-                            (caretBumpBack && caretPosMax > caretPos || isAddition && !isValidCaretPosition(caretPosOld)) && caretPos++, 
+                            }), isAddition && caretPos <= caretPosMin && (caretPos = caretPosMin + 1), caretBumpBack && caretPos--, 
+                            caretPos = caretPos > caretPosMax ? caretPosMax : caretPos < caretPosMin ? caretPosMin : caretPos; !isValidCaretPosition(caretPos) && caretPos > caretPosMin && caretPos < caretPosMax; ) caretPos += caretBumpBack ? -1 : 1;
+                            (caretBumpBack && caretPos < caretPosMax || isAddition && !isValidCaretPosition(caretPosOld)) && caretPos++, 
                             oldCaretPosition = caretPos, setCaretPosition(this, caretPos);
                         }
                     }
@@ -11806,7 +11806,7 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
                     var n = 0;
                     if (arguments.length > 1 && (n = Number(arguments[1]), n !== n ? n = 0 : 0 !== n && n !== 1 / 0 && n !== -(1 / 0) && (n = (n > 0 || -1) * Math.floor(Math.abs(n)))), 
                     n >= len) return -1;
-                    for (var k = n >= 0 ? n : Math.max(len - Math.abs(n), 0); len > k; k++) if (k in t && t[k] === searchElement) return k;
+                    for (var k = n >= 0 ? n : Math.max(len - Math.abs(n), 0); k < len; k++) if (k in t && t[k] === searchElement) return k;
                     return -1;
                 });
             };
@@ -11881,7 +11881,7 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
             var convertToPx, css, getMeasurements, getStyle, getWidthHeight, isWindow, scrollTo;
             return css = angular.element.prototype.css, element.prototype.css = function(name, value) {
                 var elem, self;
-                return self = this, elem = self[0], elem && 3 !== elem.nodeType && 8 !== elem.nodeType && elem.style ? css.call(self, name, value) : void 0;
+                if (self = this, elem = self[0], elem && 3 !== elem.nodeType && 8 !== elem.nodeType && elem.style) return css.call(self, name, value);
             }, isWindow = function(obj) {
                 return obj && obj.document && obj.location && obj.alert && obj.setInterval;
             }, scrollTo = function(self, direction, value) {
@@ -11933,7 +11933,7 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
                     outer: measurements.base,
                     outerfull: measurements.base + measurements.margin
                 }[measure] : (computedStyle = getStyle(elem), result = computedStyle[direction], 
-                (0 > result || null === result) && (result = elem.style[direction] || 0), result = parseFloat(result) || 0, 
+                (result < 0 || null === result) && (result = elem.style[direction] || 0), result = parseFloat(result) || 0, 
                 {
                     base: result - measurements.padding - measurements.border,
                     outer: result,
@@ -11944,7 +11944,7 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
                     var children, elem, i, parent, self, _i, _ref;
                     if (self = this, elem = self[0], parent = self.parent(), children = parent.contents(), 
                     children[0] === elem) return parent.prepend(newElem);
-                    for (i = _i = 1, _ref = children.length - 1; _ref >= 1 ? _ref >= _i : _i >= _ref; i = _ref >= 1 ? ++_i : --_i) if (children[i] === elem) return void angular.element(children[i - 1]).after(newElem);
+                    for (i = _i = 1, _ref = children.length - 1; 1 <= _ref ? _i <= _ref : _i >= _ref; i = 1 <= _ref ? ++_i : --_i) if (children[i] === elem) return void angular.element(children[i - 1]).after(newElem);
                     throw new Error("invalid DOM structure " + elem.outerHTML);
                 },
                 height: function(value) {
@@ -11961,15 +11961,15 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
                         if (void 0 === value) return self;
                         throw new Error("offset setter method is not implemented");
                     }
-                    return box = {
+                    if (box = {
                         top: 0,
                         left: 0
-                    }, elem = self[0], (doc = elem && elem.ownerDocument) ? (docElem = doc.documentElement, 
+                    }, elem = self[0], doc = elem && elem.ownerDocument) return docElem = doc.documentElement, 
                     null != elem.getBoundingClientRect && (box = elem.getBoundingClientRect()), win = doc.defaultView || doc.parentWindow, 
                     {
                         top: box.top + (win.pageYOffset || docElem.scrollTop) - (docElem.clientTop || 0),
                         left: box.left + (win.pageXOffset || docElem.scrollLeft) - (docElem.clientLeft || 0)
-                    }) : void 0;
+                    };
                 },
                 scrollTop: function(value) {
                     return scrollTo(this, "top", value);
@@ -11978,13 +11978,13 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
                     return scrollTo(this, "left", value);
                 }
             }, function(value, key) {
-                return element.prototype[key] ? void 0 : element.prototype[key] = value;
+                if (!element.prototype[key]) return element.prototype[key] = value;
             });
         }
     };
 } ]).run([ "$log", "$window", "jqLiteExtras", function(console, window, jqLiteExtras) {
     "use strict";
-    return window.jQuery ? void 0 : jqLiteExtras.registerFor(angular.element);
+    if (!window.jQuery) return jqLiteExtras.registerFor(angular.element);
 } ]), angular.module("ui.scroll", []).directive("uiScrollViewport", [ "$log", function() {
     "use strict";
     return {
@@ -12074,16 +12074,16 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
                 }), angular.isDefined($attr.topVisibleScope) && (topVisibleScope = function(scope) {
                     return viewportScope[$attr.topVisibleScope] = scope;
                 }), topVisible = function(item) {
-                    return topVisibleItem && topVisibleItem(item.scope[itemName]), topVisibleElement && topVisibleElement(item.element), 
-                    topVisibleScope && topVisibleScope(item.scope), datasource.topVisible ? datasource.topVisible(item) : void 0;
+                    if (topVisibleItem && topVisibleItem(item.scope[itemName]), topVisibleElement && topVisibleElement(item.element), 
+                    topVisibleScope && topVisibleScope(item.scope), datasource.topVisible) return datasource.topVisible(item);
                 }, loading = angular.isDefined($attr.isLoading) ? function(value) {
-                    return viewportScope[$attr.isLoading] = value, datasource.loading ? datasource.loading(value) : void 0;
+                    if (viewportScope[$attr.isLoading] = value, datasource.loading) return datasource.loading(value);
                 } : function(value) {
-                    return datasource.loading ? datasource.loading(value) : void 0;
+                    if (datasource.loading) return datasource.loading(value);
                 }, ridActual = 0, first = 1, next = 1, buffer = [], pending = [], eof = !1, bof = !1, 
                 isLoading = !1, removeFromBuffer = function(start, stop) {
                     var i, _i;
-                    for (i = _i = start; stop >= start ? stop > _i : _i > stop; i = stop >= start ? ++_i : --_i) buffer[i].scope.$destroy(), 
+                    for (i = _i = start; start <= stop ? _i < stop : _i > stop; i = start <= stop ? ++_i : --_i) buffer[i].scope.$destroy(), 
                     buffer[i].element.remove();
                     return buffer.splice(start, stop - start);
                 }, reload = function() {
@@ -12097,34 +12097,34 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
                     return !eof && adapter.bottomDataPos() < bottomVisiblePos() + bufferPadding();
                 }, clipBottom = function() {
                     var bottomHeight, i, item, itemHeight, itemTop, newRow, overage, rowTop, _i, _ref;
-                    for (bottomHeight = 0, overage = 0, i = _i = _ref = buffer.length - 1; 0 >= _ref ? 0 >= _i : _i >= 0; i = 0 >= _ref ? ++_i : --_i) if (item = buffer[i], 
+                    for (bottomHeight = 0, overage = 0, i = _i = _ref = buffer.length - 1; _ref <= 0 ? _i <= 0 : _i >= 0; i = _ref <= 0 ? ++_i : --_i) if (item = buffer[i], 
                     itemTop = item.element.offset().top, newRow = rowTop !== itemTop, rowTop = itemTop, 
                     newRow && (itemHeight = item.element.outerHeight(!0)), adapter.bottomDataPos() - bottomHeight - itemHeight > bottomVisiblePos() + bufferPadding()) newRow && (bottomHeight += itemHeight), 
                     overage++, eof = !1; else {
                         if (newRow) break;
                         overage++;
                     }
-                    return overage > 0 ? (adapter.bottomPadding(adapter.bottomPadding() + bottomHeight), 
-                    removeFromBuffer(buffer.length - overage, buffer.length), next -= overage, log("clipped off bottom " + overage + " bottom padding " + adapter.bottomPadding())) : void 0;
+                    if (overage > 0) return adapter.bottomPadding(adapter.bottomPadding() + bottomHeight), 
+                    removeFromBuffer(buffer.length - overage, buffer.length), next -= overage, log("clipped off bottom " + overage + " bottom padding " + adapter.bottomPadding());
                 }, shouldLoadTop = function() {
                     return !bof && adapter.topDataPos() > topVisiblePos() - bufferPadding();
                 }, clipTop = function() {
                     var item, itemHeight, itemTop, newRow, overage, rowTop, topHeight, _i, _len;
-                    for (topHeight = 0, overage = 0, _i = 0, _len = buffer.length; _len > _i; _i++) if (item = buffer[_i], 
+                    for (topHeight = 0, overage = 0, _i = 0, _len = buffer.length; _i < _len; _i++) if (item = buffer[_i], 
                     itemTop = item.element.offset().top, newRow = rowTop !== itemTop, rowTop = itemTop, 
                     newRow && (itemHeight = item.element.outerHeight(!0)), adapter.topDataPos() + topHeight + itemHeight < topVisiblePos() - bufferPadding()) newRow && (topHeight += itemHeight), 
                     overage++, bof = !1; else {
                         if (newRow) break;
                         overage++;
                     }
-                    return overage > 0 ? (adapter.topPadding(adapter.topPadding() + topHeight), removeFromBuffer(0, overage), 
-                    first += overage, log("clipped off top " + overage + " top padding " + adapter.topPadding())) : void 0;
+                    if (overage > 0) return adapter.topPadding(adapter.topPadding() + topHeight), removeFromBuffer(0, overage), 
+                    first += overage, log("clipped off top " + overage + " top padding " + adapter.topPadding());
                 }, enqueueFetch = function(rid, direction, scrolling) {
-                    return isLoading || (isLoading = !0, loading(!0)), 1 === pending.push(direction) ? fetch(rid, scrolling) : void 0;
+                    if (isLoading || (isLoading = !0, loading(!0)), 1 === pending.push(direction)) return fetch(rid, scrolling);
                 }, hideElementBeforeAppend = function(element) {
                     return element.displayTemp = element.css("display"), element.css("display", "none");
                 }, showElementAfterRender = function(element) {
-                    return element.hasOwnProperty("displayTemp") ? element.css("display", element.displayTemp) : void 0;
+                    if (element.hasOwnProperty("displayTemp")) return element.css("display", element.displayTemp);
                 }, insert = function(index, item) {
                     var itemScope, toBeAppended, wrapper;
                     return itemScope = $scope.$new(), itemScope[itemName] = item, toBeAppended = index > first, 
@@ -12148,7 +12148,7 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
                     if (log("top {actual=" + adapter.topDataPos() + " visible from=" + topVisiblePos() + " bottom {visible through=" + bottomVisiblePos() + " actual=" + adapter.bottomDataPos() + "}"), 
                     shouldLoadBottom() ? enqueueFetch(rid, !0, scrolling) : shouldLoadTop() && enqueueFetch(rid, !1, scrolling), 
                     finalize && finalize(rid), 0 === pending.length) {
-                        for (topHeight = 0, _results = [], _i = 0, _len = buffer.length; _len > _i; _i++) {
+                        for (topHeight = 0, _results = [], _i = 0, _len = buffer.length; _i < _len; _i++) {
                             if (item = buffer[_i], itemTop = item.element.offset().top, newRow = rowTop !== itemTop, 
                             rowTop = itemTop, newRow && (itemHeight = item.element.outerHeight(!0)), !(newRow && adapter.topDataPos() + topHeight + itemHeight < topVisiblePos())) {
                                 newRow && topVisible(item);
@@ -12161,10 +12161,10 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
                 }, adjustBuffer = function(rid, scrolling, newItems, finalize) {
                     return newItems && newItems.length ? $timeout(function() {
                         var itemTop, row, rowTop, rows, _i, _j, _len, _len1;
-                        for (rows = [], _i = 0, _len = newItems.length; _len > _i; _i++) row = newItems[_i], 
+                        for (rows = [], _i = 0, _len = newItems.length; _i < _len; _i++) row = newItems[_i], 
                         element = row.wrapper.element, showElementAfterRender(element), itemTop = element.offset().top, 
                         rowTop !== itemTop && (rows.push(row), rowTop = itemTop);
-                        for (_j = 0, _len1 = rows.length; _len1 > _j; _j++) row = rows[_j], adjustRowHeight(row.appended, row.wrapper);
+                        for (_j = 0, _len1 = rows.length; _j < _len1; _j++) row = rows[_j], adjustRowHeight(row.appended, row.wrapper);
                         return doAdjustment(rid, scrolling, finalize);
                     }) : doAdjustment(rid, scrolling, finalize);
                 }, finalize = function(rid, scrolling, newItems) {
@@ -12177,7 +12177,7 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
                         var item, newItems, _i, _len;
                         if (!rid || rid === ridActual) {
                             if (newItems = [], result.length < bufferSize && (eof = !0, adapter.bottomPadding(0)), 
-                            result.length > 0) for (clipTop(), _i = 0, _len = result.length; _len > _i; _i++) item = result[_i], 
+                            result.length > 0) for (clipTop(), _i = 0, _len = result.length; _i < _len; _i++) item = result[_i], 
                             newItems.push(insert(++next, item));
                             return finalize(rid, scrolling, newItems);
                         }
@@ -12185,18 +12185,18 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
                         var i, newItems, _i, _ref;
                         if (!rid || rid === ridActual) {
                             if (newItems = [], result.length < bufferSize && (bof = !0, adapter.topPadding(0)), 
-                            result.length > 0) for (buffer.length && clipBottom(), i = _i = _ref = result.length - 1; 0 >= _ref ? 0 >= _i : _i >= 0; i = 0 >= _ref ? ++_i : --_i) newItems.unshift(insert(--first, result[i]));
+                            result.length > 0) for (buffer.length && clipBottom(), i = _i = _ref = result.length - 1; _ref <= 0 ? _i <= 0 : _i >= 0; i = _ref <= 0 ? ++_i : --_i) newItems.unshift(insert(--first, result[i]));
                             return finalize(rid, scrolling, newItems);
                         }
                     });
                 }, resizeHandler = function() {
-                    return $rootScope.$$phase || isLoading ? void 0 : (adjustBuffer(null, !1), $scope.$apply());
+                    if (!$rootScope.$$phase && !isLoading) return adjustBuffer(null, !1), $scope.$apply();
                 }, viewport.bind("resize", resizeHandler), scrollHandler = function() {
-                    return $rootScope.$$phase || isLoading ? void 0 : (adjustBuffer(null, !0), $scope.$apply());
+                    if (!$rootScope.$$phase && !isLoading) return adjustBuffer(null, !0), $scope.$apply();
                 }, viewport.bind("scroll", scrollHandler), wheelHandler = function(event) {
                     var scrollTop, yMax;
-                    return scrollTop = viewport[0].scrollTop, yMax = viewport[0].scrollHeight - viewport[0].clientHeight, 
-                    0 === scrollTop && !bof || scrollTop === yMax && !eof ? event.preventDefault() : void 0;
+                    if (scrollTop = viewport[0].scrollTop, yMax = viewport[0].scrollHeight - viewport[0].clientHeight, 
+                    0 === scrollTop && !bof || scrollTop === yMax && !eof) return event.preventDefault();
                 }, viewport.bind("mousewheel", wheelHandler), $scope.$watch(datasource.revision, function() {
                     return reload();
                 }), eventListener = datasource.scope ? datasource.scope.$new() : $scope.$new(), 
@@ -12207,27 +12207,27 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
                     var wrapper, _fn, _i, _len, _ref;
                     if (angular.isFunction(locator)) for (_fn = function(wrapper) {
                         return locator(wrapper.scope);
-                    }, _i = 0, _len = buffer.length; _len > _i; _i++) wrapper = buffer[_i], _fn(wrapper); else 0 <= (_ref = locator - first - 1) && _ref < buffer.length && (buffer[locator - first - 1].scope[itemName] = newItem);
+                    }, _i = 0, _len = buffer.length; _i < _len; _i++) wrapper = buffer[_i], _fn(wrapper); else 0 <= (_ref = locator - first - 1) && _ref < buffer.length && (buffer[locator - first - 1].scope[itemName] = newItem);
                     return null;
                 }), eventListener.$on("delete.items", function(event, locator) {
                     var i, item, temp, wrapper, _fn, _i, _j, _k, _len, _len1, _len2, _ref;
                     if (angular.isFunction(locator)) {
-                        for (temp = [], _i = 0, _len = buffer.length; _len > _i; _i++) item = buffer[_i], 
+                        for (temp = [], _i = 0, _len = buffer.length; _i < _len; _i++) item = buffer[_i], 
                         temp.unshift(item);
                         for (_fn = function(wrapper) {
-                            return locator(wrapper.scope) ? (removeFromBuffer(temp.length - 1 - i, temp.length - i), 
-                            next--) : void 0;
-                        }, i = _j = 0, _len1 = temp.length; _len1 > _j; i = ++_j) wrapper = temp[i], _fn(wrapper);
+                            if (locator(wrapper.scope)) return removeFromBuffer(temp.length - 1 - i, temp.length - i), 
+                            next--;
+                        }, i = _j = 0, _len1 = temp.length; _j < _len1; i = ++_j) wrapper = temp[i], _fn(wrapper);
                     } else 0 <= (_ref = locator - first - 1) && _ref < buffer.length && (removeFromBuffer(locator - first - 1, locator - first), 
                     next--);
-                    for (i = _k = 0, _len2 = buffer.length; _len2 > _k; i = ++_k) item = buffer[i], 
+                    for (i = _k = 0, _len2 = buffer.length; _k < _len2; i = ++_k) item = buffer[i], 
                     item.scope.$index = first + i;
                     return adjustBuffer(null, !1);
                 }), eventListener.$on("insert.item", function(event, locator, item) {
                     var i, inserted, _i, _len, _ref;
                     if (inserted = [], angular.isFunction(locator)) throw new Error("not implemented - Insert with locator function");
                     for (0 <= (_ref = locator - first - 1) && _ref < buffer.length && (inserted.push(insert(locator, item)), 
-                    next++), i = _i = 0, _len = buffer.length; _len > _i; i = ++_i) item = buffer[i], 
+                    next++), i = _i = 0, _len = buffer.length; _i < _len; i = ++_i) item = buffer[i], 
                     item.scope.$index = first + i;
                     return adjustBuffer(null, !1, inserted);
                 });
@@ -12247,7 +12247,7 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
             function onScroll() {
                 var limit = absolute ? attrs.uiScrollfix : elm[0].offsetTop + shift, offset = uiScrollfixTarget ? $target[0].scrollTop : getWindowScrollTop();
                 !elm.hasClass("ui-scrollfix") && offset > limit ? (elm.addClass("ui-scrollfix"), 
-                fixLimit = limit) : elm.hasClass("ui-scrollfix") && fixLimit > offset && elm.removeClass("ui-scrollfix");
+                fixLimit = limit) : elm.hasClass("ui-scrollfix") && offset < fixLimit && elm.removeClass("ui-scrollfix");
             }
             var fixLimit, absolute = !0, shift = 0, $target = uiScrollfixTarget && uiScrollfixTarget.$element || angular.element($window);
             attrs.uiScrollfix ? "string" == typeof attrs.uiScrollfix && ("-" === attrs.uiScrollfix.charAt(0) ? (absolute = !1, 
@@ -12402,7 +12402,7 @@ function(window, angular, undefined) {
             var dec = options.decode || tryDecodeURIComponent, enc = options.encode || encodeURIComponent;
             if (void 0 !== value) return value = "object" == typeof value ? JSON.stringify(value) : String(value), 
             "number" == typeof options.expires && (expiresFor = options.expires, options.expires = new Date(), 
-            -1 === expiresFor ? options.expires = new Date("Thu, 01 Jan 1970 00:00:00 GMT") : void 0 !== options.expirationUnit ? "hours" === options.expirationUnit ? options.expires.setHours(options.expires.getHours() + expiresFor) : "minutes" === options.expirationUnit ? options.expires.setMinutes(options.expires.getMinutes() + expiresFor) : "seconds" === options.expirationUnit ? options.expires.setSeconds(options.expires.getSeconds() + expiresFor) : "milliseconds" === options.expirationUnit ? options.expires.setMilliseconds(options.expires.getMilliseconds() + expiresFor) : options.expires.setDate(options.expires.getDate() + expiresFor) : options.expires.setDate(options.expires.getDate() + expiresFor)), 
+            expiresFor === -1 ? options.expires = new Date("Thu, 01 Jan 1970 00:00:00 GMT") : void 0 !== options.expirationUnit ? "hours" === options.expirationUnit ? options.expires.setHours(options.expires.getHours() + expiresFor) : "minutes" === options.expirationUnit ? options.expires.setMinutes(options.expires.getMinutes() + expiresFor) : "seconds" === options.expirationUnit ? options.expires.setSeconds(options.expires.getSeconds() + expiresFor) : "milliseconds" === options.expirationUnit ? options.expires.setMilliseconds(options.expires.getMilliseconds() + expiresFor) : options.expires.setDate(options.expires.getDate() + expiresFor) : options.expires.setDate(options.expires.getDate() + expiresFor)), 
             $document[0].cookie = [ enc(key), "=", enc(value), options.expires ? "; expires=" + options.expires.toUTCString() : "", options.path ? "; path=" + options.path : "", options.domain ? "; domain=" + options.domain : "", options.secure ? "; secure" : "" ].join("");
             for (list = [], all = $document[0].cookie, all && (list = all.split("; ")), cookies = {}, 
             hasCookies = !1, i = 0; i < list.length; ++i) if (list[i]) {
@@ -12467,9 +12467,9 @@ function(window, angular, undefined) {
         var name, i = 0, length = object.length, isObj = void 0 === length || "[object Array]" !== Object.prototype.toString.apply(object) || "function" == typeof object;
         if (args) if (isObj) {
             for (name in object) if (callback.apply(object[name], args) === !1) break;
-        } else for (;length > i && callback.apply(object[i++], args) !== !1; ) ; else if (isObj) {
+        } else for (;i < length && callback.apply(object[i++], args) !== !1; ) ; else if (isObj) {
             for (name in object) if (callback.call(object[name], name, object[name]) === !1) break;
-        } else for (;length > i && callback.call(object[i], i, object[i++]) !== !1; ) ;
+        } else for (;i < length && callback.call(object[i], i, object[i++]) !== !1; ) ;
         return object;
     }
     function _escape(data) {
@@ -12495,7 +12495,7 @@ function(window, angular, undefined) {
             text = text.replace(/\r\n/g, "\n");
             for (var result = "", i = 0; i < text.length; i++) {
                 var c = text.charCodeAt(i);
-                128 > c ? result += String.fromCharCode(c) : c > 127 && 2048 > c ? (result += String.fromCharCode(c >> 6 | 192), 
+                c < 128 ? result += String.fromCharCode(c) : c > 127 && c < 2048 ? (result += String.fromCharCode(c >> 6 | 192), 
                 result += String.fromCharCode(63 & c | 128)) : (result += String.fromCharCode(c >> 12 | 224), 
                 result += String.fromCharCode(c >> 6 & 63 | 128), result += String.fromCharCode(63 & c | 128));
             }
@@ -12518,7 +12518,7 @@ function(window, angular, undefined) {
         }, ajax = function(method, url, options, callback) {
             "function" == typeof options && (callback = options, options = {}), options.cache = options.cache || !1, 
             options.data = options.data || {}, options.headers = options.headers || {}, options.jsonp = options.jsonp || !1, 
-            options.async = void 0 === options.async ? !0 : options.async;
+            options.async = void 0 === options.async || options.async;
             var payload, headers = mergeHeaders({
                 accept: "*/*",
                 "content-type": "application/x-www-form-urlencoded;charset=UTF-8"
@@ -12578,7 +12578,7 @@ function(window, angular, undefined) {
             },
             isAllowed: function(url, verb, callback) {
                 this.options(url, function(status, data) {
-                    callback(-1 !== data.text().indexOf(verb));
+                    callback(data.text().indexOf(verb) !== -1);
                 });
             },
             options: function(url, options, callback) {
@@ -12607,7 +12607,7 @@ function(window, angular, undefined) {
         "string" == typeof o.ns && (o.ns = {
             namespaces: [ o.ns ],
             defaultNs: o.ns
-        }), "string" == typeof o.fallbackNS && (o.fallbackNS = [ o.fallbackNS ]), ("string" == typeof o.fallbackLng || "boolean" == typeof o.fallbackLng) && (o.fallbackLng = [ o.fallbackLng ]), 
+        }), "string" == typeof o.fallbackNS && (o.fallbackNS = [ o.fallbackNS ]), "string" != typeof o.fallbackLng && "boolean" != typeof o.fallbackLng || (o.fallbackLng = [ o.fallbackLng ]), 
         o.interpolationPrefixEscaped = f.regexEscape(o.interpolationPrefix), o.interpolationSuffixEscaped = f.regexEscape(o.interpolationSuffix), 
         o.lng || (o.lng = f.detectLanguage()), languages = f.toLanguages(o.lng), currentLng = languages[0], 
         f.log("currentLng set to: " + currentLng), o.useCookie && f.cookie.read(o.cookieName) !== currentLng && f.cookie.create(o.cookieName, currentLng, o.cookieExpirationTime, o.cookieDomain), 
@@ -12617,23 +12617,24 @@ function(window, angular, undefined) {
             return options = options || {}, options.lng = options.lng || lngTranslate.lng, translate(key, options);
         }, lngTranslate.lng = currentLng), pluralExtensions.setCurrentLng(currentLng), $ && o.setJqueryExt && addJqueryFunct();
         var deferred;
-        if ($ && $.Deferred && (deferred = $.Deferred()), !o.resStore) {
+        if ($ && $.Deferred && (deferred = $.Deferred()), o.resStore) {
+            if (resStore = o.resStore, initialized = !0, cb && cb(lngTranslate), deferred && deferred.resolve(lngTranslate), 
+            deferred) return deferred.promise();
+        } else {
             var lngsToLoad = f.toLanguages(o.lng);
             "string" == typeof o.preload && (o.preload = [ o.preload ]);
-            for (var i = 0, l = o.preload.length; l > i; i++) for (var pres = f.toLanguages(o.preload[i]), y = 0, len = pres.length; len > y; y++) lngsToLoad.indexOf(pres[y]) < 0 && lngsToLoad.push(pres[y]);
-            return i18n.sync.load(lngsToLoad, o, function(err, store) {
+            for (var i = 0, l = o.preload.length; i < l; i++) for (var pres = f.toLanguages(o.preload[i]), y = 0, len = pres.length; y < len; y++) lngsToLoad.indexOf(pres[y]) < 0 && lngsToLoad.push(pres[y]);
+            if (i18n.sync.load(lngsToLoad, o, function(err, store) {
                 resStore = store, initialized = !0, cb && cb(lngTranslate), deferred && deferred.resolve(lngTranslate);
-            }), deferred ? deferred.promise() : void 0;
+            }), deferred) return deferred.promise();
         }
-        return resStore = o.resStore, initialized = !0, cb && cb(lngTranslate), deferred && deferred.resolve(lngTranslate), 
-        deferred ? deferred.promise() : void 0;
     }
     function isInitialized() {
         return initialized;
     }
     function preload(lngs, cb) {
         "string" == typeof lngs && (lngs = [ lngs ]);
-        for (var i = 0, l = lngs.length; l > i; i++) o.preload.indexOf(lngs[i]) < 0 && o.preload.push(lngs[i]);
+        for (var i = 0, l = lngs.length; i < l; i++) o.preload.indexOf(lngs[i]) < 0 && o.preload.push(lngs[i]);
         return init(cb);
     }
     function addResourceBundle(lng, ns, resources, deep) {
@@ -12685,10 +12686,10 @@ function(window, angular, undefined) {
             }
         }, lngsToLoad = f.toLanguages(o.lng);
         "string" == typeof o.preload && (o.preload = [ o.preload ]);
-        for (var i = 0, l = o.preload.length; l > i; i++) for (var pres = f.toLanguages(o.preload[i]), y = 0, len = pres.length; len > y; y++) lngsToLoad.indexOf(pres[y]) < 0 && lngsToLoad.push(pres[y]);
-        for (var lngNeedLoad = [], a = 0, lenA = lngsToLoad.length; lenA > a; a++) {
+        for (var i = 0, l = o.preload.length; i < l; i++) for (var pres = f.toLanguages(o.preload[i]), y = 0, len = pres.length; y < len; y++) lngsToLoad.indexOf(pres[y]) < 0 && lngsToLoad.push(pres[y]);
+        for (var lngNeedLoad = [], a = 0, lenA = lngsToLoad.length; a < lenA; a++) {
             var needLoad = !1, resSet = resStore[lngsToLoad[a]];
-            if (resSet) for (var b = 0, lenB = namespaces.length; lenB > b; b++) resSet[namespaces[b]] || (needLoad = !0); else needLoad = !0;
+            if (resSet) for (var b = 0, lenB = namespaces.length; b < lenB; b++) resSet[namespaces[b]] || (needLoad = !0); else needLoad = !0;
             needLoad && lngNeedLoad.push(lngsToLoad[a]);
         }
         lngNeedLoad.length ? i18n.sync._fetch(lngNeedLoad, opts, function(err, store) {
@@ -12782,14 +12783,14 @@ function(window, angular, undefined) {
     }
     function applyReuse(translated, options) {
         var comma = ",", options_open = "{", options_close = "}", opts = f.extend({}, options);
-        for (delete opts.postProcess; -1 != translated.indexOf(o.reusePrefix) && (replacementCounter++, 
+        for (delete opts.postProcess; translated.indexOf(o.reusePrefix) != -1 && (replacementCounter++, 
         !(replacementCounter > o.maxRecursion)); ) {
             var index_of_opening = translated.lastIndexOf(o.reusePrefix), index_of_end_of_closing = translated.indexOf(o.reuseSuffix, index_of_opening) + o.reuseSuffix.length, token = translated.substring(index_of_opening, index_of_end_of_closing), token_without_symbols = token.replace(o.reusePrefix, "").replace(o.reuseSuffix, "");
-            if (index_of_opening >= index_of_end_of_closing) return f.error("there is an missing closing in following translation value", translated), 
+            if (index_of_end_of_closing <= index_of_opening) return f.error("there is an missing closing in following translation value", translated), 
             "";
-            if (-1 != token_without_symbols.indexOf(comma)) {
+            if (token_without_symbols.indexOf(comma) != -1) {
                 var index_of_token_end_of_closing = token_without_symbols.indexOf(comma);
-                if (-1 != token_without_symbols.indexOf(options_open, index_of_token_end_of_closing) && -1 != token_without_symbols.indexOf(options_close, index_of_token_end_of_closing)) {
+                if (token_without_symbols.indexOf(options_open, index_of_token_end_of_closing) != -1 && token_without_symbols.indexOf(options_close, index_of_token_end_of_closing) != -1) {
                     var index_of_opts_opening = token_without_symbols.indexOf(options_open, index_of_token_end_of_closing), index_of_opts_end_of_closing = token_without_symbols.indexOf(options_close, index_of_opts_opening) + options_close.length;
                     try {
                         opts = f.extend(opts, JSON.parse(token_without_symbols.substring(index_of_opts_opening, index_of_opts_end_of_closing))), 
@@ -12844,7 +12845,7 @@ function(window, angular, undefined) {
         key = parts[1]), void 0 === found && o.sendMissing && "function" == typeof o.missingKeyHandler && (options.lng ? o.missingKeyHandler(lngs[0], ns, key, notFound, lngs) : o.missingKeyHandler(o.lng, ns, key, notFound, lngs));
         var postProcessorsToApply;
         postProcessorsToApply = "string" == typeof o.postProcess && "" !== o.postProcess ? [ o.postProcess ] : "array" == typeof o.postProcess || "object" == typeof o.postProcess ? o.postProcess : [], 
-        "string" == typeof options.postProcess && "" !== options.postProcess ? postProcessorsToApply = postProcessorsToApply.concat([ options.postProcess ]) : ("array" == typeof options.postProcess || "object" == typeof options.postProcess) && (postProcessorsToApply = postProcessorsToApply.concat(options.postProcess)), 
+        "string" == typeof options.postProcess && "" !== options.postProcess ? postProcessorsToApply = postProcessorsToApply.concat([ options.postProcess ]) : "array" != typeof options.postProcess && "object" != typeof options.postProcess || (postProcessorsToApply = postProcessorsToApply.concat(options.postProcess)), 
         void 0 !== found && postProcessorsToApply.length && postProcessorsToApply.forEach(function(postProcessor) {
             postProcessors[postProcessor] && (found = postProcessors[postProcessor](found, key, options));
         });
@@ -12919,7 +12920,7 @@ function(window, angular, undefined) {
             var indefiniteKey = ns + o.nsseparator + key + (options.count && !needsPlural(options, lngs[0]) || !options.count ? o.indefiniteSuffix : "");
             if (translated = translate(indefiniteKey, optionsWithoutIndef), translated != o.indefiniteNotFound) return translated;
         }
-        for (var found, keys = key.split(o.keyseparator), i = 0, len = lngs.length; len > i && void 0 === found; i++) {
+        for (var found, keys = key.split(o.keyseparator), i = 0, len = lngs.length; i < len && void 0 === found; i++) {
             for (var l = lngs[i], x = 0, value = resStore[l] && resStore[l][ns]; keys[x]; ) value = value && value[keys[x]], 
             x++;
             if (void 0 !== value && (!o.showKeyIfEmpty || "" !== value)) {
@@ -12941,7 +12942,7 @@ function(window, angular, undefined) {
         }
         if (void 0 === found && !options.isFallbackLookup && (o.fallbackToDefaultNS === !0 || o.fallbackNS && o.fallbackNS.length > 0)) {
             if (options.isFallbackLookup = !0, o.fallbackNS.length) {
-                for (var y = 0, lenY = o.fallbackNS.length; lenY > y; y++) if (found = _find(o.fallbackNS[y] + o.nsseparator + key, options), 
+                for (var y = 0, lenY = o.fallbackNS.length; y < lenY; y++) if (found = _find(o.fallbackNS[y] + o.nsseparator + key, options), 
                 found || "" === found && o.fallbackOnEmpty === !1) {
                     var foundValue = found.indexOf(o.nsseparator) > -1 ? found.split(o.nsseparator)[1] : found, notFoundValue = notFound.indexOf(o.nsseparator) > -1 ? notFound.split(o.nsseparator)[1] : notFound;
                     if (foundValue !== notFoundValue) break;
@@ -12995,7 +12996,7 @@ function(window, angular, undefined) {
         var n = 0;
         if (arguments.length > 0 && (n = Number(arguments[1]), n != n ? n = 0 : 0 != n && n != 1 / 0 && n != -(1 / 0) && (n = (n > 0 || -1) * Math.floor(Math.abs(n)))), 
         n >= len) return -1;
-        for (var k = n >= 0 ? n : Math.max(len - Math.abs(n), 0); len > k; k++) if (k in t && t[k] === searchElement) return k;
+        for (var k = n >= 0 ? n : Math.max(len - Math.abs(n), 0); k < len; k++) if (k in t && t[k] === searchElement) return k;
         return -1;
     }), Array.prototype.lastIndexOf || (Array.prototype.lastIndexOf = function(searchElement) {
         "use strict";
@@ -13014,7 +13015,7 @@ function(window, angular, undefined) {
     root.i18n && (conflictReference = root.i18n), root.i18n = i18n), sync = {
         load: function(lngs, options, cb) {
             options.useLocalStorage ? sync._loadLocal(lngs, options, function(err, store) {
-                for (var missingLngs = [], i = 0, len = lngs.length; len > i; i++) store[lngs[i]] || missingLngs.push(lngs[i]);
+                for (var missingLngs = [], i = 0, len = lngs.length; i < len; i++) store[lngs[i]] || missingLngs.push(lngs[i]);
                 missingLngs.length > 0 ? sync._fetch(missingLngs, options, function(err, fetched) {
                     f.extend(store, fetched), sync._storeLocal(fetched), cb(null, store);
                 }) : cb(null, store);
@@ -13114,14 +13115,14 @@ function(window, angular, undefined) {
                     lng: lng,
                     ns: ns
                 })
-            }); else if ("all" === o.sendMissingTo) for (var i = 0, l = lngs.length; l > i; i++) urls.push({
+            }); else if ("all" === o.sendMissingTo) for (var i = 0, l = lngs.length; i < l; i++) urls.push({
                 lng: lngs[i],
                 url: applyReplacement(o.resPostPath, {
                     lng: lngs[i],
                     ns: ns
                 })
             });
-            for (var y = 0, len = urls.length; len > y; y++) {
+            for (var y = 0, len = urls.length; y < len; y++) {
                 var item = urls[y];
                 f.ajax({
                     url: item.url,
@@ -13248,7 +13249,7 @@ function(window, angular, undefined) {
         },
         getCountyIndexOfLng: function(lng) {
             var lng_index = 0;
-            return ("nb-NO" === lng || "nn-NO" === lng || "nb-no" === lng || "nn-no" === lng) && (lng_index = 1), 
+            return "nb-NO" !== lng && "nn-NO" !== lng && "nb-no" !== lng && "nn-no" !== lng || (lng_index = 1), 
             lng_index;
         },
         toLanguages: function(lng) {
@@ -13267,7 +13268,7 @@ function(window, angular, undefined) {
                 var parts = lng.split("-");
                 "unspecific" !== o.load && addLanguage(applyCase(lng)), "current" !== o.load && addLanguage(applyCase(parts[this.getCountyIndexOfLng(lng)]));
             } else addLanguage(applyCase(lng));
-            for (var i = 0; i < o.fallbackLng.length; i++) -1 === languages.indexOf(o.fallbackLng[i]) && o.fallbackLng[i] && languages.push(applyCase(o.fallbackLng[i]));
+            for (var i = 0; i < o.fallbackLng.length; i++) languages.indexOf(o.fallbackLng[i]) === -1 && o.fallbackLng[i] && languages.push(applyCase(o.fallbackLng[i]));
             return languages;
         },
         regexEscape: function(str) {
@@ -13305,16 +13306,16 @@ function(window, angular, undefined) {
             return 0;
         },
         4: function(n) {
-            return Number(n % 10 == 1 && n % 100 != 11 ? 0 : n % 10 >= 2 && 4 >= n % 10 && (10 > n % 100 || n % 100 >= 20) ? 1 : 2);
+            return Number(n % 10 == 1 && n % 100 != 11 ? 0 : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? 1 : 2);
         },
         5: function(n) {
-            return Number(0 === n ? 0 : 1 == n ? 1 : 2 == n ? 2 : n % 100 >= 3 && 10 >= n % 100 ? 3 : n % 100 >= 11 ? 4 : 5);
+            return Number(0 === n ? 0 : 1 == n ? 1 : 2 == n ? 2 : n % 100 >= 3 && n % 100 <= 10 ? 3 : n % 100 >= 11 ? 4 : 5);
         },
         6: function(n) {
-            return Number(1 == n ? 0 : n >= 2 && 4 >= n ? 1 : 2);
+            return Number(1 == n ? 0 : n >= 2 && n <= 4 ? 1 : 2);
         },
         7: function(n) {
-            return Number(1 == n ? 0 : n % 10 >= 2 && 4 >= n % 10 && (10 > n % 100 || n % 100 >= 20) ? 1 : 2);
+            return Number(1 == n ? 0 : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? 1 : 2);
         },
         8: function(n) {
             return Number(1 == n ? 0 : 2 == n ? 1 : 8 != n && 11 != n ? 2 : 3);
@@ -13323,10 +13324,10 @@ function(window, angular, undefined) {
             return Number(n >= 2);
         },
         10: function(n) {
-            return Number(1 == n ? 0 : 2 == n ? 1 : 7 > n ? 2 : 11 > n ? 3 : 4);
+            return Number(1 == n ? 0 : 2 == n ? 1 : n < 7 ? 2 : n < 11 ? 3 : 4);
         },
         11: function(n) {
-            return Number(1 == n || 11 == n ? 0 : 2 == n || 12 == n ? 1 : n > 2 && 20 > n ? 2 : 3);
+            return Number(1 == n || 11 == n ? 0 : 2 == n || 12 == n ? 1 : n > 2 && n < 20 ? 2 : 3);
         },
         12: function(n) {
             return Number(n % 10 != 1 || n % 100 == 11);
@@ -13338,7 +13339,7 @@ function(window, angular, undefined) {
             return Number(1 == n ? 0 : 2 == n ? 1 : 3 == n ? 2 : 3);
         },
         15: function(n) {
-            return Number(n % 10 == 1 && n % 100 != 11 ? 0 : n % 10 >= 2 && (10 > n % 100 || n % 100 >= 20) ? 1 : 2);
+            return Number(n % 10 == 1 && n % 100 != 11 ? 0 : n % 10 >= 2 && (n % 100 < 10 || n % 100 >= 20) ? 1 : 2);
         },
         16: function(n) {
             return Number(n % 10 == 1 && n % 100 != 11 ? 0 : 0 !== n ? 1 : 2);
@@ -13350,10 +13351,10 @@ function(window, angular, undefined) {
             return Number(1 == n ? 1 : 2);
         },
         19: function(n) {
-            return Number(1 == n ? 0 : 0 === n || n % 100 > 1 && 11 > n % 100 ? 1 : n % 100 > 10 && 20 > n % 100 ? 2 : 3);
+            return Number(1 == n ? 0 : 0 === n || n % 100 > 1 && n % 100 < 11 ? 1 : n % 100 > 10 && n % 100 < 20 ? 2 : 3);
         },
         20: function(n) {
-            return Number(1 == n ? 0 : 0 === n || n % 100 > 0 && 20 > n % 100 ? 1 : 2);
+            return Number(1 == n ? 0 : 0 === n || n % 100 > 0 && n % 100 < 20 ? 1 : 2);
         },
         21: function(n) {
             return Number(n % 100 == 1 ? 1 : n % 100 == 2 ? 2 : n % 100 == 3 || n % 100 == 4 ? 3 : 0);
@@ -13383,7 +13384,7 @@ function(window, angular, undefined) {
         needsPlural: function(lng, count) {
             var ext, parts = lng.split("-");
             return ext = pluralExtensions.currentRule && pluralExtensions.currentRule.lng === lng ? pluralExtensions.currentRule.rule : pluralExtensions.rules[parts[f.getCountyIndexOfLng(lng)]], 
-            ext && ext.numbers.length <= 1 ? !1 : 1 !== this.get(lng, count);
+            !(ext && ext.numbers.length <= 1) && 1 !== this.get(lng, count);
         },
         get: function(lng, count) {
             function getResult(l, c) {
@@ -13416,7 +13417,7 @@ function(window, angular, undefined) {
         };
         return str_format.format = function(parse_tree, argv) {
             var arg, i, k, match, pad, pad_character, pad_length, cursor = 1, tree_length = parse_tree.length, node_type = "", output = [];
-            for (i = 0; tree_length > i; i++) if (node_type = get_type(parse_tree[i]), "string" === node_type) output.push(parse_tree[i]); else if ("array" === node_type) {
+            for (i = 0; i < tree_length; i++) if (node_type = get_type(parse_tree[i]), "string" === node_type) output.push(parse_tree[i]); else if ("array" === node_type) {
                 if (match = parse_tree[i], match[2]) for (arg = argv[cursor], k = 0; k < match[2].length; k++) {
                     if (!arg.hasOwnProperty(match[2][k])) throw sprintf('[sprintf] property "%s" does not exist', match[2][k]);
                     arg = arg[match[2][k]];
@@ -13514,7 +13515,7 @@ angular.module("jm.i18next").provider("$i18next", function() {
                 translations = {}, t = localize, $rootScope.$$phase || $rootScope.$digest(), $rootScope.$broadcast("i18nextLanguageChange", i18n.lng()), 
                 i18nDeferred.resolve();
             }), i18nDeferred.promise;
-            if (triesToLoadI18next++, !(5 > triesToLoadI18next)) throw new Error("[ng-i18next] Can't find i18next!");
+            if (triesToLoadI18next++, !(triesToLoadI18next < 5)) throw new Error("[ng-i18next] Can't find i18next!");
             $timeout(function() {
                 return init(options);
             }, 400);
@@ -13525,7 +13526,7 @@ angular.module("jm.i18next").provider("$i18next", function() {
         }
         function translate(key, options, hasOwnOptions) {
             var lng = options.lng || "auto";
-            translations[lng] || (translations[lng] = {}), t ? (!translations[lng][key] || hasOwnOptions) && (translations[lng][key] = t(key, options)) : translations[lng][key] = "defaultLoadingValue" in options ? options.defaultLoadingValue : "defaultValue" in options ? options.defaultValue : "defaultLoadingValue" in globalOptions ? globalOptions.defaultLoadingValue : key;
+            translations[lng] || (translations[lng] = {}), t ? translations[lng][key] && !hasOwnOptions || (translations[lng][key] = t(key, options)) : translations[lng][key] = "defaultLoadingValue" in options ? options.defaultLoadingValue : "defaultValue" in options ? options.defaultValue : "defaultLoadingValue" in globalOptions ? globalOptions.defaultLoadingValue : key;
         }
         function $i18nextTanslate(key, options) {
             var mergedOptions, lng, hasOwnOptions = !!options, hasOwnNsOption = hasOwnOptions && options.ns, hasGlobalNsObj = globalOptions && globalOptions.ns, defaultOptions = globalOptions;
@@ -13674,7 +13675,7 @@ angular.module("jm.i18next").provider("$i18next", function() {
     return function(scope, element, attr) {
         function isMouseInFirstHalf(event, targetNode, relativeToParent) {
             var mousePointer = horizontal ? event.offsetX || event.layerX : event.offsetY || event.layerY, targetSize = horizontal ? targetNode.offsetWidth : targetNode.offsetHeight, targetPosition = horizontal ? targetNode.offsetLeft : targetNode.offsetTop;
-            return targetPosition = relativeToParent ? targetPosition : 0, targetPosition + targetSize / 2 > mousePointer;
+            return targetPosition = relativeToParent ? targetPosition : 0, mousePointer < targetPosition + targetSize / 2;
         }
         function getPlaceholderIndex() {
             return Array.prototype.indexOf.call(listNode.children, placeholderNode);
@@ -13684,9 +13685,9 @@ angular.module("jm.i18next").provider("$i18next", function() {
             if (!hasTextMimetype(event.dataTransfer.types)) return !1;
             if (attr.dndAllowedTypes && dndDragTypeWorkaround.isDragging) {
                 var allowed = scope.$eval(attr.dndAllowedTypes);
-                if (angular.isArray(allowed) && -1 === allowed.indexOf(dndDragTypeWorkaround.dragType)) return !1;
+                if (angular.isArray(allowed) && allowed.indexOf(dndDragTypeWorkaround.dragType) === -1) return !1;
             }
-            return attr.dndDisableIf && scope.$eval(attr.dndDisableIf) ? !1 : !0;
+            return !attr.dndDisableIf || !scope.$eval(attr.dndDisableIf);
         }
         function stopDragover() {
             return placeholder.remove(), element.removeClass("dndDragover"), !0;
@@ -14012,7 +14013,7 @@ mod.directive("infiniteScroll", [ "$rootScope", "$window", "$interval", "THROTTL
                 for (var r = {}, n = 0; n < b.data[t].length; n++) {
                     if (e.dynamicTyping) {
                         var i = b.data[t][n];
-                        b.data[t][n] = "true" == i || "TRUE" == i ? !0 : "false" == i || "FALSE" == i ? !1 : o(i);
+                        b.data[t][n] = "true" == i || "TRUE" == i || "false" != i && "FALSE" != i && o(i);
                     }
                     e.header && (n >= y.length ? (r.__parsed_extra || (r.__parsed_extra = []), r.__parsed_extra.push(b.data[t][n])) : r[y[n]] = b.data[t][n]);
                 }
@@ -14021,7 +14022,7 @@ mod.directive("infiniteScroll", [ "$rootScope", "$window", "$interval", "THROTTL
             return e.header && b.meta && (b.meta.fields = y), b;
         }
         function s(t) {
-            for (var r, n, i, s = [ ",", "	", "|", ";", S.RECORD_SEP, S.UNIT_SEP ], a = 0; a < s.length; a++) {
+            for (var r, n, i, s = [ ",", "\t", "|", ";", S.RECORD_SEP, S.UNIT_SEP ], a = 0; a < s.length; a++) {
                 var o = s[a], h = 0, f = 0;
                 i = void 0;
                 for (var c = new u({
@@ -14328,107 +14329,68 @@ mod.directive("infiniteScroll", [ "$rootScope", "$window", "$interval", "THROTTL
 
 var saveAs = saveAs || function(e) {
     "use strict";
-    if ("undefined" == typeof navigator || !/MSIE [1-9]\./.test(navigator.userAgent)) {
+    if (!("undefined" == typeof e || "undefined" != typeof navigator && /MSIE [1-9]\./.test(navigator.userAgent))) {
         var t = e.document, n = function() {
             return e.URL || e.webkitURL || e;
-        }, r = t.createElementNS("http://www.w3.org/1999/xhtml", "a"), i = "download" in r, o = function(e) {
+        }, r = t.createElementNS("http://www.w3.org/1999/xhtml", "a"), o = "download" in r, i = function(e) {
             var t = new MouseEvent("click");
             e.dispatchEvent(t);
-        }, a = /Version\/[\d\.]+.*Safari/.test(navigator.userAgent), f = e.webkitRequestFileSystem, u = e.requestFileSystem || f || e.mozRequestFileSystem, s = function(t) {
+        }, a = /constructor/i.test(e.HTMLElement), f = /CriOS\/[\d]+/.test(navigator.userAgent), u = function(t) {
             (e.setImmediate || e.setTimeout)(function() {
                 throw t;
             }, 0);
-        }, c = "application/octet-stream", d = 0, l = 500, w = function(t) {
-            var r = function() {
-                "string" == typeof t ? n().revokeObjectURL(t) : t.remove();
+        }, d = "application/octet-stream", s = 4e4, c = function(e) {
+            var t = function() {
+                "string" == typeof e ? n().revokeObjectURL(e) : e.remove();
             };
-            e.chrome ? r() : setTimeout(r, l);
-        }, p = function(e, t, n) {
+            setTimeout(t, s);
+        }, l = function(e, t, n) {
             t = [].concat(t);
             for (var r = t.length; r--; ) {
-                var i = e["on" + t[r]];
-                if ("function" == typeof i) try {
-                    i.call(e, n || e);
-                } catch (o) {
-                    s(o);
+                var o = e["on" + t[r]];
+                if ("function" == typeof o) try {
+                    o.call(e, n || e);
+                } catch (i) {
+                    u(i);
                 }
             }
-        }, v = function(e) {
-            return /^\s*(?:text\/\S*|application\/xml|\S*\/\S*\+xml)\s*;.*charset\s*=\s*utf-8/i.test(e.type) ? new Blob([ "\ufeff", e ], {
+        }, p = function(e) {
+            return /^\s*(?:text\/\S*|application\/xml|\S*\/\S*\+xml)\s*;.*charset\s*=\s*utf-8/i.test(e.type) ? new Blob([ String.fromCharCode(65279), e ], {
                 type: e.type
             }) : e;
-        }, y = function(t, s, l) {
-            l || (t = v(t));
-            var h, R, N, y = this, m = t.type, S = !1, O = function() {
-                p(y, "writestart progress write writeend".split(" "));
-            }, g = function() {
-                if (R && a && "undefined" != typeof FileReader) {
+        }, v = function(t, u, s) {
+            s || (t = p(t));
+            var y, v = this, w = t.type, m = w === d, h = function() {
+                l(v, "writestart progress write writeend".split(" "));
+            }, S = function() {
+                if ((f || m && a) && e.FileReader) {
                     var r = new FileReader();
                     return r.onloadend = function() {
-                        var e = r.result;
-                        R.location.href = "data:attachment/file" + e.slice(e.search(/[,;]/)), y.readyState = y.DONE, 
-                        O();
-                    }, r.readAsDataURL(t), void (y.readyState = y.INIT);
+                        var t = f ? r.result : r.result.replace(/^data:[^;]*;/, "data:attachment/file;"), n = e.open(t, "_blank");
+                        n || (e.location.href = t), t = void 0, v.readyState = v.DONE, h();
+                    }, r.readAsDataURL(t), void (v.readyState = v.INIT);
                 }
-                if ((S || !h) && (h = n().createObjectURL(t)), R) R.location.href = h; else {
-                    var i = e.open(h, "_blank");
-                    void 0 == i && a && (e.location.href = h);
+                if (y || (y = n().createObjectURL(t)), m) e.location.href = y; else {
+                    var o = e.open(y, "_blank");
+                    o || (e.location.href = y);
                 }
-                y.readyState = y.DONE, O(), w(h);
-            }, b = function(e) {
-                return function() {
-                    return y.readyState !== y.DONE ? e.apply(this, arguments) : void 0;
-                };
-            }, E = {
-                create: !0,
-                exclusive: !1
+                v.readyState = v.DONE, h(), c(y);
             };
-            return y.readyState = y.INIT, s || (s = "download"), i ? (h = n().createObjectURL(t), 
-            r.href = h, r.download = s, void setTimeout(function() {
-                o(r), O(), w(h), y.readyState = y.DONE;
-            })) : (e.chrome && m && m !== c && (N = t.slice || t.webkitSlice, t = N.call(t, 0, t.size, c), 
-            S = !0), f && "download" !== s && (s += ".download"), (m === c || f) && (R = e), 
-            u ? (d += t.size, void u(e.TEMPORARY, d, b(function(e) {
-                e.root.getDirectory("saved", E, b(function(e) {
-                    var n = function() {
-                        e.getFile(s, E, b(function(e) {
-                            e.createWriter(b(function(n) {
-                                n.onwriteend = function(t) {
-                                    R.location.href = e.toURL(), y.readyState = y.DONE, p(y, "writeend", t), w(e);
-                                }, n.onerror = function() {
-                                    var e = n.error;
-                                    e.code !== e.ABORT_ERR && g();
-                                }, "writestart progress write abort".split(" ").forEach(function(e) {
-                                    n["on" + e] = y["on" + e];
-                                }), n.write(t), y.abort = function() {
-                                    n.abort(), y.readyState = y.DONE;
-                                }, y.readyState = y.WRITING;
-                            }), g);
-                        }), g);
-                    };
-                    e.getFile(s, {
-                        create: !1
-                    }, b(function(e) {
-                        e.remove(), n();
-                    }), b(function(e) {
-                        e.code === e.NOT_FOUND_ERR ? n() : g();
-                    }));
-                }), g);
-            }), g)) : void g());
-        }, m = y.prototype, S = function(e, t, n) {
-            return new y(e, t, n);
+            return v.readyState = v.INIT, o ? (y = n().createObjectURL(t), void setTimeout(function() {
+                r.href = y, r.download = u, i(r), h(), c(y), v.readyState = v.DONE;
+            })) : void S();
+        }, w = v.prototype, m = function(e, t, n) {
+            return new v(e, t || e.name || "download", n);
         };
         return "undefined" != typeof navigator && navigator.msSaveOrOpenBlob ? function(e, t, n) {
-            return n || (e = v(e)), navigator.msSaveOrOpenBlob(e, t || "download");
-        } : (m.abort = function() {
-            var e = this;
-            e.readyState = e.DONE, p(e, "abort");
-        }, m.readyState = m.INIT = 0, m.WRITING = 1, m.DONE = 2, m.error = m.onwritestart = m.onprogress = m.onwrite = m.onabort = m.onerror = m.onwriteend = null, 
-        S);
+            return t = t || e.name || "download", n || (e = p(e)), navigator.msSaveOrOpenBlob(e, t);
+        } : (w.abort = function() {}, w.readyState = w.INIT = 0, w.WRITING = 1, w.DONE = 2, 
+        w.error = w.onwritestart = w.onprogress = w.onwrite = w.onabort = w.onerror = w.onwriteend = null, 
+        m);
     }
 }("undefined" != typeof self && self || "undefined" != typeof window && window || this.content);
 
-"undefined" != typeof module && module.exports ? module.exports.saveAs = saveAs : "undefined" != typeof define && null !== define && null != define.amd && define([], function() {
+"undefined" != typeof module && module.exports ? module.exports.saveAs = saveAs : "undefined" != typeof define && null !== define && null !== define.amd && define([], function() {
     return saveAs;
 }), function() {
     function patchXHR(fnName, newFn) {
@@ -14468,11 +14430,11 @@ var saveAs = saveAs || function(e) {
         }
         function resetAndClick(evt) {
             if (null != fileElem[0].value && "" != fileElem[0].value && (fileElem[0].value = null, 
-            -1 === navigator.userAgent.indexOf("Trident/7") && onChangeFn({
+            navigator.userAgent.indexOf("Trident/7") === -1 && onChangeFn({
                 target: {
                     files: []
                 }
-            })), elem.attr("__afu_clone__")) elem.attr("__afu_clone__", null); else if (-1 !== navigator.appVersion.indexOf("MSIE 10") || -1 !== navigator.userAgent.indexOf("Trident/7")) {
+            })), elem.attr("__afu_clone__")) elem.attr("__afu_clone__", null); else if (navigator.appVersion.indexOf("MSIE 10") !== -1 || navigator.userAgent.indexOf("Trident/7") !== -1) {
                 var clone = recompileElem();
                 return clone.attr("__afu_clone__", !0), clone[0].click(), evt.preventDefault(), 
                 evt.stopPropagation(), !0;
@@ -14513,7 +14475,7 @@ var saveAs = saveAs || function(e) {
             for (var i = 0; i < watchers.length; i++) watchers[i]();
             elem[0] != fileElem[0] && fileElem.remove();
         }), watchers.push(scope.$watch(attr.ngModel, function(val, oldVal) {
-            val == oldVal || null != val && val.length || (-1 !== navigator.appVersion.indexOf("MSIE 10") ? recompileElem() : fileElem[0].value = null);
+            val == oldVal || null != val && val.length || (navigator.appVersion.indexOf("MSIE 10") !== -1 ? recompileElem() : fileElem[0].value = null);
         }));
     }
     function handleDrop(scope, elem, attr, ngModel, $parse, $timeout, $location) {
@@ -14786,7 +14748,7 @@ var saveAs = saveAs || function(e) {
             };
             var i, j;
             this.call = function() {
-                for (i = 0, j = this.q.length; j > i; i++) this.q[i].call();
+                for (i = 0, j = this.q.length; i < j; i++) this.q[i].call();
             };
         }
         function getComputedStyle(element, prop) {
@@ -14819,7 +14781,7 @@ var saveAs = saveAs || function(e) {
                 addResizeListener(element.resizeSensor.lastElementChild, myResized);
             }
         }
-        if ("array" == typeof element || "undefined" != typeof jQuery && element instanceof jQuery || "undefined" != typeof Elements && element instanceof Elements) for (var i = 0, j = element.length; j > i; i++) attachResizeEvent(element[i], callback); else attachResizeEvent(element, callback);
+        if ("array" == typeof element || "undefined" != typeof jQuery && element instanceof jQuery || "undefined" != typeof Elements && element instanceof Elements) for (var i = 0, j = element.length; i < j; i++) attachResizeEvent(element[i], callback); else attachResizeEvent(element, callback);
     };
 }(), RC4.getStringBytes = function(string) {
     for (var output = [], i = 0; i < string.length; i++) {
@@ -14840,7 +14802,7 @@ var saveAs = saveAs || function(e) {
 }, RNG.prototype.nextByte = function() {
     return this._state.next();
 }, RNG.prototype.uniform = function() {
-    for (var BYTES = 7, output = 0, i = 0; BYTES > i; i++) output *= 256, output += this.nextByte();
+    for (var BYTES = 7, output = 0, i = 0; i < BYTES; i++) output *= 256, output += this.nextByte();
     return output / (Math.pow(2, 8 * BYTES) - 1);
 }, RNG.prototype.random = function(n, m) {
     return null == n ? this.uniform() : (null == m && (m = n, n = 0), n + Math.floor(this.uniform() * (m - n)));
@@ -14858,16 +14820,16 @@ var saveAs = saveAs || function(e) {
     do k++, p *= this.uniform(); while (p > L);
     return k - 1;
 }, RNG.prototype.gamma = function(a) {
-    var d = (1 > a ? 1 + a : a) - 1 / 3, c = 1 / Math.sqrt(9 * d);
+    var d = (a < 1 ? 1 + a : a) - 1 / 3, c = 1 / Math.sqrt(9 * d);
     do {
-        do var x = this.normal(), v = Math.pow(c * x + 1, 3); while (0 >= v);
+        do var x = this.normal(), v = Math.pow(c * x + 1, 3); while (v <= 0);
         var u = this.uniform(), x2 = Math.pow(x, 2);
     } while (u >= 1 - .0331 * x2 * x2 && Math.log(u) >= .5 * x2 + d * (1 - v + Math.log(v)));
-    return 1 > a ? d * v * Math.exp(this.exponential() / -a) : d * v;
+    return a < 1 ? d * v * Math.exp(this.exponential() / -a) : d * v;
 }, RNG.roller = function(expr, rng) {
     var parts = expr.split(/(\d+)?d(\d+)([+-]\d+)?/).slice(1), dice = parseFloat(parts[0]) || 1, sides = parseFloat(parts[1]), mod = parseFloat(parts[2]) || 0;
     return rng = rng || new RNG(), function() {
-        for (var total = dice + mod, i = 0; dice > i; i++) total += rng.random(sides);
+        for (var total = dice + mod, i = 0; i < dice; i++) total += rng.random(sides);
         return total;
     };
 }, RNG.$ = new RNG(), function() {
@@ -14909,10 +14871,10 @@ var saveAs = saveAs || function(e) {
     angular.module("angular-date-picker-polyfill").factory("aaDateUtil", function() {
         return {
             dateObjectsAreEqualToDay: function(d1, d2) {
-                return angular.isDate(d1) && angular.isDate(d2) ? d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate() : !1;
+                return !(!angular.isDate(d1) || !angular.isDate(d2)) && (d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate());
             },
             dateObjectsAreEqualToMonth: function(d1, d2) {
-                return angular.isDate(d1) && angular.isDate(d2) ? d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() : !1;
+                return !(!angular.isDate(d1) || !angular.isDate(d2)) && (d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth());
             },
             convertToDate: function(val) {
                 var d;
@@ -14930,24 +14892,23 @@ var saveAs = saveAs || function(e) {
     linker = function(scope, elem, attrs, ngModelCtrl, $compile, aaDateUtil, includeTimepicker) {
         var compileTemplate, init, setupNonInputEvents, setupNonInputValidatorAndFormatter, setupPopupTogglingEvents, setupViewActionMethods;
         return null == includeTimepicker && (includeTimepicker = !1), init = function() {
-            return compileTemplate(), setupViewActionMethods(), setupPopupTogglingEvents(), 
-            "INPUT" !== elem.prop("tagName") || "date" !== attrs.type && "datetime-local" !== attrs.type ? (setupNonInputEvents(), 
-            setupNonInputValidatorAndFormatter()) : void 0;
+            if (compileTemplate(), setupViewActionMethods(), setupPopupTogglingEvents(), "INPUT" !== elem.prop("tagName") || "date" !== attrs.type && "datetime-local" !== attrs.type) return setupNonInputEvents(), 
+            setupNonInputValidatorAndFormatter();
         }, setupNonInputValidatorAndFormatter = function() {
             ngModelCtrl.$formatters.unshift(aaDateUtil.convertToDate);
         }, compileTemplate = function() {
             var $popup, popupDiv, tmpl, useAmPm;
             return elem.wrap("<div class='aa-date-input'></div>"), tmpl = "<div class='aa-datepicker-popup' data-ng-show='isOpen'>\n  <div class='aa-datepicker-popup-close' data-ng-click='closePopup()'></div>\n  <div data-aa-calendar ng-model='ngModel'></div>", 
-            includeTimepicker && (useAmPm = null != attrs.useAmPm ? attrs.useAmPm === !0 || "true" === attrs.useAmPm : !0, 
+            includeTimepicker && (useAmPm = null == attrs.useAmPm || (attrs.useAmPm === !0 || "true" === attrs.useAmPm), 
             tmpl += "<div data-aa-timepicker use-am-pm='" + useAmPm + "' ng-model='ngModel'></div>"), 
             tmpl += "</div>", popupDiv = angular.element(tmpl), $popup = $compile(popupDiv)(scope), 
             elem.after($popup);
         }, setupPopupTogglingEvents = function() {
             var $wrapper, onDocumentClick, wrapperClicked;
             return scope.$on("aa:calendar:set-date", function() {
-                return includeTimepicker ? void 0 : scope.closePopup();
+                if (!includeTimepicker) return scope.closePopup();
             }), wrapperClicked = !1, elem.on("focus", function(e) {
-                return scope.isOpen ? void 0 : scope.$apply(function() {
+                if (!scope.isOpen) return scope.$apply(function() {
                     return scope.openPopup();
                 });
             }), $wrapper = elem.parent(), $wrapper.on("mousedown", function(e) {
@@ -14955,19 +14916,19 @@ var saveAs = saveAs || function(e) {
                     return wrapperClicked = !1;
                 }, 100);
             }), elem.on("blur", function(e) {
-                return scope.isOpen && !wrapperClicked ? scope.$apply(function() {
+                if (scope.isOpen && !wrapperClicked) return scope.$apply(function() {
                     return scope.closePopup();
-                }) : void 0;
+                });
             }), onDocumentClick = function(e) {
-                return scope.isOpen && !wrapperClicked ? scope.$apply(function() {
+                if (scope.isOpen && !wrapperClicked) return scope.$apply(function() {
                     return scope.closePopup();
-                }) : void 0;
+                });
             }, angular.element(window.document).on("mousedown", onDocumentClick), scope.$on("$destroy", function() {
                 return elem.off("focus"), elem.off("blur"), $wrapper.off("mousedown"), angular.element(window.document).off("mousedown", onDocumentClick);
             });
         }, setupNonInputEvents = function() {
             return elem.on("click", function(e) {
-                return scope.isOpen ? void 0 : scope.$apply(function() {
+                if (!scope.isOpen) return scope.$apply(function() {
                     return scope.openPopup();
                 });
             }), scope.$on("$destroy", function() {
@@ -15010,7 +14971,7 @@ var saveAs = saveAs || function(e) {
                 ngModel: "="
             },
             compile: function(elem, attrs) {
-                return null == attrs.ngModel || "date" !== attrs.type && "datetime-local" !== attrs.type ? void 0 : function(scope, elem, attrs, ngModelCtrl) {
+                if (null != attrs.ngModel && ("date" === attrs.type || "datetime-local" === attrs.type)) return function(scope, elem, attrs, ngModelCtrl) {
                     return linker(scope, elem, attrs, ngModelCtrl, $compile, aaDateUtil, "datetime-local" === attrs.type);
                 };
             }
@@ -15026,11 +14987,11 @@ var saveAs = saveAs || function(e) {
                 var arr, d, dayIndex, endDate, obj, offset, today, weekNum, _i;
                 for (null == selected && (selected = null), d = new Date(year, month, 1), today = new Date(), 
                 endDate = new Date(year, month, this.numberOfDaysInMonth(year, month)), offset = d.getDay(), 
-                d.setDate(d.getDate() + -1 * offset), arr = [], weekNum = 0; endDate >= d; ) {
-                    for (arr.push([]), dayIndex = _i = 0; 6 >= _i; dayIndex = ++_i) obj = {
+                d.setDate(d.getDate() + offset * -1), arr = [], weekNum = 0; d <= endDate; ) {
+                    for (arr.push([]), dayIndex = _i = 0; _i <= 6; dayIndex = ++_i) obj = {
                         date: angular.copy(d),
                         isToday: aaDateUtil.dateObjectsAreEqualToDay(d, today),
-                        isSelected: selected && aaDateUtil.dateObjectsAreEqualToDay(d, selected) ? !0 : !1,
+                        isSelected: !(!selected || !aaDateUtil.dateObjectsAreEqualToDay(d, selected)),
                         isOtherMonth: d.getMonth() !== month
                     }, arr[weekNum].push(obj), d.setDate(d.getDate() + 1);
                     weekNum += 1;
@@ -15054,7 +15015,7 @@ var saveAs = saveAs || function(e) {
                     amPm = "PM";
                     break;
 
-                  case 12 >= h:
+                  case h <= 12:
                     h -= 12, amPm = "PM";
                 }
                 return m = d.getMinutes(), [ h, m, amPm ];
@@ -15079,12 +15040,12 @@ var saveAs = saveAs || function(e) {
                     return setupSelectOptions(), resetToNull();
                 }, setupSelectOptions = function() {
                     var _i, _j, _results, _results1;
-                    return scope.useAmPm = null != attrs.useAmPm ? attrs.useAmPm === !0 || "true" === attrs.useAmPm : !0, 
+                    return scope.useAmPm = null == attrs.useAmPm || (attrs.useAmPm === !0 || "true" === attrs.useAmPm), 
                     scope.hourOptions = scope.useAmPm ? [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 ] : function() {
-                        for (_results = [], _i = 0; 23 >= _i; _i++) _results.push(_i);
+                        for (_results = [], _i = 0; _i <= 23; _i++) _results.push(_i);
                         return _results;
                     }.apply(this), scope.minuteOptions = function() {
-                        for (_results1 = [], _j = 0; 59 >= _j; _j++) _results1.push(_j);
+                        for (_results1 = [], _j = 0; _j <= 59; _j++) _results1.push(_j);
                         return _results1;
                     }.apply(this), scope.amPmOptions = [ "AM", "PM" ];
                 }, resetToNull = function() {
@@ -15098,10 +15059,10 @@ var saveAs = saveAs || function(e) {
                     scope.minute = _ref[1], scope.amPm = _ref[2], _ref) : resetToNull();
                 }, scope.setTimeFromFields = function() {
                     var d;
-                    return null != scope.hour && null == scope.minute && (scope.minute = 0), null != scope.hour && scope.useAmPm && null == scope.amPm && (scope.amPm = "AM"), 
-                    null == scope.hour || null == scope.minute || scope.useAmPm && null == scope.amPm ? void 0 : (d = null != ngModelCtrl.$viewValue && angular.isDate(ngModelCtrl.$viewValue) ? new Date(ngModelCtrl.$viewValue) : aaDateUtil.todayStart(), 
+                    if (null != scope.hour && null == scope.minute && (scope.minute = 0), null != scope.hour && scope.useAmPm && null == scope.amPm && (scope.amPm = "AM"), 
+                    !(null == scope.hour || null == scope.minute || scope.useAmPm && null == scope.amPm)) return d = null != ngModelCtrl.$viewValue && angular.isDate(ngModelCtrl.$viewValue) ? new Date(ngModelCtrl.$viewValue) : aaDateUtil.todayStart(), 
                     aaTimeUtil.applyTimeValuesToDateObject([ scope.hour, parseInt(scope.minute), scope.amPm ], d), 
-                    ngModelCtrl.$setViewValue(d));
+                    ngModelCtrl.$setViewValue(d);
                 }, init();
             },
             template: "<div class='aa-timepicker'>\n  <select\n    tabindex='-1'\n    class='aa-timepicker-hour'\n    ng-model='hour'\n    ng-options='hour as hour for hour in hourOptions'\n    ng-change='setTimeFromFields()'>\n  </select>\n  <select\n    tabindex='-1'\n    class='aa-timepicker-minute'\n    ng-model='minute'\n    ng-options=\"min as ((min < 10) ? ('0' + min) : ('' + min)) for min in minuteOptions\"\n    ng-change='setTimeFromFields()'>\n  </select>\n  <select\n    tabindex='-1'\n    class='aa-timepicker-ampm'\n    ng-show='useAmPm'\n    ng-model='amPm'\n    ng-options='v for v in amPmOptions'\n    ng-change='setTimeFromFields()'>\n  </select>\n</div>"
@@ -15131,11 +15092,11 @@ var saveAs = saveAs || function(e) {
     BROWSER_SCROLLBAR_WIDTH = null, rAF = window.requestAnimationFrame, cAF = window.cancelAnimationFrame, 
     _elementStyle = document.createElement("div").style, _vendor = function() {
         var i, transform, vendor, vendors, _i, _len;
-        for (vendors = [ "t", "webkitT", "MozT", "msT", "OT" ], i = _i = 0, _len = vendors.length; _len > _i; i = ++_i) if (vendor = vendors[i], 
+        for (vendors = [ "t", "webkitT", "MozT", "msT", "OT" ], i = _i = 0, _len = vendors.length; _i < _len; i = ++_i) if (vendor = vendors[i], 
         transform = vendors[i] + "ransform", transform in _elementStyle) return vendors[i].substr(0, vendors[i].length - 1);
         return !1;
     }(), _prefixStyle = function(style) {
-        return _vendor === !1 ? !1 : "" === _vendor ? style : _vendor + style.charAt(0).toUpperCase() + style.substr(1);
+        return _vendor !== !1 && ("" === _vendor ? style : _vendor + style.charAt(0).toUpperCase() + style.substr(1));
     }, transform = _prefixStyle("transform"), hasTransform = transform !== !1, getBrowserScrollbarWidth = function() {
         var outer, outerStyle, scrollbarWidth;
         return outer = document.createElement("div"), outerStyle = outer.style, outerStyle.position = "absolute", 
@@ -15144,8 +15105,8 @@ var saveAs = saveAs || function(e) {
         document.body.removeChild(outer), scrollbarWidth;
     }, isFFWithBuggyScrollbar = function() {
         var isOSXFF, ua, version;
-        return ua = window.navigator.userAgent, (isOSXFF = /(?=.+Mac OS X)(?=.+Firefox)/.test(ua)) ? (version = /Firefox\/\d{2}\./.exec(ua), 
-        version && (version = version[0].replace(/\D+/g, "")), isOSXFF && +version > 23) : !1;
+        return ua = window.navigator.userAgent, !!(isOSXFF = /(?=.+Mac OS X)(?=.+Firefox)/.test(ua)) && (version = /Firefox\/\d{2}\./.exec(ua), 
+        version && (version = version[0].replace(/\D+/g, "")), isOSXFF && +version > 23);
     }, NanoScroll = function() {
         function NanoScroll(el, options) {
             this.el = el, this.options = options, BROWSER_SCROLLBAR_WIDTH || (BROWSER_SCROLLBAR_WIDTH = getBrowserScrollbarWidth()), 
@@ -15284,23 +15245,24 @@ var saveAs = saveAs || function(e) {
             this.pane.css({
                 opacity: this.options.alwaysVisible ? 1 : "",
                 visibility: this.options.alwaysVisible ? "visible" : ""
-            }), contentPosition = this.$content.css("position"), ("static" === contentPosition || "relative" === contentPosition) && (right = parseInt(this.$content.css("right"), 10), 
+            }), contentPosition = this.$content.css("position"), "static" !== contentPosition && "relative" !== contentPosition || (right = parseInt(this.$content.css("right"), 10), 
             right && this.$content.css({
                 right: "",
                 marginRight: right
             })), this);
         }, NanoScroll.prototype.scroll = function() {
-            return this.isActive ? (this.sliderY = Math.max(0, this.sliderY), this.sliderY = Math.min(this.maxSliderTop, this.sliderY), 
+            if (this.isActive) return this.sliderY = Math.max(0, this.sliderY), this.sliderY = Math.min(this.maxSliderTop, this.sliderY), 
             this.$content.scrollTop(this.maxScrollTop * this.sliderY / this.maxSliderTop), this.iOSNativeScrolling || (this.updateScrollValues(), 
-            this.setOnScrollStyles()), this) : void 0;
+            this.setOnScrollStyles()), this;
         }, NanoScroll.prototype.scrollBottom = function(offsetY) {
-            return this.isActive ? (this.$content.scrollTop(this.contentHeight - this.$content.height() - offsetY).trigger(MOUSEWHEEL), 
-            this.stop().restore(), this) : void 0;
+            if (this.isActive) return this.$content.scrollTop(this.contentHeight - this.$content.height() - offsetY).trigger(MOUSEWHEEL), 
+            this.stop().restore(), this;
         }, NanoScroll.prototype.scrollTop = function(offsetY) {
-            return this.isActive ? (this.$content.scrollTop(+offsetY).trigger(MOUSEWHEEL), this.stop().restore(), 
-            this) : void 0;
+            if (this.isActive) return this.$content.scrollTop(+offsetY).trigger(MOUSEWHEEL), 
+            this.stop().restore(), this;
         }, NanoScroll.prototype.scrollTo = function(node) {
-            return this.isActive ? (this.scrollTop(this.$el.find(node).get(0).offsetTop), this) : void 0;
+            if (this.isActive) return this.scrollTop(this.$el.find(node).get(0).offsetTop), 
+            this;
         }, NanoScroll.prototype.stop = function() {
             return cAF && this.scrollRAF && (cAF(this.scrollRAF), this.scrollRAF = null), this.stopped = !0, 
             this.removeEvents(), this.iOSNativeScrolling || this.pane.hide(), this;
@@ -15311,12 +15273,12 @@ var saveAs = saveAs || function(e) {
                 right: ""
             })), this;
         }, NanoScroll.prototype.flash = function() {
-            return !this.iOSNativeScrolling && this.isActive ? (this.reset(), this.pane.addClass("flashed"), 
+            if (!this.iOSNativeScrolling && this.isActive) return this.reset(), this.pane.addClass("flashed"), 
             setTimeout(function(_this) {
                 return function() {
                     _this.pane.removeClass("flashed");
                 };
-            }(this), this.options.flashDelay), this) : void 0;
+            }(this), this.options.flashDelay), this;
         }, NanoScroll;
     }(), $.fn.nanoScroller = function(settings) {
         return this.each(function() {
@@ -15390,7 +15352,7 @@ var saveAs = saveAs || function(e) {
     }
     function f() {
         function a(a) {
-            return "true" === a ? !0 : !1;
+            return "true" === a;
         }
         var b = X.substr(_).split(":");
         ab = b[0], M = void 0 !== b[1] ? Number(b[1]) : M, P = void 0 !== b[2] ? a(b[2]) : P, 
@@ -15630,8 +15592,8 @@ var saveAs = saveAs || function(e) {
         }
         function j() {
             return a.data.split(":")[2] in {
-                "true": 1,
-                "false": 1
+                true: 1,
+                false: 1
             };
         }
         b() && (T && j() ? f() : "reset" === h() ? g() : a.data === X || i() || d("Unexpected message (" + a.data + ")"));
@@ -15696,7 +15658,7 @@ var t = void 0, u = !1, sjcl = {
     b = a.length;
     var h = 1;
     for (4 !== b && 6 !== b && 8 !== b && q(new sjcl.exception.invalid("invalid aes key size")), 
-    this.a = [ d = a.slice(0), e = [] ], a = b; 4 * b + 28 > a; a++) c = d[a - 1], (0 === a % b || 8 === b && 4 === a % b) && (c = f[c >>> 24] << 24 ^ f[c >> 16 & 255] << 16 ^ f[c >> 8 & 255] << 8 ^ f[255 & c], 
+    this.a = [ d = a.slice(0), e = [] ], a = b; a < 4 * b + 28; a++) c = d[a - 1], (0 === a % b || 8 === b && 4 === a % b) && (c = f[c >>> 24] << 24 ^ f[c >> 16 & 255] << 16 ^ f[c >> 8 & 255] << 8 ^ f[255 & c], 
     0 === a % b && (c = c << 8 ^ c >>> 24 ^ h << 24, h = h << 1 ^ 283 * (h >> 7))), 
     d[a] = d[a - b] ^ c;
     for (b = 0; a; b++, a--) c = d[3 & b ? a : a - 4], e[b] = 4 >= a || 4 > b ? c : g[0][f[c >>> 24]] ^ g[1][f[c >> 16 & 255]] ^ g[2][f[c >> 8 & 255]] ^ g[3][f[255 & c]];
@@ -15723,7 +15685,7 @@ var t = void 0, u = !1, sjcl = {
     },
     extract: function(a, b, c) {
         var d = Math.floor(-b - c & 31);
-        return (-32 & (b + c - 1 ^ b) ? a[b / 32 | 0] << 32 - d ^ a[b / 32 + 1 | 0] >>> d : a[b / 32 | 0] >>> d) & (1 << c) - 1;
+        return ((b + c - 1 ^ b) & -32 ? a[b / 32 | 0] << 32 - d ^ a[b / 32 + 1 | 0] >>> d : a[b / 32 | 0] >>> d) & (1 << c) - 1;
     },
     concat: function(a, b) {
         if (0 === a.length || 0 === b.length) return a.concat(b);
@@ -15738,7 +15700,7 @@ var t = void 0, u = !1, sjcl = {
         if (32 * a.length < b) return a;
         a = a.slice(0, Math.ceil(b / 32));
         var c = a.length;
-        return b &= 31, c > 0 && b && (a[c - 1] = sjcl.bitArray.partial(b, a[c - 1] & 2147483648 >> b - 1, 1)), 
+        return b &= 31, 0 < c && b && (a[c - 1] = sjcl.bitArray.partial(b, a[c - 1] & 2147483648 >> b - 1, 1)), 
         a;
     },
     partial: function(a, b, c) {
@@ -15755,10 +15717,10 @@ var t = void 0, u = !1, sjcl = {
     },
     P: function(a, b, c, d) {
         var e;
-        for (e = 0, d === t && (d = []); b >= 32; b -= 32) d.push(c), c = 0;
+        for (e = 0, d === t && (d = []); 32 <= b; b -= 32) d.push(c), c = 0;
         if (0 === b) return d.concat(a);
         for (e = 0; e < a.length; e++) d.push(c | a[e] >>> b), c = a[e] << 32 - b;
-        return e = a.length ? a[a.length - 1] : 0, a = sjcl.bitArray.getPartial(e), d.push(sjcl.bitArray.partial(b + a & 31, b + a > 32 ? c : d.pop(), 1)), 
+        return e = a.length ? a[a.length - 1] : 0, a = sjcl.bitArray.getPartial(e), d.push(sjcl.bitArray.partial(b + a & 31, 32 < b + a ? c : d.pop(), 1)), 
         d;
     },
     k: function(a, b) {
@@ -15767,7 +15729,7 @@ var t = void 0, u = !1, sjcl = {
 }, sjcl.codec.utf8String = {
     fromBits: function(a) {
         var d, e, b = "", c = sjcl.bitArray.bitLength(a);
-        for (d = 0; c / 8 > d; d++) 0 === (3 & d) && (e = a[d / 4]), b += String.fromCharCode(e >>> 24), 
+        for (d = 0; d < c / 8; d++) 0 === (3 & d) && (e = a[d / 4]), b += String.fromCharCode(e >>> 24), 
         e <<= 8;
         return decodeURIComponent(escape(b));
     },
@@ -15802,7 +15764,7 @@ var t = void 0, u = !1, sjcl = {
         a = a.replace(/\s|=/g, "");
         var d, h, c = [], e = 0, f = sjcl.codec.base64.J, g = 0;
         for (b && (f = f.substr(0, 62) + "-_"), d = 0; d < a.length; d++) h = f.indexOf(a.charAt(d)), 
-        0 > h && q(new sjcl.exception.invalid("this isn't base64!")), e > 26 ? (e -= 26, 
+        0 > h && q(new sjcl.exception.invalid("this isn't base64!")), 26 < e ? (e -= 26, 
         c.push(g ^ h >>> e), g = h << 32 - e) : (e += 6, g ^= h << 32 - e);
         return 56 & e && c.push(sjcl.bitArray.partial(56 & e, g, 1)), c;
     }
@@ -15825,7 +15787,7 @@ var t = void 0, u = !1, sjcl = {
     update: function(a) {
         "string" == typeof a && (a = sjcl.codec.utf8String.toBits(a));
         var b, c = this.n = sjcl.bitArray.concat(this.n, a);
-        for (b = this.g, a = this.g = b + sjcl.bitArray.bitLength(a), b = 512 + b & -512; a >= b; b += 512) z(this, c.splice(0, 16));
+        for (b = this.g, a = this.g = b + sjcl.bitArray.bitLength(a), b = 512 + b & -512; b <= a; b += 512) z(this, c.splice(0, 16));
         return this;
     },
     finalize: function() {
@@ -15842,7 +15804,7 @@ var t = void 0, u = !1, sjcl = {
         }
         var d, b = 0, c = 2;
         a: for (;64 > b; c++) {
-            for (d = 2; c >= d * d; d++) if (0 === c % d) continue a;
+            for (d = 2; d * d <= c; d++) if (0 === c % d) continue a;
             8 > b && (this.N[b] = a(Math.pow(c, .5))), this.a[b] = a(Math.pow(c, 1 / 3)), b++;
         }
     }
@@ -15852,7 +15814,7 @@ var t = void 0, u = !1, sjcl = {
         var f, g = b.slice(0), h = sjcl.bitArray, l = h.bitLength(c) / 8, k = h.bitLength(g) / 8;
         for (e = e || 64, d = d || [], 7 > l && q(new sjcl.exception.invalid("ccm: iv must be at least 7 bytes")), 
         f = 2; 4 > f && k >>> 8 * f; f++) ;
-        return 15 - l > f && (f = 15 - l), c = h.clamp(c, 8 * (15 - f)), b = sjcl.mode.ccm.L(a, b, c, d, e, f), 
+        return f < 15 - l && (f = 15 - l), c = h.clamp(c, 8 * (15 - f)), b = sjcl.mode.ccm.L(a, b, c, d, e, f), 
         g = sjcl.mode.ccm.o(a, g, c, b, e, f), h.concat(g.data, g.tag);
     },
     decrypt: function(a, b, c, d, e) {
@@ -15860,13 +15822,13 @@ var t = void 0, u = !1, sjcl = {
         var f = sjcl.bitArray, g = f.bitLength(c) / 8, h = f.bitLength(b), l = f.clamp(b, h - e), k = f.bitSlice(b, h - e), h = (h - e) / 8;
         for (7 > g && q(new sjcl.exception.invalid("ccm: iv must be at least 7 bytes")), 
         b = 2; 4 > b && h >>> 8 * b; b++) ;
-        return 15 - g > b && (b = 15 - g), c = f.clamp(c, 8 * (15 - b)), l = sjcl.mode.ccm.o(a, l, c, k, e, b), 
+        return b < 15 - g && (b = 15 - g), c = f.clamp(c, 8 * (15 - b)), l = sjcl.mode.ccm.o(a, l, c, k, e, b), 
         a = sjcl.mode.ccm.L(a, l.data, c, d, e, b), f.equal(l.tag, a) || q(new sjcl.exception.corrupt("ccm: tag doesn't match")), 
         l.data;
     },
     L: function(a, b, c, d, e, f) {
         var g = [], h = sjcl.bitArray, l = h.k;
-        if (e /= 8, (e % 2 || 4 > e || e > 16) && q(new sjcl.exception.invalid("ccm: invalid tag length")), 
+        if (e /= 8, (e % 2 || 4 > e || 16 < e) && q(new sjcl.exception.invalid("ccm: invalid tag length")), 
         (4294967295 < d.length || 4294967295 < b.length) && q(new sjcl.exception.bug("ccm: can't deal with 4GiB or more data")), 
         f = [ h.partial(8, (d.length ? 64 : 0) | e - 2 << 2 | f - 1) ], f = h.concat(f, c), 
         f[3] |= h.bitLength(b) / 8, f = a.encrypt(f), d.length) for (c = h.bitLength(d) / 8, 
@@ -15884,7 +15846,7 @@ var t = void 0, u = !1, sjcl = {
             tag: d,
             data: []
         };
-        for (g = 0; l > g; g += 4) c[3]++, e = a.encrypt(c), b[g] ^= e[0], b[g + 1] ^= e[1], 
+        for (g = 0; g < l; g += 4) c[3]++, e = a.encrypt(c), b[g] ^= e[0], b[g + 1] ^= e[1], 
         b[g + 2] ^= e[2], b[g + 3] ^= e[3];
         return {
             tag: d,
@@ -15909,7 +15871,7 @@ var t = void 0, u = !1, sjcl = {
         128 !== sjcl.bitArray.bitLength(c) && q(new sjcl.exception.invalid("ocb iv must be 128 bits")), 
         e = e || 64;
         var m, p, g = sjcl.mode.ocb2.H, h = sjcl.bitArray, l = h.k, k = [ 0, 0, 0, 0 ], n = g(a.encrypt(c)), s = sjcl.bitArray.bitLength(b) - e, r = [];
-        for (d = d || [], c = 0; s / 32 > c + 4; c += 4) m = l(n, a.decrypt(l(n, b.slice(c, c + 4)))), 
+        for (d = d || [], c = 0; c + 4 < s / 32; c += 4) m = l(n, a.decrypt(l(n, b.slice(c, c + 4)))), 
         k = l(k, m), r = r.concat(m), n = g(n);
         return p = s - 32 * c, m = a.encrypt(l(n, [ 0, 0, 0, p ])), m = l(m, h.clamp(b.slice(c), p).concat([ 0, 0, 0 ])), 
         k = l(k, m), k = a.encrypt(l(k, l(n, g(n)))), d.length && (k = l(k, f ? d : sjcl.mode.ocb2.pmac(a, d))), 
@@ -15934,7 +15896,7 @@ var t = void 0, u = !1, sjcl = {
     },
     decrypt: function(a, b, c, d, e) {
         var f = b.slice(0), g = sjcl.bitArray, h = g.bitLength(f);
-        return e = e || 128, d = d || [], h >= e ? (b = g.bitSlice(f, h - e), f = g.bitSlice(f, 0, h - e)) : (b = f, 
+        return e = e || 128, d = d || [], e <= h ? (b = g.bitSlice(f, h - e), f = g.bitSlice(f, 0, h - e)) : (b = f, 
         f = []), a = sjcl.mode.gcm.o(u, a, f, d, c, e), g.equal(a.tag, b) || q(new sjcl.exception.corrupt("gcm: tag doesn't match")), 
         a.data;
     },
@@ -15942,14 +15904,14 @@ var t = void 0, u = !1, sjcl = {
         var c, d, e, f, g, h = sjcl.bitArray.k;
         for (e = [ 0, 0, 0, 0 ], f = b.slice(0), c = 0; 128 > c; c++) {
             for ((d = 0 !== (a[Math.floor(c / 32)] & 1 << 31 - c % 32)) && (e = h(e, f)), g = 0 !== (1 & f[3]), 
-            d = 3; d > 0; d--) f[d] = f[d] >>> 1 | (1 & f[d - 1]) << 31;
+            d = 3; 0 < d; d--) f[d] = f[d] >>> 1 | (1 & f[d - 1]) << 31;
             f[0] >>>= 1, g && (f[0] ^= -520093696);
         }
         return e;
     },
     f: function(a, b, c) {
         var d, e = c.length;
-        for (b = b.slice(0), d = 0; e > d; d += 4) b[0] ^= 4294967295 & c[d], b[1] ^= 4294967295 & c[d + 1], 
+        for (b = b.slice(0), d = 0; d < e; d += 4) b[0] ^= 4294967295 & c[d], b[1] ^= 4294967295 & c[d + 1], 
         b[2] ^= 4294967295 & c[d + 2], b[3] ^= 4294967295 & c[d + 3], b = sjcl.mode.gcm.W(b, a);
         return b;
     },
@@ -15959,7 +15921,7 @@ var t = void 0, u = !1, sjcl = {
         96 === h ? (e = e.slice(0), e = r.concat(e, [ 1 ])) : (e = sjcl.mode.gcm.f(g, [ 0, 0, 0, 0 ], e), 
         e = sjcl.mode.gcm.f(g, e, [ 0, 0, Math.floor(h / 4294967296), 4294967295 & h ])), 
         h = sjcl.mode.gcm.f(g, [ 0, 0, 0, 0 ], d), n = e.slice(0), d = h.slice(0), a || (d = sjcl.mode.gcm.f(g, h, c)), 
-        k = 0; m > k; k += 4) n[3]++, l = b.encrypt(n), c[k] ^= l[0], c[k + 1] ^= l[1], 
+        k = 0; k < m; k += 4) n[3]++, l = b.encrypt(n), c[k] ^= l[0], c[k + 1] ^= l[1], 
         c[k + 2] ^= l[2], c[k + 3] ^= l[3];
         return c = r.clamp(c, p), a && (d = sjcl.mode.gcm.f(g, h, c)), a = [ Math.floor(s / 4294967296), 4294967295 & s, Math.floor(p / 4294967296), 4294967295 & p ], 
         d = sjcl.mode.gcm.f(g, d, a), l = b.encrypt(e), d[0] ^= l[0], d[1] ^= l[1], d[2] ^= l[2], 
@@ -15971,7 +15933,7 @@ var t = void 0, u = !1, sjcl = {
 }, sjcl.misc.hmac = function(a, b) {
     this.M = b = b || sjcl.hash.sha256;
     var d, c = [ [], [] ], e = b.prototype.blockSize / 32;
-    for (this.m = [ new b(), new b() ], a.length > e && (a = b.hash(a)), d = 0; e > d; d++) c[0][d] = 909522486 ^ a[d], 
+    for (this.m = [ new b(), new b() ], a.length > e && (a = b.hash(a)), d = 0; d < e; d++) c[0][d] = 909522486 ^ a[d], 
     c[1][d] = 1549556828 ^ a[d];
     this.m[0].update(c[0]), this.m[1].update(c[1]), this.G = new b(this.m[0]);
 }, sjcl.misc.hmac.prototype.encrypt = sjcl.misc.hmac.prototype.mac = function(a) {
@@ -15990,7 +15952,7 @@ var t = void 0, u = !1, sjcl = {
     e = e || sjcl.misc.hmac, a = new e(a);
     var f, g, h, l, k = [], n = sjcl.bitArray;
     for (l = 1; 32 * k.length < (d || 1); l++) {
-        for (e = f = a.encrypt(n.concat(b, [ l ])), g = 1; c > g; g++) for (f = a.encrypt(f), 
+        for (e = f = a.encrypt(n.concat(b, [ l ])), g = 1; g < c; g++) for (f = a.encrypt(f), 
         h = 0; h < f.length; h++) e[h] ^= f[h];
         k = k.concat(e);
     }
@@ -16019,7 +15981,7 @@ var t = void 0, u = !1, sjcl = {
             this.A = new sjcl.cipher.aes(this.a), d = 0; 4 > d && (this.e[d] = this.e[d] + 1 | 0, 
             !this.e[d]); d++) ;
         }
-        for (d = 0; a > d; d += 4) 0 === (d + 1) % this.S && A(this), e = B(this), c.push(e[0], e[1], e[2], e[3]);
+        for (d = 0; d < a; d += 4) 0 === (d + 1) % this.S && A(this), e = B(this), c.push(e[0], e[1], e[2], e[3]);
         return A(this), c.slice(0, a);
     },
     setDefaultParanoia: function(a) {
@@ -16040,7 +16002,7 @@ var t = void 0, u = !1, sjcl = {
                 a = e;
             } else for ("[object Array]" !== c && (l = 1), c = 0; c < a.length && !l; c++) "number" != typeof a[c] && (l = 1);
             if (!l) {
-                if (b === t) for (c = b = 0; c < a.length; c++) for (e = a[c]; e > 0; ) b++, e >>>= 1;
+                if (b === t) for (c = b = 0; c < a.length; c++) for (e = a[c]; 0 < e; ) b++, e >>>= 1;
                 this.b[g].update([ d, this.C++, 2, b, f, a.length ].concat(a));
             }
             break;

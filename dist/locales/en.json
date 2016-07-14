@@ -76,6 +76,20 @@
 		"imageHelp": "Add an image in jpg or png format",
 		"invalidImage": "Invalid Image"
 	},
+	"avDocumentation": {
+		"legal": {
+			"title": "Legal"
+		},
+		"documentation": {
+			"title": "Documentation",
+			"first_line": "You can find more information about this election in the following links:",
+			"faq": "Frequently Asked Questions",
+			"overview": "General Overview",
+			"authorities": "List of Authorities",
+			"technical": "Technical Description",
+			"security_contact": "Security Contact"
+		}
+	},
 	"avCommon": {
 		"poweredBy": "Powered by <strong><a href=\"__url__\" target=\"_blank\">__name__</a></strong>"
 	},
