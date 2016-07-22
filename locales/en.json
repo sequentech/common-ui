@@ -101,6 +101,32 @@
   },
   
   "avCommon": {
-    "poweredBy": "Powered by <strong><a href=\"__url__\" target=\"_blank\">__name__</a></strong>"
+    "poweredBy": "Powered by <strong><a href=\"__url__\" target=\"_blank\">__name__</a></strong>",
+    "foot": {
+        "contact": "Contact",
+        "contactsupport": "Contact support",
+        "contactsales": "Contact sales",
+        "callsales": "Sales: ",
+
+        "aboutus": "About us",
+        "pricing": "Pricing",
+        "technology": "Technology",
+        "solutions": "Solutions",
+        "adminManual": "Admin Manual",
+
+        "electionTypes": "Election types",
+        "primaries": "Primaries and candidate elections",
+        "participatoryBudgeting": "Participatory budgeting",
+        "referendums": "Referendums and consultations",
+        "professional": "Professionals and Labor Unions",
+        "universities": "Universities",
+
+        "legal": "Legal",
+        "tos": "Term of service",
+        "cookies": "Cookies policy",
+        "privacy": "Privacy policy",
+        "securitycontact": "Security Contact",
+        "communitywebsite": "Community Website"
+    }
   }
 }
