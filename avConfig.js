@@ -20,7 +20,7 @@
  * in this same file, which you might want to edit and tune if needed.
  */
 
-var AV_CONFIG_VERSION = '3.2.0';
+var AV_CONFIG_VERSION = '3.3.0';
 
 var avConfigData = {
   // the base url path for ajax requests, for example for sending ballots or
@@ -163,6 +163,17 @@ var avConfigData = {
     security_contact: "https://agoravoting.com/security_contact/",
     community_website: "https://agoravoting.org"
   },
+  
+  documentation: {
+    faq: 'https://nvotes.com/doc/en/',
+    overview: 'https://agoravoting.com/overview/',
+    technical: 'https://agoravoting.com/static/generic_tech_overview_20_08_15.pdf',
+    security_contact: "https://agoravoting.com/security_contact/"
+  },
+  
+  documentation_html_include: '',
+  
+  legal_html_include: '',
 
   // Details pertaining to the organization that runs the software
   organization: {
@@ -177,10 +188,6 @@ var avConfigData = {
   verifier: {
     link: "",
     hash: ""
-  },
-
-  help: {
-    info:""
   },
 
   success: {

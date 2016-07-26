@@ -1,9 +1,26 @@
+/**
+ * This file is part of agora-gui-common.
+ * Copyright (C) 2015-2016  Agora Voting SL <agora@agoravoting.com>
+
+ * agora-gui-common is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License.
+
+ * agora-gui-common  is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+
+ * You should have received a copy of the GNU Affero General Public License
+ * along with agora-gui-common.  If not, see <http://www.gnu.org/licenses/>.
+**/
+
 /*
  * ConfigService is a function that returns the configuration that exists
  * in this same file, which you might want to edit and tune if needed.
  */
 
-var AV_CONFIG_VERSION = '3.2.0';
+var AV_CONFIG_VERSION = '3.3.0';
 
 var avConfigData = {
   // the base url path for ajax requests, for example for sending ballots or
@@ -146,6 +163,17 @@ var avConfigData = {
     security_contact: "https://agoravoting.com/security_contact/",
     community_website: "https://agoravoting.org"
   },
+  
+  documentation: {
+    faq: 'https://nvotes.com/doc/en/',
+    overview: 'https://agoravoting.com/overview/',
+    technical: 'https://agoravoting.com/static/generic_tech_overview_20_08_15.pdf',
+    security_contact: "https://agoravoting.com/security_contact/"
+  },
+  
+  documentation_html_include: '',
+  
+  legal_html_include: '',
 
   // Details pertaining to the organization that runs the software
   organization: {
@@ -160,10 +188,6 @@ var avConfigData = {
   verifier: {
     link: "",
     hash: ""
-  },
-
-  help: {
-    info:""
   },
 
   success: {

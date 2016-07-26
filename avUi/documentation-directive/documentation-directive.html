@@ -1,0 +1,52 @@
+<div>
+  <h2 class="text-center text-av-secondary" ng-i18next="avDocumentation.documentation.title"></h2>
+  <p ng-i18next="avDocumentation.documentation.first_line"></p>
+  <ul>
+    <li>
+      <a
+        href="{{documentation.faq}}"
+        target="_blank"
+        ng-i18next="avDocumentation.documentation.faq">
+      </a>
+    </li>
+    <li>
+      <a
+        href="{{documentation.overview}}"
+        target="_blank"
+        ng-i18next="avDocumentation.documentation.overview">
+      </a>
+    </li>
+    <li>
+      <a
+        href="{{auths_url}}"
+        target="_blank"
+        ng-i18next="avDocumentation.documentation.authorities">
+      </a>
+    </li>
+    <li>
+      <a
+        href="{{documentation.technical}}"
+        target="_blank"
+        ng-i18next="avDocumentation.documentation.technical">
+      </a>
+    </li>
+    <li>
+      <a
+        href="{{documentation.security_contact}}"
+        target="_blank"
+        ng-i18next="avDocumentation.documentation.security_contact">
+      </a>
+    </li>
+    <li>
+      <a
+        href="{{legal_url}}"
+        target="_blank"
+        ng-i18next="avDocumentation.legal.title">
+      </a>
+    </li>
+  </ul>
+  <div
+    class="documentation-html-include"
+    ng-bind-html="documentation_html_include | addTargetBlank">
+  </div>
+</div> 

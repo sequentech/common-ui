@@ -75,7 +75,50 @@
     "imageHelp": "Add an image in jpg or png format",
     "invalidImage": "Invalid Image"
   },
+  
+  "avDocumentation": {
+    "legal": {
+        "title": "Legal"
+    },
+    
+    "documentation": { 
+      "title": "Documentación",
+      "first_line": "Puedes encontrar más información sobre la votación en los siguientes enlaces:",
+      "faq": "Preguntas Frecuentes",
+      "overview": "Esquema General",
+      "authorities": "Lista de Autoridades",
+      "technical": "Descripción técnica",
+      "security_contact": "Contacto de seguridad"
+    }
+  },
+  
   "avCommon": {
-    "poweredBy": "Funciona amb <strong><a href=\"__url__\" target=\"_blank\">__name__</a></strong>"
+    "poweredBy": "Funciona amb <strong><a href=\"__url__\" target=\"_blank\">__name__</a></strong>",
+    "foot": {
+        "contact": "Contacto",
+        "contactsupport": "Contacto de soporte",
+        "contactsales": "Contacto de ventas",
+        "callsales": "Ventas:",
+
+        "aboutus": "Acerca de",
+        "pricing": "Precios",
+        "technology": "Tecnología",
+        "solutions": "Soluciones",
+        "adminManual": "Manual de admin",
+
+        "electionTypes": "Tipos de votació",
+        "primaries": "Primarias y elecciones de candidatos",
+        "participatoryBudgeting": "Presupuestos participativos",
+        "referendums": "Referéndums y consultas",
+        "professional": "Elecciones profesionales y sindicales",
+        "universities": "Universidades",
+
+        "legal": "Legal",
+        "tos": "Condiciones de uso",
+        "cookies": "Política de Cookies",
+        "privacy": "Política de Privacidad",
+        "securitycontact": "Contacto de seguridad",
+        "communitywebsite": "Sitio web del proyecto"
+    }
   }
 }
