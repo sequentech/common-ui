@@ -240,7 +240,7 @@ angular.module('avRegistration')
             if (!page) {
                 page = 1;
             }
-            return $http.get(backendUrl + 'acl/mine/?object_type=AuthEvent&perm=edit&order=-pk&page='+page);
+            return $http.get(backendUrl + 'acl/mine/?object_type=AuthEvent&perm=edit|view&order=-pk&page='+page);
         };
 
         authmethod.sendAuthCodes = function(eid, election, user_ids, extra) {
