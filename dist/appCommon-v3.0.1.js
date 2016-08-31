@@ -170,11 +170,11 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
 } ]), angular.module("avRegistration").directive("avLogin", [ "Authmethod", "StateDataService", "$parse", "$state", "$cookies", "$i18next", "$window", "$timeout", "ConfigService", function(Authmethod, StateDataService, $parse, $state, $cookies, $i18next, $window, $timeout, ConfigService) {
     function link(scope, element, attrs) {
         var adminId = ConfigService.freeAuthId + "", autheventid = attrs.eventId;
-        scope.orgName = ConfigService.organization.orgName, $cookies.authevent && $cookies.authevent === adminId && autheventid === adminId && ($window.location.href = "/admin/elections"), 
-        scope.sendingData = !1, scope.stateData = StateDataService.getData(), scope.code = null, 
-        attrs.code && attrs.code.length > 0 && (scope.code = attrs.code), scope.email = null, 
-        attrs.email && attrs.email.length > 0 && (scope.email = attrs.email), scope.isAdmin = !1, 
-        autheventid === adminId && (scope.isAdmin = !0), scope.resendAuthCode = function(field) {
+        scope.orgName = ConfigService.organization.orgName, $cookies.authevent && $cookies.authevent === adminId && autheventid === adminId && (console.log("FELIX WINDOW HREF"), 
+        $window.location.href = "/admin/elections"), scope.sendingData = !1, scope.stateData = StateDataService.getData(), 
+        scope.code = null, attrs.code && attrs.code.length > 0 && (scope.code = attrs.code), 
+        scope.email = null, attrs.email && attrs.email.length > 0 && (scope.email = attrs.email), 
+        scope.isAdmin = !1, autheventid === adminId && (scope.isAdmin = !0), scope.resendAuthCode = function(field) {
             if (!scope.sendingData && "sms" === scope.method && scope.telIndex !== -1 && !scope.form["input" + scope.telIndex].$invalid) {
                 field.value = "";
                 var data = {};
