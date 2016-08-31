@@ -917,15 +917,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             });
         } ], $delegate;
     } ]);
-} ]), angular.module("avUi").directive("learnMore", function() {
-    function link(scope, el, attrs) {
-        $(el).attr("href", "https://bit.ly/avguiadeuso");
-    }
-    return {
-        restrict: "EAC",
-        link: link
-    };
-}), angular.module("avUi").controller("DocumentationUiController", [ "$state", "$stateParams", "$http", "$scope", "$i18next", "ConfigService", "InsideIframeService", "Authmethod", function($state, $stateParams, $http, $scope, $i18next, ConfigService, InsideIframeService, Authmethod) {
+} ]), angular.module("avUi").controller("DocumentationUiController", [ "$state", "$stateParams", "$http", "$scope", "$i18next", "ConfigService", "InsideIframeService", "Authmethod", function($state, $stateParams, $http, $scope, $i18next, ConfigService, InsideIframeService, Authmethod) {
     $scope.inside_iframe = InsideIframeService(), $scope.documentation = ConfigService.documentation, 
     $scope.documentation.security_contact = ConfigService.legal.security_contact, $scope.documentation_html_include = ConfigService.documentation_html_include, 
     $scope.auths_url = "/election/" + $stateParams.id + "/public/authorities", $scope.legal_url = "/election/" + $stateParams.id + "/public/legal", 
