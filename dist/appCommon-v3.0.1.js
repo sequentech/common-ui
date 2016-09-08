@@ -137,11 +137,11 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         }, 500 * ConfigService.timeoutSeconds)), !1;
     }, authmethod.electionsIds = function(page) {
         return page || (page = 1), $http.get(backendUrl + "acl/mine/?object_type=AuthEvent&perm=edit&order=-pk&page=" + page);
-    }, authmethod.sendAuthCodes = function(eid, election, user_ids, extra) {
+    }, authmethod.sendAuthCodes = function(eid, election, user_ids, auth_method, extra) {
         var url = backendUrl + "auth-event/" + eid + "/census/send_auth/", data = {};
-        return angular.isDefined(election) && (data.msg = election.census.config.msg, "email" === election.census.auth_method && (data.subject = election.census.config.subject)), 
-        angular.isDefined(user_ids) && (data["user-ids"] = user_ids), extra && (data.extra = extra), 
-        $http.post(url, data);
+        return angular.isDefined(election) && (data.msg = election.census.config.msg, "email" === authmethod && (data.subject = election.census.config.subject)), 
+        angular.isDefined(user_ids) && (data["user-ids"] = user_ids), angular.isDefined(auth_method) && (data["auth-method"] = auth_method), 
+        extra && (data.extra = extra), $http.post(url, data);
     }, authmethod.removeUsersIds = function(eid, election, user_ids) {
         var url = backendUrl + "auth-event/" + eid + "/census/delete/", data = {
             "user-ids": user_ids
@@ -170,11 +170,11 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
 } ]), angular.module("avRegistration").directive("avLogin", [ "Authmethod", "StateDataService", "$parse", "$state", "$cookies", "$i18next", "$window", "$timeout", "ConfigService", function(Authmethod, StateDataService, $parse, $state, $cookies, $i18next, $window, $timeout, ConfigService) {
     function link(scope, element, attrs) {
         var adminId = ConfigService.freeAuthId + "", autheventid = attrs.eventId;
-        scope.orgName = ConfigService.organization.orgName, $cookies.authevent && $cookies.authevent === adminId && autheventid === adminId && (console.log("FELIX WINDOW HREF"), 
-        $window.location.href = "/admin/elections"), scope.sendingData = !1, scope.stateData = StateDataService.getData(), 
-        scope.code = null, attrs.code && attrs.code.length > 0 && (scope.code = attrs.code), 
-        scope.email = null, attrs.email && attrs.email.length > 0 && (scope.email = attrs.email), 
-        scope.isAdmin = !1, autheventid === adminId && (scope.isAdmin = !0), scope.resendAuthCode = function(field) {
+        scope.orgName = ConfigService.organization.orgName, $cookies.authevent && $cookies.authevent === adminId && autheventid === adminId && ($window.location.href = "/admin/elections"), 
+        scope.sendingData = !1, scope.stateData = StateDataService.getData(), scope.code = null, 
+        attrs.code && attrs.code.length > 0 && (scope.code = attrs.code), scope.email = null, 
+        attrs.email && attrs.email.length > 0 && (scope.email = attrs.email), scope.isAdmin = !1, 
+        autheventid === adminId && (scope.isAdmin = !0), scope.resendAuthCode = function(field) {
             if (!scope.sendingData && "sms" === scope.method && scope.telIndex !== -1 && !scope.form["input" + scope.telIndex].$invalid) {
                 field.value = "";
                 var data = {};
