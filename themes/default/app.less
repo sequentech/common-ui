@@ -18,9 +18,9 @@
 @import "../../external.less";
 
 /* Global Config */
-@av-primary: #2C3E50;
-@av-secondary: #00A489;
-@av-primary-contrast: white;
+@av-primary: #FFFFFF;
+@av-secondary: #474747;
+@av-primary-contrast: #444444;
 @av-secondary-contrast: white;
 @brand-primary: @av-primary;
 @brand-success: @av-secondary;
@@ -43,4 +43,10 @@
 [ave-default-election] .background .top-section,
 [ave-public-view] .background .top-section {
   color: #333;
+}
+
+[av-booth] {
+  .navbar, .navbar-unfixed-top, .busy-gui, .avb-content, .start-screen {
+    color: @av-secondary;
+  }
 }
