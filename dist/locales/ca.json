@@ -80,10 +80,10 @@
 			"title": "Documentació",
 			"first_line": "Pots trobar més informació sobre la votació en els següents enllaços:",
 			"faq": "Preguntes Freqüents",
-			"overview": "Esquema General",
-			"authorities": "Llista d'Autoritats",
-			"technical": "Descripció tècnica",
-			"security_contact": "Contacte de seguretat"
+			"overview": "Esquema General (Castellano)",
+			"authorities": "Llista d'Autoritats (Castellano)",
+			"technical": "Descripció tècnica (English)",
+			"security_contact": "Contacte de seguretat (English)"
 		}
 	},
 	"avCommon": {
