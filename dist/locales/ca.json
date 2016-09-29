@@ -18,7 +18,7 @@
 	},
 	"avRegistration": {
 		"codeHelp": "Utilitzi el codi que li hem enviat per telèfon o per correu electrònic. El codi té 8 caràcters alfanumèrics.",
-		"noCodeReceivedQuestion": "Si no heu rebut el codi, si us plau, poseu-vos en contacte amb el Col·legi",
+		"noCodeReceivedQuestion": "Si no heu rebut el codi, si us plau, poseu-vos en contacte amb els administradors de la votació.",
 		"sendCodeAgain": "",
 		"loginHeader": "Per entrar a la pàgina de votació:",
 		"helpRegisterForm": "Per poder votar, heu de registrar-vos abans mitjançant aquest formulari. Alguns dels camps són obligatoris: llegiu bé la informació d'ajuda",
