@@ -103,6 +103,8 @@ angular.module('avRegistration')
               data[field.name] = field.value;
               if (field.name === 'email') {
                 scope.email = field.value;
+              } else if ('code' === field.name) {
+                field.value = field.value.trim().replace(/ |\n|\t|-|_/g,'').toUpperCase();
               }
             });
 
@@ -177,7 +179,7 @@ angular.module('avRegistration')
                   el.value = scope.email;
                   el.disabled = true;
                 } else if (el.type === "code" && scope.code !== null) {
-                  el.value = scope.code.trim().toUpperCase();
+                  el.value = scope.code.trim().replace(/ |\n|\t|-|_/g,'').toUpperCase();
                   el.disabled = true;
                 } else if (el.type === "tlf" && scope.method === "sms") {
                   if (scope.email !== null && scope.email.indexOf('@') === -1) {
