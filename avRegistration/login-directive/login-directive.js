@@ -100,12 +100,12 @@ angular.module('avRegistration')
                 'captcha_code': Authmethod.captcha_code,
             };
             _.each(scope.login_fields, function (field) {
-              data[field.name] = field.value;
               if (field.name === 'email') {
                 scope.email = field.value;
               } else if ('code' === field.name) {
                 field.value = field.value.trim().replace(/ |\n|\t|-|_/g,'').toUpperCase();
               }
+              data[field.name] = field.value;
             });
 
             scope.sendingData = true;

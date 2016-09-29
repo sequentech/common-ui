@@ -192,7 +192,8 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                     captcha_code: Authmethod.captcha_code
                 };
                 _.each(scope.login_fields, function(field) {
-                    data[field.name] = field.value, "email" === field.name ? scope.email = field.value : "code" === field.name && (field.value = field.value.trim().replace(/ |\n|\t|-|_/g, "").toUpperCase());
+                    "email" === field.name ? scope.email = field.value : "code" === field.name && (field.value = field.value.trim().replace(/ |\n|\t|-|_/g, "").toUpperCase()), 
+                    data[field.name] = field.value;
                 }), scope.sendingData = !0, Authmethod.login(data, autheventid).success(function(rcvData) {
                     "ok" === rcvData.status ? (scope.khmac = rcvData.khmac, $cookies.authevent = autheventid, 
                     $cookies.userid = rcvData.username, $cookies.user = scope.email, $cookies.auth = rcvData["auth-token"], 
