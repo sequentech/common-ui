@@ -26,7 +26,7 @@
 		"registerFormHelpTitle": "Registrant-vos per votar",
 		"registerAdminFormHelpTitle": "Registrant-vos per crear votacions",
 		"fillValidFormText": "Per poder enviar el formulari, empleneu correctament tots els camps.",
-		"invalidRegisterData": "No ha estat possible registrar-vos amb les dades aportades. Si us plau, reviseu-les o poseu-vos en contacte amb els administradors de la votació,",
+		"invalidRegisterData": "No ha estat possible registrar-te amb les dades aportades. <strong> El més probable és que ja estiguis registrat, <a href=\"__url__\"> accedeix fent servir les teves credencials clicant aquí </a> </strong>. També pot ser que el període de votació hagi finalitzat. Comprova tot l'anterior, i en cas que segueixis tenint problemes, revisa les teves dades, o posa't en contacte amb els administradors de la votació,",
 		"logout": "Sortir",
 		"codeLabel": "Codi d'Autenticació",
 		"emailLabel": "Correu Electrònic",
