@@ -50,9 +50,7 @@
   color: @av-secondary-contrast;
 }
 
-[ave-default-election] .avb-top-navbar .pull-right,
-[av-booth] [av-change-lang],
-[av-booth] .avb-top-navbar > .pull-right {
+[ave-default-election] .avb-top-navbar .pull-right {
   display: none;
 }
 
@@ -70,3 +68,13 @@ img.logo-img {
   background-color: @av-secondary;
 }
 
+[ave-default-election] .logo-img,
+[ave-public-view] .logo-img
+{
+    max-height: 40px !important;
+    max-width: 200px !important;
+    width: auto;
+    background-color: white;
+    box-shadow: 0 0 3px white;
+    padding: 0 3px 0 0;
+}
