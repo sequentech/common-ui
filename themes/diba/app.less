@@ -59,27 +59,31 @@
   text-align: right !important;
 }
 
-img.logo-img {
-  padding-top: 5px;
-}
-
 [av-booth] .basic-booth-layout .warnings .text-brand-primary,
 [av-booth] .warnings .text-brand-primary {
   background-color: @av-secondary;
 }
 
-[ave-default-election] .logo-img,
-[ave-public-view] .logo-img,
-[avb-start-screen] .logo-img
+img.logo-img
 {
     max-height: 40px !important;
     max-width: 200px !important;
     width: auto;
     background-color: white;
     box-shadow: 0 0 3px white;
-    padding: 0 3px 0 0;
+    padding: 5px 3px 0 0;
 }
 
 [av-booth] .avb-top-navbar>.text-center > span:first-child {
     margin-right: 10px;
+}
+
+
+[ng-i18next="avBooth.continueButton"]
+{
+    background-color: #555 !important;
+
+    &:hover {
+      background-color: #333 !important;
+    }
 }
