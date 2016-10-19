@@ -108,7 +108,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         return fields;
     }, authmethod.getLoginFields = function(viewEventData) {
         var fields = authmethod.getRegisterFields(viewEventData);
-        ("sms" === viewEventData.auth_method || "email" === viewEventData.auth_method) && fields.push({
+        "sms" !== viewEventData.auth_method && "email" !== viewEventData.auth_method || fields.push({
             name: "code",
             type: "code",
             required: !0,
@@ -175,7 +175,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         attrs.code && attrs.code.length > 0 && (scope.code = attrs.code), scope.email = null, 
         attrs.email && attrs.email.length > 0 && (scope.email = attrs.email), scope.isAdmin = !1, 
         autheventid === adminId && (scope.isAdmin = !0), scope.resendAuthCode = function(field) {
-            if (!scope.sendingData && "sms" === scope.method && -1 !== scope.telIndex && !scope.form["input" + scope.telIndex].$invalid) {
+            if (!scope.sendingData && "sms" === scope.method && scope.telIndex !== -1 && !scope.form["input" + scope.telIndex].$invalid) {
                 field.value = "";
                 var data = {};
                 data.tlf = scope.telField.value, scope.sendingData = !0, Authmethod.resendAuthCode(data, autheventid).success(function(rcvData) {
@@ -218,7 +218,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                 return scope.stateData[el.name] ? (el.value = scope.stateData[el.name], el.disabled = !0) : (el.value = null, 
                 el.disabled = !1), "email" === el.type && null !== scope.email ? (el.value = scope.email, 
                 el.disabled = !0) : "code" === el.type && null !== scope.code ? (el.value = scope.code.trim().replace(/ |\n|\t|-|_/g, "").toUpperCase(), 
-                el.disabled = !0) : "tlf" === el.type && "sms" === scope.method && (null !== scope.email && -1 === scope.email.indexOf("@") && (el.value = scope.email, 
+                el.disabled = !0) : "tlf" === el.type && "sms" === scope.method && (null !== scope.email && scope.email.indexOf("@") === -1 && (el.value = scope.email, 
                 el.disabled = !0), scope.telIndex = index + 1, scope.telField = el), el;
             }), filled_fields = _.filter(fields, function(el) {
                 return null !== el.value;
@@ -649,7 +649,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
     }
     var checkCollapse = function(instance, el, options) {
         var maxHeight = select(instance, el, instance.maxHeightSelector).css("max-height"), height = angular.element(el)[0].scrollHeight;
-        if (-1 === maxHeight.indexOf("px")) return void console.log("invalid non-pixels max-height for " + instance.maxHeightSelector);
+        if (maxHeight.indexOf("px") === -1) return void console.log("invalid non-pixels max-height for " + instance.maxHeightSelector);
         if (maxHeight = parseInt(maxHeight.replace("px", "")), height > maxHeight) {
             if (instance.isCollapsed) return;
             instance.isCollapsed = !0, collapseEl(instance, el).addClass("collapsed"), select(instance, el, instance.toggleSelector).removeClass("hidden in");
@@ -742,7 +742,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         }
         if (void 0 === format && (format = "str"), 0 === total_votes) return print(0);
         var base = question.totals.valid_votes + question.totals.null_votes + question.totals.blank_votes;
-        return (void 0 === over || null === over) && (over = question.answer_total_votes_percentage), 
+        return void 0 !== over && null !== over || (over = question.answer_total_votes_percentage), 
         "over-valid-votes" === over && (base = question.totals.valid_votes), print(100 * total_votes / base);
     };
 }), angular.module("avUi").service("CheckerService", function() {
@@ -842,7 +842,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                     prefix: sumStrs(d.prefix, item.prefix)
                 });
             }), !0));
-            return pass || "chain" !== d.data.groupType ? !0 : !1;
+            return !(!pass && "chain" === d.data.groupType);
         });
         return ret;
     }
@@ -851,8 +851,8 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
     return function(number, fixedDigits) {
         angular.isNumber(fixedDigits) && fixedDigits >= 0 && (number = number.toFixed(parseInt(fixedDigits)));
         var number_str = (number + "").replace(".", ","), ret = "", commaPos = number_str.length;
-        -1 !== number_str.indexOf(",") && (commaPos = number_str.indexOf(","));
-        for (var i = 0; commaPos > i; i++) {
+        number_str.indexOf(",") !== -1 && (commaPos = number_str.indexOf(","));
+        for (var i = 0; i < commaPos; i++) {
             var reverse = commaPos - i;
             reverse % 3 === 0 && reverse > 0 && i > 0 && (ret += "."), ret += number_str[i];
         }
@@ -862,7 +862,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
     return function(originString, searchString) {
         if (!angular.isString(originString) || !angular.isString(searchString)) return !1;
         var lastIndex = originString.indexOf(searchString);
-        return -1 !== lastIndex && lastIndex === originString.length - searchString.length;
+        return lastIndex !== -1 && lastIndex === originString.length - searchString.length;
     };
 }), angular.module("avUi").service("StateDataService", [ "$state", function($state) {
     var data = {};
@@ -1007,7 +1007,7 @@ angular.module("jm.i18next").config([ "$i18nextProvider", "ConfigServiceProvider
     $templateCache.put("avRegistration/register-directive/register-directive.html", '<div class="container"><div class="row"><div class="col-sm-12"><h2 ng-if="!admin" class="registerheader" ng-i18next="avRegistration.registerHeader"></h2><h2 ng-if="admin" class="registerheader" ng-i18next="avRegistration.registerAdminHeader"></h2></div></div><div class="row"><div class="col-sm-6"><div ng-if="method == \'dnie\'"><a type="submit" class="btn btn-block btn-success" ng-i18next="avRegistration.registerButton" ng-href="{{ dnieurl }}/"></a></div><form ng-if="method != \'dnie\'" name="form" id="registerForm" role="form" class="form-horizontal"><div ng-repeat="field in register_fields" avr-field index="{{$index+1}}"></div><div class="col-sm-offset-4 col-sm-8 button-group"><div class="input-error"><div class="error text-danger" ng-if="error" ng-bind-html="error"></div></div><div class="input-warn"><span class="text-warning" ng-if="!form.$valid || sendingData" ng-i18next>avRegistration.fillValidFormText</span></div><button type="submit" class="btn btn-block btn-success" ng-i18next="avRegistration.registerButton" ng-click="signUp(form.$valid)" tabindex="{{register_fields.length+1}}" ng-disabled="!form.$valid || sendingData"></button></div></form></div><div class="col-sm-5 col-sm-offset-1 help-sidebar hidden-xs"><span><h3 class="help-h3" ng-i18next="avRegistration.registerAdminFormHelpTitle"></h3><p ng-i18next>avRegistration.helpAdminRegisterForm</p></span> <span><p ng-if="!admin" ng-i18next>avRegistration.helpRegisterForm</p><h3 class="help-h3" ng-i18next="avRegistration.alreadyRegistered"></h3><p ng-i18next>[html]avRegistration.helpAlreadyRegisteredForm</p><a href="" ng-click="goLogin($event)" ng-i18next="avRegistration.loginHere"></a><br></span></div></div></div>'), 
     $templateCache.put("avRegistration/success.html", '<div av-success><p ng-i18next="avRegistration.successRegistration"></p></div>'), 
     $templateCache.put("avUi/change-lang-directive/change-lang-directive.html", '<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{ deflang }} <span class="caret"></span></a><ul class="dropdown-menu" role="menu"><li ng-repeat="lang in langs"><a ng-click="changeLang(lang)">{{lang}}</a></li></ul>'), 
-    $templateCache.put("avUi/documentation-directive/documentation-directive.html", '<div><h2 class="text-center text-av-secondary" ng-i18next="avDocumentation.documentation.title"></h2><p ng-i18next="avDocumentation.documentation.first_line"></p><ul><li><a href="{{documentation.overview}}" target="_blank" ng-i18next="avDocumentation.documentation.overview"></a></li><li><a href="{{auths_url}}" target="_blank" ng-i18next="avDocumentation.documentation.authorities"></a></li><li><a href="{{legal_url}}" target="_blank">Registre d\'esdeveniments (Castellano)</a></li><li><a href="{{documentation.technical}}" target="_blank" ng-i18next="avDocumentation.documentation.technical"></a></li><li><a href="{{documentation.security_contact}}" target="_blank" ng-i18next="avDocumentation.documentation.security_contact"></a></li><li><a href="https://nvotes.com/tos/" target="_blank">Legal (English)</a></li></ul><div class="documentation-html-include" ng-bind-html="documentation_html_include | addTargetBlank"></div></div>'), 
+    $templateCache.put("avUi/documentation-directive/documentation-directive.html", '<div><h2 class="text-center text-av-secondary" ng-i18next="avDocumentation.documentation.title"></h2><p ng-i18next="avDocumentation.documentation.first_line"></p><ul><li><a href="{{documentation.faq}}" target="_blank" ng-i18next="avDocumentation.documentation.faq"></a></li><li><a href="{{documentation.overview}}" target="_blank" ng-i18next="avDocumentation.documentation.overview"></a></li><li><a href="{{auths_url}}" target="_blank" ng-i18next="avDocumentation.documentation.authorities"></a></li><li><a href="{{documentation.technical}}" target="_blank" ng-i18next="avDocumentation.documentation.technical"></a></li><li><a href="{{documentation.security_contact}}" target="_blank" ng-i18next="avDocumentation.documentation.security_contact"></a></li><li><a href="{{legal_url}}" target="_blank" ng-i18next="avDocumentation.legal.title"></a></li></ul><div class="documentation-html-include" ng-bind-html="documentation_html_include | addTargetBlank"></div></div>'), 
     $templateCache.put("avUi/foot-directive/foot-directive.html", '<div class="commonfoot"><div class="container"><div class="row"><div class="col-md-2 col-md-offset-1"><h3 ng-i18next="avCommon.foot.contact"></h3><ul><li><a href="mailto:{{contact.email}}" ng-i18next="avCommon.foot.contactsupport"></a></li></ul></div><div class="col-md-2"><h3 ng-i18next="avCommon.foot.technology"></h3><ul><li><a href="{{technology.aboutus}}" ng-i18next="avCommon.foot.aboutus"></a></li><li><a href="{{technology.overview}}" ng-i18next="avCommon.foot.technology"></a></li><li><a href="{{technology.solutions}}" ng-i18next="avCommon.foot.solutions"></a></li></ul></div><div class="col-md-2"><h3 ng-i18next="avCommon.foot.legal"></h3><ul><li><a href="{{legal.terms_of_service}}" ng-i18next="avCommon.foot.tos"></a></li><li><a href="{{legal.cookies}}" ng-i18next="avCommon.foot.cookies"></a></li><li><a href="{{legal.privacy}}" ng-i18next="avCommon.foot.privacy"></a></li><li><a href="{{legal.security_contact}}" ng-i18next="avCommon.foot.securitycontact"></a></li><li><a target="_blank" href="{{legal.community_website}}" ng-i18next="avCommon.foot.communitywebsite"></a></li></ul></div></div></div></div>'), 
     $templateCache.put("avUi/simple-error-directive/simple-error-directive.html", '<div class="av-simple-error-title" ng-transclude></div>'), 
     $templateCache.put("test/test_booth_widget.html", '<!DOCTYPE html><html><head><title>Test frame</title><meta charset="UTF-8"></head><script>function getCastHmac(auth_data, callback) {\n      callback("khmac:///sha-256;5e25a9af28a33d94b8c2c0edbc83d6d87355e45b93021c35a103821557ec7dc5/voter-1110-1dee0c135afeae29e208550e7258dab7b64fb008bc606fc326d41946ab8e773f:1415185712");\n    }</script><body style="overflow-y: hidden; overflow-x: hidden; padding: 0; margin: 0"><div style="width: 100%; display: block; position: absolute; top: 0; bottom: 0; scroll: none; padding: 0; margin: 0"><a class="agoravoting-voting-booth" href="http://agora.dev/#/election/1110/vote" data-authorization-funcname="getCastHmac">Votar con Agora Voting</a><script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="http://agora.dev/avWidgets.min.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","agoravoting-widgets-js");</script></div></body></html>'), 
