@@ -30,10 +30,10 @@ var avConfigData = {
   theme: "default",
   baseUrl: "https://agora/elections/api/",
   freeAuthId: 1,
-  
+
   // Webpage title
   webTitle: "Agora Voting",
-  
+
   // Show 'Success Action' tab in admin agora_gui
   showSuccessAction: false,
 
@@ -48,6 +48,11 @@ var avConfigData = {
 
   authorities: ['local-auth2'],
   director: "local-auth1",
+
+  // For admins:
+  // Allow editing the json description of the election before creating it
+  // Allowed values: true|false
+  allowEditElectionJson: true,
 
   resourceUrlWhitelist: [
     // Allow same origin resource loads.
@@ -135,7 +140,7 @@ var avConfigData = {
     sales: "sales@example.com",
     tlf: "-no tlf-"
   },
-  
+
   // social networks footer links
   social: {
       facebook: "https://www.facebook.com/AgoraVoting",
@@ -145,7 +150,7 @@ var avConfigData = {
       youtube: "https://www.youtube.com/results?search_query=Agora+Voting",
       github: "https://github.com/agoravoting/"
   },
-  
+
   // technology footer links
   technology: {
     aboutus: "https://agoravoting.com/#aboutus",
@@ -154,7 +159,7 @@ var avConfigData = {
     solutions: "https://agoravoting.com/solutions/",
     admin_manual: "https://bit.ly/avguiadeuso"
   },
-  
+
   // legality footer links
   legal: {
     terms_of_service: "https://agoravoting.com/tos/",
@@ -163,16 +168,16 @@ var avConfigData = {
     security_contact: "https://agoravoting.com/security_contact/",
     community_website: "https://agoravoting.org"
   },
-  
+
   documentation: {
     faq: 'https://nvotes.com/doc/en/',
     overview: 'https://agoravoting.com/overview/',
     technical: 'https://agoravoting.com/static/generic_tech_overview_20_08_15.pdf',
     security_contact: "https://agoravoting.com/security_contact/"
   },
-  
+
   documentation_html_include: '',
-  
+
   legal_html_include: '',
 
   // Details pertaining to the organization that runs the software
@@ -184,7 +189,7 @@ var avConfigData = {
     // URL that the logo links to
     orgUrl: 'https://agoravoting.com'
   },
-    
+
   verifier: {
     link: "",
     hash: ""
