@@ -1,21 +1,18 @@
 <div class="commonfoot">
     <div class="container">
         <div class="row">
-            <div class="col-md-2 col-md-offset-1">
-                <h3 
-                  ng-i18next="avCommon.foot.contact" 
-                  ng-if="contact.email||contact.sales"
-                >
+            <div
+              class="col-md-2 col-md-offset-1"
+              ng-if="contact.email||contact.sales||social.facebook||social.twitter||social.googleplus||social.youtube||social.github"
+            >
+                <h3 ng-i18next="avCommon.foot.contact">
                 </h3>
                 <ul>
                     <li ng-if="contact.email"><a href="mailto:{{contact.email}}" ng-i18next="avCommon.foot.contactsupport"></a></li>
                     <li ng-if="contact.sales"><a href="mailto:{{contact.sales}}" ng-i18next="avCommon.foot.contactsales"></a></li>
                 </ul>
                 <!-- social links -->
-                <div
-                  class="social" 
-                  ng-if="social.facebook||social.twitter||social.googleplus||social.youtube||social.github"
-                >
+                <div class="social">
                     <a href="{{social.facebook}}" ng-if="social.facebook"><i class="fa fa-fw fa-lg fa-facebook"></i></a>
                     <a href="{{social.twitter}}" ng-if="social.twitter"><i class="fa fa-fw fa-lg fa-twitter"></i></a>
                     <a href="{{social.googleplus}}" ng-if="social.googleplus"><i class="fa fa-fw fa-lg fa-google-plus"></i></a>
