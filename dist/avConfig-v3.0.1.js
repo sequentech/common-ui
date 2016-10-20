@@ -54,6 +54,10 @@ var avConfigData = {
   // Allowed values: true|false
   allowEditElectionJson: true,
 
+  // show the documentation links after successfully casting a vote
+  // allowed values: true| false
+  showDocOnVoteCast: false,
+
   resourceUrlWhitelist: [
     // Allow same origin resource loads.
     'self',
