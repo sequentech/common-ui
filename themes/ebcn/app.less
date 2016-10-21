@@ -1,0 +1,71 @@
+/**
+ * This file is part of agora-gui-common.
+ * Copyright (C) 2015-2016  Agora Voting SL <agora@agoravoting.com>
+
+ * agora-gui-common is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License.
+
+ * agora-gui-common  is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+
+ * You should have received a copy of the GNU Affero General Public License
+ * along with agora-gui-common.  If not, see <http://www.gnu.org/licenses/>.
+**/
+
+@import "../../external.less";
+
+/* Global Config */
+@av-primary: #9e0054;
+@av-secondary: #000000;
+@av-primary-contrast: #FFFFFF;
+@av-secondary-contrast: #FFFFFF;
+@brand-primary: @av-primary;
+@brand-success: @av-secondary;
+@link-color: @av-secondary;
+@text-success: @av-secondary;
+@state-success-text: @av-secondary;
+
+
+
+/* Admin Config */
+@av-bg: #EEE;
+@av-bg-hover: #DDD;
+@av-error-bg: #fff;
+@av-error-color: #990000;
+
+@imgdir: "../../img";
+
+@import "../../app.less";
+
+[ave-default-election] .background .top-section,
+[ave-public-view] .background .top-section {
+  color: #333;
+}
+
+[ave-default-election] .avb-top-navbar a {
+  color: @av-secondary-contrast;
+}
+
+[ave-default-election] .avb-top-navbar .pull-right,
+[av-booth] [av-change-lang],
+[av-booth] .avb-top-navbar > .pull-right {
+  display: none;
+}
+
+[ave-default-election] .avb-top-navbar > .text-center,
+[av-booth] .avb-top-navbar > .text-center {
+  text-align: right !important;
+}
+
+img.logo-img {
+  padding-top: 5px;
+}
+
+[av-booth] .basic-booth-layout .warnings .text-brand-primary,
+[av-booth] .warnings .text-brand-primary {
+  background-color: @av-secondary;
+}
+

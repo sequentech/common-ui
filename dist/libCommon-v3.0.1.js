@@ -1466,7 +1466,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             for (message = prefix + template.replace(/\{\d+\}/g, function(match) {
                 var arg, index = +match.slice(1, -1);
                 return index + 2 < templateArgs.length ? (arg = templateArgs[index + 2], "function" == typeof arg ? arg.toString().replace(/ ?\{[\s\S]*$/, "") : "undefined" == typeof arg ? "undefined" : "string" != typeof arg ? toJson(arg) : arg) : match;
-            }), message = message + "\nhttp://errors.angularjs.org/1.2.30/" + (module ? module + "/" : "") + code, 
+            }), message = message + "\nhttp://errors.angularjs.org/1.2.32/" + (module ? module + "/" : "") + code, 
             i = 2; i < arguments.length; i++) message = message + (2 == i ? "?" : "&") + "p" + (i - 2) + "=" + encodeURIComponent(stringify(arguments[i]));
             return new Error(message);
         };
@@ -2233,7 +2233,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                 }
             };
         }
-        var INSTANTIATING = {}, providerSuffix = "Provider", path = [], loadedModules = new HashMap([], (!0)), providerCache = {
+        var INSTANTIATING = {}, providerSuffix = "Provider", path = [], loadedModules = new HashMap([], !0), providerCache = {
             $provide: {
                 provider: supportObject(provider),
                 factory: supportObject(factory),
@@ -2529,10 +2529,10 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                 return boundTranscludeFn;
             }
             function collectDirectives(node, directives, attrs, maxPriority, ignoreDirective) {
-                var match, className, nodeType = node.nodeType, attrsMap = attrs.$attr;
+                var match, nodeName, className, nodeType = node.nodeType, attrsMap = attrs.$attr;
                 switch (nodeType) {
                   case 1:
-                    addDirective(directives, directiveNormalize(nodeName_(node).toLowerCase()), "E", maxPriority, ignoreDirective);
+                    nodeName = nodeName_(node).toLowerCase(), addDirective(directives, directiveNormalize(nodeName), "E", maxPriority, ignoreDirective);
                     for (var attr, name, nName, ngAttrName, value, isNgAttr, nAttrs = node.attributes, j = 0, jj = nAttrs && nAttrs.length; j < jj; j++) {
                         var attrStartName = !1, attrEndName = !1;
                         if (attr = nAttrs[j], !msie || msie >= 8 || attr.specified) {
@@ -2546,7 +2546,8 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                             addDirective(directives, nName, "A", maxPriority, ignoreDirective, attrStartName, attrEndName);
                         }
                     }
-                    if (className = node.className, isString(className) && "" !== className) for (;match = CLASS_DIRECTIVE_REGEXP.exec(className); ) nName = directiveNormalize(match[2]), 
+                    if ("input" === nodeName && "hidden" === node.getAttribute("type") && node.setAttribute("autocomplete", "off"), 
+                    className = node.className, isString(className) && "" !== className) for (;match = CLASS_DIRECTIVE_REGEXP.exec(className); ) nName = directiveNormalize(match[2]), 
                     addDirective(directives, nName, "C", maxPriority, ignoreDirective) && (attrs[nName] = trim(match[3])), 
                     className = className.substr(match.index + match[0].length);
                     break;
@@ -4786,11 +4787,11 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         }
         return csp.isActive_ = active;
     }, SNAKE_CASE_REGEXP = /[A-Z]/g, version = {
-        full: "1.2.30",
+        full: "1.2.32",
         major: 1,
         minor: 2,
-        dot: 30,
-        codeName: "patronal-resurrection"
+        dot: 32,
+        codeName: "alternation-intention"
     };
     JQLite.expando = "ng339";
     var jqCache = JQLite.cache = {}, jqId = 1, addEventListenerFn = window.document.addEventListener ? function(element, type, fn) {
@@ -6964,8 +6965,8 @@ function(window, angular, undefined) {
     }
     function makeDateFromInput(config) {
         var input = config._i, matched = aspNetJsonRegex.exec(input);
-        input === undefined ? config._d = new Date() : matched ? config._d = new Date((+matched[1])) : "string" == typeof input ? makeDateFromString(config) : isArray(input) ? (config._a = input.slice(0), 
-        dateFromConfig(config)) : isDate(input) ? config._d = new Date((+input)) : "object" == typeof input ? dateFromObject(config) : config._d = new Date(input);
+        input === undefined ? config._d = new Date() : matched ? config._d = new Date(+matched[1]) : "string" == typeof input ? makeDateFromString(config) : isArray(input) ? (config._a = input.slice(0), 
+        dateFromConfig(config)) : isDate(input) ? config._d = new Date(+input) : "object" == typeof input ? dateFromObject(config) : config._d = new Date(input);
     }
     function makeDate(y, m, d, h, M, s, ms) {
         var date = new Date(y, m, d, h, M, s, ms);
@@ -7009,7 +7010,7 @@ function(window, angular, undefined) {
         return null === input ? moment.invalid({
             nullInput: !0
         }) : ("string" == typeof input && (config._i = input = getLangDefinition().preparse(input)), 
-        moment.isMoment(input) ? (config = cloneMoment(input), config._d = new Date((+input._d))) : format ? isArray(format) ? makeDateFromStringAndArray(config) : makeDateFromStringAndFormat(config) : makeDateFromInput(config), 
+        moment.isMoment(input) ? (config = cloneMoment(input), config._d = new Date(+input._d)) : format ? isArray(format) ? makeDateFromStringAndArray(config) : makeDateFromStringAndFormat(config) : makeDateFromInput(config), 
         new Moment(config));
     }
     function makeGetterAndSetter(name, key) {
@@ -7387,7 +7388,7 @@ function(window, angular, undefined) {
             return this.clone().lang("en").format("ddd MMM DD YYYY HH:mm:ss [GMT]ZZ");
         },
         toDate: function() {
-            return this._offset ? new Date((+this)) : this._d;
+            return this._offset ? new Date(+this) : this._d;
         },
         toISOString: function() {
             var m = moment(this).utc();
@@ -14332,38 +14333,38 @@ var saveAs = saveAs || function(e) {
     if (!("undefined" == typeof e || "undefined" != typeof navigator && /MSIE [1-9]\./.test(navigator.userAgent))) {
         var t = e.document, n = function() {
             return e.URL || e.webkitURL || e;
-        }, r = t.createElementNS("http://www.w3.org/1999/xhtml", "a"), o = "download" in r, i = function(e) {
+        }, r = t.createElementNS("http://www.w3.org/1999/xhtml", "a"), o = "download" in r, a = function(e) {
             var t = new MouseEvent("click");
             e.dispatchEvent(t);
-        }, a = /constructor/i.test(e.HTMLElement), f = /CriOS\/[\d]+/.test(navigator.userAgent), u = function(t) {
+        }, i = /constructor/i.test(e.HTMLElement) || e.safari, f = /CriOS\/[\d]+/.test(navigator.userAgent), u = function(t) {
             (e.setImmediate || e.setTimeout)(function() {
                 throw t;
             }, 0);
-        }, d = "application/octet-stream", s = 4e4, c = function(e) {
+        }, s = "application/octet-stream", d = 4e4, c = function(e) {
             var t = function() {
                 "string" == typeof e ? n().revokeObjectURL(e) : e.remove();
             };
-            setTimeout(t, s);
+            setTimeout(t, d);
         }, l = function(e, t, n) {
             t = [].concat(t);
             for (var r = t.length; r--; ) {
                 var o = e["on" + t[r]];
                 if ("function" == typeof o) try {
                     o.call(e, n || e);
-                } catch (i) {
-                    u(i);
+                } catch (a) {
+                    u(a);
                 }
             }
         }, p = function(e) {
             return /^\s*(?:text\/\S*|application\/xml|\S*\/\S*\+xml)\s*;.*charset\s*=\s*utf-8/i.test(e.type) ? new Blob([ String.fromCharCode(65279), e ], {
                 type: e.type
             }) : e;
-        }, v = function(t, u, s) {
-            s || (t = p(t));
-            var y, v = this, w = t.type, m = w === d, h = function() {
+        }, v = function(t, u, d) {
+            d || (t = p(t));
+            var y, v = this, w = t.type, m = w === s, h = function() {
                 l(v, "writestart progress write writeend".split(" "));
             }, S = function() {
-                if ((f || m && a) && e.FileReader) {
+                if ((f || m && i) && e.FileReader) {
                     var r = new FileReader();
                     return r.onloadend = function() {
                         var t = f ? r.result : r.result.replace(/^data:[^;]*;/, "data:attachment/file;"), n = e.open(t, "_blank");
@@ -14377,7 +14378,7 @@ var saveAs = saveAs || function(e) {
                 v.readyState = v.DONE, h(), c(y);
             };
             return v.readyState = v.INIT, o ? (y = n().createObjectURL(t), void setTimeout(function() {
-                r.href = y, r.download = u, i(r), h(), c(y), v.readyState = v.DONE;
+                r.href = y, r.download = u, a(r), h(), c(y), v.readyState = v.DONE;
             })) : void S();
         }, w = v.prototype, m = function(e, t, n) {
             return new v(e, t || e.name || "download", n);
@@ -14390,7 +14391,7 @@ var saveAs = saveAs || function(e) {
     }
 }("undefined" != typeof self && self || "undefined" != typeof window && window || this.content);
 
-"undefined" != typeof module && module.exports ? module.exports.saveAs = saveAs : "undefined" != typeof define && null !== define && null !== define.amd && define([], function() {
+"undefined" != typeof module && module.exports ? module.exports.saveAs = saveAs : "undefined" != typeof define && null !== define && null !== define.amd && define("FileSaver.js", function() {
     return saveAs;
 }), function() {
     function patchXHR(fnName, newFn) {

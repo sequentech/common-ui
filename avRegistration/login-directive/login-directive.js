@@ -100,10 +100,12 @@ angular.module('avRegistration')
                 'captcha_code': Authmethod.captcha_code,
             };
             _.each(scope.login_fields, function (field) {
-              data[field.name] = field.value;
               if (field.name === 'email') {
                 scope.email = field.value;
+              } else if ('code' === field.name) {
+                field.value = field.value.trim().replace(/ |\n|\t|-|_/g,'').toUpperCase();
               }
+              data[field.name] = field.value;
             });
 
             scope.sendingData = true;
@@ -177,7 +179,7 @@ angular.module('avRegistration')
                   el.value = scope.email;
                   el.disabled = true;
                 } else if (el.type === "code" && scope.code !== null) {
-                  el.value = scope.code.trim().toUpperCase();
+                  el.value = scope.code.trim().replace(/ |\n|\t|-|_/g,'').toUpperCase();
                   el.disabled = true;
                 } else if (el.type === "tlf" && scope.method === "sms") {
                   if (scope.email !== null && scope.email.indexOf('@') === -1) {
