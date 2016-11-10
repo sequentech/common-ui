@@ -8006,7 +8006,7 @@ function(window, angular, undefined) {
                 encode: valToString,
                 decode: valFromString,
                 is: regexpMatches,
-                pattern: /[^/]*/
+                pattern: /[^\/]*/
             },
             int: {
                 encode: valToString,
@@ -8053,7 +8053,7 @@ function(window, angular, undefined) {
                 decode: angular.fromJson,
                 is: angular.isObject,
                 equals: angular.equals,
-                pattern: /[^/]*/
+                pattern: /[^\/]*/
             },
             any: {
                 encode: angular.identity,
