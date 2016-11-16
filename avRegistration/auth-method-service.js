@@ -143,10 +143,12 @@ angular.module('avRegistration')
           var found = false;
           _.each(fields, function(field) {
             if (viewEventData.auth_method === "sms" && field.name === 'tlf') {
-                if (field.type === 'text') {
-                  field.type = 'tlf';
-                }
-                found = true;
+              if (field.type === 'text') {
+                field.type = 'tlf';
+              }
+              found = true;
+            } else if (viewEventData.auth_method === "email" && field.name === 'email') {
+              found = true;
             }
           });
 
@@ -157,7 +159,7 @@ angular.module('avRegistration')
               "required": true,
               "required_on_authentication": true
             });
-          } else if (viewEventData.auth_method === "email") {
+          } else if (viewEventData.auth_method === "email" && !found) {
             fields.push({
               "name": "email",
               "type": "email",
