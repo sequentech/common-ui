@@ -79,12 +79,12 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         }) : $http.get(backendUrl + "auth-event/" + id + "/census/");
     }, authmethod.getRegisterFields = function(viewEventData) {
         var fields = angular.copy(viewEventData.extra_fields);
-        fields || (fields = []), "sms" === viewEventData.auth_method ? fields.push({
-            name: "tlf",
-            type: "tlf",
-            required: !0,
-            required_on_authentication: !0
-        }) : "email" === viewEventData.auth_method ? fields.push({
+        fields || (fields = []);
+        var found = !1;
+        _.each(fields, function(field) {
+            "sms" === viewEventData.auth_method && "tlf" === field.name && ("text" === field.type && (field.type = "tlf"), 
+            found = !0);
+        }), "sms" !== viewEventData.auth_method || found ? "email" === viewEventData.auth_method ? fields.push({
             name: "email",
             type: "email",
             required: !0,
@@ -99,7 +99,12 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             type: "password",
             required: !0,
             required_on_authentication: !0
-        }));
+        })) : fields.push({
+            name: "tlf",
+            type: "tlf",
+            required: !0,
+            required_on_authentication: !0
+        });
         for (var i = 0; i < fields.length; i++) if ("captcha" === fields[i].type) {
             var captcha = fields.splice(i, 1);
             fields.push(captcha[0]);
