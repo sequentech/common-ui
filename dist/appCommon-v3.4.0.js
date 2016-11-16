@@ -82,14 +82,9 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         fields || (fields = []);
         var found = !1;
         _.each(fields, function(field) {
-            "sms" === viewEventData.auth_method && "tlf" === field.name && ("text" === field.type && (field.type = "tlf"), 
-            found = !0);
-        }), "sms" !== viewEventData.auth_method || found ? "email" === viewEventData.auth_method ? fields.push({
-            name: "email",
-            type: "email",
-            required: !0,
-            required_on_authentication: !0
-        }) : "user-and-password" === viewEventData.auth_method && (fields.push({
+            "sms" === viewEventData.auth_method && "tlf" === field.name ? ("text" === field.type && (field.type = "tlf"), 
+            found = !0) : "email" === viewEventData.auth_method && "email" === field.name && (found = !0);
+        }), "sms" !== viewEventData.auth_method || found ? "email" !== viewEventData.auth_method || found ? "user-and-password" === viewEventData.auth_method && (fields.push({
             name: "email",
             type: "email",
             required: !0,
@@ -100,6 +95,11 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             required: !0,
             required_on_authentication: !0
         })) : fields.push({
+            name: "email",
+            type: "email",
+            required: !0,
+            required_on_authentication: !0
+        }) : fields.push({
             name: "tlf",
             type: "tlf",
             required: !0,
