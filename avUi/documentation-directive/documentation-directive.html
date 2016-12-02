@@ -2,14 +2,14 @@
   <h2 class="text-center text-av-secondary" ng-i18next="avDocumentation.documentation.title"></h2>
   <p ng-i18next="avDocumentation.documentation.first_line"></p>
   <ul>
-    <li>
+    <li ng-if="!!documentation.faq">
       <a
         href="{{documentation.faq}}"
         target="_blank"
         ng-i18next="avDocumentation.documentation.faq">
       </a>
     </li>
-    <li>
+    <li ng-if="!!documentation.overview">
       <a
         href="{{documentation.overview}}"
         target="_blank"
@@ -23,14 +23,14 @@
         ng-i18next="avDocumentation.documentation.authorities">
       </a>
     </li>
-    <li>
+    <li ng-if="!!documentation.technical">
       <a
         href="{{documentation.technical}}"
         target="_blank"
         ng-i18next="avDocumentation.documentation.technical">
       </a>
     </li>
-    <li>
+    <li ng-if="!!documentation.security_contact">
       <a
         href="{{documentation.security_contact}}"
         target="_blank"

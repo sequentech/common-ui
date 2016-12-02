@@ -1,61 +1,72 @@
 <div class="commonfoot">
     <div class="container">
         <div class="row">
-            <div class="col-md-2 col-md-offset-1">
-                <h3 ng-i18next="avCommon.foot.contact"></h3>
+            <div
+              class="col-md-2 col-md-offset-3"
+              ng-if="!!contact.email||!!contact.sales||!!social.facebook||!!social.twitter||!!social.googleplus||!!social.youtube||!!social.github"
+            >
+                <h3 ng-i18next="avCommon.foot.contact">
+                </h3>
                 <ul>
-                    <li><a href="mailto:{{contact.email}}" ng-i18next="avCommon.foot.contactsupport"></a></li>
-                    <li><a href="mailto:{{contact.sales}}" ng-i18next="avCommon.foot.contactsales"></a></li>
+                    <li ng-if="!!contact.email"><a href="mailto:{{contact.email}}" ng-i18next="avCommon.foot.contactsupport"></a></li>
+                    <li ng-if="!!contact.sales"><a href="mailto:{{contact.sales}}" ng-i18next="avCommon.foot.contactsales"></a></li>
                 </ul>
                 <!-- social links -->
                 <div class="social">
-                    <a href="{{social.facebook}}"><i class="fa fa-fw fa-lg fa-facebook"></i></a>
-                    <a href="{{social.twitter}}"><i class="fa fa-fw fa-lg fa-twitter"></i></a>
-                    <a href="{{social.googleplus}}"><i class="fa fa-fw fa-lg fa-google-plus"></i></a>
-                    <a href="{{social.youtube}}"><i class="fa fa-fw fa-lg fa-youtube-play"></i></a>
-                    <a href="{{social.github}}"><i class="fa fa-fw fa-lg fa-github"></i></a>
+                    <a href="{{social.facebook}}" ng-if="!!social.facebook"><i class="fa fa-fw fa-lg fa-facebook"></i></a>
+                    <a href="{{social.twitter}}" ng-if="!!social.twitter"><i class="fa fa-fw fa-lg fa-twitter"></i></a>
+                    <a href="{{social.googleplus}}" ng-if="!!social.googleplus"><i class="fa fa-fw fa-lg fa-google-plus"></i></a>
+                    <a href="{{social.youtube}}" ng-if="!!social.youtube"><i class="fa fa-fw fa-lg fa-youtube-play"></i></a>
+                    <a href="{{social.github}}" ng-if="!!social.github"><i class="fa fa-fw fa-lg fa-github"></i></a>
                 </div>
             </div>
 
-            <div class="col-md-2">
-                <h3 ng-i18next="avCommon.foot.technology"></h3>
+            <div 
+              class="col-md-2"
+              ng-if="!!technology.aboutus||!!technology.pricing||!!technology.overview||!!technology.solutions||!!technology.admin_manual"
+            >
+                <h3 ng-i18next="avCommon.foot.technology">
+                </h3>
                 <ul>
-                    <li><a href="{{technology.aboutus}}" ng-i18next="avCommon.foot.aboutus"></a></li>
-                    <li><a href="{{technology.pricing}}" ng-i18next="avCommon.foot.pricing"></a></li>
-                    <li><a href="{{technology.overview}}" ng-i18next="avCommon.foot.technology"></a></li>
-                    <li><a href="{{technology.solutions}}" ng-i18next="avCommon.foot.solutions"></a></li>
-                    <li><a href="{{technology.admin_manual}}" ng-i18next="avCommon.foot.adminManual"></a></li>
+                    <li ng-if="!!technology.aboutus"><a href="{{technology.aboutus}}" ng-i18next="avCommon.foot.aboutus"></a></li>
+                    <li ng-if="!!technology.pricing"><a href="{{technology.pricing}}" ng-i18next="avCommon.foot.pricing"></a></li>
+                    <li ng-if="!!technology.overview"><a href="{{technology.overview}}" ng-i18next="avCommon.foot.technology"></a></li>
+                    <li ng-if="!!technology.solutions"><a href="{{technology.solutions}}" ng-i18next="avCommon.foot.solutions"></a></li>
+                    <li ng-if="!!technology.admin_manual"><a href="{{technology.admin_manual}}" ng-i18next="avCommon.foot.adminManual"></a></li>
                 </ul>
             </div>
 
-            <div class="col-md-2">
+            <div 
+              class="col-md-2"
+              ng-if="!!legal.terms_of_service||!!legal.cookies||!!legal.privacy||!!legal.security_contact||!!legal.community_website"
+            >
               <h3 ng-i18next="avCommon.foot.legal"></h3>
               <ul>
-                <li>
+                <li ng-if="!!legal.terms_of_service">
                   <a
                     href="{{legal.terms_of_service}}"
                     ng-i18next="avCommon.foot.tos">
                   </a>
                 </li>
-                <li>
+                <li ng-if="!!legal.cookies">
                   <a
                     href="{{legal.cookies}}"
                     ng-i18next="avCommon.foot.cookies">
                   </a>
                 </li>
-                <li>
+                <li ng-if="!!legal.privacy">
                   <a
                     href="{{legal.privacy}}"
                     ng-i18next="avCommon.foot.privacy">
                   </a>
                 </li>
-                <li>
+                <li ng-if="!!legal.security_contact">
                   <a
                     href="{{legal.security_contact}}"
                     ng-i18next="avCommon.foot.securitycontact">
                   </a>
                 </li>
-                <li>
+                <li ng-if="!!legal.community_website">
                   <a
                     target="_blank"
                     href="{{legal.community_website}}"

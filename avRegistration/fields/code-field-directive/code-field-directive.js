@@ -18,7 +18,7 @@
 angular.module('avRegistration')
   .directive('avrCodeField', function($state, Plugins) {
     function link(scope, element, attrs) {
-      scope.codePattern = /[abcdefghjklmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789]{8,8}/;
+      scope.codePattern = /[abcdefghjklmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789-]{8,9}/;
       
       scope.showResendAuthCode = function ()
       { 

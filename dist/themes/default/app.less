@@ -18,14 +18,14 @@
 @import "../../external.less";
 
 /* Global Config */
-@av-primary: #2C3E50;
-@av-secondary: #00A489;
-@av-primary-contrast: white;
-@av-secondary-contrast: white;
+@av-primary: #FFFFFF;
+@av-secondary: #444444;
+@av-primary-contrast: #959292;
+@av-secondary-contrast: #007B67;
 @brand-primary: @av-primary;
 @brand-success: @av-secondary;
 @link-color: @av-secondary;
-@text-success: @av-secondary;
+@text-success: @av-secondary-contrast;
 @state-success-text: @av-secondary;
 
 
@@ -43,4 +43,53 @@
 [ave-default-election] .background .top-section,
 [ave-public-view] .background .top-section {
   color: #333;
+}
+
+[av-booth] {
+  .navbar, .navbar-unfixed-top, .busy-gui, .avb-content, .start-screen {
+    color: @av-secondary;
+  }
+}
+
+.modal-dialog .modal-header h4 {
+  color: @av-primary;
+}
+
+.btn-success {
+  border: 0;
+  background-color: @av-primary-contrast;
+}
+
+.btn-success:hover {
+  background-color: darken(@av-primary-contrast, 25%);
+}
+
+.btn-transparent {
+  border-color: @av-primary-contrast !important;
+  color: @av-primary-contrast !important;
+
+  &:hover {
+    color: white !important;
+    background-color: @av-primary-contrast !important;
+    border-color: @av-primary-contrast !important;
+  }
+}
+
+
+[av-plurality-at-large-results] .table-hover>tbody>tr:hover>td, [av-plurality-at-large-results] .table-hover>tbody>tr:hover>th {
+    background-color: @av-primary-contrast !important;
+    color: @av-primary !important;
+}
+
+[avb-start-screen] .description a, [ave-default-election] .background .top-section p.election-description a, [ave-public-view] .background .top-section p.election-description a {
+  text-decoration: underline;
+
+  &:hover {
+    text-decoration: none;
+  }
+}
+
+/* disable this feature for now */
+[avr-code-field] .code-help {
+  display: none !important;
 }

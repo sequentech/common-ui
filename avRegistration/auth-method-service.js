@@ -138,15 +138,28 @@ angular.module('avRegistration')
 
         authmethod.getRegisterFields = function (viewEventData) {
           var fields = angular.copy(viewEventData.extra_fields);
+
           if (!fields) { fields = []; }
-          if (viewEventData.auth_method === "sms") {
+          var found = false;
+          _.each(fields, function(field) {
+            if (viewEventData.auth_method === "sms" && field.name === 'tlf') {
+              if (field.type === 'text') {
+                field.type = 'tlf';
+              }
+              found = true;
+            } else if (viewEventData.auth_method === "email" && field.name === 'email') {
+              found = true;
+            }
+          });
+
+          if (viewEventData.auth_method === "sms" && !found) {
             fields.push({
               "name": "tlf",
               "type": "tlf",
               "required": true,
               "required_on_authentication": true
             });
-          } else if (viewEventData.auth_method === "email") {
+          } else if (viewEventData.auth_method === "email" && !found) {
             fields.push({
               "name": "email",
               "type": "email",
@@ -240,20 +253,23 @@ angular.module('avRegistration')
             if (!page) {
                 page = 1;
             }
-            return $http.get(backendUrl + 'acl/mine/?object_type=AuthEvent&perm=edit&order=-pk&page='+page);
+            return $http.get(backendUrl + 'acl/mine/?object_type=AuthEvent&perm=edit|view&order=-pk&page='+page);
         };
 
-        authmethod.sendAuthCodes = function(eid, election, user_ids, extra) {
+        authmethod.sendAuthCodes = function(eid, election, user_ids, auth_method, extra) {
             var url = backendUrl + 'auth-event/'+eid+'/census/send_auth/';
             var data = {};
             if (angular.isDefined(election)) {
               data.msg = election.census.config.msg;
-              if (election.census.auth_method === 'email') {
+              if ('email' === auth_method) {
                 data.subject = election.census.config.subject;
               }
             }
             if (angular.isDefined(user_ids)) {
               data["user-ids"] = user_ids;
+            }
+            if (angular.isDefined(auth_method)) {
+              data["auth-method"] = auth_method;
             }
             if (extra) {
               data["extra"] = extra;

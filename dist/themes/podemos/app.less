@@ -19,9 +19,9 @@
 
 /* Global Config */
 @av-primary: #612d62;
-@av-secondary: #78bbb1;
+@av-secondary: white;
 @av-primary-contrast: white;
-@av-secondary-contrast: white;
+@av-secondary-contrast: #78bbb1;
 @brand-primary: #612D62;
 @brand-success: #005c56;
 @brand-danger: #97c2b8;
@@ -37,6 +37,129 @@
 @import "../../app.less";
 
 // podemos custom
+
+[av-ballot-locator-screen] {
+  .btn-success {
+    background-color: @brand-success !important;
+  }
+
+  .btn-success:hover {
+    background-color: darken(@brand-success, 12%) !important;
+  }
+}
+
+[avb-accordion-option] {
+  &.selected.highlight-selected {
+    color: @av-secondary !important;
+    background-color: @av-primary !important;
+  }
+}
+
+[av-booth] {
+  .btn-success {
+    background-color: @brand-success !important;
+  }
+
+  .btn-success:hover {
+    background-color: darken(@brand-success, 12%) !important;
+  }
+
+  .avb-top-navbar {
+    .pull-left {
+      a:hover {
+        color: @av-secondary-contrast !important;
+      }
+    }
+
+    .pull-right {
+      a:hover {
+        color: @brand-success !important;
+      }
+    }
+  }
+
+  a:hover {
+    color: @brand-success;
+  }
+}
+
+[ave-default-election] .background, [ave-public-view] .background {
+  background-color: @av-bg;
+
+  [ui-view] {
+    .top-section {
+      background-color: @av-secondary !important;
+      color: black;
+
+      h3 {
+        color: @av-primary;
+      }
+    }
+  }
+}
+
+[ave-default-election] .background.first, [ave-public-view] .background.first {
+  background-color: @av-primary;
+}
+
+[ave-default-election] .adminhead {
+  a:hover {
+    color: @brand-success !important;
+  }
+
+  .powered-by .strong, 
+  div.row.avb-top-navbar div.pull-left span.ng-scope strong.ng-scope,
+  div.row.avb-top-navbar div.text-center.ng-scope span strong.ng-scope {
+    a {
+      color: @av-secondary !important;
+    }
+
+    a:hover {
+      color: @av-secondary-contrast !important;
+    }
+  }
+}
+
+[av-foot] .commonfoot > div > div > div > div > a > i:hover {
+  color: @av-secondary-contrast !important;
+}
+
+[av-foot] .commonfoot > div > div > div > ul > li > a:hover {
+  color: @av-secondary-contrast !important;
+}
+
+[ave-default-election] .background.first .top-section {
+  color: @av-primary-contrast !important;
+}
+
+[av-change-lang] {
+  > a {
+    color: @av-secondary !important;
+  }
+
+  > a:hover, > a:active {
+    color: @brand-success !important;
+  }
+
+  .dropdown-menu li a {
+    color: black !important;
+  }
+
+  &:hover, &:active {
+    a {
+      color: black !important;
+    }
+  }
+}
+
+[ave-default-election] {
+  div.row.avb-top-navbar > div.pull-left > span > strong,
+  .top-section > div > ul > li {
+    &:hover > a {
+      color: @av-secondary-contrast !important;
+    }
+  }
+}
 
 [av-ballot-locator-screen] .navbar-unfixed-top h1, [av-booth] .navbar-unfixed-top h1 {
  margin-top: 17px;
@@ -85,10 +208,4 @@
     font-weight: 500;
     line-height: 1.1;
     color: inherit;
-}
-
-@media (min-width: 1200px) {
-  .container {
-      width: 970px;
-  }
 }
