@@ -147,13 +147,13 @@ angular.module('avRegistration')
                     } else {
                         scope.sendingData = false;
                         scope.status = 'Not found';
-                        scope.error = $i18next('avRegistration.invalidCredentials');
+                        scope.error = $i18next('avRegistration.invalidCredentials', { support: ConfigService.contact.emails });
                     }
                 })
                 .error(function(error) {
                     scope.sendingData = false;
                     scope.status = 'Registration error: ' + error.message;
-                    scope.error = $i18next('avRegistration.invalidCredentials');
+                    scope.error = $i18next('avRegistration.invalidCredentials', { support: ConfigService.contact.emails });
                 });
         };
 
