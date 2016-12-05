@@ -211,11 +211,11 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                         var khmac = rcvData2["permission-token"], path = khmac.split(";")[1], hash = path.split("/")[0], msg = path.split("/")[1];
                         $window.location.href = "/booth/" + autheventid + "/vote/" + hash + "/" + msg;
                     })) : (scope.sendingData = !1, scope.status = "Not found", scope.error = $i18next("avRegistration.invalidCredentials", {
-                        support: ConfigService.contact.emails
+                        support: ConfigService.contact.email
                     }));
                 }).error(function(error) {
                     scope.sendingData = !1, scope.status = "Registration error: " + error.message, scope.error = $i18next("avRegistration.invalidCredentials", {
-                        support: ConfigService.contact.emails
+                        support: ConfigService.contact.email
                     });
                 });
             }
