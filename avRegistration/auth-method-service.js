@@ -138,15 +138,28 @@ angular.module('avRegistration')
 
         authmethod.getRegisterFields = function (viewEventData) {
           var fields = angular.copy(viewEventData.extra_fields);
+
           if (!fields) { fields = []; }
-          if (viewEventData.auth_method === "sms") {
+          var found = false;
+          _.each(fields, function(field) {
+            if (viewEventData.auth_method === "sms" && field.name === 'tlf') {
+              if (field.type === 'text') {
+                field.type = 'tlf';
+              }
+              found = true;
+            } else if (viewEventData.auth_method === "email" && field.name === 'email') {
+              found = true;
+            }
+          });
+
+          if (viewEventData.auth_method === "sms" && !found) {
             fields.push({
               "name": "tlf",
               "type": "tlf",
               "required": true,
               "required_on_authentication": true
             });
-          } else if (viewEventData.auth_method === "email") {
+          } else if (viewEventData.auth_method === "email" && !found) {
             fields.push({
               "name": "email",
               "type": "email",

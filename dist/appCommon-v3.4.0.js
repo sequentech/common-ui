@@ -79,17 +79,12 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         }) : $http.get(backendUrl + "auth-event/" + id + "/census/");
     }, authmethod.getRegisterFields = function(viewEventData) {
         var fields = angular.copy(viewEventData.extra_fields);
-        fields || (fields = []), "sms" === viewEventData.auth_method ? fields.push({
-            name: "tlf",
-            type: "tlf",
-            required: !0,
-            required_on_authentication: !0
-        }) : "email" === viewEventData.auth_method ? fields.push({
-            name: "email",
-            type: "email",
-            required: !0,
-            required_on_authentication: !0
-        }) : "user-and-password" === viewEventData.auth_method && (fields.push({
+        fields || (fields = []);
+        var found = !1;
+        _.each(fields, function(field) {
+            "sms" === viewEventData.auth_method && "tlf" === field.name ? ("text" === field.type && (field.type = "tlf"), 
+            found = !0) : "email" === viewEventData.auth_method && "email" === field.name && (found = !0);
+        }), "sms" !== viewEventData.auth_method || found ? "email" !== viewEventData.auth_method || found ? "user-and-password" === viewEventData.auth_method && (fields.push({
             name: "email",
             type: "email",
             required: !0,
@@ -99,7 +94,17 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             type: "password",
             required: !0,
             required_on_authentication: !0
-        }));
+        })) : fields.push({
+            name: "email",
+            type: "email",
+            required: !0,
+            required_on_authentication: !0
+        }) : fields.push({
+            name: "tlf",
+            type: "tlf",
+            required: !0,
+            required_on_authentication: !0
+        });
         for (var i = 0; i < fields.length; i++) if ("captcha" === fields[i].type) {
             var captcha = fields.splice(i, 1);
             fields.push(captcha[0]);
@@ -108,7 +113,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         return fields;
     }, authmethod.getLoginFields = function(viewEventData) {
         var fields = authmethod.getRegisterFields(viewEventData);
-        "sms" !== viewEventData.auth_method && "email" !== viewEventData.auth_method || fields.push({
+        ("sms" === viewEventData.auth_method || "email" === viewEventData.auth_method) && fields.push({
             name: "code",
             type: "code",
             required: !0,
@@ -175,7 +180,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         attrs.code && attrs.code.length > 0 && (scope.code = attrs.code), scope.email = null, 
         attrs.email && attrs.email.length > 0 && (scope.email = attrs.email), scope.isAdmin = !1, 
         autheventid === adminId && (scope.isAdmin = !0), scope.resendAuthCode = function(field) {
-            if (!scope.sendingData && "sms" === scope.method && scope.telIndex !== -1 && !scope.form["input" + scope.telIndex].$invalid) {
+            if (!scope.sendingData && "sms" === scope.method && -1 !== scope.telIndex && !scope.form["input" + scope.telIndex].$invalid) {
                 field.value = "";
                 var data = {};
                 data.tlf = scope.telField.value, scope.sendingData = !0, Authmethod.resendAuthCode(data, autheventid).success(function(rcvData) {
@@ -218,7 +223,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                 return scope.stateData[el.name] ? (el.value = scope.stateData[el.name], el.disabled = !0) : (el.value = null, 
                 el.disabled = !1), "email" === el.type && null !== scope.email ? (el.value = scope.email, 
                 el.disabled = !0) : "code" === el.type && null !== scope.code ? (el.value = scope.code.trim().replace(/ |\n|\t|-|_/g, "").toUpperCase(), 
-                el.disabled = !0) : "tlf" === el.type && "sms" === scope.method && (null !== scope.email && scope.email.indexOf("@") === -1 && (el.value = scope.email, 
+                el.disabled = !0) : "tlf" === el.type && "sms" === scope.method && (null !== scope.email && -1 === scope.email.indexOf("@") && (el.value = scope.email, 
                 el.disabled = !0), scope.telIndex = index + 1, scope.telField = el), el;
             }), filled_fields = _.filter(fields, function(el) {
                 return null !== el.value;
@@ -649,7 +654,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
     }
     var checkCollapse = function(instance, el, options) {
         var maxHeight = select(instance, el, instance.maxHeightSelector).css("max-height"), height = angular.element(el)[0].scrollHeight;
-        if (maxHeight.indexOf("px") === -1) return void console.log("invalid non-pixels max-height for " + instance.maxHeightSelector);
+        if (-1 === maxHeight.indexOf("px")) return void console.log("invalid non-pixels max-height for " + instance.maxHeightSelector);
         if (maxHeight = parseInt(maxHeight.replace("px", "")), height > maxHeight) {
             if (instance.isCollapsed) return;
             instance.isCollapsed = !0, collapseEl(instance, el).addClass("collapsed"), select(instance, el, instance.toggleSelector).removeClass("hidden in");
@@ -742,7 +747,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         }
         if (void 0 === format && (format = "str"), 0 === total_votes) return print(0);
         var base = question.totals.valid_votes + question.totals.null_votes + question.totals.blank_votes;
-        return void 0 !== over && null !== over || (over = question.answer_total_votes_percentage), 
+        return (void 0 === over || null === over) && (over = question.answer_total_votes_percentage), 
         "over-valid-votes" === over && (base = question.totals.valid_votes), print(100 * total_votes / base);
     };
 }), angular.module("avUi").service("CheckerService", function() {
@@ -842,7 +847,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                     prefix: sumStrs(d.prefix, item.prefix)
                 });
             }), !0));
-            return !(!pass && "chain" === d.data.groupType);
+            return pass || "chain" !== d.data.groupType ? !0 : !1;
         });
         return ret;
     }
@@ -851,8 +856,8 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
     return function(number, fixedDigits) {
         angular.isNumber(fixedDigits) && fixedDigits >= 0 && (number = number.toFixed(parseInt(fixedDigits)));
         var number_str = (number + "").replace(".", ","), ret = "", commaPos = number_str.length;
-        number_str.indexOf(",") !== -1 && (commaPos = number_str.indexOf(","));
-        for (var i = 0; i < commaPos; i++) {
+        -1 !== number_str.indexOf(",") && (commaPos = number_str.indexOf(","));
+        for (var i = 0; commaPos > i; i++) {
             var reverse = commaPos - i;
             reverse % 3 === 0 && reverse > 0 && i > 0 && (ret += "."), ret += number_str[i];
         }
@@ -862,7 +867,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
     return function(originString, searchString) {
         if (!angular.isString(originString) || !angular.isString(searchString)) return !1;
         var lastIndex = originString.indexOf(searchString);
-        return lastIndex !== -1 && lastIndex === originString.length - searchString.length;
+        return -1 !== lastIndex && lastIndex === originString.length - searchString.length;
     };
 }), angular.module("avUi").service("StateDataService", [ "$state", function($state) {
     var data = {};
