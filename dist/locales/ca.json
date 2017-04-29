@@ -65,7 +65,7 @@
 		"loadingRegistration": "Carregant",
 		"successRegistration": "Reeixit",
 		"errorRegistration": "Error",
-		"invalidCredentials": "Credencials no vàlides",
+		"invalidCredentials": "La autenticación falló, posiblemente por alguno de estos motivos:\n- Las credenciales son inválidas\n- El usuario está inactivo\n- El usuario ha excedido el máximo número de revotos permitidos para esta votación\n- Existe un problema técnico en el servidor\nSi el problema persistiera, por favor contacto con soporte via __support__",
 		"invalidDataRegEx": "dades no vàlides",
 		"invalidDni": "DNI/NIE no vàlid",
 		"dniHelp": "Especifica un DNI/NIE vàlid. Exemples: 1234567R o X0123456R",
