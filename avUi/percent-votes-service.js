@@ -44,7 +44,7 @@ angular.module('avUi')
       if (over === undefined || over === null) {
         over = question.answer_total_votes_percentage;
       }
-      if ("over-valid-votes" === over) {
+      if ("over-valid-votes" === over || "over-total-valid-votes" === over) {
         base = question.totals.valid_votes;
       }
       else if ("over-total-valid-points" === over &&
