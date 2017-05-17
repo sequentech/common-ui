@@ -748,7 +748,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         if (void 0 === format && (format = "str"), 0 === total_votes) return print(0);
         var base = question.totals.valid_votes + question.totals.null_votes + question.totals.blank_votes;
         return void 0 !== over && null !== over || (over = question.answer_total_votes_percentage), 
-        "over-valid-votes" === over ? base = question.totals.valid_votes : "over-total-valid-points" === over && void 0 !== question.totals.valid_points && (base = question.totals.valid_points), 
+        "over-valid-votes" === over || "over-total-valid-votes" === over ? base = question.totals.valid_votes : "over-total-valid-points" === over && void 0 !== question.totals.valid_points && (base = question.totals.valid_points), 
         print(100 * total_votes / base);
     };
 }), angular.module("avUi").service("CheckerService", function() {
