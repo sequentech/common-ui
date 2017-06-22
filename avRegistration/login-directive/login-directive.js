@@ -41,6 +41,8 @@ angular.module('avRegistration')
 
         scope.stateData = StateDataService.getData();
 
+        scope.formStep = 0;
+
         scope.code = null;
         if (attrs.code && attrs.code.length > 0) {
           scope.code = attrs.code;
@@ -69,7 +71,9 @@ angular.module('avRegistration')
           }
 
           // reset code field, as we are going to send a new one
-          field.value = "";
+          if (!!field) {
+            field.value = "";
+          }
 
           var data = {};
           data['tlf'] = scope.telField.value;
@@ -94,6 +98,13 @@ angular.module('avRegistration')
                 return;
             }
             if (scope.sendingData) {
+                return;
+            }
+
+            // loginUser
+            if (scope.method === 'sms-otp' && scope.formStep === 0) {
+                scope.resendAuthCode();
+                scope.formStep = 1;
                 return;
             }
             var data = {

@@ -159,6 +159,20 @@ angular.module('avRegistration')
               "required": true,
               "required_on_authentication": true
             });
+          } else if (viewEventData.auth_method === "sms-otp" && !found) {
+            fields.push({
+              "name": "tlf",
+              "type": "tlf",
+              "required": true,
+              "required_on_authentication": true
+            });
+            fields.push({
+              "name": "code",
+              "type": "code",
+              "required": true,
+              "step": 1,
+              "required_on_authentication": true
+            });
           } else if (viewEventData.auth_method === "email" && !found) {
             fields.push({
               "name": "email",
