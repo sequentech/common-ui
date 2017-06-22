@@ -199,6 +199,14 @@ angular.module('avRegistration')
                   }
                   scope.telIndex = index+1;
                   scope.telField = el;
+                } else if (el.type === "tlf" && scope.method === "sms-otp") {
+                  if (scope.email !== null && scope.email.indexOf('@') === -1) {
+                    el.value = scope.email;
+                    el.disabled = true;
+                  }
+                  scope.telIndex = index+1;
+                  scope.telField = el;
+                  scope.formStep = 1;
                 }
                 return el;
               });

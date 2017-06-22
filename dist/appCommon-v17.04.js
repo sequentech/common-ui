@@ -84,7 +84,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         _.each(fields, function(field) {
             "sms" === viewEventData.auth_method && "tlf" === field.name ? ("text" === field.type && (field.type = "tlf"), 
             found = !0) : "email" === viewEventData.auth_method && "email" === field.name && (found = !0);
-        }), "sms" !== viewEventData.auth_method || found ? "sms-otp" !== viewEventData.auth_method || found ? "email" !== viewEventData.auth_method || found ? "user-and-password" === viewEventData.auth_method && (fields.push({
+        }), "sms" !== viewEventData.auth_method && "sms-otp" !== viewEventData.auth_method || found ? "email" !== viewEventData.auth_method || found ? "user-and-password" === viewEventData.auth_method && (fields.push({
             name: "email",
             type: "email",
             required: !0,
@@ -99,18 +99,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             type: "email",
             required: !0,
             required_on_authentication: !0
-        }) : (fields.push({
-            name: "tlf",
-            type: "tlf",
-            required: !0,
-            required_on_authentication: !0
-        }), fields.push({
-            name: "code",
-            type: "code",
-            required: !0,
-            step: 1,
-            required_on_authentication: !0
-        })) : fields.push({
+        }) : fields.push({
             name: "tlf",
             type: "tlf",
             required: !0,
@@ -124,10 +113,16 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         return fields;
     }, authmethod.getLoginFields = function(viewEventData) {
         var fields = authmethod.getRegisterFields(viewEventData);
-        ("sms" === viewEventData.auth_method || "email" === viewEventData.auth_method) && fields.push({
+        "sms" === viewEventData.auth_method || "email" === viewEventData.auth_method ? fields.push({
             name: "code",
             type: "code",
             required: !0,
+            required_on_authentication: !0
+        }) : "sms-otp" === viewEventData.auth_method && fields.push({
+            name: "code",
+            type: "code",
+            required: !0,
+            step: 1,
             required_on_authentication: !0
         }), fields = _.filter(fields, function(field) {
             return field.required_on_authentication;
@@ -240,8 +235,10 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                 return scope.stateData[el.name] ? (el.value = scope.stateData[el.name], el.disabled = !0) : (el.value = null, 
                 el.disabled = !1), "email" === el.type && null !== scope.email ? (el.value = scope.email, 
                 el.disabled = !0) : "code" === el.type && null !== scope.code ? (el.value = scope.code.trim().replace(/ |\n|\t|-|_/g, "").toUpperCase(), 
-                el.disabled = !0) : "tlf" === el.type && "sms" === scope.method && (null !== scope.email && -1 === scope.email.indexOf("@") && (el.value = scope.email, 
-                el.disabled = !0), scope.telIndex = index + 1, scope.telField = el), el;
+                el.disabled = !0) : "tlf" === el.type && "sms" === scope.method ? (null !== scope.email && -1 === scope.email.indexOf("@") && (el.value = scope.email, 
+                el.disabled = !0), scope.telIndex = index + 1, scope.telField = el) : "tlf" === el.type && "sms-otp" === scope.method && (null !== scope.email && -1 === scope.email.indexOf("@") && (el.value = scope.email, 
+                el.disabled = !0), scope.telIndex = index + 1, scope.telField = el, scope.formStep = 1), 
+                el;
             }), filled_fields = _.filter(fields, function(el) {
                 return null !== el.value;
             });
