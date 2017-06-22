@@ -208,6 +208,7 @@ angular.module('avRegistration')
                 "name": "code",
                 "type": "code",
                 "required": true,
+                "steps": [1],
                 "required_on_authentication": true
               });
             }
