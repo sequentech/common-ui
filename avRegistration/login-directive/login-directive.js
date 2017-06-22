@@ -39,7 +39,7 @@ angular.module('avRegistration')
         }
         scope.sendingData = false;
 
-        scope.formStep = 1;
+        scope.form = { step: 1 };
 
         scope.stateData = StateDataService.getData();
 
@@ -81,6 +81,8 @@ angular.module('avRegistration')
           scope.sendingData = true;
           Authmethod.resendAuthCode(data, autheventid)
             .success(function(rcvData) {
+              scope.telField.disabled = true;
+              scope.form.step = 1;
               $timeout(scope.sendingDataTimeout, 3000);
             })
             .error(function(error) {
@@ -102,10 +104,8 @@ angular.module('avRegistration')
             }
 
             // loginUser
-            if (scope.method === 'sms-otp' && !scope.telField.disabled) {
+            if (scope.method === 'sms-otp' && scope.form.step === 0) {
                 scope.resendAuthCode();
-                scope.telField.disabled = true;
-                scope.formStep = 1;
                 return;
             }
             var data = {
@@ -204,7 +204,7 @@ angular.module('avRegistration')
                   if (scope.email !== null && scope.email.indexOf('@') === -1) {
                     el.value = scope.email;
                     el.disabled = true;
-                    scope.formStep = 1;
+                    scope.form.step = 1;
                   }
                   scope.telIndex = index+1;
                   scope.telField = el;
