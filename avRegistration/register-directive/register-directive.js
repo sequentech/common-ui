@@ -38,7 +38,7 @@ angular.module('avRegistration')
           if (!scope.admin) {
               return {path: 'election.public.show.login', data: {id: eventId}};
           } else {
-              return {path: 'admin.login', data:{}};
+              return {path: 'admin.login.email', data:{email: scope.email}};
           }
         };
 
@@ -52,7 +52,13 @@ angular.module('avRegistration')
             };
             _.each(scope.register_fields, function (field) {
               data[field.name] = field.value;
-              if (field.name === 'email') {
+              if (field.name === 'email' && scope.method === 'email')
+              {
+                scope.email = field.value;
+              }
+              else if (field.name === 'tlf' &&
+                _.contains(['sms', 'sms-otp'], scope.method))
+              {
                 scope.email = field.value;
               }
             });

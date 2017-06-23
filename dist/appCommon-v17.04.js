@@ -277,8 +277,10 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         scope.sendingData = !1, scope.admin = !1, scope.email = null, attrs.email && attrs.email.length > 0 && (scope.email = attrs.email), 
         "admin" in attrs && (scope.admin = !0), scope.getLoginDetails = function(eventId) {
             return scope.admin ? {
-                path: "admin.login",
-                data: {}
+                path: "admin.login.email",
+                data: {
+                    email: scope.email
+                }
             } : {
                 path: "election.public.show.login",
                 data: {
@@ -292,7 +294,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                     captcha_code: Authmethod.captcha_code
                 };
                 _.each(scope.register_fields, function(field) {
-                    data[field.name] = field.value, "email" === field.name && (scope.email = field.value);
+                    data[field.name] = field.value, "email" === field.name && "email" === scope.method ? scope.email = field.value : "tlf" === field.name && _.contains([ "sms", "sms-otp" ], scope.method) && (scope.email = field.value);
                 });
                 var details;
                 Authmethod.signup(data, autheventid).success(function(rcvData) {
