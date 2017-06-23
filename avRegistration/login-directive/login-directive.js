@@ -39,6 +39,8 @@ angular.module('avRegistration')
         }
         scope.sendingData = false;
 
+        scope.currentFormStep = 0;
+
         scope.stateData = StateDataService.getData();
 
         scope.code = null;
@@ -56,7 +58,7 @@ angular.module('avRegistration')
         }
 
         scope.resendAuthCode = function(field) {
-          if (scope.sendingData || scope.method !== "sms") {
+          if (scope.sendingData || !_.contains(["sms", "sms-otp"], scope.method)) {
               return;
           }
 
@@ -69,7 +71,9 @@ angular.module('avRegistration')
           }
 
           // reset code field, as we are going to send a new one
-          field.value = "";
+          if (!!field) {
+            field.value = "";
+          }
 
           var data = {};
           data['tlf'] = scope.telField.value;
@@ -77,6 +81,8 @@ angular.module('avRegistration')
           scope.sendingData = true;
           Authmethod.resendAuthCode(data, autheventid)
             .success(function(rcvData) {
+              scope.telField.disabled = true;
+              scope.currentFormStep = 1;
               $timeout(scope.sendingDataTimeout, 3000);
             })
             .error(function(error) {
@@ -94,6 +100,12 @@ angular.module('avRegistration')
                 return;
             }
             if (scope.sendingData) {
+                return;
+            }
+
+            // loginUser
+            if (scope.method === 'sms-otp' && scope.currentFormStep === 0) {
+                scope.resendAuthCode();
                 return;
             }
             var data = {
@@ -185,6 +197,14 @@ angular.module('avRegistration')
                   if (scope.email !== null && scope.email.indexOf('@') === -1) {
                     el.value = scope.email;
                     el.disabled = true;
+                  }
+                  scope.telIndex = index+1;
+                  scope.telField = el;
+                } else if (el.type === "tlf" && scope.method === "sms-otp") {
+                  if (scope.email !== null && scope.email.indexOf('@') === -1) {
+                    el.value = scope.email;
+                    el.disabled = true;
+                    scope.currentFormStep = 1;
                   }
                   scope.telIndex = index+1;
                   scope.telField = el;
