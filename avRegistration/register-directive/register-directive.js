@@ -38,7 +38,7 @@ angular.module('avRegistration')
           if (!scope.admin) {
               return {path: 'election.public.show.login', data: {id: eventId}};
           } else {
-              return {path: 'admin.login.email', data:{email: scope.email}};
+              return {path: 'admin.login_email', data:{email: scope.email}};
           }
         };
 

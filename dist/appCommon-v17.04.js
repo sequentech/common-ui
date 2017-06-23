@@ -277,7 +277,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         scope.sendingData = !1, scope.admin = !1, scope.email = null, attrs.email && attrs.email.length > 0 && (scope.email = attrs.email), 
         "admin" in attrs && (scope.admin = !0), scope.getLoginDetails = function(eventId) {
             return scope.admin ? {
-                path: "admin.login.email",
+                path: "admin.login_email",
                 data: {
                     email: scope.email
                 }
