@@ -253,6 +253,9 @@ angular.module('avUi')
             var extra = {};
             extra[item.append.key] = evalValue(item.append.value, data);
             var prefix = "";
+            if (angular.isString(d.prefix)) {
+              prefix += d.prefix;
+            }
             if (angular.isString(item.prefix)) {
               prefix += item.prefix;
             }

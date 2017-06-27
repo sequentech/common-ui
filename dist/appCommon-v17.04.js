@@ -859,7 +859,8 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                 var data = d.data[item.key], extra = {};
                 extra[item.append.key] = evalValue(item.append.value, data);
                 var prefix = "";
-                angular.isString(item.prefix) && (prefix += item.prefix), pass = _.every(item.checks, function(check, index) {
+                angular.isString(d.prefix) && (prefix += d.prefix), angular.isString(item.prefix) && (prefix += item.prefix), 
+                pass = _.every(item.checks, function(check, index) {
                     return checker({
                         data: data,
                         errorData: angular.extend({}, d.errorData, extra),
