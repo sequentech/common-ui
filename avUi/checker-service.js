@@ -252,6 +252,10 @@ angular.module('avUi')
             var data = d.data[item.key];
             var extra = {};
             extra[item.append.key] = evalValue(item.append.value, data);
+            var prefix = "";
+            if (angular.isString(item.prefix)) {
+              prefix += item.prefix;
+            }
             pass = _.every(
               item.checks,
               function (check, index) {
@@ -260,7 +264,7 @@ angular.module('avUi')
                   errorData: angular.extend({}, d.errorData, extra),
                   onError: d.onError,
                   checks: [check],
-                  prefix: sumStrs(item.prefix, check.prefix),
+                  prefix: prefix,
                 });
               });
           }

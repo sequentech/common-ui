@@ -857,13 +857,15 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                 });
             }), !0); else if ("object-key-chain" === item.check && (pass = _.isString(item.key) && _.isObject(d.data[item.key]))) {
                 var data = d.data[item.key], extra = {};
-                extra[item.append.key] = evalValue(item.append.value, data), pass = _.every(item.checks, function(check, index) {
+                extra[item.append.key] = evalValue(item.append.value, data);
+                var prefix = "";
+                angular.isString(item.prefix) && (prefix += item.prefix), pass = _.every(item.checks, function(check, index) {
                     return checker({
                         data: data,
                         errorData: angular.extend({}, d.errorData, extra),
                         onError: d.onError,
                         checks: [ check ],
-                        prefix: sumStrs(item.prefix, check.prefix)
+                        prefix: prefix
                     });
                 });
             }
