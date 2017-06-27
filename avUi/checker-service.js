@@ -125,7 +125,6 @@ angular.module('avUi')
           if (!pass) {
             error(item.check, {key: item.key}, item.postfix);
           }
-
         } else if (item.check === "lambda") {
           if (!item.validator(d.data[item.key])) {
             var errorData = {key: item.key};
@@ -247,6 +246,24 @@ angular.module('avUi')
                 });
               }),
             true);
+        } else if (item.check === "object-key-chain") {
+          pass = _.isString(item.key) && _.isObject(d.data[item.key]);
+          if (!!pass) {
+            var data = d.data[item.key];
+            pass = _.every(
+              item.checks,
+              function (check, index) {
+                var extra = {};
+                extra[check.append.key] = evalValue(check.append.value, data);
+                return checker({
+                  data: data,
+                  errorData: angular.extend({}, d.errorData, extra),
+                  onError: d.onError,
+                  checks: check.checks,
+                  prefix: sumStrs(d.prefix, check.prefix),
+                });
+              });
+          }
         }
         if (!pass && d.data.groupType === 'chain') {
           return false;

@@ -808,7 +808,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                     };
                     error("array-length-max", itemErrorData, item.postfix);
                 }
-            } else "int-size" === item.check ? (itemMin = evalValue(item.min, d.data), itemMax = evalValue(item.max, d.data), 
+            } else if ("int-size" === item.check) itemMin = evalValue(item.min, d.data), itemMax = evalValue(item.max, d.data), 
             min = angular.isUndefined(item.min) || d.data[item.key] >= itemMin, max = angular.isUndefined(item.max) || d.data[item.key] <= itemMax, 
             pass = min && max, min || error("int-size-min", {
                 key: item.key,
@@ -818,7 +818,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                 key: item.key,
                 max: itemMax,
                 value: d.data[item.key]
-            }, item.postfix)) : "group-chain" === item.check ? pass = _.all(_.map(item.checks, function(check) {
+            }, item.postfix); else if ("group-chain" === item.check) pass = _.all(_.map(item.checks, function(check) {
                 return checker({
                     data: d.data,
                     errorData: d.errorData,
@@ -826,7 +826,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                     checks: [ check ],
                     prefix: sumStrs(d.prefix, item.prefix)
                 });
-            })) : "array-key-group-chain" === item.check ? pass = _.every(d.data[item.key], function(data, index) {
+            })); else if ("array-key-group-chain" === item.check) pass = _.every(d.data[item.key], function(data, index) {
                 var extra = {}, prefix = "";
                 return angular.isString(d.prefix) && (prefix = d.prefix), angular.isString(item.prefix) && (prefix += item.prefix), 
                 extra.prefix = prefix, extra[item.append.key] = evalValue(item.append.value, data), 
@@ -837,7 +837,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                     checks: item.checks,
                     prefix: sumStrs(d.prefix, item.prefix)
                 });
-            }) : "array-group-chain" === item.check ? pass = _.every(d.data, function(data, index) {
+            }); else if ("array-group-chain" === item.check) pass = _.every(d.data, function(data, index) {
                 var extra = {};
                 return extra[item.append.key] = evalValue(item.append.value, data), checker({
                     data: data,
@@ -846,7 +846,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                     checks: item.checks,
                     prefix: sumStrs(d.prefix, item.prefix)
                 });
-            }) : "array-group" === item.check && (pass = _.contains(_.map(d.data, function(data, index) {
+            }); else if ("array-group" === item.check) pass = _.contains(_.map(d.data, function(data, index) {
                 var extra = {};
                 return extra[item.append.key] = evalValue(item.append.value, data), checker({
                     data: data,
@@ -855,7 +855,19 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                     checks: item.checks,
                     prefix: sumStrs(d.prefix, item.prefix)
                 });
-            }), !0));
+            }), !0); else if ("object-key-chain" === item.check && (pass = _.isString(item.key) && _.isObject(d.data[item.key]))) {
+                var data = d.data[item.key];
+                pass = _.every(item.checks, function(check, index) {
+                    var extra = {};
+                    return extra[check.append.key] = evalValue(check.append.value, data), checker({
+                        data: data,
+                        errorData: angular.extend({}, d.errorData, extra),
+                        onError: d.onError,
+                        checks: check.checks,
+                        prefix: sumStrs(d.prefix, check.prefix)
+                    });
+                });
+            }
             return !(!pass && "chain" === d.data.groupType);
         });
         return ret;
