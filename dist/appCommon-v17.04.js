@@ -856,10 +856,9 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                     prefix: sumStrs(d.prefix, item.prefix)
                 });
             }), !0); else if ("object-key-chain" === item.check && (pass = _.isString(item.key) && _.isObject(d.data[item.key]))) {
-                var data = d.data[item.key];
-                pass = _.every(item.checks, function(check, index) {
-                    var extra = {};
-                    return extra[check.append.key] = evalValue(check.append.value, data), checker({
+                var data = d.data[item.key], extra = {};
+                extra[item.append.key] = evalValue(item.append.value, data), pass = _.every(item.checks, function(check, index) {
+                    return checker({
                         data: data,
                         errorData: angular.extend({}, d.errorData, extra),
                         onError: d.onError,

@@ -250,11 +250,11 @@ angular.module('avUi')
           pass = _.isString(item.key) && _.isObject(d.data[item.key]);
           if (!!pass) {
             var data = d.data[item.key];
+            var extra = {};
+            extra[item.append.key] = evalValue(item.append.value, data);
             pass = _.every(
               item.checks,
               function (check, index) {
-                var extra = {};
-                extra[check.append.key] = evalValue(check.append.value, data);
                 return checker({
                   data: data,
                   errorData: angular.extend({}, d.errorData, extra),
