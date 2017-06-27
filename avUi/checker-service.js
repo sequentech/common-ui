@@ -259,7 +259,7 @@ angular.module('avUi')
                   data: data,
                   errorData: angular.extend({}, d.errorData, extra),
                   onError: d.onError,
-                  checks: check,
+                  checks: [check],
                   prefix: sumStrs(item.prefix, check.prefix),
                 });
               });
