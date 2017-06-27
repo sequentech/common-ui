@@ -14,8 +14,7 @@
             required />
         <p class="help-block" ng-i18next="avRegistration.telHelp">
         </p>
-        <p class="help-block" ng-if="'sms-otp' === method">
-          felix
+        <p class="help-block" ng-if="'sms-otp' === method" ng-i18next="avRegistration.otpHelp">
         </p>
         <div class="input-error">
           <span class="error" ng-show="form.input{{index}}.$error.pattern" ng-i18next="avRegistration.telInvalid"></span>
