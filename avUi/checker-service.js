@@ -134,6 +134,38 @@ angular.module('avUi')
             error(item.check, errorData, item.postfix);
           }
 
+        } else if (item.check === "is-string-if-defined") {
+          pass = angular.isUndefined(d.data[item.key]) ||
+                   angular.isString(d.data[item.key], item.postfix);
+          if (!pass) {
+            error(item.check, {key: item.key}, item.postfix);
+          }
+
+        } else if (item.check === "array-length-if-defined") {
+          if (angular.isDefined(d.data[item.key])) {
+            itemMin = evalValue(item.min, d.data);
+            itemMax = evalValue(item.max, d.data);
+
+            if (angular.isArray(d.data[item.key]) || angular.isString(d.data[item.key]))
+            {
+              min = angular.isUndefined(item.min) || d.data[item.key].length >= itemMin;
+              max = angular.isUndefined(item.max) || d.data[item.key].length <= itemMax;
+              pass = min && max;
+              if (!min) {
+                error(
+                  "array-length-min",
+                  {key: item.key, min: itemMin, num: d.data[item.key].length},
+                  item.postfix);
+              }
+              if (!max) {
+                var itemErrorData0 = {key: item.key, max: itemMax, num: d.data[item.key].length};
+                error(
+                  "array-length-max",
+                  itemErrorData0,
+                  item.postfix);
+              }
+            }
+          }
         } else if (item.check === "is-string") {
           pass = angular.isString(d.data[item.key], item.postfix);
           if (!pass) {

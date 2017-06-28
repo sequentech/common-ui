@@ -790,6 +790,24 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                     angular.isUndefined(item.appendOnErrorLambda) || (errorData = item.appendOnErrorLambda(d.data[item.key])), 
                     error(item.check, errorData, item.postfix);
                 }
+            } else if ("is-string-if-defined" === item.check) (pass = angular.isUndefined(d.data[item.key]) || angular.isString(d.data[item.key], item.postfix)) || error(item.check, {
+                key: item.key
+            }, item.postfix); else if ("array-length-if-defined" === item.check) {
+                if (angular.isDefined(d.data[item.key]) && (itemMin = evalValue(item.min, d.data), 
+                itemMax = evalValue(item.max, d.data), (angular.isArray(d.data[item.key]) || angular.isString(d.data[item.key])) && (min = angular.isUndefined(item.min) || d.data[item.key].length >= itemMin, 
+                max = angular.isUndefined(item.max) || d.data[item.key].length <= itemMax, pass = min && max, 
+                min || error("array-length-min", {
+                    key: item.key,
+                    min: itemMin,
+                    num: d.data[item.key].length
+                }, item.postfix), !max))) {
+                    var itemErrorData0 = {
+                        key: item.key,
+                        max: itemMax,
+                        num: d.data[item.key].length
+                    };
+                    error("array-length-max", itemErrorData0, item.postfix);
+                }
             } else if ("is-string" === item.check) (pass = angular.isString(d.data[item.key], item.postfix)) || error(item.check, {
                 key: item.key
             }, item.postfix); else if ("array-length" === item.check) {
