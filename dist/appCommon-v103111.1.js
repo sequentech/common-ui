@@ -975,7 +975,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
     return {
         restrict: "AE",
         scope: {
-            extra: "@"
+            extra: "=extra"
         },
         templateUrl: "avUi/documentation-directive/documentation-directive.html",
         controller: "DocumentationUiController"

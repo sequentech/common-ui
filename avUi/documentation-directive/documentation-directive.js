@@ -45,7 +45,7 @@ angular.module('avUi')
     return {
       restrict: 'AE',
       scope: {
-        extra: '@'
+        extra: '=extra'
       },
       templateUrl: 'avUi/documentation-directive/documentation-directive.html',
       controller: 'DocumentationUiController'
