@@ -20,13 +20,16 @@
  * loading config, showing results, showing error if needed.
  */
 angular.module('avUi').controller('DocumentationUiController',
-  function($state, $stateParams, $http, $scope,$i18next, ConfigService, InsideIframeService, Authmethod) {
+  function($state, $stateParams, $http, $scope,$i18next, ConfigService, InsideIframeService, Authmethod, extra) {
     $scope.inside_iframe = InsideIframeService();
     $scope.documentation = ConfigService.documentation;
     $scope.documentation.security_contact = ConfigService.legal.security_contact;
     $scope.documentation_html_include = ConfigService.documentation_html_include;
     $scope.auths_url = '/election/' + $stateParams.id + '/public/authorities';
     $scope.legal_url = '/election/' + $stateParams.id + '/public/legal';
+    if (_.isObject(extra)) {
+      $scope = _.extend($scope, extra);
+    }
 
     Authmethod.viewEvent($stateParams.id)
       .success(function(data) {
@@ -41,6 +44,9 @@ angular.module('avUi')
   .directive('documentationDirective', function() {
     return {
       restrict: 'AE',
+      scope: {
+        extra: '@'
+      },
       templateUrl: 'avUi/documentation-directive/documentation-directive.html',
       controller: 'DocumentationUiController'
     };
