@@ -964,18 +964,18 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             });
         } ], $delegate;
     } ]);
-} ]), angular.module("avUi").controller("DocumentationUiController", [ "$state", "$stateParams", "$http", "$scope", "$i18next", "ConfigService", "InsideIframeService", "Authmethod", "extra", function($state, $stateParams, $http, $scope, $i18next, ConfigService, InsideIframeService, Authmethod, extra) {
+} ]), angular.module("avUi").controller("DocumentationUiController", [ "$state", "$stateParams", "$http", "$scope", "$i18next", "ConfigService", "InsideIframeService", "Authmethod", function($state, $stateParams, $http, $scope, $i18next, ConfigService, InsideIframeService, Authmethod) {
     $scope.inside_iframe = InsideIframeService(), $scope.documentation = ConfigService.documentation, 
     $scope.documentation.security_contact = ConfigService.legal.security_contact, $scope.documentation_html_include = ConfigService.documentation_html_include, 
     $scope.auths_url = "/election/" + $stateParams.id + "/public/authorities", $scope.legal_url = "/election/" + $stateParams.id + "/public/legal", 
-    _.isObject(extra) && ($scope = _.extend($scope, extra)), Authmethod.viewEvent($stateParams.id).success(function(data) {
+    Authmethod.viewEvent($stateParams.id).success(function(data) {
         "ok" === data.status && ($scope.authEvent = data.events);
     });
 } ]), angular.module("avUi").directive("documentationDirective", function() {
     return {
         restrict: "AE",
         scope: {
-            extra: "=extra"
+            extra: "="
         },
         templateUrl: "avUi/documentation-directive/documentation-directive.html",
         controller: "DocumentationUiController"
