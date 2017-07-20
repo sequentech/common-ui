@@ -69,6 +69,7 @@
 		"loadingRegistration": "Loading",
 		"successRegistration": "Success",
 		"errorRegistration": "Error",
+		"otpHelp": "MFA users, enter your code on the next screen.",
 		"invalidCredentials": "Authentication failed, possibly for one of the following reasons:\n- Credentials are invalid\n- The user is not active\n- The user has exceeded the maximum number of allowed revotes for this election\n- There is a technical problem in the server\nIf the problem persists, please contact support at __support__",
 		"invalidDataRegEx": "Invalid data",
 		"invalidDni": "Invalid DNI/NIE",

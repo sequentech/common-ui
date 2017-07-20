@@ -152,7 +152,7 @@ angular.module('avRegistration')
             }
           });
 
-          if (viewEventData.auth_method === "sms" && !found) {
+          if ((viewEventData.auth_method === "sms" || viewEventData.auth_method === "sms-otp") && !found) {
             fields.push({
               "name": "tlf",
               "type": "tlf",
@@ -181,7 +181,7 @@ angular.module('avRegistration')
             });
           }
 
-          // put captha the last
+          // put captcha the last
           for (var i=0; i<fields.length; i++) {
               if (fields[i]['type'] === "captcha") {
                   var captcha = fields.splice(i, 1);
@@ -194,11 +194,21 @@ angular.module('avRegistration')
 
         authmethod.getLoginFields = function (viewEventData) {
             var fields = authmethod.getRegisterFields(viewEventData);
-            if (viewEventData.auth_method === "sms" || viewEventData.auth_method === "email") {
+            if (viewEventData.auth_method === "sms" || viewEventData.auth_method === "email")
+            {
               fields.push({
                 "name": "code",
                 "type": "code",
                 "required": true,
+                "required_on_authentication": true
+              });
+            } else if (viewEventData.auth_method === "sms-otp")
+            {
+              fields.push({
+                "name": "code",
+                "type": "code",
+                "required": true,
+                "steps": [1],
                 "required_on_authentication": true
               });
             }

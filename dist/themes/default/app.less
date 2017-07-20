@@ -89,7 +89,18 @@
   }
 }
 
-/* disable this feature for now */
-[avr-code-field] .code-help {
-  display: none !important;
+.btn[disabled] {
+    background-color: lighten(@av-primary-contrast, 19%) !important;
+}
+
+.btn-cancel {
+    background-color: lighten(@av-primary-contrast, 11%);
+    color: @av-primary;
+    &:hover {
+        background-color: darken(@av-primary-contrast, 10%) !important;
+    }
+}
+
+input[type=checkbox] {
+    min-width: 10px;
 }
