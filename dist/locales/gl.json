@@ -67,7 +67,7 @@
 		"loadingRegistration": "Cargando",
 		"successRegistration": "Exitoso",
 		"errorRegistration": "Erro",
-		"otpHelp": "Usuarios de MFA, introduzcan su código en la próxima pantalla.",
+		"otpHelp": "Recibirás un SMS con el código de autenticación en el próximo paso",
 		"invalidCredentials": "La autenticación falló, posiblemente por alguno de estos motivos:\n- Las credenciales son inválidas\n- El usuario está inactivo\n- El usuario ha excedido el máximo número de revotos permitidos para esta votación\n- Existe un problema técnico en el servidor\nSi el problema persistiera, por favor contacto con soporte via __support__",
 		"invalidDataRegEx": "Datos inválidos",
 		"invalidDni": "DNI/NIE inválido",
