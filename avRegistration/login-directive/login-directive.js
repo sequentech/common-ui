@@ -32,7 +32,7 @@ angular.module('avRegistration')
         scope.orgName = ConfigService.organization.orgName;
 
         // redirect from admin login to admin elections if login is not needed
-        if ($cookies.authevent && $cookies.authevent === adminId &&
+        if ($cookies["authevent_" + adminId] && $cookies["authevent_" + adminId] === adminId &&
           autheventid === adminId)
         {
           $window.location.href = '/admin/elections';
@@ -113,16 +113,17 @@ angular.module('avRegistration')
                 .success(function(rcvData) {
                     if (rcvData.status === "ok") {
                         scope.khmac = rcvData.khmac;
-                        $cookies.authevent = autheventid;
-                        $cookies.userid = rcvData.username;
-                        $cookies.user = scope.email;
-                        $cookies.auth = rcvData['auth-token'];
-                        $cookies.isAdmin = scope.isAdmin;
-                        Authmethod.setAuth($cookies.auth, scope.isAdmin);
+                        var postfix = "_authevent_" + autheventid;
+                        $cookies["authevent_" + autheventid] = autheventid;
+                        $cookies["userid" + postfix] = rcvData.username;
+                        $cookies["user" + postfix] = scope.email;
+                        $cookies["auth" + postfix] = rcvData['auth-token'];
+                        $cookies["isAdmin" + postfix] = scope.isAdmin;
+                        Authmethod.setAuth($cookies["auth" + postfix], scope.isAdmin, autheventid);
                         if (scope.isAdmin)
                         {
                             Authmethod.getUserInfo().success(function(d) {
-                                $cookies.user = d.email;
+                                $cookies["user" + postfix] = d.email;
                                 $window.location.href = '/admin/elections';
                             }).error(function(error) {
                                 $window.location.href = '/admin/elections';
