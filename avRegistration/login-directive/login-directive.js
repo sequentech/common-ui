@@ -32,8 +32,8 @@ angular.module('avRegistration')
         scope.orgName = ConfigService.organization.orgName;
 
         // redirect from admin login to admin elections if login is not needed
-        if ($cookies["authevent_" + adminId] && $cookies["authevent_" + adminId] === adminId &&
-          autheventid === adminId)
+        if (!!$cookies["authevent_" + adminId] && $cookies["authevent_" + adminId] === adminId &&
+          autheventid === adminId && !!$cookies["auth_authevent_" + adminId])
         {
           $window.location.href = '/admin/elections';
         }

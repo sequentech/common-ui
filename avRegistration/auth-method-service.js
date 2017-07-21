@@ -17,7 +17,7 @@
 
 angular.module('avRegistration')
 
-    .factory('Authmethod', function($http, $cookies, ConfigService, $interval, $window) {
+    .factory('Authmethod', function($http, $cookies, ConfigService, $interval, $location) {
         var backendUrl = ConfigService.authAPI;
         var authId = ConfigService.freeAuthId;
         var authmethod = {};
@@ -28,7 +28,7 @@ angular.module('avRegistration')
         
         authmethod.getAuthevent = function() {
           var adminId = ConfigService.freeAuthId + '';
-          var href = $window.location.href;
+          var href = $location.path();
           var authevent = '';
 
           var adminMatch = href.match(/^\/admin\//);

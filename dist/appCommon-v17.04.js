@@ -1,9 +1,9 @@
 angular.module("avRegistration", [ "ui.bootstrap", "ui.utils", "ui.router" ]), angular.module("avRegistration").config(function() {}), 
-angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "ConfigService", "$interval", "$window", function($http, $cookies, ConfigService, $interval, $window) {
+angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "ConfigService", "$interval", "$location", function($http, $cookies, ConfigService, $interval, $location) {
     var backendUrl = ConfigService.authAPI, authId = ConfigService.freeAuthId, authmethod = {};
     return authmethod.captcha_code = null, authmethod.captcha_image_url = "", authmethod.captcha_status = "", 
     authmethod.admin = !1, authmethod.getAuthevent = function() {
-        var adminId = ConfigService.freeAuthId + "", href = $window.location.href, authevent = "", adminMatch = href.match(/^\/admin\//), boothMatch = href.match(/^\/booth\/([0-9]+)\//), electionsMatch = href.match(/^\/elections\/([0-9]+)\//);
+        var adminId = ConfigService.freeAuthId + "", href = $location.path(), authevent = "", adminMatch = href.match(/^\/admin\//), boothMatch = href.match(/^\/booth\/([0-9]+)\//), electionsMatch = href.match(/^\/elections\/([0-9]+)\//);
         return _.isArray(adminMatch) ? authevent = adminId : _.isArray(boothMatch) && 2 === boothMatch.length ? authevent = boothMatch[1] : _.isArray(electionsMatch) && 2 === electionsMatch.length && (authevent = electionsMatch[1]), 
         authevent;
     }, authmethod.isAdmin = function() {
@@ -180,7 +180,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
 } ]), angular.module("avRegistration").directive("avLogin", [ "Authmethod", "StateDataService", "$parse", "$state", "$cookies", "$i18next", "$window", "$timeout", "ConfigService", function(Authmethod, StateDataService, $parse, $state, $cookies, $i18next, $window, $timeout, ConfigService) {
     function link(scope, element, attrs) {
         var adminId = ConfigService.freeAuthId + "", autheventid = attrs.eventId;
-        scope.orgName = ConfigService.organization.orgName, $cookies["authevent_" + adminId] && $cookies["authevent_" + adminId] === adminId && autheventid === adminId && ($window.location.href = "/admin/elections"), 
+        scope.orgName = ConfigService.organization.orgName, $cookies["authevent_" + adminId] && $cookies["authevent_" + adminId] === adminId && autheventid === adminId && $cookies["auth_authevent_" + adminId] && ($window.location.href = "/admin/elections"), 
         scope.sendingData = !1, scope.stateData = StateDataService.getData(), scope.code = null, 
         attrs.code && attrs.code.length > 0 && (scope.code = attrs.code), scope.email = null, 
         attrs.email && attrs.email.length > 0 && (scope.email = attrs.email), scope.isAdmin = !1, 
