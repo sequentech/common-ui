@@ -37,13 +37,13 @@ angular.module('avRegistration')
           
           if (_.isArray(adminMatch)) {
             authevent = adminId;
-          } else if(_.isArray(boothMatch) && 2 == boothMatch.length) {
+          } else if(_.isArray(boothMatch) && 2 === boothMatch.length) {
             authevent = boothMatch[1];
-          } else if(_.isArray(electionsMatch) && 2 == electionsMatch.length) {
+          } else if(_.isArray(electionsMatch) && 2 === electionsMatch.length) {
             authevent = electionsMatch[1];
           }
           return authevent;
-        }
+        };
 
         authmethod.isAdmin = function() {
             return authmethod.isLoggedIn() && authmethod.admin;
