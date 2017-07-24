@@ -16,18 +16,19 @@
 **/
 
 angular.module('avRegistration').controller('LogoutController',
-  function($scope, $stateParams, $filter, ConfigService, $i18next, $state, $cookies) {
+  function($scope, $stateParams, $filter, ConfigService, $i18next, $state, $cookies, Authmethod) {
     var adminId = ConfigService.freeAuthId;
-    var authevent = $cookies.authevent;
-    $cookies.user = '';
-    $cookies.auth = '';
-    $cookies.authevent = '';
-    $cookies.userid = '';
-    $cookies.isAdmin = false;
+    var authevent = Authmethod.getAuthevent();
+    var postfix = "_authevent_" + authevent;
+    $cookies["user" + postfix] = '';
+    $cookies["auth" + postfix] = '';
+    $cookies["authevent_" + authevent] = '';
+    $cookies["userid" + postfix] = '';
+    $cookies["isAdmin" + postfix] = false;
     if (authevent === ConfigService.freeAuthId + '' || !authevent) {
         $state.go("admin.login");
     } else {
-        $state.go("registration.login", {id: $cookies.authevent});
+        $state.go("registration.login", {id: $cookies["authevent_" + authevent]});
     }
   }
 );

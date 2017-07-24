@@ -17,7 +17,7 @@
 
 angular.module('avRegistration')
 
-    .factory('Authmethod', function($http, $cookies, ConfigService, $interval) {
+    .factory('Authmethod', function($http, $cookies, ConfigService, $interval, $location) {
         var backendUrl = ConfigService.authAPI;
         var authId = ConfigService.freeAuthId;
         var authmethod = {};
@@ -25,6 +25,25 @@ angular.module('avRegistration')
         authmethod.captcha_image_url = "";
         authmethod.captcha_status = "";
         authmethod.admin = false;
+        
+        authmethod.getAuthevent = function() {
+          var adminId = ConfigService.freeAuthId + '';
+          var href = $location.path();
+          var authevent = '';
+
+          var adminMatch = href.match(/^\/admin\//);
+          var boothMatch = href.match(/^\/booth\/([0-9]+)\//);
+          var electionsMatch = href.match(/^\/elections\/([0-9]+)\//);
+          
+          if (_.isArray(adminMatch)) {
+            authevent = adminId;
+          } else if(_.isArray(boothMatch) && 2 === boothMatch.length) {
+            authevent = boothMatch[1];
+          } else if(_.isArray(electionsMatch) && 2 === electionsMatch.length) {
+            authevent = electionsMatch[1];
+          }
+          return authevent;
+        };
 
         authmethod.isAdmin = function() {
             return authmethod.isLoggedIn() && authmethod.admin;
@@ -245,14 +264,14 @@ angular.module('avRegistration')
             return $http.get(backendUrl);
         };
 
-        authmethod.setAuth = function(auth, isAdmin) {
+        authmethod.setAuth = function(auth, isAdmin, autheventid) {
             authmethod.admin = isAdmin;
             $http.defaults.headers.common.Authorization = auth;
             if (!authmethod.pingTimeout) {
                 $interval.cancel(authmethod.pingTimeout);
-                authmethod.launchPingDaemon();
+                authmethod.launchPingDaemon(autheventid);
                 authmethod.pingTimeout = $interval(
-                        function() { authmethod.launchPingDaemon(); },
+                        function() { authmethod.launchPingDaemon(autheventid); },
                         ConfigService.timeoutSeconds*500 // ms * 500 mean seconds * 1/2
                 );
             }
@@ -311,15 +330,16 @@ angular.module('avRegistration')
             return $http.post(url, data);
         };
 
-        authmethod.launchPingDaemon = function() {
+        authmethod.launchPingDaemon = function(autheventid) {
+          var postfix = "_authevent_" + autheventid;
           // only needed if it's an admin and daemon has not been launched
-          if (!$cookies.isAdmin) {
+          if (!$cookies["isAdmin" + postfix]) {
             return;
           }
           authmethod.ping()
             .success(function(data) {
-                $cookies.auth = data['auth-token'];
-                authmethod.setAuth($cookies.auth, $cookies.isAdmin);
+                $cookies["auth" + postfix] = data['auth-token'];
+                authmethod.setAuth($cookies["auth" + postfix], $cookies["isAdmin" + postfix], autheventid);
             });
         };
 
