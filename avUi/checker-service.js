@@ -133,8 +133,8 @@ angular.module('avUi')
             }
             if (_.isObject(item.append) &&
                 _.isString(item.append.key) &&
-                !_.isUndefined(item.append.value) {
-              errorData[item.append.key] = evalValue(item.append.value, data);
+                !_.isUndefined(item.append.value)) {
+              errorData[item.append.key] = evalValue(item.append.value, item);
             }
             error(item.check, errorData, item.postfix);
           }
