@@ -797,6 +797,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                         key: item.key
                     };
                     angular.isUndefined(item.appendOnErrorLambda) || (errorData = item.appendOnErrorLambda(d.data[item.key])), 
+                    _.isObject(item.append) && _.isString(item.append.key) && !_.isUndefined(item.append.value) && (errorData[item.append.key] = evalValue(item.append.value, item)), 
                     error(item.check, errorData, item.postfix);
                 }
             } else if ("is-string-if-defined" === item.check) (pass = angular.isUndefined(d.data[item.key]) || angular.isString(d.data[item.key], item.postfix)) || error(item.check, {
