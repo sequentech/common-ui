@@ -104,3 +104,15 @@
 input[type=checkbox] {
     min-width: 10px;
 }
+
+// makes inputs with +/- signs at least 100px wide
+.input-group .form-control:not(:first-child):not(:last-child),
+.input-group-addon:not(:first-child):not(:last-child),
+.input-group-btn:not(:first-child):not(:last-child) {
+    min-width: 100px;
+}
+
+// sets a minimum height for textareas
+textarea.form-control {
+    min-height: 180px;
+}
