@@ -17,8 +17,12 @@
 
 angular.module('avRegistration')
   .directive('avrPasswordField', function($state) {
+    function link(scope, element, attrs) {
+      scope.pass_id = 'passwordText' + _.random(1e12);
+    }
     return {
       restrict: 'AE',
+      link: link,
       scope: true,
       templateUrl: 'avRegistration/fields/password-field-directive/password-field-directive.html'
     };
