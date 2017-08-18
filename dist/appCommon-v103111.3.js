@@ -30,7 +30,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             };
             return data;
         }
-        return "undefined" == typeof userid ? $http.get(backendUrl + "user/", {}) : $http.get(backendUrl + "user/%d" % userid, {});
+        return void 0 === userid ? $http.get(backendUrl + "user/", {}) : $http.get(backendUrl + "user/%d" % userid, {});
     }, authmethod.ping = function() {
         if (!authmethod.isLoggedIn()) {
             var data = {
@@ -247,10 +247,10 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                 el.disabled = !0), scope.telIndex = index + 1, scope.telField = el) : "tlf" === el.type && "sms-otp" === scope.method && (null !== scope.email && -1 === scope.email.indexOf("@") && (el.value = scope.email, 
                 el.disabled = !0, scope.currentFormStep = 1), scope.telIndex = index + 1, scope.telField = el), 
                 el;
-            }), filled_fields = _.filter(fields, function(el) {
-                return null !== el.value;
             });
-            filled_fields.length === scope.login_fields.length && scope.loginUser(!0);
+            _.filter(fields, function(el) {
+                return null !== el.value;
+            }).length === scope.login_fields.length && scope.loginUser(!0);
         }, scope.view = function(id) {
             Authmethod.viewEvent(id).success(function(data) {
                 "ok" === data.status ? scope.apply(data.events) : (scope.status = "Not found", document.querySelector(".input-error").style.display = "block");
@@ -398,10 +398,9 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
     function link(scope, element, attrs) {
         scope.dni_re = /^[XYZ]?\d{7,8}[A-Z]$/, scope.validateDni = function(str) {
             str || (str = ""), str = str.toUpperCase().replace(/\s/, "");
-            var prefix = str.charAt(0), index = "XYZ".indexOf(prefix), niePrefix = 0;
-            index > -1 && (niePrefix = index, str = str.substr(1), "Y" === prefix ? str = "1" + str : "Z" === prefix && (str = "2" + str));
-            var dni_letters = "TRWAGMYFPDXBNJZSQVHLCKE", letter = dni_letters.charAt(parseInt(str, 10) % 23);
-            return letter === str.charAt(str.length - 1);
+            var prefix = str.charAt(0), index = "XYZ".indexOf(prefix);
+            return index > -1 && (index, str = str.substr(1), "Y" === prefix ? str = "1" + str : "Z" === prefix && (str = "2" + str)), 
+            "TRWAGMYFPDXBNJZSQVHLCKE".charAt(parseInt(str, 10) % 23) === str.charAt(str.length - 1);
         };
     }
     return {
@@ -412,8 +411,9 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
     };
 } ]), angular.module("avRegistration").directive("avrCodeField", [ "$state", "Plugins", function($state, Plugins) {
     function link(scope, element, attrs) {
-        scope.codePattern = /[abcdefghjklmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789-]{8,9}/, 
-        scope.showResendAuthCode = function() {
+        scope.codePattern = /[abcdefghjklmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789-]{8,9}/;
+        var rand_code = "" + _.random(1e12);
+        scope.code_id = "input" + scope.index + rand_code, scope.showResendAuthCode = function() {
             var data = {
                 showUserSendAuthCode: !0
             };
@@ -510,8 +510,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         plugins.signals.fire(signalName, data);
     }, plugins.hook = function(hookname, data) {
         for (var i = 0; i < plugins.hooks.length; i++) {
-            var h = plugins.hooks[i], ret = h(hookname, data);
-            if (!ret) return !1;
+            if (!(0, plugins.hooks[i])(hookname, data)) return !1;
         }
         return !0;
     }, plugins;
@@ -669,12 +668,10 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
     };
 } ]), angular.module("avUi").directive("avCollapsing", [ "$window", "$timeout", function($window, $timeout) {
     function collapseEl(instance, el) {
-        var val = null;
-        return val = instance.collapseSelector ? select(instance, el, instance.collapseSelector) : angular.element(el);
+        return instance.collapseSelector ? select(instance, el, instance.collapseSelector) : angular.element(el);
     }
     function select(instance, el, selector) {
-        var val;
-        return val = instance.parentSelector ? el.closest(instance.parentSelector).find(selector) : angular.element(selector);
+        return instance.parentSelector ? el.closest(instance.parentSelector).find(selector) : angular.element(selector);
     }
     var checkCollapse = function(instance, el, options) {
         var maxHeight = select(instance, el, instance.maxHeightSelector).css("max-height"), height = angular.element(el)[0].scrollHeight;
@@ -771,7 +768,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         }
         if (void 0 === format && (format = "str"), 0 === total_votes) return print(0);
         var base = question.totals.valid_votes + question.totals.null_votes + question.totals.blank_votes;
-        return (void 0 === over || null === over) && (over = question.answer_total_votes_percentage), 
+        return void 0 !== over && null !== over || (over = question.answer_total_votes_percentage), 
         "over-valid-votes" === over || "over-total-valid-votes" === over ? base = question.totals.valid_votes : "over-total-valid-points" === over && void 0 !== question.totals.valid_points && (base = question.totals.valid_points), 
         print(100 * total_votes / base);
     };
@@ -791,11 +788,9 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         angular.isUndefined(d.errorData) && (d.errorData = {});
         var ret = _.every(d.checks, function(item) {
             var itemMin, itemMax, max, min, pass = !0;
-            if ("is-int" === item.check) pass = angular.isNumber(d.data[item.key], item.postfix), 
-            pass || error(item.check, {
+            if ("is-int" === item.check) (pass = angular.isNumber(d.data[item.key], item.postfix)) || error(item.check, {
                 key: item.key
-            }, item.postfix); else if ("is-array" === item.check) pass = angular.isArray(d.data[item.key], item.postfix), 
-            pass || error(item.check, {
+            }, item.postfix); else if ("is-array" === item.check) (pass = angular.isArray(d.data[item.key], item.postfix)) || error(item.check, {
                 key: item.key
             }, item.postfix); else if ("lambda" === item.check) {
                 if (!item.validator(d.data[item.key])) {
@@ -806,8 +801,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                     _.isObject(item.append) && _.isString(item.append.key) && !_.isUndefined(item.append.value) && (errorData[item.append.key] = evalValue(item.append.value, item)), 
                     error(item.check, errorData, item.postfix);
                 }
-            } else if ("is-string-if-defined" === item.check) pass = angular.isUndefined(d.data[item.key]) || angular.isString(d.data[item.key], item.postfix), 
-            pass || error(item.check, {
+            } else if ("is-string-if-defined" === item.check) (pass = angular.isUndefined(d.data[item.key]) || angular.isString(d.data[item.key], item.postfix)) || error(item.check, {
                 key: item.key
             }, item.postfix); else if ("array-length-if-defined" === item.check) {
                 if (angular.isDefined(d.data[item.key]) && (itemMin = evalValue(item.min, d.data), 
@@ -825,8 +819,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                     };
                     error("array-length-max", itemErrorData0, item.postfix);
                 }
-            } else if ("is-string" === item.check) pass = angular.isString(d.data[item.key], item.postfix), 
-            pass || error(item.check, {
+            } else if ("is-string" === item.check) (pass = angular.isString(d.data[item.key], item.postfix)) || error(item.check, {
                 key: item.key
             }, item.postfix); else if ("array-length" === item.check) {
                 if (itemMin = evalValue(item.min, d.data), itemMax = evalValue(item.max, d.data), 
@@ -906,7 +899,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                     });
                 });
             }
-            return pass || "chain" !== d.data.groupType ? !0 : !1;
+            return !(!pass && "chain" === d.data.groupType);
         });
         return ret;
     }
@@ -916,9 +909,9 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         angular.isNumber(fixedDigits) && fixedDigits >= 0 && (number = number.toFixed(parseInt(fixedDigits)));
         var number_str = (number + "").replace(".", ","), ret = "", commaPos = number_str.length;
         -1 !== number_str.indexOf(",") && (commaPos = number_str.indexOf(","));
-        for (var i = 0; commaPos > i; i++) {
+        for (var i = 0; i < commaPos; i++) {
             var reverse = commaPos - i;
-            reverse % 3 === 0 && reverse > 0 && i > 0 && (ret += "."), ret += number_str[i];
+            reverse % 3 == 0 && reverse > 0 && i > 0 && (ret += "."), ret += number_str[i];
         }
         return ret + number_str.substr(commaPos, number_str.length);
     };
@@ -1050,7 +1043,7 @@ angular.module("jm.i18next").config([ "$i18nextProvider", "ConfigServiceProvider
     $templateCache.put("avRegistration/field-directive/field-directive.html", '<div ng-switch="field.type"><div avr-email-field ng-switch-when="email"></div><div avr-password-field ng-switch-when="password"></div><div avr-code-field ng-switch-when="code"></div><div avr-text-field ng-switch-when="text"></div><div avr-dni-field ng-switch-when="dni"></div><div avr-tel-field ng-switch-when="tlf"></div><div avr-int-field ng-switch-when="int"></div><div avr-bool-field ng-switch-when="bool"></div><div avr-captcha-field ng-switch-when="captcha"></div><div avr-textarea-field ng-switch-when="textarea"></div><div avr-image-field ng-switch-when="image"></div></div>'), 
     $templateCache.put("avRegistration/fields/bool-field-directive/bool-field-directive.html", '<div class="form-group"><label class="control-label col-sm-4"><input type="checkbox" class="form-control" id="{{index}}Text" ng-model="field.value" ng-disabled="field.disabled" tabindex="{{index}}" ng-required="{{field.required}}"></label><div class="col-sm-8"><label class="text-left" for="{{index}}Text"><span ng-bind-html="field.name | addTargetBlank"></span></label><p class="help-block" ng-if="field.help" ng-bind-html="field.help | addTargetBlank"></p><div class="input-error"></div></div></div>'), 
     $templateCache.put("avRegistration/fields/captcha-field-directive/captcha-field-directive.html", '<div class="form-group"><div class="col-sm-8 col-sm-offset-4"><img ng-src="{{authMethod.captcha_image_url}}" style="width:161px;height:65px"></div><label for="{{index}}Text" class="control-label col-sm-4"><span>{{field.name}}</span></label><div class="col-sm-8"><input type="text" class="form-control" id="{{index}}Text" minlength="{{field.min}}" maxlength="{{field.max}}" ng-model="field.value" ng-disabled="field.disabled" tabindex="{{index}}" required><p class="help-block" ng-if="field.help">{{field.help}}</p><div class="input-error">{{authMethod.captcha_status}}</div></div></div>'), 
-    $templateCache.put("avRegistration/fields/code-field-directive/code-field-directive.html", '<div class="form-group"><label for="input{{index}}" class="control-label col-sm-4" ng-i18next="avRegistration.codeLabel"></label><div class="col-sm-8"><input type="password" class="form-control" id="input{{index}}" ng-model="field.value" ng-disabled="field.disabled" tabindex="{{index}}" autocomplete="off" ng-class="{\'filled\': form[\'input\' + index].$viewValue.length > 0}" minlength="8" maxlength="9" ng-pattern="codePattern" name="input{{index}}" ng-i18next="[placeholder]avRegistration.codePlaceholder" required><p class="help-block" ng-i18next="avRegistration.codeHelp"></p><p class="help-block code-help"><span ng-if="showResendAuthCode() && !sendingData && !form[\'input\' + telIndex].$invalid"><b ng-i18next="avRegistration.noCodeReceivedQuestion"></b> <a ng-click="resendAuthCode(field)" ng-i18next="avRegistration.sendCodeAgain"></a> <span></span></span></p><div class="input-error"></div></div></div>'), 
+    $templateCache.put("avRegistration/fields/code-field-directive/code-field-directive.html", '<div class="form-group"><label for="{{code_id}}" class="control-label col-sm-4" ng-i18next="avRegistration.codeLabel"></label><div class="col-sm-8"><input type="text" class="form-control" id="{{code_id}}" ng-model="field.value" ng-disabled="field.disabled" tabindex="{{index}}" autocomplete="off" ng-class="{\'filled\': form[code_id].$viewValue.length > 0}" minlength="8" maxlength="9" ng-pattern="codePattern" name="{{code_id}}" ng-i18next="[placeholder]avRegistration.codePlaceholder" required><p class="help-block" ng-i18next="avRegistration.codeHelp"></p><p class="help-block code-help"><span ng-if="showResendAuthCode() && !sendingData && !form[\'input\' + telIndex].$invalid"><b ng-i18next="avRegistration.noCodeReceivedQuestion"></b> <a ng-click="resendAuthCode(field)" ng-i18next="avRegistration.sendCodeAgain"></a> <span></span></span></p><div class="input-error"></div></div></div>'), 
     $templateCache.put("avRegistration/fields/dni-field-directive/dni-field-directive.html", '<ng-form name="fieldForm"><div class="form-group" ng-class="{\'has-error\': fieldForm.input.$dirty && fieldForm.input.$invalid}"><label for="input" class="control-label col-sm-4"><span>{{field.name}}</span></label><div class="col-sm-8"><input type="text" name="input" class="form-control" minlength="{{field.min}}" maxlength="{{field.max}}" ng-model="field.value" ng-model-options="{debounce: 500}" ng-disabled="field.disabled" tabindex="{{index}}" ui-validate="{dni: \'validateDni($value)\'}" ng-required="{{field.required}}"><p class="help-block" ng-i18next="avRegistration.dniHelp"></p><div class="input-error"><span class="error text-brand-danger" ng-show="fieldForm.input.$dirty && fieldForm.input.$invalid" ng-i18next="avRegistration.invalidDni"></span></div></div></div></ng-form>'), 
     $templateCache.put("avRegistration/fields/email-field-directive/email-field-directive.html", '<div class="form-group" ng-class="{true: \'has-error\',false: \'is-required\'}[form.emailText.$dirty && form.emailText.$invalid]"><label for="emailText" class="control-label col-sm-4" ng-i18next="avRegistration.emailLabel"></label><div class="col-sm-8"><input type="text" class="form-control" ng-model="field.value" name="emailText" id="emailText" ng-i18next="[placeholder]avRegistration.emailPlaceholder" tabindex="{{index}}" ng-pattern="patterns(\'email\')" required ng-disabled="field.disabled"><div class="input-error"><small class="error text-danger" ng-show="form.emailText.$dirty && form.emailText.$invalid" ng-i18next="avRegistration.emailError"></small></div></div></div>'), 
     $templateCache.put("avRegistration/fields/image-field-directive/image-field-directive.html", '<ng-form name="fieldForm"><div class="form-group" ng-class="{\'has-error\': fieldForm.input.$dirty && fieldForm.input.$invalid}"><label for="input" class="control-label col-sm-4"><span>{{field.name}}</span></label><div class="col-sm-8"><input type="file" name="image" id="image-field" class="form-control" ng-disabled="field.disabled" tabindex="{{index}}" ng-required="{{field.required}}"><p class="help-block" ng-i18next="avRegistration.imageHelp"></p><div class="input-error"><span class="error text-brand-danger" ng-show="fieldForm.input.$dirty && fieldForm.input.$invalid" ng-i18next="avRegistration.invalidImage"></span></div></div></div></ng-form>'), 
@@ -1067,8 +1060,8 @@ angular.module("jm.i18next").config([ "$i18nextProvider", "ConfigServiceProvider
     $templateCache.put("avRegistration/success.html", '<div av-success><p ng-i18next="avRegistration.successRegistration"></p></div>'), 
     $templateCache.put("avUi/change-lang-directive/change-lang-directive.html", '<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{ deflang }} <span class="caret"></span></a><ul class="dropdown-menu" role="menu"><li ng-repeat="lang in langs"><a ng-click="changeLang(lang)">{{lang}}</a></li></ul>'), 
     $templateCache.put("avUi/documentation-directive/documentation-directive.html", '<div><h2 class="text-center text-av-secondary" ng-i18next="avDocumentation.documentation.title"></h2><p ng-i18next="avDocumentation.documentation.first_line"></p><ul><li ng-if="!!documentation.faq"><a href="{{documentation.faq}}" target="_blank" ng-i18next="avDocumentation.documentation.faq"></a></li><li ng-if="!!documentation.overview"><a href="{{documentation.overview}}" target="_blank" ng-i18next="avDocumentation.documentation.overview"></a></li><li><a href="{{auths_url}}" target="_blank" ng-i18next="avDocumentation.documentation.authorities"></a></li><li ng-if="!!documentation.technical"><a href="{{documentation.technical}}" target="_blank" ng-i18next="avDocumentation.documentation.technical"></a></li><li ng-if="!!documentation.security_contact"><a href="{{documentation.security_contact}}" target="_blank" ng-i18next="avDocumentation.documentation.security_contact"></a></li><li><a href="{{legal_url}}" target="_blank" ng-i18next="avDocumentation.legal.title"></a></li></ul><div class="documentation-html-include" av-plugin-html ng-bind-html="documentation_html_include"></div></div>'), 
-    $templateCache.put("avUi/foot-directive/foot-directive.html", '<div class="commonfoot"><div class="container"><div class="row"><div class="col-md-2 col-md-offset-3" ng-if="!!contact.email||!!contact.sales||!!social.facebook||!!social.twitter||!!social.googleplus||!!social.youtube||!!social.github"><h3 ng-i18next="avCommon.foot.contact"></h3><ul><li ng-if="!!contact.email"><a href="mailto:{{contact.email}}" ng-i18next="avCommon.foot.contactsupport"></a></li><li ng-if="!!contact.sales"><a href="mailto:{{contact.sales}}" ng-i18next="avCommon.foot.contactsales"></a></li></ul><!-- social links --><div class="social"><a href="{{social.facebook}}" ng-if="!!social.facebook"><i class="fa fa-fw fa-lg fa-facebook"></i></a> <a href="{{social.twitter}}" ng-if="!!social.twitter"><i class="fa fa-fw fa-lg fa-twitter"></i></a> <a href="{{social.googleplus}}" ng-if="!!social.googleplus"><i class="fa fa-fw fa-lg fa-google-plus"></i></a> <a href="{{social.youtube}}" ng-if="!!social.youtube"><i class="fa fa-fw fa-lg fa-youtube-play"></i></a> <a href="{{social.github}}" ng-if="!!social.github"><i class="fa fa-fw fa-lg fa-github"></i></a></div></div><div class="col-md-2" ng-if="!!technology.aboutus||!!technology.pricing||!!technology.overview||!!technology.solutions||!!technology.admin_manual"><h3 ng-i18next="avCommon.foot.technology"></h3><ul><li ng-if="!!technology.aboutus"><a href="{{technology.aboutus}}" ng-i18next="avCommon.foot.aboutus"></a></li><li ng-if="!!technology.pricing"><a href="{{technology.pricing}}" ng-i18next="avCommon.foot.pricing"></a></li><li ng-if="!!technology.overview"><a href="{{technology.overview}}" ng-i18next="avCommon.foot.technology"></a></li><li ng-if="!!technology.solutions"><a href="{{technology.solutions}}" ng-i18next="avCommon.foot.solutions"></a></li><li ng-if="!!technology.admin_manual"><a href="{{technology.admin_manual}}" ng-i18next="avCommon.foot.adminManual"></a></li></ul></div><div class="col-md-2" ng-if="!!legal.terms_of_service||!!legal.cookies||!!legal.privacy||!!legal.security_contact||!!legal.community_website"><h3 ng-i18next="avCommon.foot.legal"></h3><ul><li ng-if="!!legal.terms_of_service"><a href="{{legal.terms_of_service}}" ng-i18next="avCommon.foot.tos"></a></li><li ng-if="!!legal.cookies"><a href="{{legal.cookies}}" ng-i18next="avCommon.foot.cookies"></a></li><li ng-if="!!legal.privacy"><a href="{{legal.privacy}}" ng-i18next="avCommon.foot.privacy"></a></li><li ng-if="!!legal.security_contact"><a href="{{legal.security_contact}}" ng-i18next="avCommon.foot.securitycontact"></a></li><li ng-if="!!legal.community_website"><a target="_blank" href="{{legal.community_website}}" ng-i18next="avCommon.foot.communitywebsite"></a></li></ul></div></div></div></div>'), 
+    $templateCache.put("avUi/foot-directive/foot-directive.html", '<div class="commonfoot"><div class="container"><div class="row"><div class="col-md-2 col-md-offset-3" ng-if="!!contact.email||!!contact.sales||!!social.facebook||!!social.twitter||!!social.googleplus||!!social.youtube||!!social.github"><h3 ng-i18next="avCommon.foot.contact"></h3><ul><li ng-if="!!contact.email"><a href="mailto:{{contact.email}}" ng-i18next="avCommon.foot.contactsupport"></a></li><li ng-if="!!contact.sales"><a href="mailto:{{contact.sales}}" ng-i18next="avCommon.foot.contactsales"></a></li></ul>\x3c!-- social links --\x3e<div class="social"><a href="{{social.facebook}}" ng-if="!!social.facebook"><i class="fa fa-fw fa-lg fa-facebook"></i></a> <a href="{{social.twitter}}" ng-if="!!social.twitter"><i class="fa fa-fw fa-lg fa-twitter"></i></a> <a href="{{social.googleplus}}" ng-if="!!social.googleplus"><i class="fa fa-fw fa-lg fa-google-plus"></i></a> <a href="{{social.youtube}}" ng-if="!!social.youtube"><i class="fa fa-fw fa-lg fa-youtube-play"></i></a> <a href="{{social.github}}" ng-if="!!social.github"><i class="fa fa-fw fa-lg fa-github"></i></a></div></div><div class="col-md-2" ng-if="!!technology.aboutus||!!technology.pricing||!!technology.overview||!!technology.solutions||!!technology.admin_manual"><h3 ng-i18next="avCommon.foot.technology"></h3><ul><li ng-if="!!technology.aboutus"><a href="{{technology.aboutus}}" ng-i18next="avCommon.foot.aboutus"></a></li><li ng-if="!!technology.pricing"><a href="{{technology.pricing}}" ng-i18next="avCommon.foot.pricing"></a></li><li ng-if="!!technology.overview"><a href="{{technology.overview}}" ng-i18next="avCommon.foot.technology"></a></li><li ng-if="!!technology.solutions"><a href="{{technology.solutions}}" ng-i18next="avCommon.foot.solutions"></a></li><li ng-if="!!technology.admin_manual"><a href="{{technology.admin_manual}}" ng-i18next="avCommon.foot.adminManual"></a></li></ul></div><div class="col-md-2" ng-if="!!legal.terms_of_service||!!legal.cookies||!!legal.privacy||!!legal.security_contact||!!legal.community_website"><h3 ng-i18next="avCommon.foot.legal"></h3><ul><li ng-if="!!legal.terms_of_service"><a href="{{legal.terms_of_service}}" ng-i18next="avCommon.foot.tos"></a></li><li ng-if="!!legal.cookies"><a href="{{legal.cookies}}" ng-i18next="avCommon.foot.cookies"></a></li><li ng-if="!!legal.privacy"><a href="{{legal.privacy}}" ng-i18next="avCommon.foot.privacy"></a></li><li ng-if="!!legal.security_contact"><a href="{{legal.security_contact}}" ng-i18next="avCommon.foot.securitycontact"></a></li><li ng-if="!!legal.community_website"><a target="_blank" href="{{legal.community_website}}" ng-i18next="avCommon.foot.communitywebsite"></a></li></ul></div></div></div></div>'), 
     $templateCache.put("avUi/simple-error-directive/simple-error-directive.html", '<div class="av-simple-error-title" ng-transclude></div>'), 
-    $templateCache.put("test/test_booth_widget.html", '<!DOCTYPE html><html><head><title>Test frame</title><meta charset="UTF-8"></head><script>function getCastHmac(auth_data, callback) {\n      callback("khmac:///sha-256;5e25a9af28a33d94b8c2c0edbc83d6d87355e45b93021c35a103821557ec7dc5/voter-1110-1dee0c135afeae29e208550e7258dab7b64fb008bc606fc326d41946ab8e773f:1415185712");\n    }</script><body style="overflow-y: hidden; overflow-x: hidden; padding: 0; margin: 0"><div style="width: 100%; display: block; position: absolute; top: 0; bottom: 0; scroll: none; padding: 0; margin: 0"><a class="agoravoting-voting-booth" href="http://agora.dev/#/election/1110/vote" data-authorization-funcname="getCastHmac">Votar con Agora Voting</a><script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="http://agora.dev/avWidgets.min.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","agoravoting-widgets-js");</script></div></body></html>'), 
+    $templateCache.put("test/test_booth_widget.html", '<!DOCTYPE html><html><head><title>Test frame</title><meta charset="UTF-8"></head><script>function getCastHmac(auth_data, callback) {\n      callback("khmac:///sha-256;5e25a9af28a33d94b8c2c0edbc83d6d87355e45b93021c35a103821557ec7dc5/voter-1110-1dee0c135afeae29e208550e7258dab7b64fb008bc606fc326d41946ab8e773f:1415185712");\n    }<\/script><body style="overflow-y: hidden; overflow-x: hidden; padding: 0; margin: 0"><div style="width: 100%; display: block; position: absolute; top: 0; bottom: 0; scroll: none; padding: 0; margin: 0"><a class="agoravoting-voting-booth" href="http://agora.dev/#/election/1110/vote" data-authorization-funcname="getCastHmac">Votar con Agora Voting</a><script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="http://agora.dev/avWidgets.min.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","agoravoting-widgets-js");<\/script></div></body></html>'), 
     $templateCache.put("test/unit_test_e2e.html", '<div dynamic="html" id="dynamic-result"></div>');
 } ]);
