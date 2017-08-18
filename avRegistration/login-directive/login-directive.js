@@ -43,6 +43,8 @@ angular.module('avRegistration')
 
         scope.stateData = StateDataService.getData();
 
+        scope.signupLink = ConfigService.signupLink;
+
         scope.code = null;
         if (attrs.code && attrs.code.length > 0) {
           scope.code = attrs.code;

@@ -9,7 +9,7 @@
             var link = links[i], href = link.getAttribute("href");
             void 0 !== callback && callback(link, i, className);
             var iframe = createElement("iframe", {
-                "class": className + "-iframe",
+                class: className + "-iframe",
                 src: href,
                 style: "border: 0; width: 100%; height: 100%",
                 seamless: ""
