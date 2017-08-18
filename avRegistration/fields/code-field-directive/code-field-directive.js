@@ -19,7 +19,7 @@ angular.module('avRegistration')
   .directive('avrCodeField', function($state, Plugins) {
     function link(scope, element, attrs) {
       scope.codePattern = /[abcdefghjklmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789-]{8,9}/;
-      var rand_code = '' + _.random(1e12)
+      var rand_code = '' + _.random(1e12);
       scope.code_id = 'input' + scope.index + rand_code;
       
       scope.showResendAuthCode = function ()
