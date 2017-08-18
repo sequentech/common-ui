@@ -1,20 +1,20 @@
 <div class="form-group">
-    <label for="input{{index}}" class="control-label col-sm-4" ng-i18next="avRegistration.codeLabel"></label>
+    <label for="{{code_id}}" class="control-label col-sm-4" ng-i18next="avRegistration.codeLabel"></label>
     <div class="col-sm-8">
         <input
             type="text"
             class="form-control"
-            id="input{{index}}"
+            id="{{code_id}}"
             ng-model="field.value"
             ng-disabled="field.disabled"
             tabindex="{{index}}"
             autocomplete="off"
             value=""
-            ng-class="{'filled': form['input' + index].$viewValue.length > 0}"
+            ng-class="{'filled': form[code_id].$viewValue.length > 0}"
             minlength="8"
             maxlength="9"
             ng-pattern="codePattern"
-            name="input{{index}}"
+            name="{{code_id}}"
             ng-i18next="[placeholder]avRegistration.codePlaceholder"
             required />
         <p class="help-block" ng-i18next="avRegistration.codeHelp">
