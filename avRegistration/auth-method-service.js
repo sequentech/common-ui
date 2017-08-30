@@ -156,7 +156,14 @@ angular.module('avRegistration')
         };
 
         authmethod.getRegisterFields = function (viewEventData) {
-          var fields = angular.copy(viewEventData.extra_fields);
+          var fields = _.filter(
+            angular.copy(viewEventData.extra_fields),
+            function (item) {
+              if (true === item.required_when_registered) {
+                return false;
+              }
+              return true;
+            });
 
           if (!fields) { fields = []; }
           var found = false;
