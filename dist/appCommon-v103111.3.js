@@ -82,7 +82,9 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             params: params
         }) : $http.get(backendUrl + "auth-event/" + id + "/census/");
     }, authmethod.getRegisterFields = function(viewEventData) {
-        var fields = angular.copy(viewEventData.extra_fields);
+        var fields = _.filter(angular.copy(viewEventData.extra_fields), function(item) {
+            return !0 !== item.required_when_registered;
+        });
         fields || (fields = []);
         var found = !1;
         _.each(fields, function(field) {
