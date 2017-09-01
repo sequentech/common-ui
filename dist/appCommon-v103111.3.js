@@ -14,6 +14,40 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
     }, authmethod.signup = function(data, authevent) {
         var eid = authevent || authId;
         return $http.post(backendUrl + "auth-event/" + eid + "/register/", data);
+    }, authmethod.getUserInfoExtra = function() {
+        if (!authmethod.isLoggedIn()) {
+            var data = {
+                success: function() {
+                    return data;
+                },
+                error: function(func) {
+                    return setTimeout(function() {
+                        func({
+                            message: "not-logged-in"
+                        });
+                    }, 0), data;
+                }
+            };
+            return data;
+        }
+        return $http.get(backendUrl + "user/extra/", {});
+    }, authmethod.updateUserExtra = function(extra) {
+        if (!authmethod.isLoggedIn()) {
+            var data = {
+                success: function() {
+                    return data;
+                },
+                error: function(func) {
+                    return setTimeout(function() {
+                        func({
+                            message: "not-logged-in"
+                        });
+                    }, 0), data;
+                }
+            };
+            return data;
+        }
+        return $http.post(backendUrl + "user/extra/", extra);
     }, authmethod.getUserInfo = function(userid) {
         if (!authmethod.isLoggedIn()) {
             var data = {
@@ -82,7 +116,9 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             params: params
         }) : $http.get(backendUrl + "auth-event/" + id + "/census/");
     }, authmethod.getRegisterFields = function(viewEventData) {
-        var fields = angular.copy(viewEventData.extra_fields);
+        var fields = _.filter(angular.copy(viewEventData.extra_fields), function(item) {
+            return !0 !== item.required_when_registered;
+        });
         fields || (fields = []);
         var found = !1;
         _.each(fields, function(field) {
