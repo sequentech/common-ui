@@ -58,6 +58,38 @@ angular.module('avRegistration')
             var eid = authevent || authId;
             return $http.post(backendUrl + 'auth-event/'+eid+'/register/', data);
         };
+        
+        authmethod.getUserInfoExtra = function() {
+            if (!authmethod.isLoggedIn()) {
+              var data = {
+                success: function () { return data; },
+                error: function (func) {
+                  setTimeout(function() {
+                    func({message:"not-logged-in"});
+                  }, 0);
+                  return data;
+                }
+              };
+              return data;
+            }
+            return $http.get(backendUrl + 'user/extra/', {});
+        };
+
+        authmethod.updateUserExtra = function (extra) {
+            if (!authmethod.isLoggedIn()) {
+              var data = {
+                success: function () { return data; },
+                error: function (func) {
+                  setTimeout(function() {
+                    func({message:"not-logged-in"});
+                  }, 0);
+                  return data;
+                }
+              };
+              return data;
+            }
+            return $http.post(backendUrl + 'user/extra/', extra);
+        };
 
         authmethod.getUserInfo = function(userid) {
             if (!authmethod.isLoggedIn()) {
@@ -156,7 +188,14 @@ angular.module('avRegistration')
         };
 
         authmethod.getRegisterFields = function (viewEventData) {
-          var fields = angular.copy(viewEventData.extra_fields);
+          var fields = _.filter(
+            angular.copy(viewEventData.extra_fields),
+            function (item) {
+              if (true === item.required_when_registered) {
+                return false;
+              }
+              return true;
+            });
 
           if (!fields) { fields = []; }
           var found = false;
