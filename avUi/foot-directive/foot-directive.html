@@ -1,14 +1,14 @@
 <div class="commonfoot">
   <div class="social" style="text-align: center;">
+      <span 
+        class="powered-by pull-left"
+        ng-i18next="[html:i18next]({url: organization.orgUrl, name: organization.orgName})avCommon.poweredBy"
+      >
+      </span>
       <a href="{{social.facebook}}" ng-if="!!social.facebook"><i class="fa fa-fw fa-lg fa-facebook"></i></a>
       <a href="{{social.twitter}}" ng-if="!!social.twitter"><i class="fa fa-fw fa-lg fa-twitter"></i></a>
       <a href="{{social.googleplus}}" ng-if="!!social.googleplus"><i class="fa fa-fw fa-lg fa-google-plus"></i></a>
       <a href="{{social.youtube}}" ng-if="!!social.youtube"><i class="fa fa-fw fa-lg fa-youtube-play"></i></a>
       <a href="{{social.github}}" ng-if="!!social.github"><i class="fa fa-fw fa-lg fa-github"></i></a>
   </div>
-  <span 
-    class="powered-by pull-left"
-    ng-i18next="[html:i18next]({url: organization.orgUrl, name: organization.orgName})avCommon.poweredBy"
-  >
-  </span>
 </div>
