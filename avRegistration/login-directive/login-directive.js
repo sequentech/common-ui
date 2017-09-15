@@ -251,7 +251,10 @@ angular.module('avRegistration')
             console.log('forgotPassword');
         };
         
-        var pluginData = { isAdmin: scope.isAdmin };
+        var pluginData = { 
+          isAdmin: scope.isAdmin,
+          element: element
+        };
         Plugins.hook('booth-login', pluginData);
     }
     return {
