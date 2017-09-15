@@ -301,8 +301,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             console.log("forgotPassword");
         };
         var pluginData = {
-            isAdmin: scope.isAdmin,
-            element: element
+            isAdmin: scope.isAdmin
         };
         Plugins.hook("booth-login", pluginData);
     }
