@@ -24,8 +24,7 @@ angular.module('avRegistration')
                                  $i18next,
                                  $window,
                                  $timeout,
-                                 ConfigService,
-                                 Plugins) {
+                                 ConfigService) {
     // we use it as something similar to a controller here
     function link(scope, element, attrs) {
         var adminId = ConfigService.freeAuthId + '';
