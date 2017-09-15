@@ -24,7 +24,8 @@ angular.module('avRegistration')
                                  $i18next,
                                  $window,
                                  $timeout,
-                                 ConfigService) {
+                                 ConfigService,
+                                 Plugins) {
     // we use it as something similar to a controller here
     function link(scope, element, attrs) {
         var adminId = ConfigService.freeAuthId + '';
@@ -249,6 +250,9 @@ angular.module('avRegistration')
         scope.forgotPassword = function() {
             console.log('forgotPassword');
         };
+        
+        var pluginData = { isAdmin: scope.isAdmin };
+        Plugins.hook('booth-login', pluginData);
     }
     return {
       restrict: 'AE',
