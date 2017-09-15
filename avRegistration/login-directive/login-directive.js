@@ -250,11 +250,6 @@ angular.module('avRegistration')
         scope.forgotPassword = function() {
             console.log('forgotPassword');
         };
-        
-        var pluginData = { 
-          isAdmin: scope.isAdmin
-        };
-        Plugins.hook('booth-login', pluginData);
     }
     return {
       restrict: 'AE',
