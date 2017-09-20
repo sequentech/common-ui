@@ -33,14 +33,14 @@ angular.module('avRegistration')
 
           var adminMatch = href.match(/^\/admin\//);
           var boothMatch = href.match(/^\/booth\/([0-9]+)\//);
-          var electionsMatch = href.match(/^\/elections\/([0-9]+)\//);
+          var electionsMatch = href.match(/^\/(elections|election)\/([0-9]+)\//);
           
           if (_.isArray(adminMatch)) {
             authevent = adminId;
           } else if(_.isArray(boothMatch) && 2 === boothMatch.length) {
             authevent = boothMatch[1];
-          } else if(_.isArray(electionsMatch) && 2 === electionsMatch.length) {
-            authevent = electionsMatch[1];
+          } else if(_.isArray(electionsMatch) && 3 === electionsMatch.length) {
+            authevent = electionsMatch[2];
           }
           return authevent;
         };
