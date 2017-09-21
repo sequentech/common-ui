@@ -26,7 +26,7 @@ angular.module('avUi').controller('DocumentationUiController',
     $scope.documentation.security_contact = ConfigService.legal.security_contact;
     $scope.documentation_html_include = $sce.trustAsHtml(ConfigService.documentation_html_include);
     $scope.auths_url = '/election/' + $stateParams.id + '/public/authorities';
-    $scope.legal_url = '/election/' + $stateParams.id + '/public/legal';
+    $scope.election_id = $stateParams.id + '';
 
     Authmethod.viewEvent($stateParams.id)
       .success(function(data) {
