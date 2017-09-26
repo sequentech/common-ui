@@ -33,7 +33,7 @@ angular.module('avRegistration')
           }
         });
         /* configure registration telephone phone number */
-        var telInput = angular.element("phoneSignUp"));
+        var telInput = angular.element("phoneSignUp");
         // initialise plugin
         telInput.intlTelInput({
           utilsScript: "election/utils.js",
