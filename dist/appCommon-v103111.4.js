@@ -469,26 +469,27 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         $.get("https://ipinfo.io", function() {}, "jsonp").always(function(resp) {
             ipData = resp;
             for (var i = 0; i < ipCallbacks.length; i++) ipCallbacks[i]();
+        }), $(document).ready(function() {
+            var telInput = angular.element(document.getElementById("input1"));
+            telInput.intlTelInput({
+                utilsScript: "election/utils.js",
+                separateDialCode: !0,
+                initialCountry: "auto",
+                autoPlaceholder: "aggressive",
+                placeholderNumberType: "MOBILE",
+                geoIpLookup: function(callback) {
+                    var applyCountry = function() {
+                        var countryCode = ipData && ipData.country ? ipData.country : "";
+                        callback(countryCode);
+                    };
+                    ipData ? applyCountry() : ipCallbacks.push(applyCountry);
+                }
+            });
+            var validateTel = function() {
+                !telInput.intlTelInput("isValidNumber") && $("#input1").val().replace("[ \t\n]", "").length > 0 ? telInput.toggleClass("error", !0) : telInput.toggleClass("error", !1);
+            };
+            telInput.on("keyup change", validateTel);
         });
-        var telInput = angular.element(document.getElementById("input1"));
-        telInput.intlTelInput({
-            utilsScript: "election/utils.js",
-            separateDialCode: !0,
-            initialCountry: "auto",
-            autoPlaceholder: "aggressive",
-            placeholderNumberType: "MOBILE",
-            geoIpLookup: function(callback) {
-                var applyCountry = function() {
-                    var countryCode = ipData && ipData.country ? ipData.country : "";
-                    callback(countryCode);
-                };
-                ipData ? applyCountry() : ipCallbacks.push(applyCountry);
-            }
-        });
-        var validateTel = function() {
-            !telInput.intlTelInput("isValidNumber") && $("#input1").val().replace("[ \t\n]", "").length > 0 ? telInput.toggleClass("error", !0) : telInput.toggleClass("error", !1);
-        };
-        telInput.on("keyup change", validateTel);
     }
     return {
         restrict: "AE",
