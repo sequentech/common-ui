@@ -19,11 +19,21 @@ angular.module('avRegistration')
   .directive('avrTelField', function($state) {
     function link(scope, element, attrs) {
 
-      scope.tlfPattern = /^[+]?\d{9,14}$/;
+      scope.tlfPattern = /^[+]?\d{9,14}$/; 
+
+      // lookup ip data and send callbacks when it is available
+
+      var ipData = null;
+      var ipCallbacks = [];
+      $.get('https://ipinfo.io', function() {}, "jsonp")
+      .always(function(resp) {
+          ipData = resp;
+          for (var i = 0; i < ipCallbacks.length; i++) {
+            ipCallbacks[i]();
+          }
+        });
       
-      $(document).ready(
-        function()
-        {
+      $(document).ready( function() {
           /* configure registration telephone phone number */
           var telInput = angular.element(document.getElementById("phoneSignUp"));
           // initialise plugin
@@ -32,7 +42,19 @@ angular.module('avRegistration')
             separateDialCode: true,
             initialCountry: "auto",
             autoPlaceholder: "aggressive",
-            placeholderNumberType: "MOBILE"
+            placeholderNumberType: "MOBILE",
+            geoIpLookup: function(callback) {
+                var applyCountry = function()
+                {
+                  var countryCode = (ipData && ipData.country) ? ipData.country : "";
+                  callback(countryCode);
+                };
+                if (ipData) {
+                  applyCountry();
+                } else {
+                  ipCallbacks.push(applyCountry);
+                }
+              }
             });
         });
     }
