@@ -32,31 +32,42 @@ angular.module('avRegistration')
             ipCallbacks[i]();
           }
         });
-      
-      $(document).ready( function() {
-          /* configure registration telephone phone number */
-          var telInput = angular.element(document.getElementById("phoneSignUp"));
-          // initialise plugin
-          telInput.intlTelInput({
-            utilsScript: "election/utils.js",
-            separateDialCode: true,
-            initialCountry: "auto",
-            autoPlaceholder: "aggressive",
-            placeholderNumberType: "MOBILE",
-            geoIpLookup: function(callback) {
-                var applyCountry = function()
-                {
-                  var countryCode = (ipData && ipData.country) ? ipData.country : "";
-                  callback(countryCode);
-                };
-                if (ipData) {
-                  applyCountry();
-                } else {
-                  ipCallbacks.push(applyCountry);
-                }
+        /* configure registration telephone phone number */
+        var telInput = angular.element(document.getElementById("phoneSignUp"));
+        // initialise plugin
+        telInput.intlTelInput({
+          utilsScript: "election/utils.js",
+          separateDialCode: true,
+          initialCountry: "auto",
+          autoPlaceholder: "aggressive",
+          placeholderNumberType: "MOBILE",
+          geoIpLookup: function(callback) {
+              var applyCountry = function()
+              {
+                var countryCode = (ipData && ipData.country) ? ipData.country : "";
+                callback(countryCode);
+              };
+              if (ipData) {
+                applyCountry();
+              } else {
+                ipCallbacks.push(applyCountry);
               }
-            });
-        });
+            }
+          });
+
+          var validateTel = function()
+          {
+            var isValid = telInput.intlTelInput("isValidNumber");
+            if (!isValid && $("#phoneSignUp").val().replace("[ \t\n]", "").length > 0)
+            {
+              telInput.toggleClass("error", true);
+            } else
+            {
+              telInput.toggleClass("error", false);
+            }
+          };
+          // on keyup / change flag: reset
+          telInput.on("keyup change", validateTel);
     }
     return {
       restrict: 'AE',
