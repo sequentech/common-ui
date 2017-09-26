@@ -32,6 +32,7 @@ angular.module('avRegistration')
             ipCallbacks[i]();
           }
         });
+      $(document).ready(function() {
         /* configure registration telephone phone number */
         var telInput = angular.element(document.getElementById("input1"));
         // initialise plugin
@@ -68,6 +69,7 @@ angular.module('avRegistration')
           };
           // on keyup / change flag: reset
           telInput.on("keyup change", validateTel);
+      });
     }
     return {
       restrict: 'AE',
