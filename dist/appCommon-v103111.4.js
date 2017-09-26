@@ -464,13 +464,25 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
     };
 } ]), angular.module("avRegistration").directive("avrTelField", [ "$state", function($state) {
     function link(scope, element, attrs) {
-        scope.tlfPattern = /^[+]?\d{9,14}$/, $(document).ready(function() {
+        scope.tlfPattern = /^[+]?\d{9,14}$/;
+        var ipData = null, ipCallbacks = [];
+        $.get("https://ipinfo.io", function() {}, "jsonp").always(function(resp) {
+            ipData = resp;
+            for (var i = 0; i < ipCallbacks.length; i++) ipCallbacks[i]();
+        }), $(document).ready(function() {
             angular.element(document.getElementById("phoneSignUp")).intlTelInput({
                 utilsScript: "election/utils.js",
                 separateDialCode: !0,
                 initialCountry: "auto",
                 autoPlaceholder: "aggressive",
-                placeholderNumberType: "MOBILE"
+                placeholderNumberType: "MOBILE",
+                geoIpLookup: function(callback) {
+                    var applyCountry = function() {
+                        var countryCode = ipData && ipData.country ? ipData.country : "";
+                        callback(countryCode);
+                    };
+                    ipData ? applyCountry() : ipCallbacks.push(applyCountry);
+                }
             });
         });
     }
