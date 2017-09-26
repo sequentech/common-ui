@@ -467,7 +467,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         $("head").append('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/12.0.1/css/intlTelInput.css" />'), 
         scope.tlfPattern = /^[+]?\d{9,14}$/, $(document).ready(function() {
             angular.element(document.getElementById("phoneSignUp")).intlTelInput({
-                utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/12.0.1/js/utils.js",
+                utilsScript: "election/utils.js",
                 separateDialCode: !0,
                 initialCountry: "auto",
                 autoPlaceholder: "aggressive",
