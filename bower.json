@@ -1,6 +1,6 @@
 {
   "name": "avCommon",
-  "version" : "103111.4",
+  "version": "103111.4",
   "main": "index.html",
   "ignore": [
     "tests",
@@ -34,7 +34,8 @@
     "bootstrap": "~3.1",
     "font-awesome": "~4.3",
     "moment": "~2.5",
-    "angular-mocks": "~1.2"
+    "angular-mocks": "~1.2",
+    "international-phone-number": "^0.0.16"
   },
   "devDependencies": {
     "jquery": "~2.0",
@@ -63,7 +64,7 @@
     "angular-cookie": "~4.0.9"
   },
   "resolutions": {
-    "angular": "~1.2"
+    "angular": "1.3.12"
   },
   "homepage": "https://github.com/agoravoting/agora-gui-common",
   "authors": [
