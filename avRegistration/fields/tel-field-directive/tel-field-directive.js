@@ -28,7 +28,7 @@ angular.module('avRegistration')
         function()
         {
           /* configure registration telephone phone number */
-          var telInput = $("#phoneSignUp");
+          var telInput = angular.element(document.getElementById("phoneSignUp"));
           // initialise plugin
           telInput.intlTelInput({
             utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/12.0.1/js/utils.js",
