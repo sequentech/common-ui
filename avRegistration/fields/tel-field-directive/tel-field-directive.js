@@ -19,6 +19,8 @@ angular.module('avRegistration')
   .directive('avrTelField', function($state) {
     function link(scope, element, attrs) {
       scope.tlfPattern = /^[+]?\d{9,14}$/;
+      var telInput = angular.element(document.getElementById('input' + scope.index));
+      telInput.intlTelInput({ utilsScript: 'utils.js' });
     }
     return {
       restrict: 'AE',

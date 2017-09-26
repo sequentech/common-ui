@@ -36,8 +36,7 @@ angular.module(
   'dndLists',
   'angularLoad',
   'angular-date-picker-polyfill',
-  'ng-autofocus',
-  'internationalPhoneNumber'
+  'ng-autofocus'
 ]);
 
 angular.module('jm.i18next').config(function ($i18nextProvider, ConfigServiceProvider) {

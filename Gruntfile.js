@@ -150,6 +150,7 @@ module.exports = function (grunt) {
         files: [
           {src: ['img/**'], dest: 'dist/'},
           {src: ['bower_components/intl-tel-input/build/img/flags.png'], dest: 'dist/img/flags.png'},
+          {src: ['bower_components/intl-tel-input/build/js/utils.js'], dest: 'dist/utils.js'},
           {src: ['temp_data/**'], dest: 'dist/'},
           {src: ['avUi/**/*.less'], dest: 'dist/less/'},
           {src: ['themes/**'], dest: 'dist/'},
