@@ -468,7 +468,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             angular.element(document.getElementById("phoneSignUp")).intlTelInput({
                 utilsScript: "election/utils.js",
                 separateDialCode: !0,
-                initialCountry: "co",
+                initialCountry: "auto",
                 autoPlaceholder: "aggressive",
                 placeholderNumberType: "MOBILE"
             });

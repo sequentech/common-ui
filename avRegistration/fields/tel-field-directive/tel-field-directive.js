@@ -30,7 +30,7 @@ angular.module('avRegistration')
           telInput.intlTelInput({
             utilsScript: "election/utils.js",
             separateDialCode: true,
-            initialCountry: "co", // "auto"
+            initialCountry: "auto",
             autoPlaceholder: "aggressive",
             placeholderNumberType: "MOBILE"
             });
