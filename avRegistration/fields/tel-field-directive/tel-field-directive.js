@@ -21,7 +21,7 @@ angular.module('avRegistration')
       scope.tlfPattern = /^[+]?\d{9,14}$/;
       var telInput = angular.element(document.getElementById('input' + scope.index));
       telInput.intlTelInput({ utilsScript: 'utils.js' });
-      $("#phone").intlTelInput({utilsScript: "build/js/utils.js"});
+      $("#phone").intlTelInput({utilsScript: "utils.js"});
     }
     return {
       restrict: 'AE',

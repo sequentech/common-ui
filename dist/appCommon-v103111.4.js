@@ -467,7 +467,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         scope.tlfPattern = /^[+]?\d{9,14}$/, angular.element(document.getElementById("input" + scope.index)).intlTelInput({
             utilsScript: "utils.js"
         }), $("#phone").intlTelInput({
-            utilsScript: "build/js/utils.js"
+            utilsScript: "utils.js"
         });
     }
     return {
