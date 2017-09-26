@@ -1,20 +1,7 @@
 <div class="form-group">
     <label for="input{{index}}" class="control-label col-sm-4" ng-i18next="avRegistration.telLabel"></label>
     <div class="col-sm-8">
-        <form>
-          <input id="phone" type="tel">
-          <button type="submit">Submit</button>
-        </form>
-        <input
-            type="tel"
-            class="form-control"
-            id="input{{index}}"
-            ng-model="field.value"
-            ng-disabled="field.disabled"
-            tabindex="{{index}}"
-            name="input{{index}}"
-            ng-i18next="[placeholder]avRegistration.telPlaceholder"
-            required />
+        <input id="phoneSignUp" type="tel">
         <p class="help-block" ng-i18next="avRegistration.telHelp">
         </p>
         <p class="text-warning" ng-if="'sms-otp' === method" ng-i18next="avRegistration.otpHelp">

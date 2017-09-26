@@ -18,10 +18,26 @@
 angular.module('avRegistration')
   .directive('avrTelField', function($state) {
     function link(scope, element, attrs) {
+      
+      // add telephone css to head
+      $('head').append('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/12.0.1/css/intlTelInput.css" />');
+
       scope.tlfPattern = /^[+]?\d{9,14}$/;
-      var telInput = angular.element(document.getElementById('input' + scope.index));
-      telInput.intlTelInput({ utilsScript: 'election/utils.js' });
-      $("#phone").intlTelInput({utilsScript: "election/utils.js"});
+      
+      $(document).ready(
+        function()
+        {
+          /* configure registration telephone phone number */
+          var telInput = $("#phoneSignUp");
+          // initialise plugin
+          telInput.intlTelInput({
+            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/12.0.1/js/utils.js",
+            separateDialCode: true,
+            initialCountry: "auto",
+            autoPlaceholder: "aggressive",
+            placeholderNumberType: "MOBILE"
+            });
+        });
     }
     return {
       restrict: 'AE',
