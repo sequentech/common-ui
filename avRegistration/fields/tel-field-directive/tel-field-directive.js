@@ -18,9 +18,6 @@
 angular.module('avRegistration')
   .directive('avrTelField', function($state) {
     function link(scope, element, attrs) {
-      
-      // add telephone css to head
-      $('head').append('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/12.0.1/css/intlTelInput.css" />');
 
       scope.tlfPattern = /^[+]?\d{9,14}$/;
       
@@ -33,7 +30,7 @@ angular.module('avRegistration')
           telInput.intlTelInput({
             utilsScript: "election/utils.js",
             separateDialCode: true,
-            initialCountry: "auto",
+            initialCountry: "co", // "auto"
             autoPlaceholder: "aggressive",
             placeholderNumberType: "MOBILE"
             });

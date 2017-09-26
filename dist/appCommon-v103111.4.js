@@ -464,12 +464,11 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
     };
 } ]), angular.module("avRegistration").directive("avrTelField", [ "$state", function($state) {
     function link(scope, element, attrs) {
-        $("head").append('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/12.0.1/css/intlTelInput.css" />'), 
         scope.tlfPattern = /^[+]?\d{9,14}$/, $(document).ready(function() {
             angular.element(document.getElementById("phoneSignUp")).intlTelInput({
                 utilsScript: "election/utils.js",
                 separateDialCode: !0,
-                initialCountry: "auto",
+                initialCountry: "co",
                 autoPlaceholder: "aggressive",
                 placeholderNumberType: "MOBILE"
             });
