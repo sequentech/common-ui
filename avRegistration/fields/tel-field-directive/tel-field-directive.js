@@ -33,7 +33,7 @@ angular.module('avRegistration')
           }
         });
         /* configure registration telephone phone number */
-        var telInput = angular.element("phoneSignUp");
+        var telInput = angular.element(document.getElementById("index" + scope.index));
         // initialise plugin
         telInput.intlTelInput({
           utilsScript: "election/utils.js",
@@ -58,7 +58,7 @@ angular.module('avRegistration')
           var validateTel = function()
           {
             var isValid = telInput.intlTelInput("isValidNumber");
-            if (!isValid && $(".phoneSignUp").val().replace("[ \t\n]", "").length > 0)
+            if (!isValid && $("#index" + scope.index).val().replace("[ \t\n]", "").length > 0)
             {
               telInput.toggleClass("error", true);
             } else
