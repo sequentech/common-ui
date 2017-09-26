@@ -465,9 +465,9 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
 } ]), angular.module("avRegistration").directive("avrTelField", [ "$state", function($state) {
     function link(scope, element, attrs) {
         scope.tlfPattern = /^[+]?\d{9,14}$/, angular.element(document.getElementById("input" + scope.index)).intlTelInput({
-            utilsScript: "utils.js"
+            utilsScript: "election/utils.js"
         }), $("#phone").intlTelInput({
-            utilsScript: "utils.js"
+            utilsScript: "election/utils.js"
         });
     }
     return {

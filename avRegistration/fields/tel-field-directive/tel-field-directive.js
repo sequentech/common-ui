@@ -20,8 +20,8 @@ angular.module('avRegistration')
     function link(scope, element, attrs) {
       scope.tlfPattern = /^[+]?\d{9,14}$/;
       var telInput = angular.element(document.getElementById('input' + scope.index));
-      telInput.intlTelInput({ utilsScript: 'utils.js' });
-      $("#phone").intlTelInput({utilsScript: "utils.js"});
+      telInput.intlTelInput({ utilsScript: 'election/utils.js' });
+      $("#phone").intlTelInput({utilsScript: "election/utils.js"});
     }
     return {
       restrict: 'AE',
