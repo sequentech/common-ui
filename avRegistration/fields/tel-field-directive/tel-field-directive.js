@@ -61,6 +61,10 @@ angular.module('avRegistration')
           var validateTel = function()
           {
             scope.$evalAsync(function() {
+              var intlNumber = telInput.intlTelInput("getNumber");
+              if (intlNumber) {
+                scope.field.value = intlNumber;
+              }
               var isValid = telInput.intlTelInput("isValidNumber");
               if (!isValid && $("#input"+ scope.index).val().replace("[ \t\n]", "").length > 0)
               {
