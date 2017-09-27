@@ -20,7 +20,7 @@ angular.module('avRegistration')
     function link(scope, element, attrs) {
 
       scope.tlfPattern = /^[+]?\d{9,14}$/;
-      scope.isValidNumber = false;
+      scope.isValidNumber = true;
 
       // lookup ip data and send callbacks when it is available
 

@@ -464,7 +464,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
     };
 } ]), angular.module("avRegistration").directive("avrTelField", [ "$state", "$timeout", function($state, $timeout) {
     function link(scope, element, attrs) {
-        scope.tlfPattern = /^[+]?\d{9,14}$/, scope.isValidNumber = !1;
+        scope.tlfPattern = /^[+]?\d{9,14}$/, scope.isValidNumber = !0;
         var ipData = null, ipCallbacks = [];
         $.get("https://ipinfo.io", function() {}, "jsonp").always(function(resp) {
             ipData = resp;
