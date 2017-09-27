@@ -464,9 +464,8 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
     };
 } ]), angular.module("avRegistration").directive("avrTelField", [ "$state", "$timeout", function($state, $timeout) {
     function link(scope, element, attrs) {
-        scope.tlfPattern = /^[+]?\d{9,14}$/, scope.isValidNumber = function() {
-            var telInput = angular.element(document.getElementById("input" + scope.index));
-            return !telInput || telInput.intlTelInput("isValidNumber");
+        scope.tlfPattern = /^[+]?\d{9,14}$/, scope.isValid = !0, scope.isValidNumber = function() {
+            return scope.isValid;
         };
         var ipData = null, ipCallbacks = [];
         $.get("https://ipinfo.io", function() {}, "jsonp").always(function(resp) {
@@ -489,7 +488,8 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                 }
             });
             var validateTel = function() {
-                !telInput.intlTelInput("isValidNumber") && $("#input" + scope.index).val().replace("[ \t\n]", "").length > 0 ? telInput.toggleClass("error", !0) : telInput.toggleClass("error", !1);
+                !telInput.intlTelInput("isValidNumber") && $("#input" + scope.index).val().replace("[ \t\n]", "").length > 0 ? (telInput.toggleClass("error", !0), 
+                scope.isValid = !1) : (telInput.toggleClass("error", !1), scope.isValid = !0);
             };
             telInput.on("keyup change", validateTel);
         });

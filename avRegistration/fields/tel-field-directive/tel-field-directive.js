@@ -20,11 +20,10 @@ angular.module('avRegistration')
     function link(scope, element, attrs) {
 
       scope.tlfPattern = /^[+]?\d{9,14}$/;
+      scope.isValid = true;
 
       scope.isValidNumber = function () {
-        var telInput = 
-          angular.element(document.getElementById("input" + scope.index));
-        return (!!telInput? telInput.intlTelInput("isValidNumber") : true);
+        return scope.isValid;
       };
 
       // lookup ip data and send callbacks when it is available
@@ -69,9 +68,11 @@ angular.module('avRegistration')
             if (!isValid && $("#input"+ scope.index).val().replace("[ \t\n]", "").length > 0)
             {
               telInput.toggleClass("error", true);
+              scope.isValid = false;
             } else
             {
               telInput.toggleClass("error", false);
+              scope.isValid = true;
             }
           };
           // on keyup / change flag: reset
