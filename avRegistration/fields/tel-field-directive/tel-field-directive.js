@@ -69,11 +69,9 @@ angular.module('avRegistration')
             if (!isValid && $("#input"+ scope.index).val().replace("[ \t\n]", "").length > 0)
             {
               telInput.toggleClass("error", true);
-              scope.isValidNumber = false;
             } else
             {
               telInput.toggleClass("error", false);
-              scope.isValidNumber = true;
             }
           };
           // on keyup / change flag: reset

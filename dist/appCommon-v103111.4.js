@@ -489,8 +489,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                 }
             });
             var validateTel = function() {
-                !telInput.intlTelInput("isValidNumber") && $("#input" + scope.index).val().replace("[ \t\n]", "").length > 0 ? (telInput.toggleClass("error", !0), 
-                scope.isValidNumber = !1) : (telInput.toggleClass("error", !1), scope.isValidNumber = !0);
+                !telInput.intlTelInput("isValidNumber") && $("#input" + scope.index).val().replace("[ \t\n]", "").length > 0 ? telInput.toggleClass("error", !0) : telInput.toggleClass("error", !1);
             };
             telInput.on("keyup change", validateTel);
         });
