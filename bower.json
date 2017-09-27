@@ -63,6 +63,9 @@
     "rng-js": "~1.0.1",
     "angular-cookie": "~4.0.9"
   },
+  "resolutions": {
+    "angular": "~1.2"
+  },
   "homepage": "https://github.com/agoravoting/agora-gui-common",
   "authors": [
     "Víctor Ramírez <virako.9@gmail.com>"
