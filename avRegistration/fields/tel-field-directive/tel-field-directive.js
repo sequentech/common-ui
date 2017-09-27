@@ -20,7 +20,12 @@ angular.module('avRegistration')
     function link(scope, element, attrs) {
 
       scope.tlfPattern = /^[+]?\d{9,14}$/;
-      scope.isValidNumber = true;
+
+      scope.isValidNumber = function () {
+        var telInput = 
+          angular.element(document.getElementById("input" + scope.index));
+        return (!!telInput? telInput.intlTelInput("isValidNumber") : true);
+      };
 
       // lookup ip data and send callbacks when it is available
 
@@ -33,6 +38,7 @@ angular.module('avRegistration')
             ipCallbacks[i]();
           }
         });
+
       $timeout(function() {
         /* configure registration telephone phone number */
         var telInput = angular.element(document.getElementById("input" + scope.index));
