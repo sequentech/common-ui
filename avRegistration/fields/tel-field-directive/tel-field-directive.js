@@ -19,7 +19,8 @@ angular.module('avRegistration')
   .directive('avrTelField', function($state, $timeout) {
     function link(scope, element, attrs) {
 
-      scope.tlfPattern = /^[+]?\d{9,14}$/; 
+      scope.tlfPattern = /^[+]?\d{9,14}$/;
+      scope.isValidNumber = false;
 
       // lookup ip data and send callbacks when it is available
 
@@ -62,9 +63,11 @@ angular.module('avRegistration')
             if (!isValid && $("#input"+ scope.index).val().replace("[ \t\n]", "").length > 0)
             {
               telInput.toggleClass("error", true);
+              scope.isValidNumber = false;
             } else
             {
               telInput.toggleClass("error", false);
+              scope.isValidNumber = true;
             }
           };
           // on keyup / change flag: reset
