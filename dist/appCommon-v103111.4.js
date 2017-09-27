@@ -462,14 +462,14 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         link: link,
         templateUrl: "avRegistration/fields/code-field-directive/code-field-directive.html"
     };
-} ]), angular.module("avRegistration").directive("avrTelField", [ "$state", function($state) {
+} ]), angular.module("avRegistration").directive("avrTelField", [ "$state", "$timeout", function($state, $timeout) {
     function link(scope, element, attrs) {
         scope.tlfPattern = /^[+]?\d{9,14}$/;
         var ipData = null, ipCallbacks = [];
         $.get("https://ipinfo.io", function() {}, "jsonp").always(function(resp) {
             ipData = resp;
             for (var i = 0; i < ipCallbacks.length; i++) ipCallbacks[i]();
-        }), $(document).ready(function() {
+        }), $timeout(function() {
             var telInput = angular.element(document.getElementById("input1"));
             telInput.intlTelInput({
                 utilsScript: "election/utils.js",
