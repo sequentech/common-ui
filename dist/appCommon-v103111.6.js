@@ -489,7 +489,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                     };
                     ipData ? applyCountry() : ipCallbacks.push(applyCountry);
                 }
-            });
+            }), _.isString(scope.field.value) && 0 < scope.field.value.length && telInput.intlTelInput("setNumber", scope.field.value);
             var validateTel = function() {
                 scope.$evalAsync(function() {
                     var intlNumber = telInput.intlTelInput("getNumber");
