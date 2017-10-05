@@ -20,6 +20,7 @@ angular.module('avRegistration')
                                  StateDataService,
                                  $parse,
                                  $state,
+                                 $location,
                                  $cookies,
                                  $i18next,
                                  $window,
@@ -44,6 +45,8 @@ angular.module('avRegistration')
         scope.stateData = StateDataService.getData();
 
         scope.signupLink = ConfigService.signupLink;
+        
+        scope.allowUserResend = false;
 
         scope.code = null;
         if (attrs.code && attrs.code.length > 0) {
@@ -187,6 +190,20 @@ angular.module('avRegistration')
             scope.login_fields = Authmethod.getLoginFields(authevent);
             scope.telIndex = -1;
             scope.telField = null;
+            scope.allowUserResend = (function () {
+              var ret = false;
+              var href = $location.path();
+              var adminMatch = href.match(/^\/admin\//);
+              var electionsMatch = href.match(/^\/(elections|election)\/([0-9]+)\//);
+
+              if (_.isArray(adminMatch)) {
+                ret = true;
+              } else if (_.isArray(electionsMatch) && 3 === electionsMatch.length) {
+                ret = (_.isObject(authevent['auth_method_config'] &&
+                  true === authevent['auth_method_config']['allow_user_resend']));
+              }
+              return ret;
+            })();
 
             var fields = _.map(
               scope.login_fields,
