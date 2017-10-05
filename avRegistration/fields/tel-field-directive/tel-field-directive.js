@@ -57,6 +57,9 @@ angular.module('avRegistration')
               }
             }
           });
+          if (_.isString(scope.field.value) && 0 < scope.field.value.length) {
+            telInput.intlTelInput("setNumber", scope.field.value);
+          }
 
           var validateTel = function()
           {
