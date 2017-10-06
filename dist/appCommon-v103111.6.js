@@ -280,7 +280,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             scope.login_fields = Authmethod.getLoginFields(authevent), scope.telIndex = -1, 
             scope.telField = null, scope.allowUserResend = function() {
                 var ret = !1, href = $location.path(), adminMatch = href.match(/^\/admin\//), electionsMatch = href.match(/^\/(elections|election)\/([0-9]+)\//);
-                return _.isArray(adminMatch) ? ret = !0 : _.isArray(electionsMatch) && 3 === electionsMatch.length && (ret = _.isObject(authevent.auth_method_config && !0 === authevent.auth_method_config.allow_user_resend)), 
+                return _.isArray(adminMatch) ? ret = !0 : _.isArray(electionsMatch) && 3 === electionsMatch.length && (ret = !0 === authevent.allow_user_resend), 
                 ret;
             }();
             var fields = _.map(scope.login_fields, function(el, index) {
