@@ -242,8 +242,10 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                     if (!isValidTel("input" + scope.telIndex)) return;
                     data.tlf = scope.telField.value;
                 } else if ("email" === scope.method) {
-                    if (-1 === scope.emailIndex || !isValidEmail(scope.email)) return;
-                    data.email = scope.email;
+                    if (-1 === scope.emailIndex) return;
+                    var email = scope.email;
+                    if (null === email && (email = scope.login_fields[scope.emailIndex].value), !isValidEmail(email)) return;
+                    data.email = email;
                 }
                 field && (field.value = ""), scope.sendingData = !0, Authmethod.resendAuthCode(data, autheventid).success(function(rcvData) {
                     _.contains([ "sms", "sms-otp" ], scope.method) ? scope.telField.disabled = !0 : "email" === scope.method && (scope.login_fields[scope.emailIndex].disabled = !0), 
