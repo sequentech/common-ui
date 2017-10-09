@@ -199,7 +199,9 @@ angular.module('avRegistration')
               if (_.isArray(adminMatch)) {
                 ret = true;
               } else if (_.isArray(electionsMatch) && 3 === electionsMatch.length) {
-                ret = (true === authevent['allow_user_resend']);
+                ret = (_.isObject(authevent.auth_method_config) && 
+                       _.isObject(authevent.auth_method_config.config) &&
+                       true === authevent.auth_method_config.config.allow_user_resend);
               }
               return ret;
             })();
