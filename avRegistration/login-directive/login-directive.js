@@ -25,7 +25,8 @@ angular.module('avRegistration')
                                  $i18next,
                                  $window,
                                  $timeout,
-                                 ConfigService) {
+                                 ConfigService,
+                                 Patterns) {
     // we use it as something similar to a controller here
     function link(scope, element, attrs) {
         var adminId = ConfigService.freeAuthId + '';
@@ -69,27 +70,42 @@ angular.module('avRegistration')
           var telInput = angular.element(document.getElementById(inputName));
           return telInput.intlTelInput("isValidNumber");
         }
+        
+        function isValidEmail(email) {
+          val pattern = Patterns.get('email');
+          return null !== email.match(pattern);
+        }
 
         scope.resendAuthCode = function(field) {
-          if (scope.sendingData || !_.contains(["email","sms", "sms-otp"], scope.method)) {
+          if (scope.sendingData || !_.contains(["email", "sms", "sms-otp"], scope.method)) {
               return;
           }
+          var data = {};
 
-          if (scope.telIndex === -1) {
-            return;
-          }
+          // sms or sms-otp
+          if (_.contains(["sms", "sms-otp"], scope.method)) {
 
-          if (!isValidTel("input" + scope.telIndex)) {
-            return;
+            if (scope.telIndex === -1) {
+              return;
+            }
+
+            if (!isValidTel("input" + scope.telIndex)) {
+              return;
+            }
+
+            data['tlf'] = scope.telField.value;
+          } else if ("email" === scope.method) { // email
+            if (!isValidEmail(scope.email)) {
+              return;
+            }
+
+            data['email'] = scope.email;
           }
 
           // reset code field, as we are going to send a new one
           if (!!field) {
             field.value = "";
           }
-
-          var data = {};
-          data['tlf'] = scope.telField.value;
 
           scope.sendingData = true;
           Authmethod.resendAuthCode(data, autheventid)
