@@ -95,7 +95,7 @@ angular.module('avRegistration')
 
             data['tlf'] = scope.telField.value;
           } else if ("email" === scope.method) { // email
-            if (!isValidEmail(scope.email)) {
+            if (-1 === scope.emailIndex || !isValidEmail(scope.email)) {
               return;
             }
 
@@ -110,7 +110,11 @@ angular.module('avRegistration')
           scope.sendingData = true;
           Authmethod.resendAuthCode(data, autheventid)
             .success(function(rcvData) {
-              scope.telField.disabled = true;
+              if (_.contains(["sms", "sms-otp"], scope.method)) {
+                scope.telField.disabled = true;
+              }  else if ("email" === scope.method) {
+                scope.login_fields[scope.emailIndex].disabled = true;
+              }
               scope.currentFormStep = 1;
               $timeout(scope.sendingDataTimeout, 3000);
             })
@@ -205,6 +209,7 @@ angular.module('avRegistration')
             scope.registrationAllowed = (authevent['census'] === 'open');
             scope.login_fields = Authmethod.getLoginFields(authevent);
             scope.telIndex = -1;
+            scope.emailIndex = -1;
             scope.telField = null;
             scope.allowUserResend = (function () {
               var ret = false;
@@ -232,9 +237,12 @@ angular.module('avRegistration')
                   el.value = null;
                   el.disabled = false;
                 }
-                if (el.type === "email" && scope.email !== null) {
-                  el.value = scope.email;
-                  el.disabled = true;
+                if (el.type === "email") {
+                  if (scope.email !== null) {
+                    el.value = scope.email;
+                    el.disabled = true;
+                  }
+                  scope.emailIndex = index;
                 } else if (el.type === "code" && scope.code !== null) {
                   el.value = scope.code.trim().replace(/ |\n|\t|-|_/g,'').toUpperCase();
                   el.disabled = true;
