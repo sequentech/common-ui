@@ -242,11 +242,12 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                     if (!isValidTel("input" + scope.telIndex)) return;
                     data.tlf = scope.telField.value;
                 } else if ("email" === scope.method) {
-                    if (!isValidEmail(scope.email)) return;
+                    if (-1 === scope.emailIndex || !isValidEmail(scope.email)) return;
                     data.email = scope.email;
                 }
                 field && (field.value = ""), scope.sendingData = !0, Authmethod.resendAuthCode(data, autheventid).success(function(rcvData) {
-                    scope.telField.disabled = !0, scope.currentFormStep = 1, $timeout(scope.sendingDataTimeout, 3e3);
+                    _.contains([ "sms", "sms-otp" ], scope.method) ? scope.telField.disabled = !0 : "email" === scope.method && (scope.login_fields[scope.emailIndex].disabled = !0), 
+                    scope.currentFormStep = 1, $timeout(scope.sendingDataTimeout, 3e3);
                 }).error(function(error) {
                     $timeout(scope.sendingDataTimeout, 3e3), scope.error = $i18next("avRegistration.errorSendingAuthCode");
                 });
@@ -289,15 +290,15 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         }, scope.apply = function(authevent) {
             scope.method = authevent.auth_method, scope.name = authevent.name, scope.registrationAllowed = "open" === authevent.census, 
             scope.login_fields = Authmethod.getLoginFields(authevent), scope.telIndex = -1, 
-            scope.telField = null, scope.allowUserResend = function() {
+            scope.emailIndex = -1, scope.telField = null, scope.allowUserResend = function() {
                 var ret = !1, href = $location.path(), adminMatch = href.match(/^\/admin\//), electionsMatch = href.match(/^\/(elections|election)\/([0-9]+)\//);
                 return _.isArray(adminMatch) ? ret = !0 : _.isArray(electionsMatch) && 3 === electionsMatch.length && (ret = _.isObject(authevent.auth_method_config) && _.isObject(authevent.auth_method_config.config) && !0 === authevent.auth_method_config.config.allow_user_resend), 
                 ret;
             }();
             var fields = _.map(scope.login_fields, function(el, index) {
                 return scope.stateData[el.name] ? (el.value = scope.stateData[el.name], el.disabled = !0) : (el.value = null, 
-                el.disabled = !1), "email" === el.type && null !== scope.email ? (el.value = scope.email, 
-                el.disabled = !0) : "code" === el.type && null !== scope.code ? (el.value = scope.code.trim().replace(/ |\n|\t|-|_/g, "").toUpperCase(), 
+                el.disabled = !1), "email" === el.type ? (null !== scope.email && (el.value = scope.email, 
+                el.disabled = !0), scope.emailIndex = index) : "code" === el.type && null !== scope.code ? (el.value = scope.code.trim().replace(/ |\n|\t|-|_/g, "").toUpperCase(), 
                 el.disabled = !0) : "tlf" === el.type && "sms" === scope.method ? (null !== scope.email && -1 === scope.email.indexOf("@") && (el.value = scope.email, 
                 el.disabled = !0), scope.telIndex = index + 1, scope.telField = el) : "tlf" === el.type && "sms-otp" === scope.method && (null !== scope.email && -1 === scope.email.indexOf("@") && (el.value = scope.email, 
                 el.disabled = !0, scope.currentFormStep = 1), scope.telIndex = index + 1, scope.telField = el), 
