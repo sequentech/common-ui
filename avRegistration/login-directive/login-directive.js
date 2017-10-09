@@ -72,7 +72,7 @@ angular.module('avRegistration')
         }
         
         function isValidEmail(email) {
-          val pattern = Patterns.get('email');
+          var pattern = Patterns.get('email');
           return null !== email.match(pattern);
         }
 

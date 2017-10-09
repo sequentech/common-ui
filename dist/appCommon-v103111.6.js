@@ -219,10 +219,14 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
     }, authmethod;
 } ]), angular.module("avRegistration").controller("LoginController", [ "$scope", "$stateParams", "$filter", "ConfigService", "$i18next", function($scope, $stateParams, $filter, ConfigService, $i18next) {
     $scope.event_id = $stateParams.id, $scope.code = $stateParams.code, $scope.email = $stateParams.email;
-} ]), angular.module("avRegistration").directive("avLogin", [ "Authmethod", "StateDataService", "$parse", "$state", "$location", "$cookies", "$i18next", "$window", "$timeout", "ConfigService", function(Authmethod, StateDataService, $parse, $state, $location, $cookies, $i18next, $window, $timeout, ConfigService) {
+} ]), angular.module("avRegistration").directive("avLogin", [ "Authmethod", "StateDataService", "$parse", "$state", "$location", "$cookies", "$i18next", "$window", "$timeout", "ConfigService", "Patterns", function(Authmethod, StateDataService, $parse, $state, $location, $cookies, $i18next, $window, $timeout, ConfigService, Patterns) {
     function link(scope, element, attrs) {
         function isValidTel(inputName) {
             return !!document.getElementById(inputName) && angular.element(document.getElementById(inputName)).intlTelInput("isValidNumber");
+        }
+        function isValidEmail(email) {
+            var pattern = Patterns.get("email");
+            return null !== email.match(pattern);
         }
         var adminId = ConfigService.freeAuthId + "", autheventid = attrs.eventId;
         scope.orgName = ConfigService.organization.orgName, $cookies["authevent_" + adminId] && $cookies["authevent_" + adminId] === adminId && autheventid === adminId && $cookies["auth_authevent_" + adminId] && ($window.location.href = "/admin/elections"), 
@@ -231,10 +235,17 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         attrs.code && attrs.code.length > 0 && (scope.code = attrs.code), scope.email = null, 
         attrs.email && attrs.email.length > 0 && (scope.email = attrs.email), scope.isAdmin = !1, 
         autheventid === adminId && (scope.isAdmin = !0), scope.resendAuthCode = function(field) {
-            if (!scope.sendingData && _.contains([ "email", "sms", "sms-otp" ], scope.method) && -1 !== scope.telIndex && isValidTel("input" + scope.telIndex)) {
-                field && (field.value = "");
+            if (!scope.sendingData && _.contains([ "email", "sms", "sms-otp" ], scope.method)) {
                 var data = {};
-                data.tlf = scope.telField.value, scope.sendingData = !0, Authmethod.resendAuthCode(data, autheventid).success(function(rcvData) {
+                if (_.contains([ "sms", "sms-otp" ], scope.method)) {
+                    if (-1 === scope.telIndex) return;
+                    if (!isValidTel("input" + scope.telIndex)) return;
+                    data.tlf = scope.telField.value;
+                } else if ("email" === scope.method) {
+                    if (!isValidEmail(scope.email)) return;
+                    data.email = scope.email;
+                }
+                field && (field.value = ""), scope.sendingData = !0, Authmethod.resendAuthCode(data, autheventid).success(function(rcvData) {
                     scope.telField.disabled = !0, scope.currentFormStep = 1, $timeout(scope.sendingDataTimeout, 3e3);
                 }).error(function(error) {
                     $timeout(scope.sendingDataTimeout, 3e3), scope.error = $i18next("avRegistration.errorSendingAuthCode");
