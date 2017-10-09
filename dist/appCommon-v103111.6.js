@@ -231,7 +231,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         attrs.code && attrs.code.length > 0 && (scope.code = attrs.code), scope.email = null, 
         attrs.email && attrs.email.length > 0 && (scope.email = attrs.email), scope.isAdmin = !1, 
         autheventid === adminId && (scope.isAdmin = !0), scope.resendAuthCode = function(field) {
-            if (!scope.sendingData && _.contains([ "sms", "sms-otp" ], scope.method) && -1 !== scope.telIndex && isValidTel("input" + scope.telIndex)) {
+            if (!scope.sendingData && _.contains([ "email", "sms", "sms-otp" ], scope.method) && -1 !== scope.telIndex && isValidTel("input" + scope.telIndex)) {
                 field && (field.value = "");
                 var data = {};
                 data.tlf = scope.telField.value, scope.sendingData = !0, Authmethod.resendAuthCode(data, autheventid).success(function(rcvData) {
