@@ -71,7 +71,7 @@ angular.module('avRegistration')
         }
 
         scope.resendAuthCode = function(field) {
-          if (scope.sendingData || !_.contains(["sms", "sms-otp"], scope.method)) {
+          if (scope.sendingData || !_.contains(["email","sms", "sms-otp"], scope.method)) {
               return;
           }
 
