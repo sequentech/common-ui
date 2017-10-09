@@ -95,11 +95,18 @@ angular.module('avRegistration')
 
             data['tlf'] = scope.telField.value;
           } else if ("email" === scope.method) { // email
-            if (-1 === scope.emailIndex || !isValidEmail(scope.email)) {
+            if (-1 === scope.emailIndex) {
+              return;
+            }
+            var email = scope.email;
+            if (null === email) {
+              email = scope.login_fields[scope.emailIndex].value;
+            }
+            if (!isValidEmail(email)) {
               return;
             }
 
-            data['email'] = scope.email;
+            data['email'] = email;
           }
 
           // reset code field, as we are going to send a new one
