@@ -32,11 +32,13 @@ angular.module('avRegistration')
       if ('sms' === scope.method || 'sms-otp' === scope.method) {
         var telInput =
           angular.element(document.getElementById('input' + scope.telIndex));
+        scope.isValidTel = telInput.intlTelInput("isValidNumber");
+        scope.$watch('login_fields[' + scope.telIndex + '].value',
+          function (newValue, oldValue) {
+            scope.isValidTel = telInput.intlTelInput("isValidNumber");
+          },
+                     true);
       }
-
-      scope.isValidTel = function () {
-        return telInput.intlTelInput("isValidNumber");
-      };
     }
     return {
       restrict: 'AE',
