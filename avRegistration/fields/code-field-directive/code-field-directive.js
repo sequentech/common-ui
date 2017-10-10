@@ -29,7 +29,7 @@ angular.module('avRegistration')
         return data.showUserSendAuthCode;
       };
 
-      if ('sms' === method || 'sms-otp' === method) {
+      if ('sms' === scope.method || 'sms-otp' === scope.method) {
         var telInput =
           angular.element(document.getElementById('input' + scope.telIndex));
       }
