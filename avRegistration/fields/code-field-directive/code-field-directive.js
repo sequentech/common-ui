@@ -29,11 +29,12 @@ angular.module('avRegistration')
         return data.showUserSendAuthCode;
       };
 
-      scope.isValidTel = function (inputName) {
-        if (!document.getElementById(inputName)) {
-          return false;
-        }
-        var telInput = angular.element(document.getElementById(inputName));
+      if ('sms' === method || 'sms-otp' === method) {
+        var telInput =
+          angular.element(document.getElementById('input' + scope.telIndex));
+      }
+
+      scope.isValidTel = function () {
         return telInput.intlTelInput("isValidNumber");
       };
     }
