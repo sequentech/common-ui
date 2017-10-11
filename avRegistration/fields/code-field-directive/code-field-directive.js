@@ -29,13 +29,16 @@ angular.module('avRegistration')
         return data.showUserSendAuthCode;
       };
 
-      scope.isValidTel = function (inputName) {
-        if (!document.getElementById(inputName)) {
-          return false;
-        }
-        var telInput = angular.element(document.getElementById(inputName));
-        return telInput.intlTelInput("isValidNumber");
-      };
+      if ('sms' === scope.method || 'sms-otp' === scope.method) {
+        var telInput =
+          angular.element(document.getElementById('input' + scope.telIndex));
+        scope.isValidTel = telInput.intlTelInput("isValidNumber");
+        scope.$watch('telField.value',
+          function (newValue, oldValue) {
+            scope.isValidTel = telInput.intlTelInput("isValidNumber");
+          },
+          true);
+      }
     }
     return {
       restrict: 'AE',

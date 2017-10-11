@@ -20,11 +20,13 @@ angular.module('avRegistration')
                                  StateDataService,
                                  $parse,
                                  $state,
+                                 $location,
                                  $cookies,
                                  $i18next,
                                  $window,
                                  $timeout,
-                                 ConfigService) {
+                                 ConfigService,
+                                 Patterns) {
     // we use it as something similar to a controller here
     function link(scope, element, attrs) {
         var adminId = ConfigService.freeAuthId + '';
@@ -44,6 +46,8 @@ angular.module('avRegistration')
         scope.stateData = StateDataService.getData();
 
         scope.signupLink = ConfigService.signupLink;
+        
+        scope.allowUserResend = false;
 
         scope.code = null;
         if (attrs.code && attrs.code.length > 0) {
@@ -66,18 +70,43 @@ angular.module('avRegistration')
           var telInput = angular.element(document.getElementById(inputName));
           return telInput.intlTelInput("isValidNumber");
         }
+        
+        function isValidEmail(email) {
+          var pattern = Patterns.get('email');
+          return null !== email.match(pattern);
+        }
 
         scope.resendAuthCode = function(field) {
-          if (scope.sendingData || !_.contains(["sms", "sms-otp"], scope.method)) {
+          if (scope.sendingData || !_.contains(["email", "sms", "sms-otp"], scope.method)) {
               return;
           }
+          var data = {};
 
-          if (scope.telIndex === -1) {
-            return;
-          }
+          // sms or sms-otp
+          if (_.contains(["sms", "sms-otp"], scope.method)) {
 
-          if (!isValidTel("input" + scope.telIndex)) {
-            return;
+            if (scope.telIndex === -1) {
+              return;
+            }
+
+            if (!isValidTel("input" + scope.telIndex)) {
+              return;
+            }
+
+            data['tlf'] = scope.telField.value;
+          } else if ("email" === scope.method) { // email
+            if (-1 === scope.emailIndex) {
+              return;
+            }
+            var email = scope.email;
+            if (null === email) {
+              email = scope.login_fields[scope.emailIndex].value;
+            }
+            if (!isValidEmail(email)) {
+              return;
+            }
+
+            data['email'] = email;
           }
 
           // reset code field, as we are going to send a new one
@@ -85,13 +114,14 @@ angular.module('avRegistration')
             field.value = "";
           }
 
-          var data = {};
-          data['tlf'] = scope.telField.value;
-
           scope.sendingData = true;
           Authmethod.resendAuthCode(data, autheventid)
             .success(function(rcvData) {
-              scope.telField.disabled = true;
+              if (_.contains(["sms", "sms-otp"], scope.method)) {
+                scope.telField.disabled = true;
+              }  else if ("email" === scope.method) {
+                scope.login_fields[scope.emailIndex].disabled = true;
+              }
               scope.currentFormStep = 1;
               $timeout(scope.sendingDataTimeout, 3000);
             })
@@ -186,7 +216,23 @@ angular.module('avRegistration')
             scope.registrationAllowed = (authevent['census'] === 'open');
             scope.login_fields = Authmethod.getLoginFields(authevent);
             scope.telIndex = -1;
+            scope.emailIndex = -1;
             scope.telField = null;
+            scope.allowUserResend = (function () {
+              var ret = false;
+              var href = $location.path();
+              var adminMatch = href.match(/^\/admin\//);
+              var electionsMatch = href.match(/^\/(elections|election)\/([0-9]+)\//);
+
+              if (_.isArray(adminMatch)) {
+                ret = true;
+              } else if (_.isArray(electionsMatch) && 3 === electionsMatch.length) {
+                ret = (_.isObject(authevent.auth_method_config) && 
+                       _.isObject(authevent.auth_method_config.config) &&
+                       true === authevent.auth_method_config.config.allow_user_resend);
+              }
+              return ret;
+            })();
 
             var fields = _.map(
               scope.login_fields,
@@ -198,9 +244,12 @@ angular.module('avRegistration')
                   el.value = null;
                   el.disabled = false;
                 }
-                if (el.type === "email" && scope.email !== null) {
-                  el.value = scope.email;
-                  el.disabled = true;
+                if (el.type === "email") {
+                  if (scope.email !== null) {
+                    el.value = scope.email;
+                    el.disabled = true;
+                  }
+                  scope.emailIndex = index;
                 } else if (el.type === "code" && scope.code !== null) {
                   el.value = scope.code.trim().replace(/ |\n|\t|-|_/g,'').toUpperCase();
                   el.disabled = true;
