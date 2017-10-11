@@ -478,7 +478,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             return Plugins.hook("hide-user-send-auth-code", data), data.showUserSendAuthCode;
         }, "sms" === scope.method || "sms-otp" === scope.method) {
             var telInput = angular.element(document.getElementById("input" + scope.telIndex));
-            scope.isValidTel = telInput.intlTelInput("isValidNumber"), scope.$watch("login_fields[" + scope.telIndex + "].value", function(newValue, oldValue) {
+            scope.isValidTel = telInput.intlTelInput("isValidNumber"), scope.$watch("telField.value", function(newValue, oldValue) {
                 scope.isValidTel = telInput.intlTelInput("isValidNumber");
             }, !0);
         }
