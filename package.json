@@ -1,6 +1,6 @@
 {
   "name": "agora-gui-common",
-  "version" : "103111.4.0",
+  "version" : "103111.6.0",
   "devDependencies": {
     "grunt": "~0.4",
     "grunt-angular-templates": "~0.5",
@@ -12,7 +12,7 @@
     "grunt-contrib-copy": "~0.5",
     "grunt-contrib-cssmin": "~0.7",
     "grunt-contrib-htmlmin": "~0.1",
-    "grunt-contrib-imagemin": "~0.4",
+    "grunt-contrib-imagemin": "~1.0",
     "grunt-contrib-jshint": "~0.9",
     "grunt-contrib-less": "~0.8",
     "grunt-contrib-uglify": "~0.6",

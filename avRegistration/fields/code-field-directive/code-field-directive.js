@@ -21,12 +21,20 @@ angular.module('avRegistration')
       scope.codePattern = /[abcdefghjklmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789-]{8,9}/;
       var rand_code = '' + _.random(1e12);
       scope.code_id = 'input' + scope.index + rand_code;
-      
+
       scope.showResendAuthCode = function ()
       { 
         var data = {showUserSendAuthCode: true};
         Plugins.hook('hide-user-send-auth-code', data);
         return data.showUserSendAuthCode;
+      };
+
+      scope.isValidTel = function (inputName) {
+        if (!document.getElementById(inputName)) {
+          return false;
+        }
+        var telInput = angular.element(document.getElementById(inputName));
+        return telInput.intlTelInput("isValidNumber");
       };
     }
     return {

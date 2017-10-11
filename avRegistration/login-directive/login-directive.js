@@ -58,6 +58,14 @@ angular.module('avRegistration')
         if (autheventid === adminId) {
             scope.isAdmin = true;
         }
+        
+        function isValidTel(inputName) {
+          if (!document.getElementById(inputName)) {
+            return false;
+          }
+          var telInput = angular.element(document.getElementById(inputName));
+          return telInput.intlTelInput("isValidNumber");
+        }
 
         scope.resendAuthCode = function(field) {
           if (scope.sendingData || !_.contains(["sms", "sms-otp"], scope.method)) {
@@ -68,7 +76,7 @@ angular.module('avRegistration')
             return;
           }
 
-          if (scope.form["input" + scope.telIndex].$invalid) {
+          if (!isValidTel("input" + scope.telIndex)) {
             return;
           }
 
