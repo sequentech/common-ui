@@ -37,7 +37,7 @@ angular.module('avRegistration')
           function (newValue, oldValue) {
             scope.isValidTel = telInput.intlTelInput("isValidNumber");
           },
-                     true);
+          true);
       }
     }
     return {
