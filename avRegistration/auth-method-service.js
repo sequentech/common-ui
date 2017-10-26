@@ -382,6 +382,41 @@ angular.module('avRegistration')
             });
         };
 
+        authmethod.getUserDraft = function () {
+            if (!authmethod.isLoggedIn()) {
+              var data = {
+                success: function () { return data; },
+                error: function (func) {
+                  setTimeout(function() {
+                    func({message:"not-logged-in"});
+                  }, 0);
+                  return data;
+                }
+              };
+              return data;
+            }
+            return $http.get(backendUrl + 'user/draft/', {});
+        };
+
+        authmethod.uploadUserDraft = function (draft) {
+            if (!authmethod.isLoggedIn()) {
+              var data = {
+                success: function () { return data; },
+                error: function (func) {
+                  setTimeout(function() {
+                    func({message:"not-logged-in"});
+                  }, 0);
+                  return data;
+                }
+              };
+              return data;
+            }
+            var data = {
+              'draft_election': draft
+            };
+            return $http.post(backendUrl + 'user/draft/', data);
+        };
+
         return authmethod;
     });
 
