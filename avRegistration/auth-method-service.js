@@ -411,10 +411,10 @@ angular.module('avRegistration')
               };
               return data;
             }
-            var data = {
+            var draft_data = {
               'draft_election': draft
             };
-            return $http.post(backendUrl + 'user/draft/', data);
+            return $http.post(backendUrl + 'user/draft/', draft_data);
         };
 
         return authmethod;
