@@ -216,6 +216,43 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         $cookies["isAdmin" + postfix] && authmethod.ping().success(function(data) {
             $cookies["auth" + postfix] = data["auth-token"], authmethod.setAuth($cookies["auth" + postfix], $cookies["isAdmin" + postfix], autheventid);
         });
+    }, authmethod.getUserDraft = function() {
+        if (!authmethod.isLoggedIn()) {
+            var data = {
+                success: function() {
+                    return data;
+                },
+                error: function(func) {
+                    return setTimeout(function() {
+                        func({
+                            message: "not-logged-in"
+                        });
+                    }, 0), data;
+                }
+            };
+            return data;
+        }
+        return $http.get(backendUrl + "user/draft/", {});
+    }, authmethod.uploadUserDraft = function(draft) {
+        if (!authmethod.isLoggedIn()) {
+            var data = {
+                success: function() {
+                    return data;
+                },
+                error: function(func) {
+                    return setTimeout(function() {
+                        func({
+                            message: "not-logged-in"
+                        });
+                    }, 0), data;
+                }
+            };
+            return data;
+        }
+        var draft_data = {
+            draft_election: draft
+        };
+        return $http.post(backendUrl + "user/draft/", draft_data);
     }, authmethod;
 } ]), angular.module("avRegistration").controller("LoginController", [ "$scope", "$stateParams", "$filter", "ConfigService", "$i18next", function($scope, $stateParams, $filter, ConfigService, $i18next) {
     $scope.event_id = $stateParams.id, $scope.code = $stateParams.code, $scope.email = $stateParams.email;
