@@ -78,7 +78,7 @@ angular.module('avRegistration')
         /**
          * @returns an activity page
          */
-        authmethod.getActivity = function(eid, page, size, filterOptions, filteredStr, receiver_id)
+        authmethod.getActivity = function(eid, page, size, filterOptions, filterStr, receiver_id)
         {
             var params = {};
             var url = backendUrl + 'auth-event/' + eid + '/activity/';
