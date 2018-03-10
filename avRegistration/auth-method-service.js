@@ -95,7 +95,10 @@ angular.module('avRegistration')
 
             if (!angular.isNumber(page)) {
                 params.page = 1;
+            } else {
+                params.page = parseInt(page);
             }
+
 
             if (angular.isNumber(receiver_id)) {
                 params.receiver_id = receiver_id;
@@ -103,7 +106,7 @@ angular.module('avRegistration')
 
             _.extend(params, filterOptions);
             if (filterStr && filterStr.length > 0) {
-            params.filter = filterStr;
+                params.filter = filterStr;
             }
 
             // 2. generate request
