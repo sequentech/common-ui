@@ -25,7 +25,7 @@ angular.module('avRegistration')
         authmethod.captcha_image_url = "";
         authmethod.captcha_status = "";
         authmethod.admin = false;
-        
+
         authmethod.getAuthevent = function() {
           var adminId = ConfigService.freeAuthId + '';
           var href = $location.path();
@@ -34,7 +34,7 @@ angular.module('avRegistration')
           var adminMatch = href.match(/^\/admin\//);
           var boothMatch = href.match(/^\/booth\/([0-9]+)\//);
           var electionsMatch = href.match(/^\/(elections|election)\/([0-9]+)\//);
-          
+
           if (_.isArray(adminMatch)) {
             authevent = adminId;
           } else if(_.isArray(boothMatch) && 2 === boothMatch.length) {
@@ -58,7 +58,7 @@ angular.module('avRegistration')
             var eid = authevent || authId;
             return $http.post(backendUrl + 'auth-event/'+eid+'/register/', data);
         };
-        
+
         authmethod.getUserInfoExtra = function() {
             if (!authmethod.isLoggedIn()) {
               var data = {
@@ -74,6 +74,45 @@ angular.module('avRegistration')
             }
             return $http.get(backendUrl + 'user/extra/', {});
         };
+
+        /**
+         * @returns an activity page
+         */
+        authmethod.getActivity = function(eid, page, size, filterOptions, filterStr, receiver_id)
+        {
+            var params = {};
+            var url = backendUrl + 'auth-event/' + eid + '/activity/';
+
+            // 1. initialize GET params
+
+            if (size === 'max') {
+              params.size = 500;
+            } else if (angular.isNumber(size) && size > 0 && size < 500) {
+              params.size = parseInt(size);
+            } else {
+              params.size = 10;
+            }
+
+            if (!angular.isNumber(page)) {
+                params.page = 1;
+            } else {
+                params.page = parseInt(page);
+            }
+
+
+            if (angular.isNumber(receiver_id)) {
+                params.receiver_id = receiver_id;
+            }
+
+            _.extend(params, filterOptions);
+            if (filterStr && filterStr.length > 0) {
+                params.filter = filterStr;
+            }
+
+            // 2. generate request
+            return $http.get(url, {params: params})
+        };
+
 
         authmethod.updateUserExtra = function (extra) {
             if (!authmethod.isLoggedIn()) {
