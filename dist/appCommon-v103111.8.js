@@ -34,7 +34,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
     }, authmethod.getActivity = function(eid, page, size, filterOptions, filterStr, receiver_id) {
         var params = {}, url = backendUrl + "auth-event/" + eid + "/activity/";
         return "max" === size ? params.size = 500 : angular.isNumber(size) && size > 0 && 500 > size ? params.size = parseInt(size) : params.size = 10, 
-        angular.isNumber(page) || (params.page = 1), angular.isNumber(receiver_id) && (params.receiver_id = receiver_id), 
+        angular.isNumber(page) ? params.page = parseInt(page) : params.page = 1, angular.isNumber(receiver_id) && (params.receiver_id = receiver_id), 
         _.extend(params, filterOptions), filterStr && filterStr.length > 0 && (params.filter = filterStr), 
         $http.get(url, {
             params: params
