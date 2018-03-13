@@ -110,7 +110,7 @@ angular.module('avRegistration')
             }
 
             // 2. generate request
-            return $http.get(url, {params: params})
+            return $http.get(url, {params: params});
         };
 
 
