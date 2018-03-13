@@ -390,15 +390,15 @@ angular.module('avRegistration')
             return $http.post(url, data);
         };
 
-        authmethod.activateUsersIds = function(eid, election, user_ids) {
+        authmethod.activateUsersIds = function(eid, election, user_ids, comment) {
             var url = backendUrl + 'auth-event/'+eid+'/census/activate/';
-            var data = {"user-ids": user_ids};
+            var data = {"user-ids": user_ids, "comment": comment};
             return $http.post(url, data);
         };
 
-        authmethod.deactivateUsersIds = function(eid, election, user_ids) {
+        authmethod.deactivateUsersIds = function(eid, election, user_ids, comment) {
             var url = backendUrl + 'auth-event/'+eid+'/census/deactivate/';
-            var data = {"user-ids": user_ids};
+            var data = {"user-ids": user_ids, "comment": comment};
             return $http.post(url, data);
         };
 
