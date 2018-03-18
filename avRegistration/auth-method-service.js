@@ -113,6 +113,39 @@ angular.module('avRegistration')
             return $http.get(url, {params: params});
         };
 
+        /**
+         * @returns a page of ballot boxes
+         */
+        authmethod.getBallotBoxes = function(eid, page, size, filterOptions, filterStr)
+        {
+            var params = {};
+            var url = backendUrl + 'auth-event/' + eid + '/ballot-box/';
+
+            // 1. initialize GET params
+
+            if (size === 'max') {
+              params.size = 500;
+            } else if (angular.isNumber(size) && size > 0 && size < 500) {
+              params.size = parseInt(size);
+            } else {
+              params.size = 10;
+            }
+
+            if (!angular.isNumber(page)) {
+                params.page = 1;
+            } else {
+                params.page = parseInt(page);
+            }
+
+            _.extend(params, filterOptions);
+            if (filterStr && filterStr.length > 0) {
+                params.filter = filterStr;
+            }
+
+            // 2. generate request
+            return $http.get(url, {params: params})
+        };
+
 
         authmethod.updateUserExtra = function (extra) {
             if (!authmethod.isLoggedIn()) {
