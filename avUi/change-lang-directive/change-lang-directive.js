@@ -24,6 +24,7 @@ angular.module('avUi')
   .directive('avChangeLang', function($i18next, ipCookie, angularLoad, amMoment, ConfigService) {
     function link(scope, element, attrs) {
       scope.deflang = window.i18n.lng();
+      angular.element('#ng-app').attr('lang', scope.deflang);
       scope.langs =  $i18next.options.lngWhitelist;
 
       // Changes i18n to a specific language, setting also a cookie for
@@ -38,6 +39,7 @@ angular.module('avUi')
           lang,
           _.extend({expires: 360}, ConfigService.i18nextCookieOptions));
         scope.deflang = lang;
+        angular.element('#ng-app').attr('lang', scope.deflang);
 
         // async load moment i18n
         angularLoad
