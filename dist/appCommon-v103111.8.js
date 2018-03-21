@@ -46,6 +46,13 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         filterStr && filterStr.length > 0 && (params.filter = filterStr), $http.get(url, {
             params: params
         });
+    }, authmethod.createBallotBox = function(eid, name) {
+        var params = {
+            name: name
+        }, url = backendUrl + "auth-event/" + eid + "/ballot-box/";
+        return $http.post(url, {
+            params: params
+        });
     }, authmethod.updateUserExtra = function(extra) {
         if (!authmethod.isLoggedIn()) {
             var data = {
