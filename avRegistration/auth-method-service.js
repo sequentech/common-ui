@@ -146,6 +146,16 @@ angular.module('avRegistration')
             return $http.get(url, {params: params})
         };
 
+        /**
+         * @returns the http request
+         */
+        authmethod.createBallotBox = function(eid, name)
+        {
+            var params = {name: name};
+            var url = backendUrl + 'auth-event/' + eid + '/ballot-box/';
+
+            return $http.post(url, {params: params})
+        };
 
         authmethod.updateUserExtra = function (extra) {
             if (!authmethod.isLoggedIn()) {
