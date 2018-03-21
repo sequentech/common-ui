@@ -1,0 +1,17 @@
+<div class="row">
+    <label class="control-label col-sm-4" ng-if="!label" ng-i18next="avRegistration.dateLabel"></label>
+    <label class="control-label col-sm-4" ng-if="label" ng-bind="label"></label>
+    <div class="col-sm-8">
+        <select ng-model="date.year" ng-change="onChange()">
+           <option ng-selected="date.year == item" ng-repeat="item in years" ng-value="item">{{item}}</option> 
+        </select>
+
+        <select ng-model="date.month" ng-change="onChange()">
+           <option ng-selected="date.month == item" ng-repeat="item in months" ng-value="item">{{item}}</option> 
+        </select>
+
+        <select ng-model="date.day" ng-change="onChange()">
+           <option ng-selected="date.day == item" ng-repeat="item in getDays()" ng-value="item">{{item}}</option> 
+        </select>
+    </div>
+</div>
