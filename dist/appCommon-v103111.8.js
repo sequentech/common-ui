@@ -50,9 +50,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         var params = {
             name: name
         }, url = backendUrl + "auth-event/" + eid + "/ballot-box/";
-        return $http.post(url, {
-            params: params
-        });
+        return $http.post(url, params);
     }, authmethod.updateUserExtra = function(extra) {
         if (!authmethod.isLoggedIn()) {
             var data = {
