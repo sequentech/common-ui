@@ -154,7 +154,7 @@ angular.module('avRegistration')
             var params = {name: name};
             var url = backendUrl + 'auth-event/' + eid + '/ballot-box/';
 
-            return $http.post(url, {params: params})
+            return $http.post(url, params)
         };
 
         authmethod.updateUserExtra = function (extra) {
