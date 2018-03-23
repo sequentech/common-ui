@@ -157,6 +157,16 @@ angular.module('avRegistration')
             return $http.post(url, params)
         };
 
+        /**
+         * @returns the http request
+         */
+        authmethod.deleteBallotBox = function(eid, ballot_box_id)
+        {
+            var url = backendUrl + 'auth-event/' + eid + '/ballot-box/' + ballot_box_id + "/delete/";
+
+            return $http.delete(url, {})
+        };
+
         authmethod.updateUserExtra = function (extra) {
             if (!authmethod.isLoggedIn()) {
               var data = {
