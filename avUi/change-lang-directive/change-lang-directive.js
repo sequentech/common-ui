@@ -21,22 +21,11 @@
  * <li class="dropdown" av-change-lang></li>
  */
 angular.module('avUi')
-  .directive('avChangeLang', function($i18next, $timeout, ipCookie, angularLoad, amMoment, ConfigService) {
+  .directive('avChangeLang', function($i18next, ipCookie, angularLoad, amMoment, ConfigService) {
     function link(scope, element, attrs) {
       scope.deflang = window.i18n.lng();
       angular.element('#ng-app').attr('lang', scope.deflang);
       scope.langs =  $i18next.options.lngWhitelist;
-
-      scope.triggerClick = function ($event){
-        switch ($event.which) {
-          case 13:              // ENTER
-          case 32: {            // SPACE
-            $timeout(function() {$event.currentTarget.click();},0);
-          }
-        }
-        $event.stopPropagation();
-        return false;
-      };
 
       // Changes i18n to a specific language, setting also a cookie for
       // remembering it, and updating all the translations instantly.
