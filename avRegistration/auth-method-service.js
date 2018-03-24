@@ -186,6 +186,16 @@ angular.module('avRegistration')
         /**
          * @returns the http request
          */
+        authmethod.deleteTallySheet = function(eid, ballot_box_id, tally_sheet_id)
+        {
+            var url = backendUrl + 'auth-event/' + eid + '/ballot-box/' + ballot_box_id + '/tally-sheet/' + tally_sheet_id + "/";
+
+            return $http.delete(url, {})
+        };
+
+        /**
+         * @returns the http request
+         */
         authmethod.deleteBallotBox = function(eid, ballot_box_id)
         {
             var url = backendUrl + 'auth-event/' + eid + '/ballot-box/' + ballot_box_id + "/delete/";
