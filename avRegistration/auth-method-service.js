@@ -143,7 +143,7 @@ angular.module('avRegistration')
             }
 
             // 2. generate request
-            return $http.get(url, {params: params})
+            return $http.get(url, {params: params});
         };
 
         /**
@@ -154,7 +154,17 @@ angular.module('avRegistration')
             var params = {name: name};
             var url = backendUrl + 'auth-event/' + eid + '/ballot-box/';
 
-            return $http.post(url, params)
+            return $http.post(url, params);
+        };
+
+        /**
+         * @returns the http request
+         */
+        authmethod.postTallySheet = function(eid, ballot_box_id, data)
+        {
+            var url = backendUrl + 'auth-event/' + eid + '/ballot-box/' + ballot_box_id + '/tally-sheet/';
+
+            return $http.post(url, data);
         };
 
         /**
