@@ -167,6 +167,22 @@ angular.module('avRegistration')
             return $http.post(url, data);
         };
 
+
+        /**
+         * @returns the http request
+         */
+        authmethod.getTallySheet = function(eid, ballot_box_id, tally_sheet_id)
+        {
+            var url = null;
+            if (!tally_sheet_id) {
+                url = backendUrl + 'auth-event/' + eid + '/ballot-box/' + ballot_box_id + '/tally-sheet/';
+            } else {
+              url = backendUrl + 'auth-event/' + eid + '/ballot-box/' + ballot_box_id + '/tally-sheet/' + tally_sheet_id + '/';
+            }
+
+            return $http.get(url);
+        };
+
         /**
          * @returns the http request
          */
