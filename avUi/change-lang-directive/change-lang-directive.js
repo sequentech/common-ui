@@ -21,7 +21,7 @@
  * <li class="dropdown" av-change-lang></li>
  */
 angular.module('avUi')
-  .directive('avChangeLang', function($i18next, $timeout ipCookie, angularLoad, amMoment, ConfigService) {
+  .directive('avChangeLang', function($i18next, $timeout, ipCookie, angularLoad, amMoment, ConfigService) {
     function link(scope, element, attrs) {
       scope.deflang = window.i18n.lng();
       angular.element('#ng-app').attr('lang', scope.deflang);
