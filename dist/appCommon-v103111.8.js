@@ -1165,7 +1165,7 @@ angular.module("jm.i18next").config([ "$i18nextProvider", "ConfigServiceProvider
     });
 } ]), angular.module("agora-gui-common").directive("ngSpaceClick", [ "$timeout", function($timeout) {
     return function(scope, element, attrs) {
-        element.bind("keydown keypress", function(event) {
+        element.bind("keydown", function(event) {
             switch (event.which) {
               case 13:
               case 32:
