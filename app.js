@@ -88,7 +88,7 @@ This directive will trigger a click if the user presses space or enter
  */
 angular.module('agora-gui-common').directive('ngSpaceClick', function ($timeout) {
   return function (scope, element, attrs) {
-    element.bind("keydown keypress", function (event) {
+    element.bind("keydown", function (event) {
       switch (event.which) {
         case 13:              // ENTER
         case 32: {            // SPACE
