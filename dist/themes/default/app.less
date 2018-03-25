@@ -27,7 +27,7 @@
 @link-color: @av-secondary;
 @text-success: @av-secondary-contrast;
 @state-success-text: @av-secondary;
-
+@av-warning-color: #515151;
 
 
 /* Admin Config */
@@ -52,7 +52,11 @@
 }
 
 .modal-dialog .modal-header h4 {
-  color: @av-primary;
+  color: @av-warning-color;
+}
+
+.btn-warning, .btn-warning:hover {
+  color: @av-warning-color;
 }
 
 .btn-success {
