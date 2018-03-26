@@ -35,7 +35,6 @@
 		"noCodeReceivedQuestion": "¿Todavía no has recibido el código?",
 		"sendCodeAgain": "Volver a enviar el código",
 		"emailLabel": "Correo electrónico",
-		"dateLabel": "Fecha",
 		"telLabel": " Número de teléfono móvil",
 		"telInvalid": " Número de teléfono inválido. Ejemplo de número válido: 666666666",
 		"telPlaceholder": "Ejemplo: 666666666",

@@ -20,6 +20,7 @@ angular.module('avRegistration')
     function link(scope, element, attrs) {
         scope.years = [];
         scope.months = [];
+        scope.field = scope.$parent.field;
 
         var now = new Date();
         scope.date = {
