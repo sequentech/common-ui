@@ -265,6 +265,19 @@ angular.module('avRegistration')
             });
           } else if (viewEventData.auth_method === "user-and-password") {
             fields.push({
+              "name": "username",
+              "type": "text",
+              "required": true,
+              "required_on_authentication": true
+            });
+            fields.push({
+              "name": "password",
+              "type": "password",
+              "required": true,
+              "required_on_authentication": true
+            });
+          } else if (viewEventData.auth_method === "email-and-password") {
+            fields.push({
               "name": "email",
               "type": "email",
               "required": true,
