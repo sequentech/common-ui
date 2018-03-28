@@ -113,6 +113,95 @@ angular.module('avRegistration')
             return $http.get(url, {params: params});
         };
 
+        /**
+         * @returns a page of ballot boxes
+         */
+        authmethod.getBallotBoxes = function(eid, page, size, filterOptions, filterStr)
+        {
+            var params = {};
+            var url = backendUrl + 'auth-event/' + eid + '/ballot-box/';
+
+            // 1. initialize GET params
+
+            if (size === 'max') {
+              params.size = 500;
+            } else if (angular.isNumber(size) && size > 0 && size < 500) {
+              params.size = parseInt(size);
+            } else {
+              params.size = 10;
+            }
+
+            if (!angular.isNumber(page)) {
+                params.page = 1;
+            } else {
+                params.page = parseInt(page);
+            }
+
+            _.extend(params, filterOptions);
+            if (filterStr && filterStr.length > 0) {
+                params.filter = filterStr;
+            }
+
+            // 2. generate request
+            return $http.get(url, {params: params});
+        };
+
+        /**
+         * @returns the http request
+         */
+        authmethod.createBallotBox = function(eid, name)
+        {
+            var params = {name: name};
+            var url = backendUrl + 'auth-event/' + eid + '/ballot-box/';
+
+            return $http.post(url, params);
+        };
+
+        /**
+         * @returns the http request
+         */
+        authmethod.postTallySheet = function(eid, ballot_box_id, data)
+        {
+            var url = backendUrl + 'auth-event/' + eid + '/ballot-box/' + ballot_box_id + '/tally-sheet/';
+
+            return $http.post(url, data);
+        };
+
+
+        /**
+         * @returns the http request
+         */
+        authmethod.getTallySheet = function(eid, ballot_box_id, tally_sheet_id)
+        {
+            var url = null;
+            if (!tally_sheet_id) {
+                url = backendUrl + 'auth-event/' + eid + '/ballot-box/' + ballot_box_id + '/tally-sheet/';
+            } else {
+              url = backendUrl + 'auth-event/' + eid + '/ballot-box/' + ballot_box_id + '/tally-sheet/' + tally_sheet_id + '/';
+            }
+
+            return $http.get(url);
+        };
+
+        /**
+         * @returns the http request
+         */
+        authmethod.deleteTallySheet = function(eid, ballot_box_id, tally_sheet_id)
+        {
+            var url = backendUrl + 'auth-event/' + eid + '/ballot-box/' + ballot_box_id + '/tally-sheet/' + tally_sheet_id + "/";
+
+            return $http.delete(url, {})
+        };
+
+        /**
+         * @returns the http request
+         */
+        authmethod.deleteBallotBox = function(eid, ballot_box_id)
+        {
+            var url = backendUrl + 'auth-event/' + eid + '/ballot-box/' + ballot_box_id + "/delete/";
+
+            return $http.delete(url, {})
+        };
 
         authmethod.updateUserExtra = function (extra) {
             if (!authmethod.isLoggedIn()) {
