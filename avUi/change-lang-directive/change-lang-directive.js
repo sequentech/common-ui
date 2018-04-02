@@ -33,10 +33,14 @@ angular.module('avUi')
       scope.changeLang = function(lang) {
         $i18next.options.lng = lang;
         console.log("setting cookie");
+        const cookieConf = {
+          expires: 360,
+          path: ConfigService.base
+        };
         ipCookie(
           "lang",
           lang,
-          _.extend({expires: 360}, ConfigService.i18nextCookieOptions));
+          _.extend(cookieConf, ConfigService.i18nextCookieOptions));
         scope.deflang = lang;
 
         // async load moment i18n
