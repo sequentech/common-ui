@@ -780,7 +780,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             $i18next.options.lng = lang, console.log("setting cookie");
             var cookieConf = {
                 expires: 360,
-                path: ConfigService.base
+                path: "/"
             };
             ipCookie("lang", lang, _.extend(cookieConf, ConfigService.i18nextCookieOptions)), 
             scope.deflang = lang, angularLoad.loadScript(ConfigService.base + "/locales/moment/" + lang + ".js").then(function() {

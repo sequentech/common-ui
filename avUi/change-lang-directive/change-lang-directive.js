@@ -35,7 +35,7 @@ angular.module('avUi')
         console.log("setting cookie");
         var cookieConf = {
           expires: 360,
-          path: ConfigService.base
+          path: "/"
         };
         ipCookie(
           "lang",
