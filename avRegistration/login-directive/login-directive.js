@@ -16,19 +16,25 @@
 **/
 
 angular.module('avRegistration')
-  .directive('avLogin', function(Authmethod,
-                                 StateDataService,
-                                 $parse,
-                                 $state,
-                                 $location,
-                                 $cookies,
-                                 $i18next,
-                                 $window,
-                                 $timeout,
-                                 ConfigService,
-                                 Patterns) {
-    // we use it as something similar to a controller here
-    function link(scope, element, attrs) {
+  .directive(
+    'avLogin',
+    function(
+      Authmethod,
+      StateDataService,
+      $parse,
+      $state,
+      $location,
+      $cookies,
+      $i18next,
+      $window,
+      $timeout,
+      ConfigService,
+      Patterns)
+    {
+      // we use it as something similar to a controller here
+      function link(scope, element, attrs)
+      {
+        scope.isCensusQuery = attrs.isCensusQuery;
         var adminId = ConfigService.freeAuthId + '';
         var autheventid = attrs.eventId;
         scope.orgName = ConfigService.organization.orgName;
@@ -46,8 +52,9 @@ angular.module('avRegistration')
         scope.stateData = StateDataService.getData();
 
         scope.signupLink = ConfigService.signupLink;
-        
+
         scope.allowUserResend = false;
+        scope.censusQuery = "not-sent";
 
         scope.code = null;
         if (attrs.code && attrs.code.length > 0) {
@@ -62,7 +69,7 @@ angular.module('avRegistration')
         if (autheventid === adminId) {
             scope.isAdmin = true;
         }
-        
+
         function isValidTel(inputName) {
           if (!document.getElementById(inputName)) {
             return false;
@@ -70,7 +77,7 @@ angular.module('avRegistration')
           var telInput = angular.element(document.getElementById(inputName));
           return telInput.intlTelInput("isValidNumber");
         }
-        
+
         function isValidEmail(email) {
           var pattern = Patterns.get('email');
           return null !== email.match(pattern);
@@ -133,6 +140,36 @@ angular.module('avRegistration')
 
         scope.sendingDataTimeout = function () {
           scope.sendingData = false;
+        };
+
+        scope.checkCensus = function(valid) {
+            if (!valid) {
+                return;
+            }
+
+            if (scope.sendingData) {
+                return;
+            }
+            scope.censusQuery = "querying";
+
+            var data = {
+                'captcha_code': Authmethod.captcha_code,
+            };
+            _.each(scope.login_fields, function (field) {
+              data[field.name] = field.value;
+            });
+
+            scope.sendingData = true;
+            Authmethod.censusQuery(data, autheventid)
+                .success(function(rcvData) {
+                    scope.sendingData = false;
+                    scope.censusQueryData = rcvData;
+                    scope.censusQuery = "success";
+                })
+                .error(function(error) {
+                    scope.sendingData = false;
+                    scope.censusQuery = "fail";
+                });
         };
 
         scope.loginUser = function(valid) {
@@ -214,7 +251,11 @@ angular.module('avRegistration')
             scope.method = authevent['auth_method'];
             scope.name = authevent['name'];
             scope.registrationAllowed = (authevent['census'] === 'open');
-            scope.login_fields = Authmethod.getLoginFields(authevent);
+            if (!scope.isCensusQuery) {
+              scope.login_fields = Authmethod.getLoginFields(authevent);
+            } else {
+              scope.login_fields = Authmethod.getCensusQueryFields(authevent);
+            }
             scope.telIndex = -1;
             scope.emailIndex = -1;
             scope.telField = null;
@@ -227,7 +268,7 @@ angular.module('avRegistration')
               if (_.isArray(adminMatch)) {
                 ret = true;
               } else if (_.isArray(electionsMatch) && 3 === electionsMatch.length) {
-                ret = (_.isObject(authevent.auth_method_config) && 
+                ret = (_.isObject(authevent.auth_method_config) &&
                        _.isObject(authevent.auth_method_config.config) &&
                        true === authevent.auth_method_config.config.allow_user_resend);
               }

@@ -20,6 +20,11 @@
 	},
 	"avRegistration": {
 		"loginHeader": "Login to your __name__ account",
+		"censusQueryHeader": "Check if you are in the census",
+		"checkCensusButton": "Check census",
+		"censusQuerying": "Please wait..",
+		"censusSuccess": "You are inside the census",
+		"censusFail": "Not found in the census",
 		"helpRegisterForm": "To be able to vote, you need to register first. Some fields are required, so please look carefully at the help information.",
 		"helpAdminRegisterForm": "To be able to create elections, you need to register first. Please look carefully at the help information.",
 		"registerFormHelpTitle": "Registering to vote",

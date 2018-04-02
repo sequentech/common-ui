@@ -120,6 +120,9 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
     }, authmethod.login = function(data, authevent) {
         var eid = authevent || authId;
         return delete data.authevent, $http.post(backendUrl + "auth-event/" + eid + "/authenticate/", data);
+    }, authmethod.censusQuery = function(data, authevent) {
+        var eid = authevent || authId;
+        return delete data.authevent, $http.post(backendUrl + "auth-event/" + eid + "/census/public-query/", data);
     }, authmethod.resendAuthCode = function(data, eid) {
         return $http.post(backendUrl + "auth-event/" + eid + "/resend_auth_code/", data);
     }, authmethod.getPerm = function(perm, object_type, object_id) {
@@ -194,6 +197,11 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             break;
         }
         return fields;
+    }, authmethod.getCensusQueryFields = function(viewEventData) {
+        var fields = angular.copy(viewEventData.extra_fields);
+        return fields = _.filter(fields, function(field) {
+            return field.required_on_authentication;
+        });
     }, authmethod.getLoginFields = function(viewEventData) {
         var fields = authmethod.getRegisterFields(viewEventData);
         "sms" === viewEventData.auth_method || "email" === viewEventData.auth_method ? fields.push({
@@ -312,13 +320,14 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             var pattern = Patterns.get("email");
             return null !== email.match(pattern);
         }
+        scope.isCensusQuery = attrs.isCensusQuery;
         var adminId = ConfigService.freeAuthId + "", autheventid = attrs.eventId;
         scope.orgName = ConfigService.organization.orgName, $cookies["authevent_" + adminId] && $cookies["authevent_" + adminId] === adminId && autheventid === adminId && $cookies["auth_authevent_" + adminId] && ($window.location.href = "/admin/elections"), 
         scope.sendingData = !1, scope.currentFormStep = 0, scope.stateData = StateDataService.getData(), 
-        scope.signupLink = ConfigService.signupLink, scope.allowUserResend = !1, scope.code = null, 
-        attrs.code && attrs.code.length > 0 && (scope.code = attrs.code), scope.email = null, 
-        attrs.email && attrs.email.length > 0 && (scope.email = attrs.email), scope.isAdmin = !1, 
-        autheventid === adminId && (scope.isAdmin = !0), scope.resendAuthCode = function(field) {
+        scope.signupLink = ConfigService.signupLink, scope.allowUserResend = !1, scope.censusQuery = "not-sent", 
+        scope.code = null, attrs.code && attrs.code.length > 0 && (scope.code = attrs.code), 
+        scope.email = null, attrs.email && attrs.email.length > 0 && (scope.email = attrs.email), 
+        scope.isAdmin = !1, autheventid === adminId && (scope.isAdmin = !0), scope.resendAuthCode = function(field) {
             if (!scope.sendingData && _.contains([ "email", "sms", "sms-otp" ], scope.method)) {
                 var data = {};
                 if (_.contains([ "sms", "sms-otp" ], scope.method)) {
@@ -340,6 +349,20 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             }
         }, scope.sendingDataTimeout = function() {
             scope.sendingData = !1;
+        }, scope.checkCensus = function(valid) {
+            if (valid && !scope.sendingData) {
+                scope.censusQuery = "querying";
+                var data = {
+                    captcha_code: Authmethod.captcha_code
+                };
+                _.each(scope.login_fields, function(field) {
+                    data[field.name] = field.value;
+                }), scope.sendingData = !0, Authmethod.censusQuery(data, autheventid).success(function(rcvData) {
+                    scope.sendingData = !1, scope.censusQueryData = rcvData, scope.censusQuery = "success";
+                }).error(function(error) {
+                    scope.sendingData = !1, scope.censusQuery = "fail";
+                });
+            }
         }, scope.loginUser = function(valid) {
             if (valid && !scope.sendingData) {
                 if ("sms-otp" === scope.method && 0 === scope.currentFormStep) return void scope.resendAuthCode();
@@ -375,8 +398,8 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             }
         }, scope.apply = function(authevent) {
             scope.method = authevent.auth_method, scope.name = authevent.name, scope.registrationAllowed = "open" === authevent.census, 
-            scope.login_fields = Authmethod.getLoginFields(authevent), scope.telIndex = -1, 
-            scope.emailIndex = -1, scope.telField = null, scope.allowUserResend = function() {
+            scope.isCensusQuery ? scope.login_fields = Authmethod.getCensusQueryFields(authevent) : scope.login_fields = Authmethod.getLoginFields(authevent), 
+            scope.telIndex = -1, scope.emailIndex = -1, scope.telField = null, scope.allowUserResend = function() {
                 var ret = !1, href = $location.path(), adminMatch = href.match(/^\/admin\//), electionsMatch = href.match(/^\/(elections|election)\/([0-9]+)\//);
                 return _.isArray(adminMatch) ? ret = !0 : _.isArray(electionsMatch) && 3 === electionsMatch.length && (ret = _.isObject(authevent.auth_method_config) && _.isObject(authevent.auth_method_config.config) && !0 === authevent.auth_method_config.config.allow_user_resend), 
                 ret;
@@ -528,10 +551,10 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         };
         var initY = new Date().getFullYear(), i = 0;
         for (i = initY; i >= initY - 130; i--) scope.years.push(i);
-        for (i = 1; i <= 12; i++) scope.months.push(i);
+        for (i = 1; 12 >= i; i++) scope.months.push(i);
         scope.getDays = function() {
             var days = [], ndays = new Date(scope.date.year, scope.date.month, 0).getDate();
-            for (i = 1; i <= ndays; i++) days.push(i);
+            for (i = 1; ndays >= i; i++) days.push(i);
             return days;
         }, scope.onChange = function() {
             scope.ngModel = scope.date.year + "-" + scope.date.month + "-" + scope.date.day;
@@ -1270,7 +1293,7 @@ angular.module("jm.i18next").config([ "$i18nextProvider", "ConfigServiceProvider
     $templateCache.put("avRegistration/fields/textarea-field-directive/textarea-field-directive.html", '<div class="form-group"><div class="col-sm-offset-2 col-sm-10"><textarea id="{{index}}Text" rows="5" cols="60" tabindex="{{index}}" readonly>{{field.name}}</textarea><p class="help-block" ng-if="field.help">{{field.help}}</p></div></div>'), 
     $templateCache.put("avRegistration/loading.html", '<div avb-busy><p ng-i18next="avRegistration.loadingRegistration"></p></div>'), 
     $templateCache.put("avRegistration/login-controller/login-controller.html", '<div class="col-xs-12 top-section"><div class="pad"><div av-login event-id="{{event_id}}" code="{{code}}" email="{{email}}"></div></div></div>'), 
-    $templateCache.put("avRegistration/login-directive/login-directive.html", '<div class="container-fluid"><div class="row"><div class="col-sm-12 loginheader"><h2 class="tex-center" ng-i18next="[i18next]({name: orgName})avRegistration.loginHeader"></h2></div><div class="col-sm-6"><form name="form" id="loginForm" role="form" class="form-horizontal"><div ng-repeat="field in login_fields" avr-field index="{{$index+1}}" ng-if="field.steps === undefined || field.steps.indexOf(currentFormStep) !== -1"></div><div class="col-sm-offset-4 col-sm-8 button-group"><div class="input-error"><div class="error text-danger" ng-if="error">{{ error }}</div></div><div class="input-warn"><span class="text-warning" ng-if="!form.$valid || sendingData" ng-i18next>avRegistration.fillValidFormText</span></div><button type="submit" class="btn btn-block btn-success" ng-i18next="avRegistration.loginButton" ng-click="loginUser(form.$valid)" tabindex="{{login_fields.length+1}}" ng-disabled="!form.$valid || sendingData"></button></div></form></div><div class="col-sm-5 col-sm-offset-1 hidden-xs" ng-if="registrationAllowed"><h3 class="help-h3" ng-i18next="avRegistration.notRegisteredYet"></h3><p><a ng-if="!isAdmin" href="#/election/{{election.id}}/public/register" ng-i18next="avRegistration.registerHere" ng-click="goSignup()" tabindex="{{login_fields.length+2}}"></a><br><a ng-if="isAdmin" href="{{ signupLink }}" ng-i18next="avRegistration.registerHere" tabindex="{{login_fields.length+2}}"></a><br><span ng-i18next="avRegistration.fewMinutes"></span></p></div></div></div>'), 
+    $templateCache.put("avRegistration/login-directive/login-directive.html", '<div class="container-fluid"><div class="row"><div class="col-sm-12 loginheader"><h2 class="tex-center" ng-if="!isCensusQuery" ng-i18next="[i18next]({name: orgName})avRegistration.loginHeader"></h2><h2 class="tex-center" ng-if="!!isCensusQuery" ng-i18next="avRegistration.censusQueryHeader"></h2></div><div class="col-sm-6"><form name="form" id="loginForm" role="form" class="form-horizontal"><div ng-repeat="field in login_fields" avr-field index="{{$index+1}}" ng-if="field.steps === undefined || field.steps.indexOf(currentFormStep) !== -1"></div><div class="col-sm-offset-4 col-sm-8 button-group"><div class="input-error" ng-if="!isCensusQuery"><div class="error text-danger" ng-if="error">{{ error }}</div></div><div class="input-warn"><span class="text-warning" ng-if="!form.$valid || sendingData" ng-i18next>avRegistration.fillValidFormText</span></div><div class="input-info" ng-if="isCensusQuery && censusQuery == \'querying\'"><div class="text-info" ng-i18next="avRegistration.censusQuerying"></div></div><div class="input-success" ng-if="isCensusQuery && censusQuery == \'success\'"><div class="success text-success" ng-i18next="avRegistration.censusSuccess"></div></div><div class="input-success" ng-if="isCensusQuery && censusQuery == \'fail\'"><div class="error text-danger" ng-i18next="avRegistration.censusFail"></div></div><button type="submit" class="btn btn-block btn-success" ng-if="!isCensusQuery" ng-i18next="avRegistration.loginButton" ng-click="loginUser(form.$valid)" tabindex="{{login_fields.length+1}}" ng-disabled="!form.$valid || sendingData"></button> <button type="submit" class="btn btn-block btn-success" ng-if="!!isCensusQuery" ng-i18next="avRegistration.checkCensusButton" ng-click="checkCensus(form.$valid)" tabindex="{{login_fields.length+1}}" ng-disabled="!form.$valid || sendingData"></button></div></form></div><div class="col-sm-5 col-sm-offset-1 hidden-xs" ng-if="registrationAllowed && !isCensusQuery"><h3 class="help-h3" ng-i18next="avRegistration.notRegisteredYet"></h3><p><a ng-if="!isAdmin" href="#/election/{{election.id}}/public/register" ng-i18next="avRegistration.registerHere" ng-click="goSignup()" tabindex="{{login_fields.length+2}}"></a><br><a ng-if="isAdmin" href="{{ signupLink }}" ng-i18next="avRegistration.registerHere" tabindex="{{login_fields.length+2}}"></a><br><span ng-i18next="avRegistration.fewMinutes"></span></p></div></div></div>'), 
     $templateCache.put("avRegistration/register-controller/register-controller.html", '<div class="col-xs-12 top-section"><div class="pad"><div av-register event-id="{{event_id}}" code="{{code}}" email="{{email}}"></div></div></div>'), 
     $templateCache.put("avRegistration/register-directive/register-directive.html", '<div class="container"><div class="row"><div class="col-sm-12"><h2 ng-if="!admin" class="registerheader" ng-i18next="avRegistration.registerHeader"></h2><h2 ng-if="admin" class="registerheader" ng-i18next="avRegistration.registerAdminHeader"></h2></div></div><div class="row"><div class="col-sm-6"><div ng-if="method == \'dnie\'"><a type="submit" class="btn btn-block btn-success" ng-i18next="avRegistration.registerButton" ng-href="{{ dnieurl }}/"></a></div><form ng-if="method != \'dnie\'" name="form" id="registerForm" role="form" class="form-horizontal"><div ng-repeat="field in register_fields" avr-field index="{{$index+1}}"></div><div class="col-sm-offset-4 col-sm-8 button-group"><div class="input-error"><div class="error text-danger" ng-if="error" ng-bind-html="error"></div></div><div class="input-warn"><span class="text-warning" ng-if="!form.$valid || sendingData" ng-i18next>avRegistration.fillValidFormText</span></div><button type="submit" class="btn btn-block btn-success" ng-i18next="avRegistration.registerButton" ng-click="signUp(form.$valid)" tabindex="{{register_fields.length+1}}" ng-disabled="!form.$valid || sendingData"></button></div></form></div><div class="col-sm-5 col-sm-offset-1 help-sidebar hidden-xs"><span><h3 class="help-h3" ng-i18next="avRegistration.registerAdminFormHelpTitle"></h3><p ng-i18next>avRegistration.helpAdminRegisterForm</p></span> <span><p ng-if="!admin" ng-i18next>avRegistration.helpRegisterForm</p><h3 class="help-h3" ng-i18next="avRegistration.alreadyRegistered"></h3><p ng-i18next>[html]avRegistration.helpAlreadyRegisteredForm</p><a href="" ng-click="goLogin($event)" ng-i18next="avRegistration.loginHere"></a><br></span></div></div></div>'), 
     $templateCache.put("avRegistration/success.html", '<div av-success><p ng-i18next="avRegistration.successRegistration"></p></div>'), 
