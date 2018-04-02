@@ -33,7 +33,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         return $http.get(backendUrl + "user/extra/", {});
     }, authmethod.getActivity = function(eid, page, size, filterOptions, filterStr, receiver_id) {
         var params = {}, url = backendUrl + "auth-event/" + eid + "/activity/";
-        return "max" === size ? params.size = 500 : angular.isNumber(size) && size > 0 && 500 > size ? params.size = parseInt(size) : params.size = 10, 
+        return "max" === size ? params.size = 500 : angular.isNumber(size) && size > 0 && size < 500 ? params.size = parseInt(size) : params.size = 10, 
         angular.isNumber(page) ? params.page = parseInt(page) : params.page = 1, angular.isNumber(receiver_id) && (params.receiver_id = receiver_id), 
         _.extend(params, filterOptions), filterStr && filterStr.length > 0 && (params.filter = filterStr), 
         $http.get(url, {
@@ -41,7 +41,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         });
     }, authmethod.getBallotBoxes = function(eid, page, size, filterOptions, filterStr) {
         var params = {}, url = backendUrl + "auth-event/" + eid + "/ballot-box/";
-        return "max" === size ? params.size = 500 : angular.isNumber(size) && size > 0 && 500 > size ? params.size = parseInt(size) : params.size = 10, 
+        return "max" === size ? params.size = 500 : angular.isNumber(size) && size > 0 && size < 500 ? params.size = parseInt(size) : params.size = 10, 
         angular.isNumber(page) ? params.page = parseInt(page) : params.page = 1, _.extend(params, filterOptions), 
         filterStr && filterStr.length > 0 && (params.filter = filterStr), $http.get(url, {
             params: params
@@ -60,10 +60,10 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         $http.get(url);
     }, authmethod.deleteTallySheet = function(eid, ballot_box_id, tally_sheet_id) {
         var url = backendUrl + "auth-event/" + eid + "/ballot-box/" + ballot_box_id + "/tally-sheet/" + tally_sheet_id + "/";
-        return $http["delete"](url, {});
+        return $http.delete(url, {});
     }, authmethod.deleteBallotBox = function(eid, ballot_box_id) {
         var url = backendUrl + "auth-event/" + eid + "/ballot-box/" + ballot_box_id + "/delete/";
-        return $http["delete"](url, {});
+        return $http.delete(url, {});
     }, authmethod.updateUserExtra = function(extra) {
         if (!authmethod.isLoggedIn()) {
             var data = {
@@ -97,7 +97,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             };
             return data;
         }
-        return "undefined" == typeof userid ? $http.get(backendUrl + "user/", {}) : $http.get(backendUrl + "user/%d" % userid, {});
+        return void 0 === userid ? $http.get(backendUrl + "user/", {}) : $http.get(backendUrl + "user/%d" % userid, {});
     }, authmethod.ping = function() {
         if (!authmethod.isLoggedIn()) {
             var data = {
@@ -153,7 +153,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         }) : $http.get(backendUrl + "auth-event/" + id + "/census/");
     }, authmethod.getRegisterFields = function(viewEventData) {
         var fields = _.filter(angular.copy(viewEventData.extra_fields), function(item) {
-            return !0 === item.required_when_registered ? !1 : !0;
+            return !0 !== item.required_when_registered;
         });
         fields || (fields = []);
         var found = !1;
@@ -312,9 +312,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
 } ]), angular.module("avRegistration").directive("avLogin", [ "Authmethod", "StateDataService", "$parse", "$state", "$location", "$cookies", "$i18next", "$window", "$timeout", "ConfigService", "Patterns", function(Authmethod, StateDataService, $parse, $state, $location, $cookies, $i18next, $window, $timeout, ConfigService, Patterns) {
     function link(scope, element, attrs) {
         function isValidTel(inputName) {
-            if (!document.getElementById(inputName)) return !1;
-            var telInput = angular.element(document.getElementById(inputName));
-            return telInput.intlTelInput("isValidNumber");
+            return !!document.getElementById(inputName) && angular.element(document.getElementById(inputName)).intlTelInput("isValidNumber");
         }
         function isValidEmail(email) {
             var pattern = Patterns.get("email");
@@ -412,10 +410,10 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                 el.disabled = !0), scope.telIndex = index + 1, scope.telField = el) : "tlf" === el.type && "sms-otp" === scope.method && (null !== scope.email && -1 === scope.email.indexOf("@") && (el.value = scope.email, 
                 el.disabled = !0, scope.currentFormStep = 1), scope.telIndex = index + 1, scope.telField = el), 
                 el;
-            }), filled_fields = _.filter(fields, function(el) {
-                return null !== el.value;
             });
-            filled_fields.length === scope.login_fields.length && scope.loginUser(!0);
+            _.filter(fields, function(el) {
+                return null !== el.value;
+            }).length === scope.login_fields.length && scope.loginUser(!0);
         }, scope.view = function(id) {
             Authmethod.viewEvent(id).success(function(data) {
                 "ok" === data.status ? scope.apply(data.events) : (scope.status = "Not found", document.querySelector(".input-error").style.display = "block");
@@ -551,10 +549,10 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         };
         var initY = new Date().getFullYear(), i = 0;
         for (i = initY; i >= initY - 130; i--) scope.years.push(i);
-        for (i = 1; 12 >= i; i++) scope.months.push(i);
+        for (i = 1; i <= 12; i++) scope.months.push(i);
         scope.getDays = function() {
             var days = [], ndays = new Date(scope.date.year, scope.date.month, 0).getDate();
-            for (i = 1; ndays >= i; i++) days.push(i);
+            for (i = 1; i <= ndays; i++) days.push(i);
             return days;
         }, scope.onChange = function() {
             scope.ngModel = scope.date.year + "-" + scope.date.month + "-" + scope.date.day;
@@ -592,10 +590,9 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
     function link(scope, element, attrs) {
         scope.dni_re = /^[XYZ]?\d{7,8}[A-Z]$/, scope.validateDni = function(str) {
             str || (str = ""), str = str.toUpperCase().replace(/\s/, "");
-            var prefix = str.charAt(0), index = "XYZ".indexOf(prefix), niePrefix = 0;
-            index > -1 && (niePrefix = index, str = str.substr(1), "Y" === prefix ? str = "1" + str : "Z" === prefix && (str = "2" + str));
-            var dni_letters = "TRWAGMYFPDXBNJZSQVHLCKE", letter = dni_letters.charAt(parseInt(str, 10) % 23);
-            return letter === str.charAt(str.length - 1);
+            var prefix = str.charAt(0), index = "XYZ".indexOf(prefix);
+            return index > -1 && (index, str = str.substr(1), "Y" === prefix ? str = "1" + str : "Z" === prefix && (str = "2" + str)), 
+            "TRWAGMYFPDXBNJZSQVHLCKE".charAt(parseInt(str, 10) % 23) === str.charAt(str.length - 1);
         };
     }
     return {
@@ -652,9 +649,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             var validateTel = function() {
                 scope.$evalAsync(function() {
                     var intlNumber = telInput.intlTelInput("getNumber");
-                    intlNumber && (scope.field.value = intlNumber);
-                    var isValid = telInput.intlTelInput("isValidNumber");
-                    !isValid && $("#input" + scope.index).val().replace("[ 	\n]", "").length > 0 ? (telInput.toggleClass("error", !0), 
+                    intlNumber && (scope.field.value = intlNumber), !telInput.intlTelInput("isValidNumber") && $("#input" + scope.index).val().replace("[ \t\n]", "").length > 0 ? (telInput.toggleClass("error", !0), 
                     scope.isValidNumber = !1) : (telInput.toggleClass("error", !1), scope.isValidNumber = !0);
                 });
             };
@@ -741,8 +736,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         plugins.signals.fire(signalName, data);
     }, plugins.hook = function(hookname, data) {
         for (var i = 0; i < plugins.hooks.length; i++) {
-            var h = plugins.hooks[i], ret = h(hookname, data);
-            if (!ret) return !1;
+            if (!(0, plugins.hooks[i])(hookname, data)) return !1;
         }
         return !0;
     }, plugins;
@@ -783,9 +777,13 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
     function link(scope, element, attrs) {
         scope.deflang = window.i18n.lng(), scope.langs = $i18next.options.lngWhitelist, 
         scope.changeLang = function(lang) {
-            $i18next.options.lng = lang, console.log("setting cookie"), ipCookie("lang", lang, _.extend({
-                expires: 360
-            }, ConfigService.i18nextCookieOptions)), scope.deflang = lang, angularLoad.loadScript(ConfigService.base + "/locales/moment/" + lang + ".js").then(function() {
+            $i18next.options.lng = lang, console.log("setting cookie");
+            var cookieConf = {
+                expires: 360,
+                path: ConfigService.base
+            };
+            ipCookie("lang", lang, _.extend(cookieConf, ConfigService.i18nextCookieOptions)), 
+            scope.deflang = lang, angularLoad.loadScript(ConfigService.base + "/locales/moment/" + lang + ".js").then(function() {
                 amMoment.changeLocale(lang);
             });
         };
@@ -900,12 +898,10 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
     };
 } ]), angular.module("avUi").directive("avCollapsing", [ "$window", "$timeout", function($window, $timeout) {
     function collapseEl(instance, el) {
-        var val = null;
-        return val = instance.collapseSelector ? select(instance, el, instance.collapseSelector) : angular.element(el);
+        return instance.collapseSelector ? select(instance, el, instance.collapseSelector) : angular.element(el);
     }
     function select(instance, el, selector) {
-        var val;
-        return val = instance.parentSelector ? el.closest(instance.parentSelector).find(selector) : angular.element(selector);
+        return instance.parentSelector ? el.closest(instance.parentSelector).find(selector) : angular.element(selector);
     }
     var checkCollapse = function(instance, el, options) {
         var maxHeight = select(instance, el, instance.maxHeightSelector).css("max-height"), height = angular.element(el)[0].scrollHeight;
@@ -1002,7 +998,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         }
         if (void 0 === format && (format = "str"), 0 === total_votes) return print(0);
         var base = question.totals.valid_votes + question.totals.null_votes + question.totals.blank_votes;
-        return (void 0 === over || null === over) && (over = question.answer_total_votes_percentage), 
+        return void 0 !== over && null !== over || (over = question.answer_total_votes_percentage), 
         "over-valid-votes" === over || "over-total-valid-votes" === over ? base = question.totals.valid_votes : "over-total-valid-points" === over && void 0 !== question.totals.valid_points && (base = question.totals.valid_points), 
         print(100 * total_votes / base);
     };
@@ -1022,11 +1018,9 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         angular.isUndefined(d.errorData) && (d.errorData = {});
         var ret = _.every(d.checks, function(item) {
             var itemMin, itemMax, max, min, pass = !0;
-            if ("is-int" === item.check) pass = angular.isNumber(d.data[item.key], item.postfix), 
-            pass || error(item.check, {
+            if ("is-int" === item.check) (pass = angular.isNumber(d.data[item.key], item.postfix)) || error(item.check, {
                 key: item.key
-            }, item.postfix); else if ("is-array" === item.check) pass = angular.isArray(d.data[item.key], item.postfix), 
-            pass || error(item.check, {
+            }, item.postfix); else if ("is-array" === item.check) (pass = angular.isArray(d.data[item.key], item.postfix)) || error(item.check, {
                 key: item.key
             }, item.postfix); else if ("lambda" === item.check) {
                 if (!item.validator(d.data[item.key])) {
@@ -1037,8 +1031,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                     _.isObject(item.append) && _.isString(item.append.key) && !_.isUndefined(item.append.value) && (errorData[item.append.key] = evalValue(item.append.value, item)), 
                     error(item.check, errorData, item.postfix);
                 }
-            } else if ("is-string-if-defined" === item.check) pass = angular.isUndefined(d.data[item.key]) || angular.isString(d.data[item.key], item.postfix), 
-            pass || error(item.check, {
+            } else if ("is-string-if-defined" === item.check) (pass = angular.isUndefined(d.data[item.key]) || angular.isString(d.data[item.key], item.postfix)) || error(item.check, {
                 key: item.key
             }, item.postfix); else if ("array-length-if-defined" === item.check) {
                 if (angular.isDefined(d.data[item.key]) && (itemMin = evalValue(item.min, d.data), 
@@ -1056,8 +1049,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                     };
                     error("array-length-max", itemErrorData0, item.postfix);
                 }
-            } else if ("is-string" === item.check) pass = angular.isString(d.data[item.key], item.postfix), 
-            pass || error(item.check, {
+            } else if ("is-string" === item.check) (pass = angular.isString(d.data[item.key], item.postfix)) || error(item.check, {
                 key: item.key
             }, item.postfix); else if ("array-length" === item.check) {
                 if (itemMin = evalValue(item.min, d.data), itemMax = evalValue(item.max, d.data), 
@@ -1137,7 +1129,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                     });
                 });
             }
-            return pass || "chain" !== d.data.groupType ? !0 : !1;
+            return !(!pass && "chain" === d.data.groupType);
         });
         return ret;
     }
@@ -1147,9 +1139,9 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         angular.isNumber(fixedDigits) && fixedDigits >= 0 && (number = number.toFixed(parseInt(fixedDigits)));
         var number_str = (number + "").replace(".", ","), ret = "", commaPos = number_str.length;
         -1 !== number_str.indexOf(",") && (commaPos = number_str.indexOf(","));
-        for (var i = 0; commaPos > i; i++) {
+        for (var i = 0; i < commaPos; i++) {
             var reverse = commaPos - i;
-            reverse % 3 === 0 && reverse > 0 && i > 0 && (ret += "."), ret += number_str[i];
+            reverse % 3 == 0 && reverse > 0 && i > 0 && (ret += "."), ret += number_str[i];
         }
         return ret + number_str.substr(commaPos, number_str.length);
     };
@@ -1301,6 +1293,6 @@ angular.module("jm.i18next").config([ "$i18nextProvider", "ConfigServiceProvider
     $templateCache.put("avUi/documentation-directive/documentation-directive.html", '<div><h2 class="text-center text-av-secondary" ng-i18next="avDocumentation.documentation.title"></h2><p ng-i18next="avDocumentation.documentation.first_line"></p><ul class="docu-ul"><li ng-if="!!documentation.faq"><a href="{{documentation.faq}}" target="_blank" ng-i18next="avDocumentation.documentation.faq"></a></li><li ng-if="!!documentation.overview"><a href="{{documentation.overview}}" target="_blank" ng-i18next="avDocumentation.documentation.overview"></a></li><li><a href="{{auths_url}}" target="_blank" ng-i18next="avDocumentation.documentation.authorities"></a></li><li ng-if="!!documentation.technical"><a href="{{documentation.technical}}" target="_blank" ng-i18next="avDocumentation.documentation.technical"></a></li><li ng-if="!!documentation.security_contact"><a href="{{documentation.security_contact}}" target="_blank" ng-i18next="avDocumentation.documentation.security_contact"></a></li></ul><div class="documentation-html-include" av-plugin-html ng-bind-html="documentation_html_include"></div></div>'), 
     $templateCache.put("avUi/foot-directive/foot-directive.html", '<div class="commonfoot"><div class="social" style="text-align: center"><span class="powered-by pull-left" ng-i18next="[html:i18next]({url: organization.orgUrl, name: organization.orgName})avCommon.poweredBy"></span> <a href="{{social.facebook}}" target="_blank" ng-if="!!social.facebook"><i class="fa fa-fw fa-lg fa-facebook"></i></a> <a href="{{social.twitter}}" target="_blank" ng-if="!!social.twitter"><i class="fa fa-fw fa-lg fa-twitter"></i></a> <a href="{{social.googleplus}}" target="_blank" ng-if="!!social.googleplus"><i class="fa fa-fw fa-lg fa-google-plus"></i></a> <a href="{{social.youtube}}" target="_blank" ng-if="!!social.youtube"><i class="fa fa-fw fa-lg fa-youtube-play"></i></a> <a href="{{social.github}}" target="_blank" ng-if="!!social.github"><i class="fa fa-fw fa-lg fa-github"></i></a></div></div>'), 
     $templateCache.put("avUi/simple-error-directive/simple-error-directive.html", '<div class="av-simple-error-title" ng-transclude></div>'), 
-    $templateCache.put("test/test_booth_widget.html", '<!DOCTYPE html><html><head><title>Test frame</title><meta charset="UTF-8"></head><script>function getCastHmac(auth_data, callback) {\n      callback("khmac:///sha-256;5e25a9af28a33d94b8c2c0edbc83d6d87355e45b93021c35a103821557ec7dc5/voter-1110-1dee0c135afeae29e208550e7258dab7b64fb008bc606fc326d41946ab8e773f:1415185712");\n    }</script><body style="overflow-y: hidden; overflow-x: hidden; padding: 0; margin: 0"><div style="width: 100%; display: block; position: absolute; top: 0; bottom: 0; scroll: none; padding: 0; margin: 0"><a class="agoravoting-voting-booth" href="http://agora.dev/#/election/1110/vote" data-authorization-funcname="getCastHmac">Votar con Agora Voting</a><script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="http://agora.dev/avWidgets.min.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","agoravoting-widgets-js");</script></div></body></html>'), 
+    $templateCache.put("test/test_booth_widget.html", '<!DOCTYPE html><html><head><title>Test frame</title><meta charset="UTF-8"></head><script>function getCastHmac(auth_data, callback) {\n      callback("khmac:///sha-256;5e25a9af28a33d94b8c2c0edbc83d6d87355e45b93021c35a103821557ec7dc5/voter-1110-1dee0c135afeae29e208550e7258dab7b64fb008bc606fc326d41946ab8e773f:1415185712");\n    }<\/script><body style="overflow-y: hidden; overflow-x: hidden; padding: 0; margin: 0"><div style="width: 100%; display: block; position: absolute; top: 0; bottom: 0; scroll: none; padding: 0; margin: 0"><a class="agoravoting-voting-booth" href="http://agora.dev/#/election/1110/vote" data-authorization-funcname="getCastHmac">Votar con Agora Voting</a><script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="http://agora.dev/avWidgets.min.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","agoravoting-widgets-js");<\/script></div></body></html>'), 
     $templateCache.put("test/unit_test_e2e.html", '<div dynamic="html" id="dynamic-result"></div>');
 } ]);

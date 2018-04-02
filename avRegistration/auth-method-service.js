@@ -190,7 +190,7 @@ angular.module('avRegistration')
         {
             var url = backendUrl + 'auth-event/' + eid + '/ballot-box/' + ballot_box_id + '/tally-sheet/' + tally_sheet_id + "/";
 
-            return $http.delete(url, {})
+            return $http.delete(url, {});
         };
 
         /**
@@ -200,7 +200,7 @@ angular.module('avRegistration')
         {
             var url = backendUrl + 'auth-event/' + eid + '/ballot-box/' + ballot_box_id + "/delete/";
 
-            return $http.delete(url, {})
+            return $http.delete(url, {});
         };
 
         authmethod.updateUserExtra = function (extra) {

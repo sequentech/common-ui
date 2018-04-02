@@ -33,7 +33,7 @@ angular.module('avUi')
       scope.changeLang = function(lang) {
         $i18next.options.lng = lang;
         console.log("setting cookie");
-        const cookieConf = {
+        var cookieConf = {
           expires: 360,
           path: ConfigService.base
         };
