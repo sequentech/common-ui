@@ -1,17 +1,21 @@
-<div class="row">
+<div class="form-group">
     <label ng-if="!label" class="control-label col-sm-4">{{field.name}}</label>
     <label class="control-label col-sm-4" ng-if="label" ng-bind="label"></label>
     <div class="col-sm-8">
         <select ng-model="date.year" ng-change="onChange()">
-           <option ng-selected="date.year == item" ng-repeat="item in years" ng-value="item">{{item}}</option> 
+           <option ng-selected="date.year == item" ng-repeat="item in years" ng-value="item">{{item}}</option>
         </select>
 
         <select ng-model="date.month" ng-change="onChange()">
-           <option ng-selected="date.month == item" ng-repeat="item in months" ng-value="item">{{item}}</option> 
+           <option ng-selected="date.month == item" ng-repeat="item in months" ng-value="item">{{item}}</option>
         </select>
 
         <select ng-model="date.day" ng-change="onChange()">
-           <option ng-selected="date.day == item" ng-repeat="item in getDays()" ng-value="item">{{item}}</option> 
+           <option ng-selected="date.day == item" ng-repeat="item in getDays()" ng-value="item">{{item}}</option>
         </select>
+
+        <p class="help-block" ng-if="field.help">
+          {{field.help}}
+        </p>
     </div>
 </div>
