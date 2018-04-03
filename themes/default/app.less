@@ -20,14 +20,14 @@
 /* Global Config */
 @av-primary: #FFFFFF;
 @av-secondary: #444444;
-@av-primary-contrast: #959292;
+@av-primary-contrast: #757272;
 @av-secondary-contrast: #007B67;
 @brand-primary: @av-primary;
 @brand-success: @av-secondary;
 @link-color: @av-secondary;
 @text-success: @av-secondary-contrast;
 @state-success-text: @av-secondary;
-
+@av-warning-color: #4a4a4a;
 
 
 /* Admin Config */
@@ -52,7 +52,15 @@
 }
 
 .modal-dialog .modal-header h4 {
-  color: @av-primary;
+  color: @av-warning-color;
+}
+
+.btn-warning {
+  color: @av-warning-color;
+}
+
+.btn-warning:hover {
+  color: #000;
 }
 
 .btn-success {
