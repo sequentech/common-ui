@@ -34,10 +34,14 @@ angular.module('avUi')
       scope.changeLang = function(lang) {
         $i18next.options.lng = lang;
         console.log("setting cookie");
+        var cookieConf = {
+          expires: 360,
+          path: "/"
+        };
         ipCookie(
           "lang",
           lang,
-          _.extend({expires: 360}, ConfigService.i18nextCookieOptions));
+          _.extend(cookieConf, ConfigService.i18nextCookieOptions));
         scope.deflang = lang;
         angular.element('#ng-app').attr('lang', scope.deflang);
 

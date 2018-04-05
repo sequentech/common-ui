@@ -783,10 +783,13 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
     function link(scope, element, attrs) {
         scope.deflang = window.i18n.lng(), angular.element("#ng-app").attr("lang", scope.deflang), 
         scope.langs = $i18next.options.lngWhitelist, scope.changeLang = function(lang) {
-            $i18next.options.lng = lang, console.log("setting cookie"), ipCookie("lang", lang, _.extend({
-                expires: 360
-            }, ConfigService.i18nextCookieOptions)), scope.deflang = lang, angular.element("#ng-app").attr("lang", scope.deflang), 
-            angularLoad.loadScript(ConfigService.base + "/locales/moment/" + lang + ".js").then(function() {
+            $i18next.options.lng = lang, console.log("setting cookie");
+            var cookieConf = {
+                expires: 360,
+                path: "/"
+            };
+            ipCookie("lang", lang, _.extend(cookieConf, ConfigService.i18nextCookieOptions)), 
+            scope.deflang = lang, angular.element("#ng-app").attr("lang", scope.deflang), angularLoad.loadScript(ConfigService.base + "/locales/moment/" + lang + ".js").then(function() {
                 amMoment.changeLocale(lang);
             });
         };
