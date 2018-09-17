@@ -43,7 +43,7 @@ angular.module('avRegistration')
         var dni4 = "";
         for (var i = 0; i < dni3.lenth; i++) {
           var char = dni3[i];
-          if (last_char==="" || '1234567890'.indexOf(last_char) === -1) && c === '0') {
+          if ((last_char==="" || '1234567890'.indexOf(last_char) === -1) && c === '0') {
           }
           dni4 += char;
           last_char = char;
