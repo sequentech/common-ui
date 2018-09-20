@@ -456,9 +456,10 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                     email: scope.email
                 }
             } : {
-                path: "election.public.show.login",
+                path: "election.public.show.login_email",
                 data: {
-                    id: eventId
+                    id: eventId,
+                    email: scope.email
                 }
             };
         }, scope.signUp = function(valid) {
