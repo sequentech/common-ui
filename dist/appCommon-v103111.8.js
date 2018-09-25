@@ -655,11 +655,12 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                 utilsScript: "election/utils.js",
                 separateDialCode: !0,
                 initialCountry: "auto",
+                preferredCountries: [ "es", "gb", "us" ],
                 autoPlaceholder: "aggressive",
                 placeholderNumberType: "MOBILE",
                 geoIpLookup: function(callback) {
                     var applyCountry = function() {
-                        var countryCode = ipData && ipData.country ? ipData.country : "";
+                        var countryCode = ipData && ipData.country ? ipData.country : "es";
                         callback(countryCode);
                     };
                     ipData ? applyCountry() : ipCallbacks.push(applyCountry);

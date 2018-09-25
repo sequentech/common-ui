@@ -42,12 +42,13 @@ angular.module('avRegistration')
           utilsScript: "election/utils.js",
           separateDialCode: true,
           initialCountry: "auto",
+          preferredCountries: ["es", "gb", "us"],
           autoPlaceholder: "aggressive",
           placeholderNumberType: "MOBILE",
           geoIpLookup: function(callback) {
               var applyCountry = function()
               {
-                var countryCode = (ipData && ipData.country) ? ipData.country : "";
+                var countryCode = (ipData && ipData.country) ? ipData.country : "es";
                 callback(countryCode);
               };
               if (ipData) {
