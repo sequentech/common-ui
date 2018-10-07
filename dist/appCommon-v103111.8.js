@@ -456,9 +456,10 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                     email: scope.email
                 }
             } : {
-                path: "election.public.show.login",
+                path: "election.public.show.login_email",
                 data: {
-                    id: eventId
+                    id: eventId,
+                    email: scope.email
                 }
             };
         }, scope.signUp = function(valid) {
@@ -590,12 +591,27 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
     };
 } ]), angular.module("avRegistration").directive("avrDniField", [ "$state", function($state) {
     function link(scope, element, attrs) {
-        scope.dni_re = /^[XYZ]?\d{7,8}[A-Z]$/, scope.validateDni = function(str) {
-            str || (str = ""), str = str.toUpperCase().replace(/\s/, "");
-            var prefix = str.charAt(0), index = "XYZ".indexOf(prefix), niePrefix = 0;
-            index > -1 && (niePrefix = index, str = str.substr(1), "Y" === prefix ? str = "1" + str : "Z" === prefix && (str = "2" + str));
-            var dni_letters = "TRWAGMYFPDXBNJZSQVHLCKE", letter = dni_letters.charAt(parseInt(str, 10) % 23);
-            return letter === str.charAt(str.length - 1);
+        function normalize_dni(dni) {
+            if (!dni) return "";
+            for (var allowed_chars = "QWERTYUIOPASDFGHJKLZXCVBNM1234567890", dni2 = dni.toUpperCase(), dni3 = "", i = 0; i < dni2.lenth; i++) {
+                var char = dni2[i];
+                allowed_chars.indexOf(char) >= 0 && (dni3 += char);
+            }
+            for (var last_char = "", dni4 = "", i = 0; i < dni3.lenth; i++) {
+                var char = dni3[i];
+                ("" === last_char || -1 === "1234567890".indexOf(last_char)) && "0" === c, dni4 += char, 
+                last_char = char;
+            }
+            return dni4;
+        }
+        var dni_re = /^([0-9]{1,8}[A-Z]|[LMXYZ][0-9]{1,7}[A-Z])$/;
+        scope.validateDni = function(dni) {
+            var norm_dni = normalize_dni(dni);
+            if (!norm_dni.match(dni_re)) return !0;
+            var prefix = norm_dni.charAt(0), index = "LMXYZ".indexOf(prefix), niePrefix = 0;
+            index > -1 && (niePrefix = index, norm_dni = norm_dni.substr(1), "Y" === prefix ? norm_dni = "1" + norm_dni : "Z" === prefix && (norm_dni = "2" + norm_dni));
+            var dni_letters = "TRWAGMYFPDXBNJZSQVHLCKE", letter = dni_letters.charAt(parseInt(norm_dni, 10) % 23);
+            return letter === norm_dni.charAt(norm_dni.length - 1);
         };
     }
     return {
@@ -639,11 +655,12 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                 utilsScript: "election/utils.js",
                 separateDialCode: !0,
                 initialCountry: "auto",
+                preferredCountries: [ "es", "gb", "us" ],
                 autoPlaceholder: "aggressive",
                 placeholderNumberType: "MOBILE",
                 geoIpLookup: function(callback) {
                     var applyCountry = function() {
-                        var countryCode = ipData && ipData.country ? ipData.country : "";
+                        var countryCode = ipData && ipData.country ? ipData.country : "es";
                         callback(countryCode);
                     };
                     ipData ? applyCountry() : ipCallbacks.push(applyCountry);

@@ -36,7 +36,10 @@ angular.module('avRegistration')
 
         scope.getLoginDetails = function (eventId) {
           if (!scope.admin) {
-              return {path: 'election.public.show.login', data: {id: eventId}};
+              return {
+                path: 'election.public.show.login_email',
+                data: {id: eventId, email: scope.email}
+              };
           } else {
               return {path: 'admin.login_email', data:{email: scope.email}};
           }
