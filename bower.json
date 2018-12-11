@@ -49,7 +49,7 @@
     "angular-bootstrap": "0.10",
     "angular-moment": "~0.8.2",
     "angular-cookies": "~1.2",
-    "angular-drag-and-drop-lists": "~1.2.0",
+    "angular-drag-and-drop-lists": "~1.4",
     "less.js": "~1.6",
     "i18next": "1.9.0",
     "ng-i18next": "0.4.2",

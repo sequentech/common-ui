@@ -13634,15 +13634,16 @@ angular.module("jm.i18next").provider("$i18next", function() {
         element.attr("draggable", "true"), attr.dndDisableIf && scope.$watch(attr.dndDisableIf, function(disabled) {
             element.attr("draggable", !disabled);
         }), element.on("dragstart", function(event) {
-            event = event.originalEvent || event, event.dataTransfer.setData("Text", angular.toJson(scope.$eval(attr.dndDraggable))), 
+            return event = event.originalEvent || event, "false" == element.attr("draggable") ? !0 : (event.dataTransfer.setData("Text", angular.toJson(scope.$eval(attr.dndDraggable))), 
             event.dataTransfer.effectAllowed = attr.dndEffectAllowed || "move", element.addClass("dndDragging"), 
             $timeout(function() {
                 element.addClass("dndDraggingSource");
             }, 0), dndDropEffectWorkaround.dropEffect = "none", dndDragTypeWorkaround.isDragging = !0, 
             dndDragTypeWorkaround.dragType = attr.dndType ? scope.$eval(attr.dndType) : void 0, 
+            event._dndHandle && event.dataTransfer.setDragImage && event.dataTransfer.setDragImage(element[0], 0, 0), 
             $parse(attr.dndDragstart)(scope, {
                 event: event
-            }), event.stopPropagation();
+            }), void event.stopPropagation());
         }), element.on("dragend", function(event) {
             event = event.originalEvent || event;
             var dropEffect = dndDropEffectWorkaround.dropEffect;
@@ -13658,17 +13659,28 @@ angular.module("jm.i18next").provider("$i18next", function() {
                     $parse(attr.dndCopied)(scope, {
                         event: event
                     });
+                    break;
+
+                  case "none":
+                    $parse(attr.dndCanceled)(scope, {
+                        event: event
+                    });
                 }
-            }), element.removeClass("dndDragging"), element.removeClass("dndDraggingSource"), 
-            dndDragTypeWorkaround.isDragging = !1, event.stopPropagation();
+                $parse(attr.dndDragend)(scope, {
+                    event: event,
+                    dropEffect: dropEffect
+                });
+            }), element.removeClass("dndDragging"), $timeout(function() {
+                element.removeClass("dndDraggingSource");
+            }, 0), dndDragTypeWorkaround.isDragging = !1, event.stopPropagation();
         }), element.on("click", function(event) {
-            event = event.originalEvent || event, scope.$apply(function() {
+            attr.dndSelected && (event = event.originalEvent || event, scope.$apply(function() {
                 $parse(attr.dndSelected)(scope, {
                     event: event
                 });
-            }), event.stopPropagation();
+            }), event.stopPropagation());
         }), element.on("selectstart", function() {
-            return this.dragDrop && this.dragDrop(), !1;
+            this.dragDrop && this.dragDrop();
         });
     };
 } ]).directive("dndList", [ "$parse", "$timeout", "dndDropEffectWorkaround", "dndDragTypeWorkaround", function($parse, $timeout, dndDropEffectWorkaround, dndDragTypeWorkaround) {
@@ -13676,6 +13688,13 @@ angular.module("jm.i18next").provider("$i18next", function() {
         function isMouseInFirstHalf(event, targetNode, relativeToParent) {
             var mousePointer = horizontal ? event.offsetX || event.layerX : event.offsetY || event.layerY, targetSize = horizontal ? targetNode.offsetWidth : targetNode.offsetHeight, targetPosition = horizontal ? targetNode.offsetLeft : targetNode.offsetTop;
             return targetPosition = relativeToParent ? targetPosition : 0, targetPosition + targetSize / 2 > mousePointer;
+        }
+        function getPlaceholderElement() {
+            var placeholder;
+            return angular.forEach(element.children(), function(childNode) {
+                var child = angular.element(childNode);
+                child.hasClass("dndPlaceholder") && (placeholder = child);
+            }), placeholder || angular.element("<li class='dndPlaceholder'></li>");
         }
         function getPlaceholderIndex() {
             return Array.prototype.indexOf.call(listNode.children, placeholderNode);
@@ -13692,10 +13711,10 @@ angular.module("jm.i18next").provider("$i18next", function() {
         function stopDragover() {
             return placeholder.remove(), element.removeClass("dndDragover"), !0;
         }
-        function invokeCallback(expression, event, item) {
+        function invokeCallback(expression, event, index, item) {
             return $parse(expression)(scope, {
                 event: event,
-                index: getPlaceholderIndex(),
+                index: index,
                 item: item || void 0,
                 external: !dndDragTypeWorkaround.isDragging,
                 type: dndDragTypeWorkaround.isDragging ? dndDragTypeWorkaround.dragType : void 0
@@ -13706,14 +13725,18 @@ angular.module("jm.i18next").provider("$i18next", function() {
             for (var i = 0; i < types.length; i++) if ("Text" === types[i] || "text/plain" === types[i]) return !0;
             return !1;
         }
-        var placeholder = angular.element("<li class='dndPlaceholder'></li>"), placeholderNode = placeholder[0], listNode = element[0], horizontal = attr.dndHorizontalList && scope.$eval(attr.dndHorizontalList), externalSources = attr.dndExternalSources && scope.$eval(attr.dndExternalSources);
-        element.on("dragover", function(event) {
+        var placeholder = getPlaceholderElement(), placeholderNode = placeholder[0], listNode = element[0];
+        placeholder.remove();
+        var horizontal = attr.dndHorizontalList && scope.$eval(attr.dndHorizontalList), externalSources = attr.dndExternalSources && scope.$eval(attr.dndExternalSources);
+        element.on("dragenter", function(event) {
+            return event = event.originalEvent || event, isDropAllowed(event) ? void event.preventDefault() : !0;
+        }), element.on("dragover", function(event) {
             if (event = event.originalEvent || event, !isDropAllowed(event)) return !0;
             if (placeholderNode.parentNode != listNode && element.append(placeholder), event.target !== listNode) {
                 for (var listItemNode = event.target; listItemNode.parentNode !== listNode && listItemNode.parentNode; ) listItemNode = listItemNode.parentNode;
                 listItemNode.parentNode === listNode && listItemNode !== placeholderNode && (isMouseInFirstHalf(event, listItemNode) ? listNode.insertBefore(placeholderNode, listItemNode) : listNode.insertBefore(placeholderNode, listItemNode.nextSibling));
             } else if (isMouseInFirstHalf(event, placeholderNode, !0)) for (;placeholderNode.previousElementSibling && (isMouseInFirstHalf(event, placeholderNode.previousElementSibling, !0) || 0 === placeholderNode.previousElementSibling.offsetHeight); ) listNode.insertBefore(placeholderNode, placeholderNode.previousElementSibling); else for (;placeholderNode.nextElementSibling && !isMouseInFirstHalf(event, placeholderNode.nextElementSibling, !0); ) listNode.insertBefore(placeholderNode, placeholderNode.nextElementSibling.nextElementSibling);
-            return attr.dndDragover && !invokeCallback(attr.dndDragover, event) ? stopDragover() : (element.addClass("dndDragover"), 
+            return attr.dndDragover && !invokeCallback(attr.dndDragover, event, getPlaceholderIndex()) ? stopDragover() : (element.addClass("dndDragover"), 
             event.preventDefault(), event.stopPropagation(), !1);
         }), element.on("drop", function(event) {
             if (event = event.originalEvent || event, !isDropAllowed(event)) return !0;
@@ -13724,20 +13747,34 @@ angular.module("jm.i18next").provider("$i18next", function() {
             } catch (e) {
                 return stopDragover();
             }
-            if (attr.dndDrop && (transferredObject = invokeCallback(attr.dndDrop, event, transferredObject), 
-            !transferredObject)) return stopDragover();
-            var targetArray = scope.$eval(attr.dndList);
-            return scope.$apply(function() {
-                targetArray.splice(getPlaceholderIndex(), 0, transferredObject);
-            }), "none" === event.dataTransfer.dropEffect ? "copy" === event.dataTransfer.effectAllowed || "move" === event.dataTransfer.effectAllowed ? dndDropEffectWorkaround.dropEffect = event.dataTransfer.effectAllowed : dndDropEffectWorkaround.dropEffect = event.ctrlKey ? "copy" : "move" : dndDropEffectWorkaround.dropEffect = event.dataTransfer.dropEffect, 
-            stopDragover(), event.stopPropagation(), !1;
+            var index = getPlaceholderIndex();
+            return attr.dndDrop && (transferredObject = invokeCallback(attr.dndDrop, event, index, transferredObject), 
+            !transferredObject) ? stopDragover() : (transferredObject !== !0 && scope.$apply(function() {
+                scope.$eval(attr.dndList).splice(index, 0, transferredObject);
+            }), invokeCallback(attr.dndInserted, event, index, transferredObject), "none" === event.dataTransfer.dropEffect ? "copy" === event.dataTransfer.effectAllowed || "move" === event.dataTransfer.effectAllowed ? dndDropEffectWorkaround.dropEffect = event.dataTransfer.effectAllowed : dndDropEffectWorkaround.dropEffect = event.ctrlKey ? "copy" : "move" : dndDropEffectWorkaround.dropEffect = event.dataTransfer.dropEffect, 
+            stopDragover(), event.stopPropagation(), !1);
         }), element.on("dragleave", function(event) {
             event = event.originalEvent || event, element.removeClass("dndDragover"), $timeout(function() {
                 element.hasClass("dndDragover") || placeholder.remove();
             }, 100);
         });
     };
-} ]).factory("dndDragTypeWorkaround", function() {
+} ]).directive("dndNodrag", function() {
+    return function(scope, element, attr) {
+        element.attr("draggable", "true"), element.on("dragstart", function(event) {
+            event = event.originalEvent || event, event._dndHandle || (event.dataTransfer.types && event.dataTransfer.types.length || event.preventDefault(), 
+            event.stopPropagation());
+        }), element.on("dragend", function(event) {
+            event = event.originalEvent || event, event._dndHandle || event.stopPropagation();
+        });
+    };
+}).directive("dndHandle", function() {
+    return function(scope, element, attr) {
+        element.attr("draggable", "true"), element.on("dragstart dragend", function(event) {
+            event = event.originalEvent || event, event._dndHandle = !0;
+        });
+    };
+}).factory("dndDragTypeWorkaround", function() {
     return {};
 }).factory("dndDropEffectWorkaround", function() {
     return {};
