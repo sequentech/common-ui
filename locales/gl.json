@@ -90,12 +90,12 @@
     
     "documentation": { 
       "title": "Documentación",
-      "first_line": "Puedes encontrar más información sobre la votación en los siguientes enlaces:",
+      "first_line": "Podes atopar máis información sobre a votación nas seguintes ligazóns:",
       "faq": "Preguntas Frecuentes",
       "overview": "Esquema General",
       "authorities": "Lista de Autoridades",
       "technical": "Descripción técnica",
-      "security_contact": "Contacto de seguridad"
+      "security_contact": "Contacto de seguridade"
     }
   },
   
