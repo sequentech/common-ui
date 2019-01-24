@@ -46,7 +46,7 @@ function uiUploader($log) {
 
 function RC4(seed) {
     this.s = new Array(256), this.i = 0, this.j = 0;
-    for (var i = 0; i < 256; i++) this.s[i] = i;
+    for (var i = 0; 256 > i; i++) this.s[i] = i;
     seed && this.mix(seed);
 }
 
@@ -55,7 +55,7 @@ function RNG(seed) {
     this.nextByte = function() {
         return ~~(256 * this.uniform());
     }, seed = null) : "[object String]" !== Object.prototype.toString.call(seed) && (seed = JSON.stringify(seed)), 
-    this._normal = null, this._state = seed ? new RC4(seed) : null;
+    this._normal = null, seed ? this._state = new RC4(seed) : this._state = null;
 }
 
 function q(a) {
@@ -69,7 +69,7 @@ function y(a, b, c) {
     var h, l, k, m, n = d.length / 4 - 2, p = 4, s = [ 0, 0, 0, 0 ];
     h = a.j[c], a = h[0];
     var r = h[1], v = h[2], w = h[3], x = h[4];
-    for (m = 0; m < n; m++) h = a[e >>> 24] ^ r[f >> 16 & 255] ^ v[g >> 8 & 255] ^ w[255 & b] ^ d[p], 
+    for (m = 0; n > m; m++) h = a[e >>> 24] ^ r[f >> 16 & 255] ^ v[g >> 8 & 255] ^ w[255 & b] ^ d[p], 
     l = a[f >>> 24] ^ r[g >> 16 & 255] ^ v[b >> 8 & 255] ^ w[255 & e] ^ d[p + 1], k = a[g >>> 24] ^ r[b >> 16 & 255] ^ v[e >> 8 & 255] ^ w[255 & f] ^ d[p + 2], 
     b = a[b >>> 24] ^ r[e >> 16 & 255] ^ v[f >> 8 & 255] ^ w[255 & g] ^ d[p + 3], p += 4, 
     e = h, f = l, g = k;
@@ -131,7 +131,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
     }, $(function() {
         $.support.transition = transitionEnd();
     });
-}(jQuery), function($) {
+}(jQuery), +function($) {
     "use strict";
     var dismiss = '[data-dismiss="alert"]', Alert = function(el) {
         $(el).on("click", dismiss, this.close);
@@ -156,7 +156,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
     }, $.fn.alert.Constructor = Alert, $.fn.alert.noConflict = function() {
         return $.fn.alert = old, this;
     }, $(document).on("click.bs.alert.data-api", dismiss, Alert.prototype.close);
-}(jQuery), function($) {
+}(jQuery), +function($) {
     "use strict";
     var Button = function(element, options) {
         this.$element = $(element), this.options = $.extend({}, Button.DEFAULTS, options), 
@@ -192,7 +192,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         var $btn = $(e.target);
         $btn.hasClass("btn") || ($btn = $btn.closest(".btn")), $btn.button("toggle"), e.preventDefault();
     });
-}(jQuery), function($) {
+}(jQuery), +function($) {
     "use strict";
     var Carousel = function(element, options) {
         this.$element = $(element), this.$indicators = this.$element.find(".carousel-indicators"), 
@@ -211,16 +211,16 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         this.$items.index(this.$active);
     }, Carousel.prototype.to = function(pos) {
         var that = this, activeIndex = this.getActiveIndex();
-        if (!(pos > this.$items.length - 1 || pos < 0)) return this.sliding ? this.$element.one("slid.bs.carousel", function() {
+        return pos > this.$items.length - 1 || 0 > pos ? void 0 : this.sliding ? this.$element.one("slid.bs.carousel", function() {
             that.to(pos);
         }) : activeIndex == pos ? this.pause().cycle() : this.slide(pos > activeIndex ? "next" : "prev", $(this.$items[pos]));
     }, Carousel.prototype.pause = function(e) {
         return e || (this.paused = !0), this.$element.find(".next, .prev").length && $.support.transition && (this.$element.trigger($.support.transition.end), 
         this.cycle(!0)), this.interval = clearInterval(this.interval), this;
     }, Carousel.prototype.next = function() {
-        if (!this.sliding) return this.slide("next");
+        return this.sliding ? void 0 : this.slide("next");
     }, Carousel.prototype.prev = function() {
-        if (!this.sliding) return this.slide("prev");
+        return this.sliding ? void 0 : this.slide("prev");
     }, Carousel.prototype.slide = function(type, next) {
         var $active = this.$element.find(".item.active"), $next = next || $active[type](), isCycling = this.interval, direction = "next" == type ? "left" : "right", fallback = "next" == type ? "first" : "last", that = this;
         if (!$next.length) {
@@ -265,7 +265,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             $carousel.carousel($carousel.data());
         });
     });
-}(jQuery), function($) {
+}(jQuery), +function($) {
     "use strict";
     var Collapse = function(element, options) {
         this.$element = $(element), this.options = $.extend({}, Collapse.DEFAULTS, options), 
@@ -275,7 +275,8 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
     Collapse.DEFAULTS = {
         toggle: !0
     }, Collapse.prototype.dimension = function() {
-        return this.$element.hasClass("width") ? "width" : "height";
+        var hasWidth = this.$element.hasClass("width");
+        return hasWidth ? "width" : "height";
     }, Collapse.prototype.show = function() {
         if (!this.transitioning && !this.$element.hasClass("in")) {
             var startEvent = $.Event("show.bs.collapse");
@@ -307,8 +308,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                 var complete = function() {
                     this.transitioning = 0, this.$element.trigger("hidden.bs.collapse").removeClass("collapsing").addClass("collapse");
                 };
-                if (!$.support.transition) return complete.call(this);
-                this.$element[dimension](0).one($.support.transition.end, $.proxy(complete, this)).emulateTransitionEnd(350);
+                return $.support.transition ? void this.$element[dimension](0).one($.support.transition.end, $.proxy(complete, this)).emulateTransitionEnd(350) : complete.call(this);
             }
         }
     }, Collapse.prototype.toggle = function() {
@@ -328,7 +328,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         data && data.transitioning || ($parent && $parent.find('[data-toggle=collapse][data-parent="' + parent + '"]').not($this).addClass("collapsed"), 
         $this[$target.hasClass("in") ? "addClass" : "removeClass"]("collapsed")), $target.collapse(option);
     });
-}(jQuery), function($) {
+}(jQuery), +function($) {
     "use strict";
     function clearMenus(e) {
         $(backdrop).remove(), $(toggle).each(function() {
@@ -389,7 +389,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
     }, $(document).on("click.bs.dropdown.data-api", clearMenus).on("click.bs.dropdown.data-api", ".dropdown form", function(e) {
         e.stopPropagation();
     }).on("click.bs.dropdown.data-api", toggle, Dropdown.prototype.toggle).on("keydown.bs.dropdown.data-api", toggle + ", [role=menu], [role=listbox]", Dropdown.prototype.keydown);
-}(jQuery), function($) {
+}(jQuery), +function($) {
     "use strict";
     var Modal = function(element, options) {
         this.options = options, this.$element = $(element), this.$backdrop = this.isShown = null, 
@@ -473,7 +473,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
     }).on("hidden.bs.modal", ".modal", function() {
         $(document.body).removeClass("modal-open");
     });
-}(jQuery), function($) {
+}(jQuery), +function($) {
     "use strict";
     var Tooltip = function(element, options) {
         this.type = this.options = this.enabled = this.timeout = this.hoverState = this.$element = null, 
@@ -518,16 +518,14 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         }), options;
     }, Tooltip.prototype.enter = function(obj) {
         var self = obj instanceof this.constructor ? obj : $(obj.currentTarget)[this.type](this.getDelegateOptions()).data("bs." + this.type);
-        if (clearTimeout(self.timeout), self.hoverState = "in", !self.options.delay || !self.options.delay.show) return self.show();
-        self.timeout = setTimeout(function() {
+        return clearTimeout(self.timeout), self.hoverState = "in", self.options.delay && self.options.delay.show ? void (self.timeout = setTimeout(function() {
             "in" == self.hoverState && self.show();
-        }, self.options.delay.show);
+        }, self.options.delay.show)) : self.show();
     }, Tooltip.prototype.leave = function(obj) {
         var self = obj instanceof this.constructor ? obj : $(obj.currentTarget)[this.type](this.getDelegateOptions()).data("bs." + this.type);
-        if (clearTimeout(self.timeout), self.hoverState = "out", !self.options.delay || !self.options.delay.hide) return self.hide();
-        self.timeout = setTimeout(function() {
+        return clearTimeout(self.timeout), self.hoverState = "out", self.options.delay && self.options.delay.hide ? void (self.timeout = setTimeout(function() {
             "out" == self.hoverState && self.hide();
-        }, self.options.delay.hide);
+        }, self.options.delay.hide)) : self.hide();
     }, Tooltip.prototype.show = function() {
         var e = $.Event("show.bs." + this.type);
         if (this.hasContent() && this.enabled) {
@@ -582,9 +580,9 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             "in" != that.hoverState && $tip.detach(), that.$element.trigger("hidden.bs." + that.type);
         }
         var that = this, $tip = this.tip(), e = $.Event("hide.bs." + this.type);
-        if (this.$element.trigger(e), !e.isDefaultPrevented()) return $tip.removeClass("in"), 
+        return this.$element.trigger(e), e.isDefaultPrevented() ? void 0 : ($tip.removeClass("in"), 
         $.support.transition && this.$tip.hasClass("fade") ? $tip.one($.support.transition.end, complete).emulateTransitionEnd(150) : complete(), 
-        this.hoverState = null, this;
+        this.hoverState = null, this);
     }, Tooltip.prototype.fixTitle = function() {
         var $e = this.$element;
         ($e.attr("title") || "string" != typeof $e.attr("data-original-title")) && $e.attr("data-original-title", $e.attr("title") || "").attr("title", "");
@@ -611,8 +609,8 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             left: pos.left + pos.width
         };
     }, Tooltip.prototype.getTitle = function() {
-        var $e = this.$element, o = this.options;
-        return $e.attr("data-original-title") || ("function" == typeof o.title ? o.title.call($e[0]) : o.title);
+        var title, $e = this.$element, o = this.options;
+        return title = $e.attr("data-original-title") || ("function" == typeof o.title ? o.title.call($e[0]) : o.title);
     }, Tooltip.prototype.tip = function() {
         return this.$tip = this.$tip || $(this.options.template);
     }, Tooltip.prototype.arrow = function() {
@@ -641,7 +639,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
     }, $.fn.tooltip.Constructor = Tooltip, $.fn.tooltip.noConflict = function() {
         return $.fn.tooltip = old, this;
     };
-}(jQuery), function($) {
+}(jQuery), +function($) {
     "use strict";
     var Popover = function(element, options) {
         this.init("popover", element, options);
@@ -679,7 +677,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
     }, $.fn.popover.Constructor = Popover, $.fn.popover.noConflict = function() {
         return $.fn.popover = old, this;
     };
-}(jQuery), function($) {
+}(jQuery), +function($) {
     "use strict";
     function ScrollSpy(element, options) {
         var href, process = $.proxy(this.process, this);
@@ -728,7 +726,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             $spy.scrollspy($spy.data());
         });
     });
-}(jQuery), function($) {
+}(jQuery), +function($) {
     "use strict";
     var Tab = function(element) {
         this.element = $(element);
@@ -772,7 +770,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
     }, $(document).on("click.bs.tab.data-api", '[data-toggle="tab"], [data-toggle="pill"]', function(e) {
         e.preventDefault(), $(this).tab("show");
     });
-}(jQuery), function($) {
+}(jQuery), +function($) {
     "use strict";
     var Affix = function(element, options) {
         this.options = $.extend({}, Affix.DEFAULTS, options), this.$window = $(window).on("scroll.bs.affix.data-api", $.proxy(this.checkPosition, this)).on("click.bs.affix.data-api", $.proxy(this.checkPositionWithEventLoop, this)), 
@@ -793,7 +791,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             var scrollHeight = $(document).height(), scrollTop = this.$window.scrollTop(), position = this.$element.offset(), offset = this.options.offset, offsetTop = offset.top, offsetBottom = offset.bottom;
             "top" == this.affixed && (position.top += scrollTop), "object" != typeof offset && (offsetBottom = offsetTop = offset), 
             "function" == typeof offsetTop && (offsetTop = offset.top(this.$element)), "function" == typeof offsetBottom && (offsetBottom = offset.bottom(this.$element));
-            var affix = !(null != this.unpin && scrollTop + this.unpin <= position.top) && (null != offsetBottom && position.top + this.$element.height() >= scrollHeight - offsetBottom ? "bottom" : null != offsetTop && scrollTop <= offsetTop && "top");
+            var affix = null != this.unpin && scrollTop + this.unpin <= position.top ? !1 : null != offsetBottom && position.top + this.$element.height() >= scrollHeight - offsetBottom ? "bottom" : null != offsetTop && offsetTop >= scrollTop ? "top" : !1;
             if (this.affixed !== affix) {
                 this.unpin && this.$element.css("top", "");
                 var affixType = "affix" + (affix ? "-" + affix : ""), e = $.Event(affixType + ".bs.affix");
@@ -823,7 +821,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
 }(jQuery), function() {
     function createReduce(dir) {
         function iterator(obj, iteratee, memo, keys, index, length) {
-            for (;index >= 0 && index < length; index += dir) {
+            for (;index >= 0 && length > index; index += dir) {
                 var currentKey = keys ? keys[index] : index;
                 memo = iteratee(memo, obj[currentKey], currentKey, obj);
             }
@@ -839,13 +837,14 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
     function createIndexFinder(dir) {
         return function(array, predicate, context) {
             predicate = cb(predicate, context);
-            for (var length = null != array && array.length, index = dir > 0 ? 0 : length - 1; index >= 0 && index < length; index += dir) if (predicate(array[index], index, array)) return index;
+            for (var length = null != array && array.length, index = dir > 0 ? 0 : length - 1; index >= 0 && length > index; index += dir) if (predicate(array[index], index, array)) return index;
             return -1;
         };
     }
     function collectNonEnumProps(obj, keys) {
         var nonEnumIdx = nonEnumerableProps.length, constructor = obj.constructor, proto = _.isFunction(constructor) && constructor.prototype || ObjProto, prop = "constructor";
-        for (_.has(obj, prop) && !_.contains(keys, prop) && keys.push(prop); nonEnumIdx--; ) (prop = nonEnumerableProps[nonEnumIdx]) in obj && obj[prop] !== proto[prop] && !_.contains(keys, prop) && keys.push(prop);
+        for (_.has(obj, prop) && !_.contains(keys, prop) && keys.push(prop); nonEnumIdx--; ) prop = nonEnumerableProps[nonEnumIdx], 
+        prop in obj && obj[prop] !== proto[prop] && !_.contains(keys, prop) && keys.push(prop);
     }
     var root = this, previousUnderscore = root._, ArrayProto = Array.prototype, ObjProto = Object.prototype, FuncProto = Function.prototype, push = ArrayProto.push, slice = ArrayProto.slice, toString = ObjProto.toString, hasOwnProperty = ObjProto.hasOwnProperty, nativeIsArray = Array.isArray, nativeKeys = Object.keys, nativeBind = FuncProto.bind, nativeCreate = Object.create, Ctor = function() {}, _ = function(obj) {
         return obj instanceof _ ? obj : this instanceof _ ? void (this._wrapped = obj) : new _(obj);
@@ -887,8 +886,8 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
     var createAssigner = function(keysFunc, undefinedOnly) {
         return function(obj) {
             var length = arguments.length;
-            if (length < 2 || null == obj) return obj;
-            for (var index = 1; index < length; index++) for (var source = arguments[index], keys = keysFunc(source), l = keys.length, i = 0; i < l; i++) {
+            if (2 > length || null == obj) return obj;
+            for (var index = 1; length > index; index++) for (var source = arguments[index], keys = keysFunc(source), l = keys.length, i = 0; l > i; i++) {
                 var key = keys[i];
                 undefinedOnly && void 0 !== obj[key] || (obj[key] = source[key]);
             }
@@ -902,19 +901,19 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         return Ctor.prototype = null, result;
     }, MAX_ARRAY_INDEX = Math.pow(2, 53) - 1, isArrayLike = function(collection) {
         var length = collection && collection.length;
-        return "number" == typeof length && length >= 0 && length <= MAX_ARRAY_INDEX;
+        return "number" == typeof length && length >= 0 && MAX_ARRAY_INDEX >= length;
     };
     _.each = _.forEach = function(obj, iteratee, context) {
         iteratee = optimizeCb(iteratee, context);
         var i, length;
-        if (isArrayLike(obj)) for (i = 0, length = obj.length; i < length; i++) iteratee(obj[i], i, obj); else {
+        if (isArrayLike(obj)) for (i = 0, length = obj.length; length > i; i++) iteratee(obj[i], i, obj); else {
             var keys = _.keys(obj);
-            for (i = 0, length = keys.length; i < length; i++) iteratee(obj[keys[i]], keys[i], obj);
+            for (i = 0, length = keys.length; length > i; i++) iteratee(obj[keys[i]], keys[i], obj);
         }
         return obj;
     }, _.map = _.collect = function(obj, iteratee, context) {
         iteratee = cb(iteratee, context);
-        for (var keys = !isArrayLike(obj) && _.keys(obj), length = (keys || obj).length, results = Array(length), index = 0; index < length; index++) {
+        for (var keys = !isArrayLike(obj) && _.keys(obj), length = (keys || obj).length, results = Array(length), index = 0; length > index; index++) {
             var currentKey = keys ? keys[index] : index;
             results[index] = iteratee(obj[currentKey], currentKey, obj);
         }
@@ -922,7 +921,8 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
     }, _.reduce = _.foldl = _.inject = createReduce(1), _.reduceRight = _.foldr = createReduce(-1), 
     _.find = _.detect = function(obj, predicate, context) {
         var key;
-        if (void 0 !== (key = isArrayLike(obj) ? _.findIndex(obj, predicate, context) : _.findKey(obj, predicate, context)) && -1 !== key) return obj[key];
+        return key = isArrayLike(obj) ? _.findIndex(obj, predicate, context) : _.findKey(obj, predicate, context), 
+        void 0 !== key && -1 !== key ? obj[key] : void 0;
     }, _.filter = _.select = function(obj, predicate, context) {
         var results = [];
         return predicate = cb(predicate, context), _.each(obj, function(value, index, list) {
@@ -932,14 +932,14 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         return _.filter(obj, _.negate(cb(predicate)), context);
     }, _.every = _.all = function(obj, predicate, context) {
         predicate = cb(predicate, context);
-        for (var keys = !isArrayLike(obj) && _.keys(obj), length = (keys || obj).length, index = 0; index < length; index++) {
+        for (var keys = !isArrayLike(obj) && _.keys(obj), length = (keys || obj).length, index = 0; length > index; index++) {
             var currentKey = keys ? keys[index] : index;
             if (!predicate(obj[currentKey], currentKey, obj)) return !1;
         }
         return !0;
     }, _.some = _.any = function(obj, predicate, context) {
         predicate = cb(predicate, context);
-        for (var keys = !isArrayLike(obj) && _.keys(obj), length = (keys || obj).length, index = 0; index < length; index++) {
+        for (var keys = !isArrayLike(obj) && _.keys(obj), length = (keys || obj).length, index = 0; length > index; index++) {
             var currentKey = keys ? keys[index] : index;
             if (predicate(obj[currentKey], currentKey, obj)) return !0;
         }
@@ -959,12 +959,12 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
     }, _.findWhere = function(obj, attrs) {
         return _.find(obj, _.matcher(attrs));
     }, _.max = function(obj, iteratee, context) {
-        var value, computed, result = -1 / 0, lastComputed = -1 / 0;
+        var value, computed, result = -(1 / 0), lastComputed = -(1 / 0);
         if (null == iteratee && null != obj) {
             obj = isArrayLike(obj) ? obj : _.values(obj);
-            for (var i = 0, length = obj.length; i < length; i++) (value = obj[i]) > result && (result = value);
+            for (var i = 0, length = obj.length; length > i; i++) value = obj[i], value > result && (result = value);
         } else iteratee = cb(iteratee, context), _.each(obj, function(value, index, list) {
-            ((computed = iteratee(value, index, list)) > lastComputed || computed === -1 / 0 && result === -1 / 0) && (result = value, 
+            computed = iteratee(value, index, list), (computed > lastComputed || computed === -(1 / 0) && result === -(1 / 0)) && (result = value, 
             lastComputed = computed);
         });
         return result;
@@ -972,14 +972,14 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         var value, computed, result = 1 / 0, lastComputed = 1 / 0;
         if (null == iteratee && null != obj) {
             obj = isArrayLike(obj) ? obj : _.values(obj);
-            for (var i = 0, length = obj.length; i < length; i++) (value = obj[i]) < result && (result = value);
+            for (var i = 0, length = obj.length; length > i; i++) value = obj[i], result > value && (result = value);
         } else iteratee = cb(iteratee, context), _.each(obj, function(value, index, list) {
-            ((computed = iteratee(value, index, list)) < lastComputed || computed === 1 / 0 && result === 1 / 0) && (result = value, 
+            computed = iteratee(value, index, list), (lastComputed > computed || computed === 1 / 0 && result === 1 / 0) && (result = value, 
             lastComputed = computed);
         });
         return result;
     }, _.shuffle = function(obj) {
-        for (var rand, set = isArrayLike(obj) ? obj : _.values(obj), length = set.length, shuffled = Array(length), index = 0; index < length; index++) rand = _.random(0, index), 
+        for (var rand, set = isArrayLike(obj) ? obj : _.values(obj), length = set.length, shuffled = Array(length), index = 0; length > index; index++) rand = _.random(0, index), 
         rand !== index && (shuffled[index] = shuffled[rand]), shuffled[rand] = set[index];
         return shuffled;
     }, _.sample = function(obj, n, guard) {
@@ -995,7 +995,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             var a = left.criteria, b = right.criteria;
             if (a !== b) {
                 if (a > b || void 0 === a) return 1;
-                if (a < b || void 0 === b) return -1;
+                if (b > a || void 0 === b) return -1;
             }
             return left.index - right.index;
         }), "value");
@@ -1026,23 +1026,23 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             (predicate(value, key, obj) ? pass : fail).push(value);
         }), [ pass, fail ];
     }, _.first = _.head = _.take = function(array, n, guard) {
-        if (null != array) return null == n || guard ? array[0] : _.initial(array, array.length - n);
+        return null == array ? void 0 : null == n || guard ? array[0] : _.initial(array, array.length - n);
     }, _.initial = function(array, n, guard) {
         return slice.call(array, 0, Math.max(0, array.length - (null == n || guard ? 1 : n)));
     }, _.last = function(array, n, guard) {
-        if (null != array) return null == n || guard ? array[array.length - 1] : _.rest(array, Math.max(0, array.length - n));
+        return null == array ? void 0 : null == n || guard ? array[array.length - 1] : _.rest(array, Math.max(0, array.length - n));
     }, _.rest = _.tail = _.drop = function(array, n, guard) {
         return slice.call(array, null == n || guard ? 1 : n);
     }, _.compact = function(array) {
         return _.filter(array, _.identity);
     };
     var flatten = function(input, shallow, strict, startIndex) {
-        for (var output = [], idx = 0, i = startIndex || 0, length = input && input.length; i < length; i++) {
+        for (var output = [], idx = 0, i = startIndex || 0, length = input && input.length; length > i; i++) {
             var value = input[i];
             if (isArrayLike(value) && (_.isArray(value) || _.isArguments(value))) {
                 shallow || (value = flatten(value, shallow, strict));
                 var j = 0, len = value.length;
-                for (output.length += len; j < len; ) output[idx++] = value[j++];
+                for (output.length += len; len > j; ) output[idx++] = value[j++];
             } else strict || (output[idx++] = value);
         }
         return output;
@@ -1055,7 +1055,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         if (null == array) return [];
         _.isBoolean(isSorted) || (context = iteratee, iteratee = isSorted, isSorted = !1), 
         null != iteratee && (iteratee = cb(iteratee, context));
-        for (var result = [], seen = [], i = 0, length = array.length; i < length; i++) {
+        for (var result = [], seen = [], i = 0, length = array.length; length > i; i++) {
             var value = array[i], computed = iteratee ? iteratee(value, i, array) : value;
             isSorted ? (i && seen === computed || result.push(value), seen = computed) : iteratee ? _.contains(seen, computed) || (seen.push(computed), 
             result.push(value)) : _.contains(result, value) || result.push(value);
@@ -1065,10 +1065,10 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         return _.uniq(flatten(arguments, !0, !0));
     }, _.intersection = function(array) {
         if (null == array) return [];
-        for (var result = [], argsLength = arguments.length, i = 0, length = array.length; i < length; i++) {
+        for (var result = [], argsLength = arguments.length, i = 0, length = array.length; length > i; i++) {
             var item = array[i];
             if (!_.contains(result, item)) {
-                for (var j = 1; j < argsLength && _.contains(arguments[j], item); j++) ;
+                for (var j = 1; argsLength > j && _.contains(arguments[j], item); j++) ;
                 j === argsLength && result.push(item);
             }
         }
@@ -1081,35 +1081,35 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
     }, _.zip = function() {
         return _.unzip(arguments);
     }, _.unzip = function(array) {
-        for (var length = array && _.max(array, "length").length || 0, result = Array(length), index = 0; index < length; index++) result[index] = _.pluck(array, index);
+        for (var length = array && _.max(array, "length").length || 0, result = Array(length), index = 0; length > index; index++) result[index] = _.pluck(array, index);
         return result;
     }, _.object = function(list, values) {
-        for (var result = {}, i = 0, length = list && list.length; i < length; i++) values ? result[list[i]] = values[i] : result[list[i][0]] = list[i][1];
+        for (var result = {}, i = 0, length = list && list.length; length > i; i++) values ? result[list[i]] = values[i] : result[list[i][0]] = list[i][1];
         return result;
     }, _.indexOf = function(array, item, isSorted) {
         var i = 0, length = array && array.length;
-        if ("number" == typeof isSorted) i = isSorted < 0 ? Math.max(0, length + isSorted) : isSorted; else if (isSorted && length) return i = _.sortedIndex(array, item), 
+        if ("number" == typeof isSorted) i = 0 > isSorted ? Math.max(0, length + isSorted) : isSorted; else if (isSorted && length) return i = _.sortedIndex(array, item), 
         array[i] === item ? i : -1;
         if (item !== item) return _.findIndex(slice.call(array, i), _.isNaN);
-        for (;i < length; i++) if (array[i] === item) return i;
+        for (;length > i; i++) if (array[i] === item) return i;
         return -1;
     }, _.lastIndexOf = function(array, item, from) {
         var idx = array ? array.length : 0;
-        if ("number" == typeof from && (idx = from < 0 ? idx + from + 1 : Math.min(idx, from + 1)), 
+        if ("number" == typeof from && (idx = 0 > from ? idx + from + 1 : Math.min(idx, from + 1)), 
         item !== item) return _.findLastIndex(slice.call(array, 0, idx), _.isNaN);
         for (;--idx >= 0; ) if (array[idx] === item) return idx;
         return -1;
     }, _.findIndex = createIndexFinder(1), _.findLastIndex = createIndexFinder(-1), 
     _.sortedIndex = function(array, obj, iteratee, context) {
         iteratee = cb(iteratee, context, 1);
-        for (var value = iteratee(obj), low = 0, high = array.length; low < high; ) {
+        for (var value = iteratee(obj), low = 0, high = array.length; high > low; ) {
             var mid = Math.floor((low + high) / 2);
             iteratee(array[mid]) < value ? low = mid + 1 : high = mid;
         }
         return low;
     }, _.range = function(start, stop, step) {
         arguments.length <= 1 && (stop = start || 0, start = 0), step = step || 1;
-        for (var length = Math.max(Math.ceil((stop - start) / step), 0), range = Array(length), idx = 0; idx < length; idx++, 
+        for (var length = Math.max(Math.ceil((stop - start) / step), 0), range = Array(length), idx = 0; length > idx; idx++, 
         start += step) range[idx] = start;
         return range;
     };
@@ -1127,15 +1127,15 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         return bound;
     }, _.partial = function(func) {
         var boundArgs = slice.call(arguments, 1), bound = function() {
-            for (var position = 0, length = boundArgs.length, args = Array(length), i = 0; i < length; i++) args[i] = boundArgs[i] === _ ? arguments[position++] : boundArgs[i];
+            for (var position = 0, length = boundArgs.length, args = Array(length), i = 0; length > i; i++) args[i] = boundArgs[i] === _ ? arguments[position++] : boundArgs[i];
             for (;position < arguments.length; ) args.push(arguments[position++]);
             return executeBound(func, bound, this, this, args);
         };
         return bound;
     }, _.bindAll = function(obj) {
         var i, key, length = arguments.length;
-        if (length <= 1) throw new Error("bindAll must be passed function names");
-        for (i = 1; i < length; i++) key = arguments[i], obj[key] = _.bind(obj[key], obj);
+        if (1 >= length) throw new Error("bindAll must be passed function names");
+        for (i = 1; length > i; i++) key = arguments[i], obj[key] = _.bind(obj[key], obj);
         return obj;
     }, _.memoize = function(func, hasher) {
         var memoize = function(key) {
@@ -1153,21 +1153,21 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         var context, args, result, timeout = null, previous = 0;
         options || (options = {});
         var later = function() {
-            previous = !1 === options.leading ? 0 : _.now(), timeout = null, result = func.apply(context, args), 
+            previous = options.leading === !1 ? 0 : _.now(), timeout = null, result = func.apply(context, args), 
             timeout || (context = args = null);
         };
         return function() {
             var now = _.now();
-            previous || !1 !== options.leading || (previous = now);
+            previous || options.leading !== !1 || (previous = now);
             var remaining = wait - (now - previous);
-            return context = this, args = arguments, remaining <= 0 || remaining > wait ? (timeout && (clearTimeout(timeout), 
-            timeout = null), previous = now, result = func.apply(context, args), timeout || (context = args = null)) : timeout || !1 === options.trailing || (timeout = setTimeout(later, remaining)), 
+            return context = this, args = arguments, 0 >= remaining || remaining > wait ? (timeout && (clearTimeout(timeout), 
+            timeout = null), previous = now, result = func.apply(context, args), timeout || (context = args = null)) : timeout || options.trailing === !1 || (timeout = setTimeout(later, remaining)), 
             result;
         };
     }, _.debounce = function(func, wait, immediate) {
         var timeout, args, context, timestamp, result, later = function() {
             var last = _.now() - timestamp;
-            last < wait && last >= 0 ? timeout = setTimeout(later, wait - last) : (timeout = null, 
+            wait > last && last >= 0 ? timeout = setTimeout(later, wait - last) : (timeout = null, 
             immediate || (result = func.apply(context, args), timeout || (context = args = null)));
         };
         return function() {
@@ -1190,12 +1190,12 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         };
     }, _.after = function(times, func) {
         return function() {
-            if (--times < 1) return func.apply(this, arguments);
+            return --times < 1 ? func.apply(this, arguments) : void 0;
         };
     }, _.before = function(times, func) {
         var memo;
         return function() {
-            return --times > 0 && (memo = func.apply(this, arguments)), times <= 1 && (func = null), 
+            return --times > 0 && (memo = func.apply(this, arguments)), 1 >= times && (func = null), 
             memo;
         };
     }, _.once = _.partial(_.before, 2);
@@ -1214,18 +1214,18 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         for (var key in obj) keys.push(key);
         return hasEnumBug && collectNonEnumProps(obj, keys), keys;
     }, _.values = function(obj) {
-        for (var keys = _.keys(obj), length = keys.length, values = Array(length), i = 0; i < length; i++) values[i] = obj[keys[i]];
+        for (var keys = _.keys(obj), length = keys.length, values = Array(length), i = 0; length > i; i++) values[i] = obj[keys[i]];
         return values;
     }, _.mapObject = function(obj, iteratee, context) {
         iteratee = cb(iteratee, context);
-        for (var currentKey, keys = _.keys(obj), length = keys.length, results = {}, index = 0; index < length; index++) currentKey = keys[index], 
+        for (var currentKey, keys = _.keys(obj), length = keys.length, results = {}, index = 0; length > index; index++) currentKey = keys[index], 
         results[currentKey] = iteratee(obj[currentKey], currentKey, obj);
         return results;
     }, _.pairs = function(obj) {
-        for (var keys = _.keys(obj), length = keys.length, pairs = Array(length), i = 0; i < length; i++) pairs[i] = [ keys[i], obj[keys[i]] ];
+        for (var keys = _.keys(obj), length = keys.length, pairs = Array(length), i = 0; length > i; i++) pairs[i] = [ keys[i], obj[keys[i]] ];
         return pairs;
     }, _.invert = function(obj) {
-        for (var result = {}, keys = _.keys(obj), i = 0, length = keys.length; i < length; i++) result[obj[keys[i]]] = keys[i];
+        for (var result = {}, keys = _.keys(obj), i = 0, length = keys.length; length > i; i++) result[obj[keys[i]]] = keys[i];
         return result;
     }, _.functions = _.methods = function(obj) {
         var names = [];
@@ -1234,7 +1234,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
     }, _.extend = createAssigner(_.allKeys), _.extendOwn = _.assign = createAssigner(_.keys), 
     _.findKey = function(obj, predicate, context) {
         predicate = cb(predicate, context);
-        for (var key, keys = _.keys(obj), i = 0, length = keys.length; i < length; i++) if (key = keys[i], 
+        for (var key, keys = _.keys(obj), i = 0, length = keys.length; length > i; i++) if (key = keys[i], 
         predicate(obj[key], key, obj)) return key;
     }, _.pick = function(object, oiteratee, context) {
         var iteratee, keys, result = {}, obj = object;
@@ -1243,7 +1243,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         iteratee = function(value, key, obj) {
             return key in obj;
         }, obj = Object(obj));
-        for (var i = 0, length = keys.length; i < length; i++) {
+        for (var i = 0, length = keys.length; length > i; i++) {
             var key = keys[i], value = obj[key];
             iteratee(value, key, obj) && (result[key] = value);
         }
@@ -1263,14 +1263,14 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
     }, _.isMatch = function(object, attrs) {
         var keys = _.keys(attrs), length = keys.length;
         if (null == object) return !length;
-        for (var obj = Object(object), i = 0; i < length; i++) {
+        for (var obj = Object(object), i = 0; length > i; i++) {
             var key = keys[i];
             if (attrs[key] !== obj[key] || !(key in obj)) return !1;
         }
         return !0;
     };
     var eq = function(a, b, aStack, bStack) {
-        if (a === b) return 0 !== a || 1 / a == 1 / b;
+        if (a === b) return 0 !== a || 1 / a === 1 / b;
         if (null == a || null == b) return a === b;
         a instanceof _ && (a = a._wrapped), b instanceof _ && (b = b._wrapped);
         var className = toString.call(a);
@@ -1281,11 +1281,11 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             return "" + a == "" + b;
 
           case "[object Number]":
-            return +a != +a ? +b != +b : 0 == +a ? 1 / +a == 1 / b : +a == +b;
+            return +a !== +a ? +b !== +b : 0 === +a ? 1 / +a === 1 / b : +a === +b;
 
           case "[object Date]":
           case "[object Boolean]":
-            return +a == +b;
+            return +a === +b;
         }
         var areArrays = "[object Array]" === className;
         if (!areArrays) {
@@ -1296,7 +1296,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         aStack = aStack || [], bStack = bStack || [];
         for (var length = aStack.length; length--; ) if (aStack[length] === a) return bStack[length] === b;
         if (aStack.push(a), bStack.push(b), areArrays) {
-            if ((length = a.length) !== b.length) return !1;
+            if (length = a.length, length !== b.length) return !1;
             for (;length--; ) if (!eq(a[length], b[length], aStack, bStack)) return !1;
         } else {
             var key, keys = _.keys(a);
@@ -1308,7 +1308,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
     _.isEqual = function(a, b) {
         return eq(a, b);
     }, _.isEmpty = function(obj) {
-        return null == obj || (isArrayLike(obj) && (_.isArray(obj) || _.isString(obj) || _.isArguments(obj)) ? 0 === obj.length : 0 === _.keys(obj).length);
+        return null == obj ? !0 : isArrayLike(obj) && (_.isArray(obj) || _.isString(obj) || _.isArguments(obj)) ? 0 === obj.length : 0 === _.keys(obj).length;
     }, _.isElement = function(obj) {
         return !(!obj || 1 !== obj.nodeType);
     }, _.isArray = nativeIsArray || function(obj) {
@@ -1329,7 +1329,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
     }, _.isNaN = function(obj) {
         return _.isNumber(obj) && obj !== +obj;
     }, _.isBoolean = function(obj) {
-        return !0 === obj || !1 === obj || "[object Boolean]" === toString.call(obj);
+        return obj === !0 || obj === !1 || "[object Boolean]" === toString.call(obj);
     }, _.isNull = function(obj) {
         return null === obj;
     }, _.isUndefined = function(obj) {
@@ -1359,7 +1359,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
     }, _.times = function(n, iteratee, context) {
         var accum = Array(Math.max(0, n));
         iteratee = optimizeCb(iteratee, context, 1);
-        for (var i = 0; i < n; i++) accum[i] = iteratee(i);
+        for (var i = 0; n > i; i++) accum[i] = iteratee(i);
         return accum;
     }, _.random = function(min, max) {
         return null == max && (max = min, min = 0), min + Math.floor(Math.random() * (max - min + 1));
@@ -1461,11 +1461,11 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
     function minErr(module) {
         return function() {
             var message, i, code = arguments[0], prefix = "[" + (module ? module + ":" : "") + code + "] ", template = arguments[1], templateArgs = arguments, stringify = function(obj) {
-                return "function" == typeof obj ? obj.toString().replace(/ \{[\s\S]*$/, "") : void 0 === obj ? "undefined" : "string" != typeof obj ? JSON.stringify(obj) : obj;
+                return "function" == typeof obj ? obj.toString().replace(/ \{[\s\S]*$/, "") : "undefined" == typeof obj ? "undefined" : "string" != typeof obj ? JSON.stringify(obj) : obj;
             };
             for (message = prefix + template.replace(/\{\d+\}/g, function(match) {
                 var arg, index = +match.slice(1, -1);
-                return index + 2 < templateArgs.length ? (arg = templateArgs[index + 2], "function" == typeof arg ? arg.toString().replace(/ ?\{[\s\S]*$/, "") : void 0 === arg ? "undefined" : "string" != typeof arg ? toJson(arg) : arg) : match;
+                return index + 2 < templateArgs.length ? (arg = templateArgs[index + 2], "function" == typeof arg ? arg.toString().replace(/ ?\{[\s\S]*$/, "") : "undefined" == typeof arg ? "undefined" : "string" != typeof arg ? toJson(arg) : arg) : match;
             }), message = message + "\nhttp://errors.angularjs.org/1.2.32/" + (module ? module + "/" : "") + code, 
             i = 2; i < arguments.length; i++) message = message + (2 == i ? "?" : "&") + "p" + (i - 2) + "=" + encodeURIComponent(stringify(arguments[i]));
             return new Error(message);
@@ -1474,7 +1474,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
     function isArrayLike(obj) {
         if (null == obj || isWindow(obj)) return !1;
         var length = obj.length;
-        return !(1 !== obj.nodeType || !length) || (isString(obj) || isArray(obj) || 0 === length || "number" == typeof length && length > 0 && length - 1 in obj);
+        return 1 === obj.nodeType && length ? !0 : isString(obj) || isArray(obj) || 0 === length || "number" == typeof length && length > 0 && length - 1 in obj;
     }
     function forEach(obj, iterator, context) {
         var key;
@@ -1497,7 +1497,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
     }
     function nextUid() {
         for (var digit, index = uid.length; index; ) {
-            if (index--, 57 == (digit = uid[index].charCodeAt(0))) return uid[index] = "A", 
+            if (index--, digit = uid[index].charCodeAt(0), 57 == digit) return uid[index] = "A", 
             uid.join("");
             if (90 != digit) return uid[index] = String.fromCharCode(digit + 1), uid.join("");
             uid[index] = "0";
@@ -1533,10 +1533,10 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         };
     }
     function isUndefined(value) {
-        return void 0 === value;
+        return "undefined" == typeof value;
     }
     function isDefined(value) {
-        return void 0 !== value;
+        return "undefined" != typeof value;
     }
     function isObject(value) {
         return null != value && "object" == typeof value;
@@ -1637,7 +1637,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         var length, key, keySet, t1 = typeof o1, t2 = typeof o2;
         if (t1 == t2 && "object" == t1) {
             if (!isArray(o1)) {
-                if (isDate(o1)) return !!isDate(o2) && (isNaN(o1.getTime()) && isNaN(o2.getTime()) || o1.getTime() === o2.getTime());
+                if (isDate(o1)) return isDate(o2) ? isNaN(o1.getTime()) && isNaN(o2.getTime()) || o1.getTime() === o2.getTime() : !1;
                 if (isRegExp(o1) && isRegExp(o2)) return o1.toString() == o2.toString();
                 if (isScope(o1) || isScope(o2) || isWindow(o1) || isWindow(o2) || isArray(o2)) return !1;
                 keySet = {};
@@ -1650,7 +1650,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             }
             if (!isArray(o2)) return !1;
             if ((length = o1.length) == o2.length) {
-                for (key = 0; key < length; key++) if (!equals(o1[key], o2[key])) return !1;
+                for (key = 0; length > key; key++) if (!equals(o1[key], o2[key])) return !1;
                 return !0;
             }
         }
@@ -1676,7 +1676,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         val;
     }
     function toJson(obj, pretty) {
-        return void 0 === obj ? undefined : JSON.stringify(obj, toJsonReplacer, pretty ? "  " : null);
+        return "undefined" == typeof obj ? undefined : JSON.stringify(obj, toJsonReplacer, pretty ? "  " : null);
     }
     function fromJson(json) {
         return isString(json) ? JSON.parse(json) : json;
@@ -1693,9 +1693,9 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         try {
             element.empty();
         } catch (e) {}
-        var elemHtml = jqLite("<div>").append(element).html();
+        var TEXT_NODE = 3, elemHtml = jqLite("<div>").append(element).html();
         try {
-            return 3 === element[0].nodeType ? lowercase(elemHtml) : elemHtml.match(/^(<[^>]+>)/)[1].replace(/^<([\w\-]+)/, function(match, nodeName) {
+            return element[0].nodeType === TEXT_NODE ? lowercase(elemHtml) : elemHtml.match(/^(<[^>]+>)/)[1].replace(/^<([\w\-]+)/, function(match, nodeName) {
                 return "<" + lowercase(nodeName);
             });
         } catch (e) {
@@ -1712,7 +1712,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         return forEach((keyValue || "").split("&"), function(keyValue) {
             if (keyValue && (key_value = keyValue.replace(/\+/g, "%20").split("="), key = tryDecodeURIComponent(key_value[0]), 
             isDefined(key))) {
-                var val = !isDefined(key_value[1]) || tryDecodeURIComponent(key_value[1]);
+                var val = isDefined(key_value[1]) ? tryDecodeURIComponent(key_value[1]) : !0;
                 hasOwnProperty.call(obj, key) ? isArray(obj[key]) ? obj[key].push(val) : obj[key] = [ obj[key], val ] : obj[key] = val;
             }
         }), obj;
@@ -1721,8 +1721,8 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         var parts = [];
         return forEach(obj, function(value, key) {
             isArray(value) ? forEach(value, function(arrayValue) {
-                parts.push(encodeUriQuery(key, !0) + (!0 === arrayValue ? "" : "=" + encodeUriQuery(arrayValue, !0)));
-            }) : parts.push(encodeUriQuery(key, !0) + (!0 === value ? "" : "=" + encodeUriQuery(value, !0)));
+                parts.push(encodeUriQuery(key, !0) + (arrayValue === !0 ? "" : "=" + encodeUriQuery(arrayValue, !0)));
+            }) : parts.push(encodeUriQuery(key, !0) + (value === !0 ? "" : "=" + encodeUriQuery(value, !0)));
         }), parts.length ? parts.join("&") : "";
     }
     function encodeUriSegment(val) {
@@ -1765,12 +1765,12 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                 });
             } ]), injector;
         }, NG_DEFER_BOOTSTRAP = /^NG_DEFER_BOOTSTRAP!/;
-        if (window && !NG_DEFER_BOOTSTRAP.test(window.name)) return doBootstrap();
-        window.name = window.name.replace(NG_DEFER_BOOTSTRAP, ""), angular.resumeBootstrap = function(extraModules) {
+        return window && !NG_DEFER_BOOTSTRAP.test(window.name) ? doBootstrap() : (window.name = window.name.replace(NG_DEFER_BOOTSTRAP, ""), 
+        void (angular.resumeBootstrap = function(extraModules) {
             forEach(extraModules, function(module) {
                 modules.push(module);
             }), doBootstrap();
-        };
+        }));
     }
     function snake_case(name, separator) {
         return separator = separator || "_", name.replace(SNAKE_CASE_REGEXP, function(letter, pos) {
@@ -1800,7 +1800,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
     }
     function getter(obj, path, bindFnToScope) {
         if (!path) return obj;
-        for (var key, keys = path.split("."), lastInstance = obj, len = keys.length, i = 0; i < len; i++) key = keys[i], 
+        for (var key, keys = path.split("."), lastInstance = obj, len = keys.length, i = 0; len > i; i++) key = keys[i], 
         obj && (obj = (lastInstance = obj)[key]);
         return !bindFnToScope && isFunction(obj) ? bind(lastInstance, obj) : obj;
     }
@@ -1809,7 +1809,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         if (startNode === endNode) return jqLite(startNode);
         var element = startNode, elements = [ element ];
         do {
-            if (!(element = element.nextSibling)) break;
+            if (element = element.nextSibling, !element) break;
             elements.push(element);
         } while (element !== endNode);
         return jqLite(elements);
@@ -1822,9 +1822,10 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         return angular.$$minErr = angular.$$minErr || minErr, ensure(angular, "module", function() {
             var modules = {};
             return function(name, requires, configFn) {
-                return function(name, context) {
+                var assertNotHasOwnProperty = function(name, context) {
                     if ("hasOwnProperty" === name) throw ngMinErr("badname", "hasOwnProperty is not a valid {0} name", context);
-                }(name, "module"), requires && modules.hasOwnProperty(name) && (modules[name] = null), 
+                };
+                return assertNotHasOwnProperty(name, "module"), requires && modules.hasOwnProperty(name) && (modules[name] = null), 
                 ensure(modules, name, function() {
                     function invokeLater(provider, method, insertMethod) {
                         return function() {
@@ -1977,9 +1978,9 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         function removePatch(param) {
             var set, setIndex, setLength, element, childIndex, childLength, children, list = filterElems && param ? [ this.filter(param) ] : [ this ], fireEvent = dispatchThis;
             if (!getterIfNoArguments || null != param) for (;list.length; ) for (set = list.shift(), 
-            setIndex = 0, setLength = set.length; setIndex < setLength; setIndex++) for (element = jqLite(set[setIndex]), 
+            setIndex = 0, setLength = set.length; setLength > setIndex; setIndex++) for (element = jqLite(set[setIndex]), 
             fireEvent ? element.triggerHandler("$destroy") : fireEvent = !fireEvent, childIndex = 0, 
-            childLength = (children = element.children()).length; childIndex < childLength; childIndex++) list.push(jQuery(children[childIndex]));
+            childLength = (children = element.children()).length; childLength > childIndex; childIndex++) list.push(jQuery(children[childIndex]));
             return originalJqFn.apply(this, arguments);
         }
         var originalJqFn = jQuery.fn[name];
@@ -1995,7 +1996,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             for (tmp = fragment.appendChild(context.createElement("div")), tag = (TAG_NAME_REGEXP.exec(html) || [ "", "" ])[1].toLowerCase(), 
             wrap = wrapMap[tag] || wrapMap._default, tmp.innerHTML = "<div>&#160;</div>" + wrap[1] + html.replace(XHTML_TAG_REGEXP, "<$1></$2>") + wrap[2], 
             tmp.removeChild(tmp.firstChild), i = wrap[0]; i--; ) tmp = tmp.lastChild;
-            for (j = 0, jj = tmp.childNodes.length; j < jj; ++j) nodes.push(tmp.childNodes[j]);
+            for (j = 0, jj = tmp.childNodes.length; jj > j; ++j) nodes.push(tmp.childNodes[j]);
             tmp = fragment.firstChild, tmp.textContent = "";
         }
         return fragment.textContent = "", fragment.innerHTML = "", nodes;
@@ -2013,7 +2014,8 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         }
         if (isString(element)) {
             jqLiteAddNodes(this, jqLiteParseHTML(element));
-            jqLite(document.createDocumentFragment()).append(this);
+            var fragment = jqLite(document.createDocumentFragment());
+            fragment.append(this);
         } else jqLiteAddNodes(this, element);
     }
     function jqLiteClone(element) {
@@ -2025,8 +2027,8 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
     }
     function jqLiteOff(element, type, fn, unsupported) {
         if (isDefined(unsupported)) throw jqLiteMinErr("offargs", "jqLite#off() does not support the `selector` argument");
-        var events = jqLiteExpandoStore(element, "events");
-        jqLiteExpandoStore(element, "handle") && (isUndefined(type) ? forEach(events, function(eventHandler, type) {
+        var events = jqLiteExpandoStore(element, "events"), handle = jqLiteExpandoStore(element, "handle");
+        handle && (isUndefined(type) ? forEach(events, function(eventHandler, type) {
             removeEventListenerFn(element, type, eventHandler), delete events[type];
         }) : forEach(type.split(" "), function(type) {
             isUndefined(fn) ? (removeEventListenerFn(element, type, events[type]), delete events[type]) : arrayRemove(events[type] || [], fn);
@@ -2042,9 +2044,8 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
     }
     function jqLiteExpandoStore(element, key, value) {
         var expandoId = element.ng339, expandoStore = jqCache[expandoId || -1];
-        if (!isDefined(value)) return expandoStore && expandoStore[key];
-        expandoStore || (element.ng339 = expandoId = jqNextId(), expandoStore = jqCache[expandoId] = {}), 
-        expandoStore[key] = value;
+        return isDefined(value) ? (expandoStore || (element.ng339 = expandoId = jqNextId(), 
+        expandoStore = jqCache[expandoId] = {}), void (expandoStore[key] = value)) : expandoStore && expandoStore[key];
     }
     function jqLiteData(element, key, value) {
         var data = jqLiteExpandoStore(element, "data"), isSetter = isDefined(value), keyDefined = !isSetter && isDefined(key), isSimpleGetter = keyDefined && !isObject(key);
@@ -2055,7 +2056,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         }
     }
     function jqLiteHasClass(element, selector) {
-        return !!element.getAttribute && (" " + (element.getAttribute("class") || "") + " ").replace(/[\n\t]/g, " ").indexOf(" " + selector + " ") > -1;
+        return element.getAttribute ? (" " + (element.getAttribute("class") || "") + " ").replace(/[\n\t]/g, " ").indexOf(" " + selector + " ") > -1 : !1;
     }
     function jqLiteRemoveClass(element, cssClasses) {
         cssClasses && element.setAttribute && forEach(cssClasses.split(" "), function(cssClass) {
@@ -2082,7 +2083,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
     function jqLiteInheritedData(element, name, value) {
         9 == element.nodeType && (element = element.documentElement);
         for (var names = isArray(name) ? name : [ name ]; element; ) {
-            for (var i = 0, ii = names.length; i < ii; i++) if ((value = jqLite.data(element, names[i])) !== undefined) return value;
+            for (var i = 0, ii = names.length; ii > i; i++) if ((value = jqLite.data(element, names[i])) !== undefined) return value;
             element = element.parentNode || 11 === element.nodeType && element.host;
         }
     }
@@ -2107,10 +2108,12 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                 }, event.defaultPrevented = !1;
             }
             event.isDefaultPrevented = function() {
-                return event.defaultPrevented || !1 === event.returnValue;
-            }, forEach(shallowCopy(events[type || event.type] || []), function(fn) {
+                return event.defaultPrevented || event.returnValue === !1;
+            };
+            var eventHandlersCopy = shallowCopy(events[type || event.type] || []);
+            forEach(eventHandlersCopy, function(fn) {
                 fn.call(element, event);
-            }), msie <= 8 ? (event.preventDefault = null, event.stopPropagation = null, event.isDefaultPrevented = null) : (delete event.preventDefault, 
+            }), 8 >= msie ? (event.preventDefault = null, event.stopPropagation = null, event.isDefaultPrevented = null) : (delete event.preventDefault, 
             delete event.stopPropagation, delete event.isDefaultPrevented);
         };
         return eventHandler.elem = element, eventHandler;
@@ -2142,8 +2145,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
     function createInjector(modulesToLoad) {
         function supportObject(delegate) {
             return function(key, value) {
-                if (!isObject(key)) return delegate(key, value);
-                forEach(key, reverseParams(delegate));
+                return isObject(key) ? void forEach(key, reverseParams(delegate)) : delegate(key, value);
             };
         }
         function provider(name, provider_) {
@@ -2183,7 +2185,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                     loadedModules.put(module, !0);
                     try {
                         if (isString(module)) for (moduleFn = angularModule(module), runBlocks = runBlocks.concat(loadModules(moduleFn.requires)).concat(moduleFn._runBlocks), 
-                        invokeQueue = moduleFn._invokeQueue, i = 0, ii = invokeQueue.length; i < ii; i++) {
+                        invokeQueue = moduleFn._invokeQueue, i = 0, ii = invokeQueue.length; ii > i; i++) {
                             var invokeArgs = invokeQueue[i], provider = providerInjector.get(invokeArgs[0]);
                             provider[invokeArgs[1]].apply(provider, invokeArgs[2]);
                         } else isFunction(module) ? runBlocks.push(providerInjector.invoke(module)) : isArray(module) ? runBlocks.push(providerInjector.invoke(module)) : assertArgFn(module, "module");
@@ -2210,8 +2212,8 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             }
             function invoke(fn, self, locals) {
                 var length, i, key, args = [], $inject = annotate(fn);
-                for (i = 0, length = $inject.length; i < length; i++) {
-                    if ("string" != typeof (key = $inject[i])) throw $injectorMinErr("itkn", "Incorrect injection token! Expected service name as string, got {0}", key);
+                for (i = 0, length = $inject.length; length > i; i++) {
+                    if (key = $inject[i], "string" != typeof key) throw $injectorMinErr("itkn", "Incorrect injection token! Expected service name as string, got {0}", key);
                     args.push(locals && locals.hasOwnProperty(key) ? locals[key] : getService(key));
                 }
                 return isArray(fn) && (fn = fn[length]), fn.apply(self, args);
@@ -2287,7 +2289,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             try {
                 fn.apply(null, sliceArgs(arguments, 1));
             } finally {
-                if (0 === --outstandingRequestCount) for (;outstandingRequestCallbacks.length; ) try {
+                if (outstandingRequestCount--, 0 === outstandingRequestCount) for (;outstandingRequestCallbacks.length; ) try {
                     outstandingRequestCallbacks.pop()();
                 } catch (e) {
                     $log.error(e);
@@ -2353,19 +2355,20 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             if (!name) {
                 if (rawDocument.cookie !== lastCookieString) for (lastCookieString = rawDocument.cookie, 
                 cookieArray = lastCookieString.split("; "), lastCookies = {}, i = 0; i < cookieArray.length; i++) cookie = cookieArray[i], 
-                (index = cookie.indexOf("=")) > 0 && (name = unescape(cookie.substring(0, index)), 
+                index = cookie.indexOf("="), index > 0 && (name = unescape(cookie.substring(0, index)), 
                 lastCookies[name] === undefined && (lastCookies[name] = unescape(cookie.substring(index + 1))));
                 return lastCookies;
             }
-            value === undefined ? rawDocument.cookie = escape(name) + "=;path=" + cookiePath + ";expires=Thu, 01 Jan 1970 00:00:00 GMT" : isString(value) && (cookieLength = (rawDocument.cookie = escape(name) + "=" + escape(value) + ";path=" + cookiePath).length + 1) > 4096 && $log.warn("Cookie '" + name + "' possibly not set or overflowed because it was too large (" + cookieLength + " > 4096 bytes)!");
+            value === undefined ? rawDocument.cookie = escape(name) + "=;path=" + cookiePath + ";expires=Thu, 01 Jan 1970 00:00:00 GMT" : isString(value) && (cookieLength = (rawDocument.cookie = escape(name) + "=" + escape(value) + ";path=" + cookiePath).length + 1, 
+            cookieLength > 4096 && $log.warn("Cookie '" + name + "' possibly not set or overflowed because it was too large (" + cookieLength + " > 4096 bytes)!"));
         }, self.defer = function(fn, delay) {
             var timeoutId;
             return outstandingRequestCount++, timeoutId = setTimeout(function() {
                 delete pendingDeferIds[timeoutId], completeOutstandingRequest(fn);
             }, delay || 0), pendingDeferIds[timeoutId] = !0, timeoutId;
         }, self.defer.cancel = function(deferId) {
-            return !!pendingDeferIds[deferId] && (delete pendingDeferIds[deferId], clearTimeout(deferId), 
-            completeOutstandingRequest(noop), !0);
+            return pendingDeferIds[deferId] ? (delete pendingDeferIds[deferId], clearTimeout(deferId), 
+            completeOutstandingRequest(noop), !0) : !1;
         };
     }
     function $BrowserProvider() {
@@ -2390,9 +2393,10 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                 return caches[cacheId] = {
                     put: function(key, value) {
                         if (capacity < Number.MAX_VALUE) {
-                            refresh(lruHash[key] || (lruHash[key] = {
+                            var lruEntry = lruHash[key] || (lruHash[key] = {
                                 key: key
-                            }));
+                            });
+                            refresh(lruEntry);
                         }
                         if (!isUndefined(value)) return key in data || size++, data[key] = value, size > capacity && this.remove(staleEnd.key), 
                         value;
@@ -2482,9 +2486,9 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                     forEach(transcludeControllers, function(instance, name) {
                         $linkNode.data("$" + name + "Controller", instance);
                     });
-                    for (var i = 0, ii = $linkNode.length; i < ii; i++) {
+                    for (var i = 0, ii = $linkNode.length; ii > i; i++) {
                         var node = $linkNode[i], nodeType = node.nodeType;
-                        1 !== nodeType && 9 !== nodeType || $linkNode.eq(i).data("$scope", scope);
+                        (1 === nodeType || 9 === nodeType) && $linkNode.eq(i).data("$scope", scope);
                     }
                     return cloneConnectFn && cloneConnectFn($linkNode, scope), compositeLinkFn && compositeLinkFn(scope, $linkNode, $linkNode, parentBoundTranscludeFn), 
                     $linkNode;
@@ -2498,8 +2502,8 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             function compileNodes(nodeList, transcludeFn, $rootElement, maxPriority, ignoreDirective, previousCompileContext) {
                 function compositeLinkFn(scope, nodeList, $rootElement, parentBoundTranscludeFn) {
                     var nodeLinkFn, childLinkFn, node, childScope, i, ii, n, childBoundTranscludeFn, nodeListLength = nodeList.length, stableNodeList = new Array(nodeListLength);
-                    for (i = 0; i < nodeListLength; i++) stableNodeList[i] = nodeList[i];
-                    for (i = 0, n = 0, ii = linkFns.length; i < ii; n++) node = stableNodeList[n], nodeLinkFn = linkFns[i++], 
+                    for (i = 0; nodeListLength > i; i++) stableNodeList[i] = nodeList[i];
+                    for (i = 0, n = 0, ii = linkFns.length; ii > i; n++) node = stableNodeList[n], nodeLinkFn = linkFns[i++], 
                     childLinkFn = linkFns[i++], nodeLinkFn ? (nodeLinkFn.scope ? (childScope = scope.$new(), 
                     jqLite.data(node, "$scope", childScope)) : childScope = scope, childBoundTranscludeFn = nodeLinkFn.transcludeOnThisElement ? createBoundTranscludeFn(scope, nodeLinkFn.transclude, parentBoundTranscludeFn) : !nodeLinkFn.templateOnThisElement && parentBoundTranscludeFn ? parentBoundTranscludeFn : !parentBoundTranscludeFn && transcludeFn ? createBoundTranscludeFn(scope, transcludeFn) : null, 
                     nodeLinkFn(childLinkFn, childScope, node, $rootElement, childBoundTranscludeFn)) : childLinkFn && childLinkFn(scope, node.childNodes, undefined, parentBoundTranscludeFn);
@@ -2513,7 +2517,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                 return linkFnFound ? compositeLinkFn : null;
             }
             function createBoundTranscludeFn(scope, transcludeFn, previousBoundTranscludeFn) {
-                return function(transcludedScope, cloneFn, controllers) {
+                var boundTranscludeFn = function(transcludedScope, cloneFn, controllers) {
                     var scopeCreated = !1;
                     transcludedScope || (transcludedScope = scope.$new(), transcludedScope.$$transcluded = !0, 
                     scopeCreated = !0);
@@ -2522,20 +2526,22 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                         transcludedScope.$destroy();
                     }), clone;
                 };
+                return boundTranscludeFn;
             }
             function collectDirectives(node, directives, attrs, maxPriority, ignoreDirective) {
                 var match, nodeName, className, nodeType = node.nodeType, attrsMap = attrs.$attr;
                 switch (nodeType) {
                   case 1:
                     nodeName = nodeName_(node).toLowerCase(), addDirective(directives, directiveNormalize(nodeName), "E", maxPriority, ignoreDirective);
-                    for (var attr, name, nName, ngAttrName, value, isNgAttr, nAttrs = node.attributes, j = 0, jj = nAttrs && nAttrs.length; j < jj; j++) {
+                    for (var attr, name, nName, ngAttrName, value, isNgAttr, nAttrs = node.attributes, j = 0, jj = nAttrs && nAttrs.length; jj > j; j++) {
                         var attrStartName = !1, attrEndName = !1;
                         if (attr = nAttrs[j], !msie || msie >= 8 || attr.specified) {
                             name = attr.name, value = trim(attr.value), ngAttrName = directiveNormalize(name), 
                             (isNgAttr = NG_ATTR_BINDING.test(ngAttrName)) && (name = snake_case(ngAttrName.substr(6), "-"));
-                            ngAttrName === ngAttrName.replace(/(Start|End)$/, "") + "Start" && (attrStartName = name, 
-                            attrEndName = name.substr(0, name.length - 5) + "end", name = name.substr(0, name.length - 6)), 
-                            nName = directiveNormalize(name.toLowerCase()), attrsMap[nName] = name, !isNgAttr && attrs.hasOwnProperty(nName) || (attrs[nName] = value, 
+                            var directiveNName = ngAttrName.replace(/(Start|End)$/, "");
+                            ngAttrName === directiveNName + "Start" && (attrStartName = name, attrEndName = name.substr(0, name.length - 5) + "end", 
+                            name = name.substr(0, name.length - 6)), nName = directiveNormalize(name.toLowerCase()), 
+                            attrsMap[nName] = name, (isNgAttr || !attrs.hasOwnProperty(nName)) && (attrs[nName] = value, 
                             getBooleanAttrName(node, nName) && (attrs[nName] = !0)), addAttrInterpolateDirective(node, directives, value, nName), 
                             addDirective(directives, nName, "A", maxPriority, ignoreDirective, attrStartName, attrEndName);
                         }
@@ -2592,7 +2598,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                         for (;"^" == (value = require.charAt(0)) || "?" == value; ) require = require.substr(1), 
                         "^" == value && (retrievalMethod = "inheritedData"), optional = optional || "?" == value;
                         if (value = null, elementControllers && "data" === retrievalMethod && (value = elementControllers[require]), 
-                        !(value = value || $element[retrievalMethod]("$" + require + "Controller")) && !optional) throw $compileMinErr("ctreq", "Controller '{0}', required by directive '{1}', can't be found!", require, directiveName);
+                        value = value || $element[retrievalMethod]("$" + require + "Controller"), !value && !optional) throw $compileMinErr("ctreq", "Controller '{0}', required by directive '{1}', can't be found!", require, directiveName);
                         return value;
                     }
                     return isArray(require) && (value = [], forEach(require, function(require) {
@@ -2654,7 +2660,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                         controllerInstance = $controller(controller, locals), elementControllers[directive.name] = controllerInstance, 
                         hasElementTranscludeDirective || $element.data("$" + directive.name + "Controller", controllerInstance), 
                         directive.controllerAs && (locals.$scope[directive.controllerAs] = controllerInstance);
-                    }), i = 0, ii = preLinkFns.length; i < ii; i++) try {
+                    }), i = 0, ii = preLinkFns.length; ii > i; i++) try {
                         linkFn = preLinkFns[i], linkFn(linkFn.isolateScope ? isolateScope : scope, $element, attrs, linkFn.require && getControllers(linkFn.directiveName, linkFn.require, $element, elementControllers), transcludeFn);
                     } catch (e) {
                         $exceptionHandler(e, startingTag($element));
@@ -2669,7 +2675,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                     }
                 }
                 previousCompileContext = previousCompileContext || {};
-                for (var newScopeDirective, directive, directiveName, $template, linkFn, directiveValue, terminalPriority = -Number.MAX_VALUE, controllerDirectives = previousCompileContext.controllerDirectives, newIsolateScopeDirective = previousCompileContext.newIsolateScopeDirective, templateDirective = previousCompileContext.templateDirective, nonTlbTranscludeDirective = previousCompileContext.nonTlbTranscludeDirective, hasTranscludeDirective = !1, hasTemplate = !1, hasElementTranscludeDirective = previousCompileContext.hasElementTranscludeDirective, $compileNode = templateAttrs.$$element = jqLite(compileNode), replaceDirective = originalReplaceDirective, childTranscludeFn = transcludeFn, i = 0, ii = directives.length; i < ii; i++) {
+                for (var newScopeDirective, directive, directiveName, $template, linkFn, directiveValue, terminalPriority = -Number.MAX_VALUE, controllerDirectives = previousCompileContext.controllerDirectives, newIsolateScopeDirective = previousCompileContext.newIsolateScopeDirective, templateDirective = previousCompileContext.templateDirective, nonTlbTranscludeDirective = previousCompileContext.nonTlbTranscludeDirective, hasTranscludeDirective = !1, hasTemplate = !1, hasElementTranscludeDirective = previousCompileContext.hasElementTranscludeDirective, $compileNode = templateAttrs.$$element = jqLite(compileNode), replaceDirective = originalReplaceDirective, childTranscludeFn = transcludeFn, i = 0, ii = directives.length; ii > i; i++) {
                     directive = directives[i];
                     var attrStart = directive.$$start, attrEnd = directive.$$end;
                     if (attrStart && ($compileNode = groupScan(compileNode, attrStart, attrEnd)), $template = undefined, 
@@ -2714,20 +2720,20 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                     }
                     directive.terminal && (nodeLinkFn.terminal = !0, terminalPriority = Math.max(terminalPriority, directive.priority));
                 }
-                return nodeLinkFn.scope = newScopeDirective && !0 === newScopeDirective.scope, nodeLinkFn.transcludeOnThisElement = hasTranscludeDirective, 
+                return nodeLinkFn.scope = newScopeDirective && newScopeDirective.scope === !0, nodeLinkFn.transcludeOnThisElement = hasTranscludeDirective, 
                 nodeLinkFn.templateOnThisElement = hasTemplate, nodeLinkFn.transclude = childTranscludeFn, 
                 previousCompileContext.hasElementTranscludeDirective = hasElementTranscludeDirective, 
                 nodeLinkFn;
             }
             function markDirectivesAsIsolate(directives) {
-                for (var j = 0, jj = directives.length; j < jj; j++) directives[j] = inherit(directives[j], {
+                for (var j = 0, jj = directives.length; jj > j; j++) directives[j] = inherit(directives[j], {
                     $$isolateScope: !0
                 });
             }
             function addDirective(tDirectives, name, location, maxPriority, ignoreDirective, startAttrName, endAttrName) {
                 if (name === ignoreDirective) return null;
                 var match = null;
-                if (hasDirectives.hasOwnProperty(name)) for (var directive, directives = $injector.get(name + Suffix), i = 0, ii = directives.length; i < ii; i++) try {
+                if (hasDirectives.hasOwnProperty(name)) for (var directive, directives = $injector.get(name + Suffix), i = 0, ii = directives.length; ii > i; i++) try {
                     directive = directives[i], (maxPriority === undefined || maxPriority > directive.priority) && -1 != directive.restrict.indexOf(location) && (startAttrName && (directive = inherit(directive, {
                         $$start: startAttrName,
                         $$end: endAttrName
@@ -2743,7 +2749,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                     "$" != key.charAt(0) && (src[key] && src[key] !== value && (value += ("style" === key ? ";" : " ") + src[key]), 
                     dst.$set(key, value, !0, srcAttr[key]));
                 }), forEach(src, function(value, key) {
-                    "class" == key ? (safeAddClass($element, value), dst.class = (dst.class ? dst.class + " " : "") + value) : "style" == key ? ($element.attr("style", $element.attr("style") + ";" + value), 
+                    "class" == key ? (safeAddClass($element, value), dst["class"] = (dst["class"] ? dst["class"] + " " : "") + value) : "style" == key ? ($element.attr("style", $element.attr("style") + ";" + value), 
                     dst.style = (dst.style ? dst.style + ";" : "") + value) : "$" == key.charAt(0) || dst.hasOwnProperty(key) || (dst[key] = value, 
                     dstAttr[key] = srcAttr[key]);
                 });
@@ -2831,7 +2837,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                                 pre: function(scope, element, attr) {
                                     var $$observers = attr.$$observers || (attr.$$observers = {});
                                     if (EVENT_HANDLER_ATTR_REGEXP.test(name)) throw $compileMinErr("nodomevents", "Interpolations for HTML DOM event attributes are disallowed.  Please use the ng- versions (such as ng-click instead of onclick) instead.");
-                                    (interpolateFn = $interpolate(attr[name], !0, getTrustedContext(node, name))) && (attr[name] = interpolateFn(scope), 
+                                    interpolateFn = $interpolate(attr[name], !0, getTrustedContext(node, name)), interpolateFn && (attr[name] = interpolateFn(scope), 
                                     ($$observers[name] || ($$observers[name] = [])).$$inter = !0, (attr.$$observers && attr.$$observers[name].$$scope || scope).$watch(interpolateFn, function(newValue, oldValue) {
                                         "class" === name && newValue != oldValue ? attr.$updateClass(newValue, oldValue) : attr.$set(name, newValue);
                                     }));
@@ -2843,17 +2849,17 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             }
             function replaceWith($rootElement, elementsToRemove, newNode) {
                 var i, ii, firstElementToRemove = elementsToRemove[0], removeCount = elementsToRemove.length, parent = firstElementToRemove.parentNode;
-                if ($rootElement) for (i = 0, ii = $rootElement.length; i < ii; i++) if ($rootElement[i] == firstElementToRemove) {
+                if ($rootElement) for (i = 0, ii = $rootElement.length; ii > i; i++) if ($rootElement[i] == firstElementToRemove) {
                     $rootElement[i++] = newNode;
-                    for (var j = i, j2 = j + removeCount - 1, jj = $rootElement.length; j < jj; j++, 
-                    j2++) j2 < jj ? $rootElement[j] = $rootElement[j2] : delete $rootElement[j];
+                    for (var j = i, j2 = j + removeCount - 1, jj = $rootElement.length; jj > j; j++, 
+                    j2++) jj > j2 ? $rootElement[j] = $rootElement[j2] : delete $rootElement[j];
                     $rootElement.length -= removeCount - 1;
                     break;
                 }
                 parent && parent.replaceChild(newNode, firstElementToRemove);
                 var fragment = document.createDocumentFragment();
                 fragment.appendChild(firstElementToRemove), newNode[jqLite.expando] = firstElementToRemove[jqLite.expando];
-                for (var k = 1, kk = elementsToRemove.length; k < kk; k++) {
+                for (var k = 1, kk = elementsToRemove.length; kk > k; k++) {
                     var element = elementsToRemove[k];
                     jqLite(element).remove(), fragment.appendChild(element), delete elementsToRemove[k];
                 }
@@ -2882,9 +2888,9 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                 $set: function(key, value, writeAttr, attrName) {
                     var nodeName, booleanKey = getBooleanAttrName(this.$$element[0], key);
                     booleanKey && (this.$$element.prop(key, value), attrName = booleanKey), this[key] = value, 
-                    attrName ? this.$attr[key] = attrName : (attrName = this.$attr[key]) || (this.$attr[key] = attrName = snake_case(key, "-")), 
+                    attrName ? this.$attr[key] = attrName : (attrName = this.$attr[key], attrName || (this.$attr[key] = attrName = snake_case(key, "-"))), 
                     nodeName = nodeName_(this.$$element).toUpperCase(), ("A" === nodeName && ("href" === key || "xlinkHref" === key) || "IMG" === nodeName && "src" === key) && (this[key] = value = $$sanitizeUri(value, "src" === key)), 
-                    !1 !== writeAttr && (null === value || value === undefined ? this.$$element.removeAttr(attrName) : this.$$element.attr(attrName, value));
+                    writeAttr !== !1 && (null === value || value === undefined ? this.$$element.removeAttr(attrName) : this.$$element.attr(attrName, value));
                     var $$observers = this.$$observers;
                     $$observers && forEach($$observers[key], function(fn) {
                         try {
@@ -2967,7 +2973,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         }), data);
     }
     function isSuccess(status) {
-        return 200 <= status && status < 300;
+        return status >= 200 && 300 > status;
     }
     function $HttpProvider() {
         var JSON_START = /^\s*(\[|\{[^\{])/, JSON_END = /[\}\]]\s*$/, PROTECTION_PREFIX = /^\)\]\}',?\n/, CONTENT_TYPE_APPLICATION_JSON = {
@@ -3087,7 +3093,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                 }
                 var cache, cachedResp, deferred = $q.defer(), promise = deferred.promise, url = buildUrl(config.url, config.params);
                 if ($http.pendingRequests.push(config), promise.then(removePendingReq, removePendingReq), 
-                !config.cache && !defaults.cache || !1 === config.cache || "GET" !== config.method && "JSONP" !== config.method || (cache = isObject(config.cache) ? config.cache : isObject(defaults.cache) ? defaults.cache : defaultCache), 
+                !config.cache && !defaults.cache || config.cache === !1 || "GET" !== config.method && "JSONP" !== config.method || (cache = isObject(config.cache) ? config.cache : isObject(defaults.cache) ? defaults.cache : defaultCache), 
                 cache) if (cachedResp = cache.get(url), isDefined(cachedResp)) {
                     if (isPromiseLike(cachedResp)) return cachedResp.then(removePendingReq, removePendingReq), 
                     cachedResp;
@@ -3129,7 +3135,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         } ];
     }
     function createXhr(method) {
-        if (msie <= 8 && (!method.match(/^(get|post|head|put|delete|options)$/i) || !window.XMLHttpRequest)) return new window.ActiveXObject("Microsoft.XMLHTTP");
+        if (8 >= msie && (!method.match(/^(get|post|head|put|delete|options)$/i) || !window.XMLHttpRequest)) return new window.ActiveXObject("Microsoft.XMLHTTP");
         if (window.XMLHttpRequest) return new window.XMLHttpRequest();
         throw minErr("$httpBackend")("noxhr", "This browser does not support XMLHttpRequest.");
     }
@@ -3149,7 +3155,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                     type: "error"
                 }), text = event.type, status = "error" === event.type ? 404 : 200), done && done(status, text);
             }, addEventListenerFn(script, "load", callback), addEventListenerFn(script, "error", callback), 
-            msie <= 8 && (script.onreadystatechange = function() {
+            8 >= msie && (script.onreadystatechange = function() {
                 isString(script.readyState) && /loaded|complete/.test(script.readyState) && (script.onreadystatechange = null, 
                 callback({
                     type: "load"
@@ -3183,7 +3189,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                     if (xhr && 4 == xhr.readyState) {
                         var responseHeaders = null, response = null, statusText = "";
                         status !== ABORTED && (responseHeaders = xhr.getAllResponseHeaders(), response = "response" in xhr ? xhr.response : xhr.responseText), 
-                        status === ABORTED && msie < 10 || (statusText = xhr.statusText), completeRequest(callback, status || xhr.status, response, responseHeaders, statusText);
+                        status === ABORTED && 10 > msie || (statusText = xhr.statusText), completeRequest(callback, status || xhr.status, response, responseHeaders, statusText);
                     }
                 }, withCredentials && (xhr.withCredentials = !0), responseType) try {
                     xhr.responseType = responseType;
@@ -3203,15 +3209,16 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             return value ? (endSymbol = value, this) : endSymbol;
         }, this.$get = [ "$parse", "$exceptionHandler", "$sce", function($parse, $exceptionHandler, $sce) {
             function $interpolate(text, mustHaveExpression, trustedContext) {
-                for (var startIndex, endIndex, fn, exp, index = 0, parts = [], length = text.length, hasInterpolation = !1, concat = []; index < length; ) -1 != (startIndex = text.indexOf(startSymbol, index)) && -1 != (endIndex = text.indexOf(endSymbol, startIndex + startSymbolLength)) ? (index != startIndex && parts.push(text.substring(index, startIndex)), 
+                for (var startIndex, endIndex, fn, exp, index = 0, parts = [], length = text.length, hasInterpolation = !1, concat = []; length > index; ) -1 != (startIndex = text.indexOf(startSymbol, index)) && -1 != (endIndex = text.indexOf(endSymbol, startIndex + startSymbolLength)) ? (index != startIndex && parts.push(text.substring(index, startIndex)), 
                 parts.push(fn = $parse(exp = text.substring(startIndex + startSymbolLength, endIndex))), 
                 fn.exp = exp, index = endIndex + endSymbolLength, hasInterpolation = !0) : (index != length && parts.push(text.substring(index)), 
                 index = length);
                 if ((length = parts.length) || (parts.push(""), length = 1), trustedContext && parts.length > 1) throw $interpolateMinErr("noconcat", "Error while interpolating: {0}\nStrict Contextual Escaping disallows interpolations that concatenate multiple expressions when a trusted value is required.  See http://docs.angularjs.org/api/ng.$sce", text);
-                if (!mustHaveExpression || hasInterpolation) return concat.length = length, fn = function(context) {
+                return !mustHaveExpression || hasInterpolation ? (concat.length = length, fn = function(context) {
                     try {
-                        for (var part, i = 0, ii = length; i < ii; i++) {
-                            if ("function" == typeof (part = parts[i])) if (part = part(context), null == (part = trustedContext ? $sce.getTrusted(trustedContext, part) : $sce.valueOf(part))) part = ""; else switch (typeof part) {
+                        for (var part, i = 0, ii = length; ii > i; i++) {
+                            if ("function" == typeof (part = parts[i])) if (part = part(context), part = trustedContext ? $sce.getTrusted(trustedContext, part) : $sce.valueOf(part), 
+                            null == part) part = ""; else switch (typeof part) {
                               case "string":
                                 break;
 
@@ -3229,7 +3236,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                         var newErr = $interpolateMinErr("interr", "Can't interpolate: {0}\n{1}", text, err.toString());
                         $exceptionHandler(newErr);
                     }
-                }, fn.exp = text, fn.parts = parts, fn;
+                }, fn.exp = text, fn.parts = parts, fn) : void 0;
             }
             var startSymbolLength = startSymbol.length, endSymbolLength = endSymbol.length;
             return $interpolate.startSymbol = function() {
@@ -3250,9 +3257,9 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             }
             var intervals = {};
             return interval.cancel = function(promise) {
-                return !!(promise && promise.$$intervalId in intervals) && (intervals[promise.$$intervalId].reject("canceled"), 
+                return promise && promise.$$intervalId in intervals ? (intervals[promise.$$intervalId].reject("canceled"), 
                 $window.clearInterval(promise.$$intervalId), delete intervals[promise.$$intervalId], 
-                !0);
+                !0) : !1;
             }, interval;
         } ];
     }
@@ -3293,7 +3300,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                     SHORTDAY: "Sun,Mon,Tue,Wed,Thu,Fri,Sat".split(","),
                     AMPMS: [ "AM", "PM" ],
                     medium: "MMM d, y h:mm:ss a",
-                    short: "M/d/yy h:mm a",
+                    "short": "M/d/yy h:mm a",
                     fullDate: "EEEE, MMMM d, y",
                     longDate: "MMMM d, y",
                     mediumDate: "MMM d, y",
@@ -3325,7 +3332,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         locationObj.$$path && "/" != locationObj.$$path.charAt(0) && (locationObj.$$path = "/" + locationObj.$$path);
     }
     function beginsWith(begin, whole) {
-        if (0 === whole.indexOf(begin)) return whole.substr(begin.length);
+        return 0 === whole.indexOf(begin) ? whole.substr(begin.length) : void 0;
     }
     function stripHash(url) {
         var index = url.indexOf("#");
@@ -3373,7 +3380,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             var search = toKeyValue(this.$$search), hash = this.$$hash ? "#" + encodeUriSegment(this.$$hash) : "";
             this.$$url = encodePath(this.$$path) + (search ? "?" + search : "") + hash, this.$$absUrl = appBase + (this.$$url ? hashPrefix + this.$$url : "");
         }, this.$$parseLinkUrl = function(url, relHref) {
-            return stripHash(appBase) == stripHash(url) && (this.$$parse(url), !0);
+            return stripHash(appBase) == stripHash(url) ? (this.$$parse(url), !0) : !1;
         };
     }
     function LocationHashbangInHtml5Url(appBase, hashPrefix) {
@@ -3505,7 +3512,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             key = ensureSafeMemberName(element.shift(), fullExp);
             var propertyObj = ensureSafeObject(obj[key], fullExp);
             propertyObj || (propertyObj = {}, obj[key] = propertyObj), obj = propertyObj, obj.then && options.unwrapPromises && (promiseWarning(fullExp), 
-            "$$v" in obj || function(promise) {
+            "$$v" in obj || !function(promise) {
                 promise.then(function(val) {
                     promise.$$v = val;
                 });
@@ -3561,12 +3568,10 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         var expensiveChecks = options.expensiveChecks, getterFnCache = expensiveChecks ? getterFnCacheExpensive : getterFnCacheDefault;
         if (getterFnCache.hasOwnProperty(path)) return getterFnCache[path];
         var fn, pathKeys = path.split("."), pathKeysLength = pathKeys.length;
-        if (options.csp) fn = pathKeysLength < 6 ? cspSafeGetterFn(pathKeys[0], pathKeys[1], pathKeys[2], pathKeys[3], pathKeys[4], fullExp, options) : function(scope, locals) {
+        if (options.csp) fn = 6 > pathKeysLength ? cspSafeGetterFn(pathKeys[0], pathKeys[1], pathKeys[2], pathKeys[3], pathKeys[4], fullExp, options) : function(scope, locals) {
             var val, i = 0;
-            do {
-                val = cspSafeGetterFn(pathKeys[i++], pathKeys[i++], pathKeys[i++], pathKeys[i++], pathKeys[i++], fullExp, options)(scope, locals), 
-                locals = undefined, scope = val;
-            } while (i < pathKeysLength);
+            do val = cspSafeGetterFn(pathKeys[i++], pathKeys[i++], pathKeys[i++], pathKeys[i++], pathKeys[i++], fullExp, options)(scope, locals), 
+            locals = undefined, scope = val; while (pathKeysLength > i);
             return val;
         }; else {
             var code = "var p;\n";
@@ -3612,8 +3617,8 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                   case "string":
                     var cache = expensiveChecks ? cacheExpensive : cacheDefault;
                     if (cache.hasOwnProperty(exp)) return cache[exp];
-                    var parseOptions = expensiveChecks ? $parseOptionsExpensive : $parseOptions, lexer = new Lexer(parseOptions);
-                    return parsedExpression = new Parser(lexer, $filter, parseOptions).parse(exp), "hasOwnProperty" !== exp && (cache[exp] = parsedExpression), 
+                    var parseOptions = expensiveChecks ? $parseOptionsExpensive : $parseOptions, lexer = new Lexer(parseOptions), parser = new Parser(lexer, $filter, parseOptions);
+                    return parsedExpression = parser.parse(exp), "hasOwnProperty" !== exp && (cache[exp] = parsedExpression), 
                     parsedExpression;
 
                   case "function":
@@ -3656,7 +3661,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                     if (pending) {
                         var callbacks = pending;
                         pending = undefined, value = ref(val), callbacks.length && nextTick(function() {
-                            for (var callback, i = 0, ii = callbacks.length; i < ii; i++) callback = callbacks[i], 
+                            for (var callback, i = 0, ii = callbacks.length; ii > i; i++) callback = callbacks[i], 
                             value.then(callback[0], callback[1], callback[2]);
                         });
                     }
@@ -3668,7 +3673,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                     if (pending) {
                         var callbacks = pending;
                         pending.length && nextTick(function() {
-                            for (var callback, i = 0, ii = callbacks.length; i < ii; i++) callback = callbacks[i], 
+                            for (var callback, i = 0, ii = callbacks.length; ii > i; i++) callback = callbacks[i], 
                             callback[2](progress);
                         });
                     }
@@ -3697,10 +3702,10 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                         return pending ? pending.push([ wrappedCallback, wrappedErrback, wrappedProgressback ]) : value.then(wrappedCallback, wrappedErrback, wrappedProgressback), 
                         result.promise;
                     },
-                    catch: function(callback) {
+                    "catch": function(callback) {
                         return this.then(null, callback);
                     },
-                    finally: function(callback) {
+                    "finally": function(callback) {
                         function makePromise(value, resolved) {
                             var result = defer();
                             return resolved ? result.resolve(value) : result.reject(value), result.promise;
@@ -3751,40 +3756,40 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                     }), result.promise;
                 }
             };
+        }, when = function(value, callback, errback, progressback) {
+            var done, result = defer(), wrappedCallback = function(value) {
+                try {
+                    return (isFunction(callback) ? callback : defaultCallback)(value);
+                } catch (e) {
+                    return exceptionHandler(e), reject(e);
+                }
+            }, wrappedErrback = function(reason) {
+                try {
+                    return (isFunction(errback) ? errback : defaultErrback)(reason);
+                } catch (e) {
+                    return exceptionHandler(e), reject(e);
+                }
+            }, wrappedProgressback = function(progress) {
+                try {
+                    return (isFunction(progressback) ? progressback : defaultCallback)(progress);
+                } catch (e) {
+                    exceptionHandler(e);
+                }
+            };
+            return nextTick(function() {
+                ref(value).then(function(value) {
+                    done || (done = !0, result.resolve(ref(value).then(wrappedCallback, wrappedErrback, wrappedProgressback)));
+                }, function(reason) {
+                    done || (done = !0, result.resolve(wrappedErrback(reason)));
+                }, function(progress) {
+                    done || result.notify(wrappedProgressback(progress));
+                });
+            }), result.promise;
         };
         return {
             defer: defer,
             reject: reject,
-            when: function(value, callback, errback, progressback) {
-                var done, result = defer(), wrappedCallback = function(value) {
-                    try {
-                        return (isFunction(callback) ? callback : defaultCallback)(value);
-                    } catch (e) {
-                        return exceptionHandler(e), reject(e);
-                    }
-                }, wrappedErrback = function(reason) {
-                    try {
-                        return (isFunction(errback) ? errback : defaultErrback)(reason);
-                    } catch (e) {
-                        return exceptionHandler(e), reject(e);
-                    }
-                }, wrappedProgressback = function(progress) {
-                    try {
-                        return (isFunction(progressback) ? progressback : defaultCallback)(progress);
-                    } catch (e) {
-                        exceptionHandler(e);
-                    }
-                };
-                return nextTick(function() {
-                    ref(value).then(function(value) {
-                        done || (done = !0, result.resolve(ref(value).then(wrappedCallback, wrappedErrback, wrappedProgressback)));
-                    }, function(reason) {
-                        done || (done = !0, result.resolve(wrappedErrback(reason)));
-                    }, function(progress) {
-                        done || result.notify(wrappedProgressback(progress));
-                    });
-                }), result.promise;
-            },
+            when: when,
             all: all
         };
     }
@@ -3811,8 +3816,8 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         }, this.$get = [ "$injector", "$exceptionHandler", "$parse", "$browser", function($injector, $exceptionHandler, $parse, $browser) {
             function Scope() {
                 this.$id = nextUid(), this.$$phase = this.$parent = this.$$watchers = this.$$nextSibling = this.$$prevSibling = this.$$childHead = this.$$childTail = null, 
-                this.this = this.$root = this, this.$$destroyed = !1, this.$$asyncQueue = [], this.$$postDigestQueue = [], 
-                this.$$listeners = {}, this.$$listenerCount = {}, this.$$isolateBindings = {};
+                this["this"] = this.$root = this, this.$$destroyed = !1, this.$$asyncQueue = [], 
+                this.$$postDigestQueue = [], this.$$listeners = {}, this.$$listenerCount = {}, this.$$isolateBindings = {};
             }
             function beginPhase(phase) {
                 if ($rootScope.$$phase) throw $rootScopeMinErr("inprog", "{0} already in progress", $rootScope.$$phase);
@@ -3826,9 +3831,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                 return assertArgFn(fn, name), fn;
             }
             function decrementListenerCount(current, count, name) {
-                do {
-                    current.$$listenerCount[name] -= count, 0 === current.$$listenerCount[name] && delete current.$$listenerCount[name];
-                } while (current = current.$parent);
+                do current.$$listenerCount[name] -= count, 0 === current.$$listenerCount[name] && delete current.$$listenerCount[name]; while (current = current.$parent);
             }
             function initWatchVal() {}
             Scope.prototype = {
@@ -3840,7 +3843,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                         this.$$watchers = this.$$nextSibling = this.$$childHead = this.$$childTail = null, 
                         this.$$listeners = {}, this.$$listenerCount = {}, this.$id = nextUid(), this.$$childScopeClass = null;
                     }, this.$$childScopeClass.prototype = this), child = new this.$$childScopeClass()), 
-                    child.this = child, child.$parent = this, child.$$prevSibling = this.$$childTail, 
+                    child["this"] = child, child.$parent = this, child.$$prevSibling = this.$$childTail, 
                     this.$$childHead ? (this.$$childTail.$$nextSibling = child, this.$$childTail = child) : this.$$childHead = this.$$childTail = child, 
                     child;
                 },
@@ -3871,18 +3874,19 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                 $watchCollection: function(obj, listener) {
                     function $watchCollectionWatch() {
                         newValue = objGetter(self);
-                        var newLength, key;
+                        var newLength, key, bothNaN;
                         if (isObject(newValue)) if (isArrayLike(newValue)) {
                             oldValue !== internalArray && (oldValue = internalArray, oldLength = oldValue.length = 0, 
                             changeDetected++), newLength = newValue.length, oldLength !== newLength && (changeDetected++, 
                             oldValue.length = oldLength = newLength);
-                            for (var i = 0; i < newLength; i++) oldValue[i] !== oldValue[i] && newValue[i] !== newValue[i] || oldValue[i] === newValue[i] || (changeDetected++, 
-                            oldValue[i] = newValue[i]);
+                            for (var i = 0; newLength > i; i++) bothNaN = oldValue[i] !== oldValue[i] && newValue[i] !== newValue[i], 
+                            bothNaN || oldValue[i] === newValue[i] || (changeDetected++, oldValue[i] = newValue[i]);
                         } else {
                             oldValue !== internalObject && (oldValue = internalObject = {}, oldLength = 0, changeDetected++), 
                             newLength = 0;
-                            for (key in newValue) newValue.hasOwnProperty(key) && (newLength++, oldValue.hasOwnProperty(key) ? oldValue[key] !== oldValue[key] && newValue[key] !== newValue[key] || oldValue[key] === newValue[key] || (changeDetected++, 
-                            oldValue[key] = newValue[key]) : (oldLength++, oldValue[key] = newValue[key], changeDetected++));
+                            for (key in newValue) newValue.hasOwnProperty(key) && (newLength++, oldValue.hasOwnProperty(key) ? (bothNaN = oldValue[key] !== oldValue[key] && newValue[key] !== newValue[key], 
+                            bothNaN || oldValue[key] === newValue[key] || (changeDetected++, oldValue[key] = newValue[key])) : (oldLength++, 
+                            oldValue[key] = newValue[key], changeDetected++));
                             if (oldLength > newLength) {
                                 changeDetected++;
                                 for (key in oldValue) oldValue.hasOwnProperty(key) && !newValue.hasOwnProperty(key) && (oldLength--, 
@@ -3924,7 +3928,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                                         break traverseScopesLoop;
                                     }
                                 } else dirty = !0, lastDirtyWatch = watch, watch.last = watch.eq ? copy(value, null) : value, 
-                                watch.fn(value, last === initWatchVal ? value : last, current), ttl < 5 && (logIdx = 4 - ttl, 
+                                watch.fn(value, last === initWatchVal ? value : last, current), 5 > ttl && (logIdx = 4 - ttl, 
                                 watchLog[logIdx] || (watchLog[logIdx] = []), logMsg = isFunction(watch.exp) ? "fn: " + (watch.exp.name || watch.exp.toString()) : watch.exp, 
                                 logMsg += "; newVal: " + toJson(value) + "; oldVal: " + toJson(last), watchLog[logIdx].push(logMsg));
                             } catch (e) {
@@ -3985,9 +3989,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                     var namedListeners = this.$$listeners[name];
                     namedListeners || (this.$$listeners[name] = namedListeners = []), namedListeners.push(listener);
                     var current = this;
-                    do {
-                        current.$$listenerCount[name] || (current.$$listenerCount[name] = 0), current.$$listenerCount[name]++;
-                    } while (current = current.$parent);
+                    do current.$$listenerCount[name] || (current.$$listenerCount[name] = 0), current.$$listenerCount[name]++; while (current = current.$parent);
                     var self = this;
                     return function() {
                         var indexOfListener = indexOf(namedListeners, listener);
@@ -4008,7 +4010,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                     }, listenerArgs = concat([ event ], arguments, 1);
                     do {
                         for (namedListeners = scope.$$listeners[name] || empty, event.currentScope = scope, 
-                        i = 0, length = namedListeners.length; i < length; i++) if (namedListeners[i]) try {
+                        i = 0, length = namedListeners.length; length > i; i++) if (namedListeners[i]) try {
                             namedListeners[i].apply(null, listenerArgs);
                         } catch (e) {
                             $exceptionHandler(e);
@@ -4028,7 +4030,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                         defaultPrevented: !1
                     }, listenerArgs = concat([ event ], arguments, 1); current = next; ) {
                         for (event.currentScope = current, listeners = current.$$listeners[name] || [], 
-                        i = 0, length = listeners.length; i < length; i++) if (listeners[i]) try {
+                        i = 0, length = listeners.length; length > i; i++) if (listeners[i]) try {
                             listeners[i].apply(null, listenerArgs);
                         } catch (e) {
                             $exceptionHandler(e);
@@ -4051,7 +4053,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         }, this.$get = function() {
             return function(uri, isImage) {
                 var normalizedVal, regex = isImage ? imgSrcSanitizationWhitelist : aHrefSanitizationWhitelist;
-                return msie && !(msie >= 8) || "" === (normalizedVal = urlResolve(uri).href) || normalizedVal.match(regex) ? uri : "unsafe:" + normalizedVal;
+                return msie && !(msie >= 8) || (normalizedVal = urlResolve(uri).href, "" === normalizedVal || normalizedVal.match(regex)) ? uri : "unsafe:" + normalizedVal;
             };
         };
     }
@@ -4087,11 +4089,11 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             }
             function isResourceUrlAllowedByPolicy(url) {
                 var i, n, parsedUrl = urlResolve(url.toString()), allowed = !1;
-                for (i = 0, n = resourceUrlWhitelist.length; i < n; i++) if (matchUrl(resourceUrlWhitelist[i], parsedUrl)) {
+                for (i = 0, n = resourceUrlWhitelist.length; n > i; i++) if (matchUrl(resourceUrlWhitelist[i], parsedUrl)) {
                     allowed = !0;
                     break;
                 }
-                if (allowed) for (i = 0, n = resourceUrlBlacklist.length; i < n; i++) if (matchUrl(resourceUrlBlacklist[i], parsedUrl)) {
+                if (allowed) for (i = 0, n = resourceUrlBlacklist.length; n > i; i++) if (matchUrl(resourceUrlBlacklist[i], parsedUrl)) {
                     allowed = !1;
                     break;
                 }
@@ -4190,7 +4192,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                 animations = isString(document.body.style.webkitAnimation));
             }
             return {
-                history: !(!$window.history || !$window.history.pushState || android < 4 || boxee),
+                history: !(!$window.history || !$window.history.pushState || 4 > android || boxee),
                 hashchange: "onhashchange" in $window && (!documentMode || documentMode > 7),
                 hasEvent: function(event) {
                     if ("input" == event && 9 == msie) return !1;
@@ -4227,8 +4229,8 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             }
             var deferreds = {};
             return timeout.cancel = function(promise) {
-                return !!(promise && promise.$$timeoutId in deferreds) && (deferreds[promise.$$timeoutId].reject("canceled"), 
-                delete deferreds[promise.$$timeoutId], $browser.defer.cancel(promise.$$timeoutId));
+                return promise && promise.$$timeoutId in deferreds ? (deferreds[promise.$$timeoutId].reject("canceled"), 
+                delete deferreds[promise.$$timeoutId], $browser.defer.cancel(promise.$$timeoutId)) : !1;
             }, timeout;
         } ];
     }
@@ -4324,7 +4326,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
 
               case "object":
                 for (var key in expression) !function(path) {
-                    void 0 !== expression[path] && predicates.push(function(value) {
+                    "undefined" != typeof expression[path] && predicates.push(function(value) {
                         return search("$" == path ? value : value && value[path], expression[path]);
                     });
                 }(key);
@@ -4358,7 +4360,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
     }
     function formatNumber(number, pattern, groupSep, decimalSep, fractionSize) {
         if (null == number || !isFinite(number) || isObject(number)) return "";
-        var isNegative = number < 0;
+        var isNegative = 0 > number;
         number = Math.abs(number);
         var numStr = number + "", formatedText = "", parts = [], hasExponent = !1;
         if (-1 !== numStr.indexOf("e")) {
@@ -4366,7 +4368,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             match && "-" == match[2] && match[3] > fractionSize + 1 ? (numStr = "0", number = 0) : (formatedText = numStr, 
             hasExponent = !0);
         }
-        if (hasExponent) fractionSize > 0 && number > -1 && number < 1 && (formatedText = number.toFixed(fractionSize)); else {
+        if (hasExponent) fractionSize > 0 && number > -1 && 1 > number && (formatedText = number.toFixed(fractionSize)); else {
             var fractionLen = (numStr.split(DECIMAL_SEP)[1] || "").length;
             isUndefined(fractionSize) && (fractionSize = Math.min(Math.max(pattern.minFrac, fractionLen), pattern.maxFrac)), 
             number = +(Math.round(+(number.toString() + "e" + fractionSize)).toString() + "e" + -fractionSize), 
@@ -4374,9 +4376,9 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             var fraction = ("" + number).split(DECIMAL_SEP), whole = fraction[0];
             fraction = fraction[1] || "";
             var i, pos = 0, lgroup = pattern.lgSize, group = pattern.gSize;
-            if (whole.length >= lgroup + group) for (pos = whole.length - lgroup, i = 0; i < pos; i++) (pos - i) % group == 0 && 0 !== i && (formatedText += groupSep), 
+            if (whole.length >= lgroup + group) for (pos = whole.length - lgroup, i = 0; pos > i; i++) (pos - i) % group === 0 && 0 !== i && (formatedText += groupSep), 
             formatedText += whole.charAt(i);
-            for (i = pos; i < whole.length; i++) (whole.length - i) % lgroup == 0 && 0 !== i && (formatedText += groupSep), 
+            for (i = pos; i < whole.length; i++) (whole.length - i) % lgroup === 0 && 0 !== i && (formatedText += groupSep), 
             formatedText += whole.charAt(i);
             for (;fraction.length < fractionSize; ) fraction += "0";
             fractionSize && "0" !== fractionSize && (formatedText += decimalSep + fraction.substr(0, fractionSize));
@@ -4386,7 +4388,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
     }
     function padNumber(num, digits, trim) {
         var neg = "";
-        for (num < 0 && (neg = "-", num = -num), num = "" + num; num.length < digits; ) num = "0" + num;
+        for (0 > num && (neg = "-", num = -num), num = "" + num; num.length < digits; ) num = "0" + num;
         return trim && (num = num.substr(num.length - digits)), neg + num;
     }
     function dateGetter(name, size, offset, trim) {
@@ -4398,8 +4400,8 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
     }
     function dateStrGetter(name, shortForm) {
         return function(date, formats) {
-            var value = date["get" + name]();
-            return formats[uppercase(shortForm ? "SHORT" + name : name)][value];
+            var value = date["get" + name](), get = uppercase(shortForm ? "SHORT" + name : name);
+            return formats[get][value];
         };
     }
     function timeZoneGetter(date) {
@@ -4462,13 +4464,13 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             function compare(v1, v2) {
                 var t1 = typeof v1, t2 = typeof v2;
                 return t1 == t2 ? (isDate(v1) && isDate(v2) && (v1 = v1.valueOf(), v2 = v2.valueOf()), 
-                "string" == t1 && (v1 = v1.toLowerCase(), v2 = v2.toLowerCase()), v1 === v2 ? 0 : v1 < v2 ? -1 : 1) : t1 < t2 ? -1 : 1;
+                "string" == t1 && (v1 = v1.toLowerCase(), v2 = v2.toLowerCase()), v1 === v2 ? 0 : v2 > v1 ? -1 : 1) : t2 > t1 ? -1 : 1;
             }
             return isArrayLike(array) ? (sortPredicate = isArray(sortPredicate) ? sortPredicate : [ sortPredicate ], 
             0 === sortPredicate.length && (sortPredicate = [ "+" ]), sortPredicate = map(sortPredicate, function(predicate) {
                 var descending = !1, get = predicate || identity;
                 if (isString(predicate)) {
-                    if ("+" != predicate.charAt(0) && "-" != predicate.charAt(0) || (descending = "-" == predicate.charAt(0), 
+                    if (("+" == predicate.charAt(0) || "-" == predicate.charAt(0)) && (descending = "-" == predicate.charAt(0), 
                     predicate = predicate.substring(1)), "" === predicate) return reverseComparator(function(a, b) {
                         return compare(a, b);
                     }, descending);
@@ -4572,7 +4574,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             };
             element.on("keydown", function(event) {
                 var key = event.keyCode;
-                91 === key || 15 < key && key < 19 || 37 <= key && key <= 40 || deferListener();
+                91 === key || key > 15 && 19 > key || key >= 37 && 40 >= key || deferListener();
             }), $sniffer.hasEvent("paste") && element.on("paste cut", deferListener);
         }
         element.on("change", listener), ctrl.$render = function() {
@@ -4623,7 +4625,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         if (attr.max) {
             var maxValidator = function(value) {
                 var max = parseFloat(attr.max);
-                return validate(ctrl, "max", ctrl.$isEmpty(value) || value <= max, value);
+                return validate(ctrl, "max", ctrl.$isEmpty(value) || max >= value, value);
             };
             ctrl.$parsers.push(maxValidator), ctrl.$formatters.push(maxValidator);
         }
@@ -4717,7 +4719,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                         0 === toAdd.length ? $animate.removeClass(element, toRemove) : 0 === toRemove.length ? $animate.addClass(element, toAdd) : $animate.setClass(element, toAdd, toRemove);
                     }
                     function ngClassWatchAction(newVal) {
-                        if (!0 === selector || scope.$index % 2 === selector) {
+                        if (selector === !0 || scope.$index % 2 === selector) {
                             var newClasses = arrayClasses(newVal || []);
                             if (oldVal) {
                                 if (!equals(newVal, oldVal)) {
@@ -4770,7 +4772,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             return isString(value) ? value.replace(/^\s\s*/, "").replace(/\s\s*$/, "") : value;
         };
     }();
-    nodeName_ = msie < 9 ? function(element) {
+    nodeName_ = 9 > msie ? function(element) {
         return element = element.nodeName ? element : element[0], element.scopeName && "HTML" != element.scopeName ? uppercase(element.scopeName + ":" + element.nodeName) : element.nodeName;
     } : function(element) {
         return element.nodeName ? element.nodeName : element[0].nodeName;
@@ -4866,8 +4868,8 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         css: function(element, name, value) {
             if (name = camelCase(name), !isDefined(value)) {
                 var val;
-                return msie <= 8 && "" === (val = element.currentStyle && element.currentStyle[name]) && (val = "auto"), 
-                val = val || element.style[name], msie <= 8 && (val = "" === val ? undefined : val), 
+                return 8 >= msie && (val = element.currentStyle && element.currentStyle[name], "" === val && (val = "auto")), 
+                val = val || element.style[name], 8 >= msie && (val = "" === val ? undefined : val), 
                 val;
             }
             element.style[name] = value;
@@ -4884,17 +4886,15 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             }
         },
         prop: function(element, name, value) {
-            if (!isDefined(value)) return element[name];
-            element[name] = value;
+            return isDefined(value) ? void (element[name] = value) : element[name];
         },
         text: function() {
             function getText(element, value) {
                 var textProp = NODE_TYPE_TEXT_PROPERTY[element.nodeType];
-                if (isUndefined(value)) return textProp ? element[textProp] : "";
-                element[textProp] = value;
+                return isUndefined(value) ? textProp ? element[textProp] : "" : void (element[textProp] = value);
             }
             var NODE_TYPE_TEXT_PROPERTY = [];
-            return msie < 9 ? (NODE_TYPE_TEXT_PROPERTY[1] = "innerText", NODE_TYPE_TEXT_PROPERTY[3] = "nodeValue") : NODE_TYPE_TEXT_PROPERTY[1] = NODE_TYPE_TEXT_PROPERTY[3] = "textContent", 
+            return 9 > msie ? (NODE_TYPE_TEXT_PROPERTY[1] = "innerText", NODE_TYPE_TEXT_PROPERTY[3] = "nodeValue") : NODE_TYPE_TEXT_PROPERTY[1] = NODE_TYPE_TEXT_PROPERTY[3] = "textContent", 
             getText.$dv = "", getText;
         }(),
         val: function(element, value) {
@@ -4920,16 +4920,16 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             var i, key, nodeCount = this.length;
             if (fn !== jqLiteEmpty && (2 == fn.length && fn !== jqLiteHasClass && fn !== jqLiteController ? arg1 : arg2) === undefined) {
                 if (isObject(arg1)) {
-                    for (i = 0; i < nodeCount; i++) if (fn === jqLiteData) fn(this[i], arg1); else for (key in arg1) fn(this[i], key, arg1[key]);
+                    for (i = 0; nodeCount > i; i++) if (fn === jqLiteData) fn(this[i], arg1); else for (key in arg1) fn(this[i], key, arg1[key]);
                     return this;
                 }
-                for (var value = fn.$dv, jj = value === undefined ? Math.min(nodeCount, 1) : nodeCount, j = 0; j < jj; j++) {
+                for (var value = fn.$dv, jj = value === undefined ? Math.min(nodeCount, 1) : nodeCount, j = 0; jj > j; j++) {
                     var nodeValue = fn(this[j], arg1, arg2);
                     value = value ? value + nodeValue : nodeValue;
                 }
                 return value;
             }
-            for (i = 0; i < nodeCount; i++) fn(this[i], arg1, arg2);
+            for (i = 0; nodeCount > i; i++) fn(this[i], arg1, arg2);
             return this;
         };
     }), forEach({
@@ -4951,12 +4951,13 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                             return !1;
                         };
                         events[type] = [];
-                        onFn(element, {
+                        var eventmap = {
                             mouseleave: "mouseout",
                             mouseenter: "mouseover"
-                        }[type], function(event) {
+                        };
+                        onFn(element, eventmap[type], function(event) {
                             var target = this, related = event.relatedTarget;
-                            related && (related === target || contains(target, related)) || handle(event, type);
+                            (!related || related !== target && !contains(target, related)) && handle(event, type);
                         });
                     } else addEventListenerFn(element, type, handle), events[type] = [];
                     eventFns = events[type];
@@ -4988,7 +4989,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         },
         append: function(element, node) {
             forEach(new JQLite(node), function(child) {
-                1 !== element.nodeType && 11 !== element.nodeType || element.appendChild(child);
+                (1 === element.nodeType || 11 === element.nodeType) && element.appendChild(child);
             });
         },
         prepend: function(element, node) {
@@ -5044,7 +5045,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                     this.defaultPrevented = !0;
                 },
                 isDefaultPrevented: function() {
-                    return !0 === this.defaultPrevented;
+                    return this.defaultPrevented === !0;
                 },
                 stopPropagation: noop,
                 type: eventName,
@@ -5166,13 +5167,13 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         }
     };
     var promiseWarning, $parseMinErr = minErr("$parse"), promiseWarningCache = {}, CALL = Function.prototype.call, APPLY = Function.prototype.apply, BIND = Function.prototype.bind, OPERATORS = {
-        null: function() {
+        "null": function() {
             return null;
         },
-        true: function() {
+        "true": function() {
             return !0;
         },
-        false: function() {
+        "false": function() {
             return !1;
         },
         undefined: noop,
@@ -5238,8 +5239,8 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         n: "\n",
         f: "\f",
         r: "\r",
-        t: "\t",
-        v: "\v",
+        t: "	",
+        v: "",
         "'": "'",
         '"': '"'
     }, Lexer = function(options) {
@@ -5284,16 +5285,16 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         },
         peek: function(i) {
             var num = i || 1;
-            return this.index + num < this.text.length && this.text.charAt(this.index + num);
+            return this.index + num < this.text.length ? this.text.charAt(this.index + num) : !1;
         },
         isNumber: function(ch) {
-            return "0" <= ch && ch <= "9";
+            return ch >= "0" && "9" >= ch;
         },
         isWhitespace: function(ch) {
-            return " " === ch || "\r" === ch || "\t" === ch || "\n" === ch || "\v" === ch || " " === ch;
+            return " " === ch || "\r" === ch || "	" === ch || "\n" === ch || "" === ch || " " === ch;
         },
         isIdent: function(ch) {
-            return "a" <= ch && ch <= "z" || "A" <= ch && ch <= "Z" || "_" === ch || "$" === ch;
+            return ch >= "a" && "z" >= ch || ch >= "A" && "Z" >= ch || "_" === ch || "$" === ch;
         },
         isExpOperator: function(ch) {
             return "-" === ch || "+" === ch || this.isNumber(ch);
@@ -5315,7 +5316,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                 }
                 this.index++;
             }
-            number *= 1, this.tokens.push({
+            number = 1 * number, this.tokens.push({
                 index: start,
                 text: number,
                 literal: !0,
@@ -5326,10 +5327,11 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
             });
         },
         readIdent: function() {
-            for (var lastDot, peekIndex, methodName, ch, parser = this, ident = "", start = this.index; this.index < this.text.length && ("." === (ch = this.text.charAt(this.index)) || this.isIdent(ch) || this.isNumber(ch)); ) "." === ch && (lastDot = this.index), 
+            for (var lastDot, peekIndex, methodName, ch, parser = this, ident = "", start = this.index; this.index < this.text.length && (ch = this.text.charAt(this.index), 
+            "." === ch || this.isIdent(ch) || this.isNumber(ch)); ) "." === ch && (lastDot = this.index), 
             ident += ch, this.index++;
             if (lastDot) for (peekIndex = this.index; peekIndex < this.text.length; ) {
-                if ("(" === (ch = this.text.charAt(peekIndex))) {
+                if (ch = this.text.charAt(peekIndex), "(" === ch) {
                     methodName = ident.substr(lastDot - start + 1), ident = ident.substr(0, lastDot - start), 
                     this.index = peekIndex;
                     break;
@@ -5436,7 +5438,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         },
         expect: function(e1, e2, e3, e4) {
             var token = this.peek(e1, e2, e3, e4);
-            return !!token && (this.tokens.shift(), token);
+            return token ? (this.tokens.shift(), token) : !1;
         },
         consume: function(e1) {
             this.expect(e1) || this.throwError("is unexpected, expecting [" + e1 + "]", this.peek());
@@ -5568,16 +5570,15 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         },
         functionCall: function(fn, contextGetter) {
             var argsFn = [];
-            if (")" !== this.peekToken().text) do {
-                argsFn.push(this.expression());
-            } while (this.expect(","));
+            if (")" !== this.peekToken().text) do argsFn.push(this.expression()); while (this.expect(","));
             this.consume(")");
             var parser = this;
             return function(scope, locals) {
                 for (var args = [], context = contextGetter ? contextGetter(scope, locals) : scope, i = 0; i < argsFn.length; i++) args.push(ensureSafeObject(argsFn[i](scope, locals), parser.text));
                 var fnPtr = fn(scope, locals, context) || noop;
-                return ensureSafeObject(context, parser.text), ensureSafeFunction(fnPtr, parser.text), 
-                ensureSafeObject(fnPtr.apply ? fnPtr.apply(context, args) : fnPtr(args[0], args[1], args[2], args[3], args[4]), parser.text);
+                ensureSafeObject(context, parser.text), ensureSafeFunction(fnPtr, parser.text);
+                var v = fnPtr.apply ? fnPtr.apply(context, args) : fnPtr(args[0], args[1], args[2], args[3], args[4]);
+                return ensureSafeObject(v, parser.text);
             };
         },
         arrayDeclaration: function() {
@@ -5658,8 +5659,8 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
     var htmlAnchorDirective = valueFn({
         restrict: "E",
         compile: function(element, attr) {
-            if (msie <= 8 && (attr.href || attr.name || attr.$set("href", ""), element.append(document.createComment("IE fix"))), 
-            !attr.href && !attr.xlinkHref && !attr.name) return function(scope, element) {
+            return 8 >= msie && (attr.href || attr.name || attr.$set("href", ""), element.append(document.createComment("IE fix"))), 
+            attr.href || attr.xlinkHref || attr.name ? void 0 : function(scope, element) {
                 var href = "[object SVGAnimatedString]" === toString.call(element.prop("href")) ? "xlink:href" : "href";
                 element.on("click", function(event) {
                     element.attr(href) || event.preventDefault();
@@ -5690,8 +5691,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                     var propName = attrName, name = attrName;
                     "href" === attrName && "[object SVGAnimatedString]" === toString.call(element.prop("href")) && (name = "xlinkHref", 
                     attr.$attr[name] = "xlink:href", propName = null), attr.$observe(normalized, function(value) {
-                        if (!value) return void ("href" === attrName && attr.$set(name, null));
-                        attr.$set(name, value), msie && propName && element.prop(propName, attr[name]);
+                        return value ? (attr.$set(name, value), void (msie && propName && element.prop(propName, attr[name]))) : void ("href" === attrName && attr.$set(name, null));
                     });
                 }
             };
@@ -5707,7 +5707,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
     FormController.$inject = [ "$element", "$attrs", "$scope", "$animate" ];
     var formDirectiveFactory = function(isNgForm) {
         return [ "$timeout", function($timeout) {
-            return {
+            var formDirective = {
                 name: "form",
                 restrict: isNgForm ? "EAC" : "E",
                 controller: FormController,
@@ -5733,6 +5733,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                     };
                 }
             };
+            return formDirective;
         } ];
     }, formDirective = formDirectiveFactory(), ngFormDirective = formDirectiveFactory(!0), URL_REGEXP = /^(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?$/, EMAIL_REGEXP = /^[a-z0-9!#$%&'*+\/=?^_`{|}~.-]+@[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)*$/i, NUMBER_REGEXP = /^\s*(\-|\+)?(\d+|(\d*(\.\d*)))\s*$/, inputType = {
         text: textInputType,
@@ -6059,7 +6060,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                     return hashKey(value);
                 }, trackByIdObjFn = function(key) {
                     return key;
-                }), !(match = lhs.match(/^(?:([\$\w]+)|\(([\$\w]+)\s*,\s*([\$\w]+)\))$/))) throw ngRepeatMinErr("iidexp", "'_item_' in '_item_ in _collection_' should be an identifier or '(_key_, _value_)' expression, but got '{0}'.", lhs);
+                }), match = lhs.match(/^(?:([\$\w]+)|\(([\$\w]+)\s*,\s*([\$\w]+)\))$/), !match) throw ngRepeatMinErr("iidexp", "'_item_' in '_item_ in _collection_' should be an identifier or '(_key_, _value_)' expression, but got '{0}'.", lhs);
                 valueIdentifier = match[3] || match[1], keyIdentifier = match[2];
                 var lastBlockMap = {};
                 $scope.$watchCollection(rhs, function(collection) {
@@ -6070,7 +6071,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                         collectionKeys.sort();
                     }
                     for (arrayLength = collectionKeys.length, length = nextBlockOrder.length = collectionKeys.length, 
-                    index = 0; index < length; index++) if (key = collection === collectionKeys ? index : collectionKeys[index], 
+                    index = 0; length > index; index++) if (key = collection === collectionKeys ? index : collectionKeys[index], 
                     value = collection[key], trackById = trackByIdFn(key, value, index), assertNotHasOwnProperty(trackById, "`track by` id"), 
                     lastBlockMap.hasOwnProperty(trackById)) block = lastBlockMap[trackById], delete lastBlockMap[trackById], 
                     nextBlockMap[trackById] = block, nextBlockOrder[index] = block; else {
@@ -6086,20 +6087,18 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                     forEach(elementsToRemove, function(element) {
                         element[NG_REMOVED] = !0;
                     }), block.scope.$destroy());
-                    for (index = 0, length = collectionKeys.length; index < length; index++) {
+                    for (index = 0, length = collectionKeys.length; length > index; index++) {
                         if (key = collection === collectionKeys ? index : collectionKeys[index], value = collection[key], 
                         block = nextBlockOrder[index], nextBlockOrder[index - 1] && (previousNode = getBlockEnd(nextBlockOrder[index - 1])), 
                         block.scope) {
                             childScope = block.scope, nextNode = previousNode;
-                            do {
-                                nextNode = nextNode.nextSibling;
-                            } while (nextNode && nextNode[NG_REMOVED]);
+                            do nextNode = nextNode.nextSibling; while (nextNode && nextNode[NG_REMOVED]);
                             getBlockStart(block) != nextNode && $animate.move(getBlockElements(block.clone), null, jqLite(previousNode)), 
                             previousNode = getBlockEnd(block);
                         } else childScope = $scope.$new();
                         childScope[valueIdentifier] = value, keyIdentifier && (childScope[keyIdentifier] = key), 
                         childScope.$index = index, childScope.$first = 0 === index, childScope.$last = index === arrayLength - 1, 
-                        childScope.$middle = !(childScope.$first || childScope.$last), childScope.$odd = !(childScope.$even = 0 == (1 & index)), 
+                        childScope.$middle = !(childScope.$first || childScope.$last), childScope.$odd = !(childScope.$even = 0 === (1 & index)), 
                         block.scope || $transclude(childScope, function(clone) {
                             clone[clone.length++] = document.createComment(" end ngRepeat: " + expression + " "), 
                             $animate.enter(clone, null, jqLite(previousNode)), previousNode = clone, block.scope = childScope, 
@@ -6139,8 +6138,8 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                 var watchExpr = attr.ngSwitch || attr.on, selectedTranscludes = [], selectedElements = [], previousElements = [], selectedScopes = [];
                 scope.$watch(watchExpr, function(value) {
                     var i, ii;
-                    for (i = 0, ii = previousElements.length; i < ii; ++i) previousElements[i].remove();
-                    for (previousElements.length = 0, i = 0, ii = selectedScopes.length; i < ii; ++i) {
+                    for (i = 0, ii = previousElements.length; ii > i; ++i) previousElements[i].remove();
+                    for (previousElements.length = 0, i = 0, ii = selectedScopes.length; ii > i; ++i) {
                         var selected = selectedElements[i];
                         selectedScopes[i].$destroy(), previousElements[i] = selected, $animate.leave(selected, function() {
                             previousElements.splice(i, 1);
@@ -6271,7 +6270,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                         var optionGroupName, optionGroup, option, existingParent, existingOptions, existingOption, key, groupLength, length, groupIndex, index, selected, lastElement, element, label, optionGroups = {
                             "": []
                         }, optionGroupNames = [ "" ], modelValue = ctrl.$modelValue, values = valuesFn(scope) || [], keys = keyName ? sortedKeys(values) : values, locals = {}, selectedSet = getSelectedSet();
-                        for (index = 0; length = keys.length, index < length; index++) {
+                        for (index = 0; length = keys.length, length > index; index++) {
                             if (key = index, keyName) {
                                 if (key = keys[index], "$" === key.charAt(0)) continue;
                                 locals[keyName] = key;
@@ -6299,7 +6298,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                             id: "?",
                             label: "",
                             selected: !0
-                        })), groupIndex = 0, groupLength = optionGroupNames.length; groupIndex < groupLength; groupIndex++) {
+                        })), groupIndex = 0, groupLength = optionGroupNames.length; groupLength > groupIndex; groupIndex++) {
                             for (optionGroupName = optionGroupNames[groupIndex], optionGroup = optionGroups[optionGroupName], 
                             optionGroupsCache.length <= groupIndex ? (existingParent = {
                                 element: optGroupTemplate.clone().attr("label", optionGroupName),
@@ -6307,7 +6306,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                             }, existingOptions = [ existingParent ], optionGroupsCache.push(existingOptions), 
                             selectElement.append(existingParent.element)) : (existingOptions = optionGroupsCache[groupIndex], 
                             existingParent = existingOptions[0], existingParent.label != optionGroupName && existingParent.element.attr("label", existingParent.label = optionGroupName)), 
-                            lastElement = null, index = 0, length = optionGroup.length; index < length; index++) option = optionGroup[index], 
+                            lastElement = null, index = 0, length = optionGroup.length; length > index; index++) option = optionGroup[index], 
                             (existingOption = existingOptions[index + 1]) ? (lastElement = existingOption.element, 
                             existingOption.label !== option.label && (lastElement.text(existingOption.label = option.label), 
                             lastElement.prop("label", existingOption.label)), existingOption.id !== option.id && lastElement.val(existingOption.id = option.id), 
@@ -6336,13 +6335,13 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                         scope.$apply(function() {
                             var optionGroup, key, value, optionElement, index, groupIndex, length, groupLength, trackIndex, collection = valuesFn(scope) || [], locals = {};
                             if (multiple) {
-                                for (value = [], groupIndex = 0, groupLength = optionGroupsCache.length; groupIndex < groupLength; groupIndex++) for (optionGroup = optionGroupsCache[groupIndex], 
-                                index = 1, length = optionGroup.length; index < length; index++) if ((optionElement = optionGroup[index].element)[0].selected) {
+                                for (value = [], groupIndex = 0, groupLength = optionGroupsCache.length; groupLength > groupIndex; groupIndex++) for (optionGroup = optionGroupsCache[groupIndex], 
+                                index = 1, length = optionGroup.length; length > index; index++) if ((optionElement = optionGroup[index].element)[0].selected) {
                                     if (key = optionElement.val(), keyName && (locals[keyName] = key), trackFn) for (trackIndex = 0; trackIndex < collection.length && (locals[valueName] = collection[trackIndex], 
                                     trackFn(scope, locals) != key); trackIndex++) ; else locals[valueName] = collection[key];
                                     value.push(valueFn(scope, locals));
                                 }
-                            } else if ("?" == (key = selectElement.val())) value = undefined; else if ("" === key) value = null; else if (trackFn) {
+                            } else if (key = selectElement.val(), "?" == key) value = undefined; else if ("" === key) value = null; else if (trackFn) {
                                 for (trackIndex = 0; trackIndex < collection.length; trackIndex++) if (locals[valueName] = collection[trackIndex], 
                                 trackFn(scope, locals) == key) {
                                     value = valueFn(scope, locals);
@@ -6355,7 +6354,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                     }), ctrl.$render = render, scope.$watchCollection(valuesFn, render), scope.$watchCollection(function() {
                         var locals = {}, values = valuesFn(scope);
                         if (values) {
-                            for (var toDisplay = new Array(values.length), i = 0, ii = values.length; i < ii; i++) locals[valueName] = values[i], 
+                            for (var toDisplay = new Array(values.length), i = 0, ii = values.length; ii > i; i++) locals[valueName] = values[i], 
                             toDisplay[i] = displayFn(scope, locals);
                             return toDisplay;
                         }
@@ -6364,7 +6363,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
                     }, render);
                 }
                 if (ctrls[1]) {
-                    for (var emptyOption, selectCtrl = ctrls[0], ngModelCtrl = ctrls[1], multiple = attr.multiple, optionsExp = attr.ngOptions, nullOption = !1, optionTemplate = jqLite(document.createElement("option")), optGroupTemplate = jqLite(document.createElement("optgroup")), unknownOption = optionTemplate.clone(), i = 0, children = element.children(), ii = children.length; i < ii; i++) if ("" === children[i].value) {
+                    for (var emptyOption, selectCtrl = ctrls[0], ngModelCtrl = ctrls[1], multiple = attr.multiple, optionsExp = attr.ngOptions, nullOption = !1, optionTemplate = jqLite(document.createElement("option")), optGroupTemplate = jqLite(document.createElement("optgroup")), unknownOption = optionTemplate.clone(), i = 0, children = element.children(), ii = children.length; ii > i; i++) if ("" === children[i].value) {
                         emptyOption = nullOption = children.eq(i);
                         break;
                     }
@@ -6403,10 +6402,10 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
         restrict: "E",
         terminal: !0
     });
-    if (window.angular.bootstrap) return void console.log("WARNING: Tried to load angular more than once.");
-    bindJQuery(), publishExternalAPI(angular), jqLite(document).ready(function() {
+    return window.angular.bootstrap ? void console.log("WARNING: Tried to load angular more than once.") : (bindJQuery(), 
+    publishExternalAPI(angular), void jqLite(document).ready(function() {
         angularInit(document, bootstrap);
-    });
+    }));
 }(window, document), !window.angular.$$csp() && window.angular.element(document).find("head").prepend('<style type="text/css">@charset "UTF-8";[ng\\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide{display:none !important;}ng\\:form{display:block;}.ng-animate-block-transitions{transition:0s all!important;-webkit-transition:0s all!important;}.ng-hide-add-active,.ng-hide-remove{display:block!important;}</style>'), 
 function(window, angular, undefined) {
     "use strict";
@@ -6421,8 +6420,8 @@ function(window, angular, undefined) {
         } ];
     }
     function sanitizeText(chars) {
-        var buf = [];
-        return htmlSanitizeWriter(buf, angular.noop).chars(chars), buf.join("");
+        var buf = [], writer = htmlSanitizeWriter(buf, angular.noop);
+        return writer.chars(chars), buf.join("");
     }
     function makeMap(str) {
         var i, obj = {}, items = str.split(",");
@@ -6433,7 +6432,7 @@ function(window, angular, undefined) {
         function parseStartTag(tag, tagName, rest, unary) {
             if (tagName = angular.lowercase(tagName), blockElements[tagName]) for (;stack.last() && inlineElements[stack.last()]; ) parseEndTag("", stack.last());
             optionalEndTagElements[tagName] && stack.last() == tagName && parseEndTag("", tagName), 
-            (unary = voidElements[tagName] || !!unary) || stack.push(tagName);
+            unary = voidElements[tagName] || !!unary, unary || stack.push(tagName);
             var attrs = {};
             rest.replace(ATTR_REGEXP, function(match, name, doubleQuotedValue, singleQuotedValue, unquotedValue) {
                 var value = doubleQuotedValue || singleQuotedValue || unquotedValue || "";
@@ -6448,7 +6447,7 @@ function(window, angular, undefined) {
                 stack.length = pos;
             }
         }
-        "string" != typeof html && (html = null === html || void 0 === html ? "" : "" + html);
+        "string" != typeof html && (html = null === html || "undefined" == typeof html ? "" : "" + html);
         var index, chars, match, text, stack = [], last = html;
         for (stack.last = function() {
             return stack[stack.length - 1];
@@ -6456,13 +6455,15 @@ function(window, angular, undefined) {
             if (text = "", chars = !0, stack.last() && specialElements[stack.last()] ? (html = html.replace(new RegExp("(.*)<\\s*\\/\\s*" + stack.last() + "[^>]*>", "i"), function(all, text) {
                 return text = text.replace(COMMENT_REGEXP, "$1").replace(CDATA_REGEXP, "$1"), handler.chars && handler.chars(decodeEntities(text)), 
                 "";
-            }), parseEndTag("", stack.last())) : (0 === html.indexOf("\x3c!--") ? (index = html.indexOf("--", 4)) >= 0 && html.lastIndexOf("--\x3e", index) === index && (handler.comment && handler.comment(html.substring(4, index)), 
-            html = html.substring(index + 3), chars = !1) : DOCTYPE_REGEXP.test(html) ? (match = html.match(DOCTYPE_REGEXP)) && (html = html.replace(match[0], ""), 
-            chars = !1) : BEGING_END_TAGE_REGEXP.test(html) ? (match = html.match(END_TAG_REGEXP)) && (html = html.substring(match[0].length), 
-            match[0].replace(END_TAG_REGEXP, parseEndTag), chars = !1) : BEGIN_TAG_REGEXP.test(html) && (match = html.match(START_TAG_REGEXP), 
+            }), parseEndTag("", stack.last())) : (0 === html.indexOf("<!--") ? (index = html.indexOf("--", 4), 
+            index >= 0 && html.lastIndexOf("-->", index) === index && (handler.comment && handler.comment(html.substring(4, index)), 
+            html = html.substring(index + 3), chars = !1)) : DOCTYPE_REGEXP.test(html) ? (match = html.match(DOCTYPE_REGEXP), 
+            match && (html = html.replace(match[0], ""), chars = !1)) : BEGING_END_TAGE_REGEXP.test(html) ? (match = html.match(END_TAG_REGEXP), 
+            match && (html = html.substring(match[0].length), match[0].replace(END_TAG_REGEXP, parseEndTag), 
+            chars = !1)) : BEGIN_TAG_REGEXP.test(html) && (match = html.match(START_TAG_REGEXP), 
             match ? (match[4] && (html = html.substring(match[0].length), match[0].replace(START_TAG_REGEXP, parseStartTag)), 
             chars = !1) : (text += "<", html = html.substring(1))), chars && (index = html.indexOf("<"), 
-            text += index < 0 ? html : html.substring(0, index), html = index < 0 ? "" : html.substring(index), 
+            text += 0 > index ? html : html.substring(0, index), html = 0 > index ? "" : html.substring(index), 
             handler.chars && handler.chars(decodeEntities(text)))), html == last) throw $sanitizeMinErr("badparse", "The sanitizer was unable to parse the following block of html: {0}", html);
             last = html;
         }
@@ -6476,7 +6477,8 @@ function(window, angular, undefined) {
     }
     function encodeEntities(value) {
         return value.replace(/&/g, "&amp;").replace(SURROGATE_PAIR_REGEXP, function(value) {
-            return "&#" + (1024 * (value.charCodeAt(0) - 55296) + (value.charCodeAt(1) - 56320) + 65536) + ";";
+            var hi = value.charCodeAt(0), low = value.charCodeAt(1);
+            return "&#" + (1024 * (hi - 55296) + (low - 56320) + 65536) + ";";
         }).replace(NON_ALPHANUMERIC_REGEXP, function(value) {
             return "&#" + value.charCodeAt(0) + ";";
         }).replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -6486,14 +6488,14 @@ function(window, angular, undefined) {
         return {
             start: function(tag, attrs, unary) {
                 tag = angular.lowercase(tag), !ignore && specialElements[tag] && (ignore = tag), 
-                ignore || !0 !== validElements[tag] || (out("<"), out(tag), angular.forEach(attrs, function(value, key) {
+                ignore || validElements[tag] !== !0 || (out("<"), out(tag), angular.forEach(attrs, function(value, key) {
                     var lkey = angular.lowercase(key), isImage = "img" === tag && "src" === lkey || "background" === lkey;
-                    !0 !== validAttrs[lkey] || !0 === uriAttrs[lkey] && !uriValidator(value, isImage) || (out(" "), 
+                    validAttrs[lkey] !== !0 || uriAttrs[lkey] === !0 && !uriValidator(value, isImage) || (out(" "), 
                     out(key), out('="'), out(encodeEntities(value)), out('"'));
                 }), out(unary ? "/>" : ">"));
             },
             end: function(tag) {
-                tag = angular.lowercase(tag), ignore || !0 !== validElements[tag] || (out("</"), 
+                tag = angular.lowercase(tag), ignore || validElements[tag] !== !0 || (out("</"), 
                 out(tag), out(">")), tag == ignore && (ignore = !1);
             },
             chars: function(chars) {
@@ -6566,7 +6568,7 @@ function(window, angular, undefined) {
         return result;
     }
     function absRound(number) {
-        return number < 0 ? Math.ceil(number) : Math.floor(number);
+        return 0 > number ? Math.ceil(number) : Math.floor(number);
     }
     function leftZeroFill(number, targetLength, forceSign) {
         for (var output = "" + Math.abs(number), sign = number >= 0; output.length < targetLength; ) output = "0" + output;
@@ -6587,7 +6589,7 @@ function(window, angular, undefined) {
     }
     function compareArrays(array1, array2, dontConvert) {
         var i, len = Math.min(array1.length, array2.length), lengthDiff = Math.abs(array1.length - array2.length), diffs = 0;
-        for (i = 0; i < len; i++) (dontConvert && array1[i] !== array2[i] || !dontConvert && toInt(array1[i]) !== toInt(array2[i])) && diffs++;
+        for (i = 0; len > i; i++) (dontConvert && array1[i] !== array2[i] || !dontConvert && toInt(array1[i]) !== toInt(array2[i])) && diffs++;
         return diffs + lengthDiff;
     }
     function normalizeUnits(units) {
@@ -6599,7 +6601,8 @@ function(window, angular, undefined) {
     }
     function normalizeObjectUnits(inputObject) {
         var normalizedProp, prop, normalizedInput = {};
-        for (prop in inputObject) inputObject.hasOwnProperty(prop) && (normalizedProp = normalizeUnits(prop)) && (normalizedInput[normalizedProp] = inputObject[prop]);
+        for (prop in inputObject) inputObject.hasOwnProperty(prop) && (normalizedProp = normalizeUnits(prop), 
+        normalizedProp && (normalizedInput[normalizedProp] = inputObject[prop]));
         return normalizedInput;
     }
     function makeList(field) {
@@ -6614,7 +6617,7 @@ function(window, angular, undefined) {
                 var m = moment().utc().set(setter, i);
                 return method.call(moment.fn._lang, m, format || "");
             }, null != index) return getter(index);
-            for (i = 0; i < count; i++) results.push(getter(i));
+            for (i = 0; count > i; i++) results.push(getter(i));
             return results;
         };
     }
@@ -6630,12 +6633,12 @@ function(window, angular, undefined) {
         return isLeapYear(year) ? 366 : 365;
     }
     function isLeapYear(year) {
-        return year % 4 == 0 && year % 100 != 0 || year % 400 == 0;
+        return year % 4 === 0 && year % 100 !== 0 || year % 400 === 0;
     }
     function checkOverflow(m) {
         var overflow;
         m._a && -2 === m._pf.overflow && (overflow = m._a[MONTH] < 0 || m._a[MONTH] > 11 ? MONTH : m._a[DATE] < 1 || m._a[DATE] > daysInMonth(m._a[YEAR], m._a[MONTH]) ? DATE : m._a[HOUR] < 0 || m._a[HOUR] > 23 ? HOUR : m._a[MINUTE] < 0 || m._a[MINUTE] > 59 ? MINUTE : m._a[SECOND] < 0 || m._a[SECOND] > 59 ? SECOND : m._a[MILLISECOND] < 0 || m._a[MILLISECOND] > 999 ? MILLISECOND : -1, 
-        m._pf._overflowDayOfYear && (overflow < YEAR || overflow > DATE) && (overflow = DATE), 
+        m._pf._overflowDayOfYear && (YEAR > overflow || overflow > DATE) && (overflow = DATE), 
         m._pf.overflow = overflow);
     }
     function isValid(m) {
@@ -6684,10 +6687,10 @@ function(window, angular, undefined) {
     }
     function makeFormatFunction(format) {
         var i, length, array = format.match(formattingTokens);
-        for (i = 0, length = array.length; i < length; i++) formatTokenFunctions[array[i]] ? array[i] = formatTokenFunctions[array[i]] : array[i] = removeFormattingTokens(array[i]);
+        for (i = 0, length = array.length; length > i; i++) formatTokenFunctions[array[i]] ? array[i] = formatTokenFunctions[array[i]] : array[i] = removeFormattingTokens(array[i]);
         return function(mom) {
             var output = "";
-            for (i = 0; i < length; i++) output += array[i] instanceof Function ? array[i].call(mom, format) : array[i];
+            for (i = 0; length > i; i++) output += array[i] instanceof Function ? array[i].call(mom, format) : array[i];
             return output;
         };
     }
@@ -6705,7 +6708,7 @@ function(window, angular, undefined) {
         return format;
     }
     function getParseRegexForToken(token, config) {
-        var strict = config._strict;
+        var a, strict = config._strict;
         switch (token) {
           case "DDDD":
             return parseTokenThreeDigits;
@@ -6789,12 +6792,12 @@ function(window, angular, undefined) {
             return parseTokenOneOrTwoDigits;
 
           default:
-            return new RegExp(regexpEscape(unescapeFormat(token.replace("\\", "")), "i"));
+            return a = new RegExp(regexpEscape(unescapeFormat(token.replace("\\", "")), "i"));
         }
     }
     function timezoneMinutesFromString(string) {
         string = string || "";
-        var possibleTzMatches = string.match(parseTokenTimezone) || [], tzChunk = possibleTzMatches[possibleTzMatches.length - 1] || [], parts = (tzChunk + "").match(parseTimezoneChunker) || [ "-", 0, 0 ], minutes = 60 * parts[1] + toInt(parts[2]);
+        var possibleTzMatches = string.match(parseTokenTimezone) || [], tzChunk = possibleTzMatches[possibleTzMatches.length - 1] || [], parts = (tzChunk + "").match(parseTimezoneChunker) || [ "-", 0, 0 ], minutes = +(60 * parts[1]) + toInt(parts[2]);
         return "+" === parts[0] ? -minutes : minutes;
     }
     function addTimeToArrayFromToken(token, input, config) {
@@ -6901,8 +6904,8 @@ function(window, angular, undefined) {
             config._a[YEAR] = temp.year, config._dayOfYear = temp.dayOfYear), config._dayOfYear && (yearToUse = null == config._a[YEAR] ? currentDate[YEAR] : config._a[YEAR], 
             config._dayOfYear > daysInYear(yearToUse) && (config._pf._overflowDayOfYear = !0), 
             date = makeUTCDate(yearToUse, 0, config._dayOfYear), config._a[MONTH] = date.getUTCMonth(), 
-            config._a[DATE] = date.getUTCDate()), i = 0; i < 3 && null == config._a[i]; ++i) config._a[i] = input[i] = currentDate[i];
-            for (;i < 7; i++) config._a[i] = input[i] = null == config._a[i] ? 2 === i ? 1 : 0 : config._a[i];
+            config._a[DATE] = date.getUTCDate()), i = 0; 3 > i && null == config._a[i]; ++i) config._a[i] = input[i] = currentDate[i];
+            for (;7 > i; i++) config._a[i] = input[i] = null == config._a[i] ? 2 === i ? 1 : 0 : config._a[i];
             input[HOUR] += toInt((config._tzm || 0) / 60), input[MINUTE] += toInt((config._tzm || 0) % 60), 
             config._d = (config._useUTC ? makeUTCDate : makeDate).apply(null, input);
         }
@@ -6925,7 +6928,7 @@ function(window, angular, undefined) {
         totalParsedInputLength += parsedInput.length), formatTokenFunctions[token] ? (parsedInput ? config._pf.empty = !1 : config._pf.unusedTokens.push(token), 
         addTimeToArrayFromToken(token, parsedInput, config)) : config._strict && !parsedInput && config._pf.unusedTokens.push(token);
         config._pf.charsLeftOver = stringLength - totalParsedInputLength, string.length > 0 && config._pf.unusedInput.push(string), 
-        config._isPm && config._a[HOUR] < 12 && (config._a[HOUR] += 12), !1 === config._isPm && 12 === config._a[HOUR] && (config._a[HOUR] = 0), 
+        config._isPm && config._a[HOUR] < 12 && (config._a[HOUR] += 12), config._isPm === !1 && 12 === config._a[HOUR] && (config._a[HOUR] = 0), 
         dateFromConfig(config), checkOverflow(config);
     }
     function unescapeFormat(s) {
@@ -6942,18 +6945,18 @@ function(window, angular, undefined) {
         for (i = 0; i < config._f.length; i++) currentScore = 0, tempConfig = extend({}, config), 
         tempConfig._pf = defaultParsingFlags(), tempConfig._f = config._f[i], makeDateFromStringAndFormat(tempConfig), 
         isValid(tempConfig) && (currentScore += tempConfig._pf.charsLeftOver, currentScore += 10 * tempConfig._pf.unusedTokens.length, 
-        tempConfig._pf.score = currentScore, (null == scoreToBeat || currentScore < scoreToBeat) && (scoreToBeat = currentScore, 
+        tempConfig._pf.score = currentScore, (null == scoreToBeat || scoreToBeat > currentScore) && (scoreToBeat = currentScore, 
         bestMoment = tempConfig));
         extend(config, bestMoment || tempConfig);
     }
     function makeDateFromString(config) {
         var i, l, string = config._i, match = isoRegex.exec(string);
         if (match) {
-            for (config._pf.iso = !0, i = 0, l = isoDates.length; i < l; i++) if (isoDates[i][1].exec(string)) {
+            for (config._pf.iso = !0, i = 0, l = isoDates.length; l > i; i++) if (isoDates[i][1].exec(string)) {
                 config._f = isoDates[i][0] + (match[6] || " ");
                 break;
             }
-            for (i = 0, l = isoTimes.length; i < l; i++) if (isoTimes[i][1].exec(string)) {
+            for (i = 0, l = isoTimes.length; l > i; i++) if (isoTimes[i][1].exec(string)) {
                 config._f += isoTimes[i][0];
                 break;
             }
@@ -6967,15 +6970,15 @@ function(window, angular, undefined) {
     }
     function makeDate(y, m, d, h, M, s, ms) {
         var date = new Date(y, m, d, h, M, s, ms);
-        return y < 1970 && date.setFullYear(y), date;
+        return 1970 > y && date.setFullYear(y), date;
     }
     function makeUTCDate(y) {
         var date = new Date(Date.UTC.apply(null, arguments));
-        return y < 1970 && date.setUTCFullYear(y), date;
+        return 1970 > y && date.setUTCFullYear(y), date;
     }
     function parseWeekday(input, language) {
         if ("string" == typeof input) if (isNaN(input)) {
-            if ("number" != typeof (input = language.weekdaysParse(input))) return null;
+            if (input = language.weekdaysParse(input), "number" != typeof input) return null;
         } else input = parseInt(input, 10);
         return input;
     }
@@ -6983,12 +6986,12 @@ function(window, angular, undefined) {
         return lang.relativeTime(number || 1, !!withoutSuffix, string, isFuture);
     }
     function relativeTime(milliseconds, withoutSuffix, lang) {
-        var seconds = round(Math.abs(milliseconds) / 1e3), minutes = round(seconds / 60), hours = round(minutes / 60), days = round(hours / 24), years = round(days / 365), args = seconds < 45 && [ "s", seconds ] || 1 === minutes && [ "m" ] || minutes < 45 && [ "mm", minutes ] || 1 === hours && [ "h" ] || hours < 22 && [ "hh", hours ] || 1 === days && [ "d" ] || days <= 25 && [ "dd", days ] || days <= 45 && [ "M" ] || days < 345 && [ "MM", round(days / 30) ] || 1 === years && [ "y" ] || [ "yy", years ];
+        var seconds = round(Math.abs(milliseconds) / 1e3), minutes = round(seconds / 60), hours = round(minutes / 60), days = round(hours / 24), years = round(days / 365), args = 45 > seconds && [ "s", seconds ] || 1 === minutes && [ "m" ] || 45 > minutes && [ "mm", minutes ] || 1 === hours && [ "h" ] || 22 > hours && [ "hh", hours ] || 1 === days && [ "d" ] || 25 >= days && [ "dd", days ] || 45 >= days && [ "M" ] || 345 > days && [ "MM", round(days / 30) ] || 1 === years && [ "y" ] || [ "yy", years ];
         return args[2] = withoutSuffix, args[3] = milliseconds > 0, args[4] = lang, substituteTimeAgo.apply({}, args);
     }
     function weekOfYear(mom, firstDayOfWeek, firstDayOfWeekOfYear) {
         var adjustedMoment, end = firstDayOfWeekOfYear - firstDayOfWeek, daysToDayOfWeek = firstDayOfWeekOfYear - mom.day();
-        return daysToDayOfWeek > end && (daysToDayOfWeek -= 7), daysToDayOfWeek < end - 7 && (daysToDayOfWeek += 7), 
+        return daysToDayOfWeek > end && (daysToDayOfWeek -= 7), end - 7 > daysToDayOfWeek && (daysToDayOfWeek += 7), 
         adjustedMoment = moment(mom).add("d", daysToDayOfWeek), {
             week: Math.ceil(adjustedMoment.dayOfYear() / 7),
             year: adjustedMoment.year()
@@ -6996,7 +6999,7 @@ function(window, angular, undefined) {
     }
     function dayOfYearFromWeeks(year, week, weekday, firstDayOfWeekOfYear, firstDayOfWeek) {
         var daysToAdd, dayOfYear, d = makeUTCDate(year, 0, 1).getUTCDay();
-        return weekday = null != weekday ? weekday : firstDayOfWeek, daysToAdd = firstDayOfWeek - d + (d > firstDayOfWeekOfYear ? 7 : 0) - (d < firstDayOfWeek ? 7 : 0), 
+        return weekday = null != weekday ? weekday : firstDayOfWeek, daysToAdd = firstDayOfWeek - d + (d > firstDayOfWeekOfYear ? 7 : 0) - (firstDayOfWeek > d ? 7 : 0), 
         dayOfYear = 7 * (week - 1) + (weekday - firstDayOfWeek) + daysToAdd + 1, {
             year: dayOfYear > 0 ? year : year - 1,
             dayOfYear: dayOfYear > 0 ? dayOfYear : daysInYear(year - 1) + dayOfYear
@@ -7118,8 +7121,8 @@ function(window, angular, undefined) {
             return leftZeroFill(this.year(), 5);
         },
         YYYYYY: function() {
-            var y = this.year();
-            return (y >= 0 ? "+" : "-") + leftZeroFill(Math.abs(y), 6);
+            var y = this.year(), sign = y >= 0 ? "+" : "-";
+            return sign + leftZeroFill(Math.abs(y), 6);
         },
         gg: function() {
             return leftZeroFill(this.weekYear() % 100, 2);
@@ -7177,11 +7180,11 @@ function(window, angular, undefined) {
         },
         Z: function() {
             var a = -this.zone(), b = "+";
-            return a < 0 && (a = -a, b = "-"), b + leftZeroFill(toInt(a / 60), 2) + ":" + leftZeroFill(toInt(a) % 60, 2);
+            return 0 > a && (a = -a, b = "-"), b + leftZeroFill(toInt(a / 60), 2) + ":" + leftZeroFill(toInt(a) % 60, 2);
         },
         ZZ: function() {
             var a = -this.zone(), b = "+";
-            return a < 0 && (a = -a, b = "-"), b + leftZeroFill(toInt(a / 60), 2) + leftZeroFill(toInt(a) % 60, 2);
+            return 0 > a && (a = -a, b = "-"), b + leftZeroFill(toInt(a / 60), 2) + leftZeroFill(toInt(a) % 60, 2);
         },
         z: function() {
             return this.zoneAbbr();
@@ -7213,7 +7216,7 @@ function(window, angular, undefined) {
         },
         monthsParse: function(monthName) {
             var i, mom, regex;
-            for (this._monthsParse || (this._monthsParse = []), i = 0; i < 12; i++) if (this._monthsParse[i] || (mom = moment.utc([ 2e3, i ]), 
+            for (this._monthsParse || (this._monthsParse = []), i = 0; 12 > i; i++) if (this._monthsParse[i] || (mom = moment.utc([ 2e3, i ]), 
             regex = "^" + this.months(mom, "") + "|^" + this.monthsShort(mom, ""), this._monthsParse[i] = new RegExp(regex.replace(".", ""), "i")), 
             this._monthsParse[i].test(monthName)) return i;
         },
@@ -7231,7 +7234,7 @@ function(window, angular, undefined) {
         },
         weekdaysParse: function(weekdayName) {
             var i, mom, regex;
-            for (this._weekdaysParse || (this._weekdaysParse = []), i = 0; i < 7; i++) if (this._weekdaysParse[i] || (mom = moment([ 2e3, 1 ]).day(i), 
+            for (this._weekdaysParse || (this._weekdaysParse = []), i = 0; 7 > i; i++) if (this._weekdaysParse[i] || (mom = moment([ 2e3, 1 ]).day(i), 
             regex = "^" + this.weekdays(mom, "") + "|^" + this.weekdaysShort(mom, "") + "|^" + this.weekdaysMin(mom, ""), 
             this._weekdaysParse[i] = new RegExp(regex.replace(".", ""), "i")), this._weekdaysParse[i].test(weekdayName)) return i;
         },
@@ -7399,7 +7402,7 @@ function(window, angular, undefined) {
             return isValid(this);
         },
         isDSTShifted: function() {
-            return !!this._a && (this.isValid() && compareArrays(this._a, (this._isUTC ? moment.utc(this._a) : moment(this._a)).toArray()) > 0);
+            return this._a ? this.isValid() && compareArrays(this._a, (this._isUTC ? moment.utc(this._a) : moment(this._a)).toArray()) > 0 : !1;
         },
         parsingFlags: function() {
             return extend({}, this._pf);
@@ -7442,7 +7445,7 @@ function(window, angular, undefined) {
             return this.from(moment(), withoutSuffix);
         },
         calendar: function() {
-            var sod = makeAs(moment(), this).startOf("day"), diff = this.diff(sod, "days", !0), format = diff < -6 ? "sameElse" : diff < -1 ? "lastWeek" : diff < 0 ? "lastDay" : diff < 1 ? "sameDay" : diff < 2 ? "nextDay" : diff < 7 ? "nextWeek" : "sameElse";
+            var sod = makeAs(moment(), this).startOf("day"), diff = this.diff(sod, "days", !0), format = -6 > diff ? "sameElse" : -1 > diff ? "lastWeek" : 0 > diff ? "lastDay" : 1 > diff ? "sameDay" : 2 > diff ? "nextDay" : 7 > diff ? "nextWeek" : "sameElse";
             return this.format(this.lang().calendar(format, this));
         },
         isLeapYear: function() {
@@ -7459,9 +7462,10 @@ function(window, angular, undefined) {
         },
         month: function(input) {
             var dayOfMonth, utc = this._isUTC ? "UTC" : "";
-            return null != input ? "string" == typeof input && "number" != typeof (input = this.lang().monthsParse(input)) ? this : (dayOfMonth = this.date(), 
-            this.date(1), this._d["set" + utc + "Month"](input), this.date(Math.min(dayOfMonth, this.daysInMonth())), 
-            moment.updateOffset(this), this) : this._d["get" + utc + "Month"]();
+            return null != input ? "string" == typeof input && (input = this.lang().monthsParse(input), 
+            "number" != typeof input) ? this : (dayOfMonth = this.date(), this.date(1), this._d["set" + utc + "Month"](input), 
+            this.date(Math.min(dayOfMonth, this.daysInMonth())), moment.updateOffset(this), 
+            this) : this._d["get" + utc + "Month"]();
         },
         startOf: function(units) {
             switch (units = normalizeUnits(units)) {
@@ -7492,16 +7496,16 @@ function(window, angular, undefined) {
             return units = normalizeUnits(units), this.startOf(units).add("isoWeek" === units ? "week" : units, 1).subtract("ms", 1);
         },
         isAfter: function(input, units) {
-            return units = void 0 !== units ? units : "millisecond", +this.clone().startOf(units) > +moment(input).startOf(units);
+            return units = "undefined" != typeof units ? units : "millisecond", +this.clone().startOf(units) > +moment(input).startOf(units);
         },
         isBefore: function(input, units) {
-            return units = void 0 !== units ? units : "millisecond", +this.clone().startOf(units) < +moment(input).startOf(units);
+            return units = "undefined" != typeof units ? units : "millisecond", +this.clone().startOf(units) < +moment(input).startOf(units);
         },
         isSame: function(input, units) {
-            return units = units || "ms", +this.clone().startOf(units) == +makeAs(input, this).startOf(units);
+            return units = units || "ms", +this.clone().startOf(units) === +makeAs(input, this).startOf(units);
         },
         min: function(other) {
-            return other = moment.apply(null, arguments), other < this ? this : other;
+            return other = moment.apply(null, arguments), this > other ? this : other;
         },
         max: function(other) {
             return other = moment.apply(null, arguments), other > this ? this : other;
@@ -7509,7 +7513,8 @@ function(window, angular, undefined) {
         zone: function(input) {
             var offset = this._offset || 0;
             return null == input ? this._isUTC ? offset : this._d.getTimezoneOffset() : ("string" == typeof input && (input = timezoneMinutesFromString(input)), 
-            Math.abs(input) < 16 && (input *= 60), this._offset = input, this._isUTC = !0, offset !== input && addOrSubtractDurationFromMoment(this, moment.duration(offset - input, "m"), 1, !0), 
+            Math.abs(input) < 16 && (input = 60 * input), this._offset = input, this._isUTC = !0, 
+            offset !== input && addOrSubtractDurationFromMoment(this, moment.duration(offset - input, "m"), 1, !0), 
             this);
         },
         zoneAbbr: function() {
@@ -7523,7 +7528,7 @@ function(window, angular, undefined) {
             this;
         },
         hasAlignedHourOffset: function(input) {
-            return input = input ? moment(input).zone() : 0, (this.zone() - input) % 60 == 0;
+            return input = input ? moment(input).zone() : 0, (this.zone() - input) % 60 === 0;
         },
         daysInMonth: function() {
             return daysInMonth(this.year(), this.month());
@@ -7618,11 +7623,11 @@ function(window, angular, undefined) {
         return (+this - 31536e6 * this.years()) / 2592e6 + 12 * this.years();
     }, moment.lang("en", {
         ordinal: function(number) {
-            var b = number % 10;
-            return number + (1 === toInt(number % 100 / 10) ? "th" : 1 === b ? "st" : 2 === b ? "nd" : 3 === b ? "rd" : "th");
+            var b = number % 10, output = 1 === toInt(number % 100 / 10) ? "th" : 1 === b ? "st" : 2 === b ? "nd" : 3 === b ? "rd" : "th";
+            return number + output;
         }
     }), hasModule ? (module.exports = moment, makeGlobal(!0)) : "function" == typeof define && define.amd ? define("moment", function(require, exports, module) {
-        return module.config && module.config() && !0 !== module.config().noGlobal && makeGlobal(module.config().noGlobal === undefined), 
+        return module.config && module.config() && module.config().noGlobal !== !0 && makeGlobal(module.config().noGlobal === undefined), 
         moment;
     }) : makeGlobal();
 }.call(this), function() {
@@ -7653,7 +7658,7 @@ function(window, angular, undefined) {
                     if (element.text(momentInstance.from(getNow(), withoutSuffix)), titleFormat && !element.attr("title") && element.attr("title", momentInstance.local().format(titleFormat)), 
                     !isBindOnce) {
                         var howOld = Math.abs(getNow().diff(momentInstance, "minute")), secondsUntilUpdate = 3600;
-                        howOld < 1 ? secondsUntilUpdate = 1 : howOld < 60 ? secondsUntilUpdate = 30 : howOld < 180 && (secondsUntilUpdate = 300), 
+                        1 > howOld ? secondsUntilUpdate = 1 : 60 > howOld ? secondsUntilUpdate = 30 : 180 > howOld && (secondsUntilUpdate = 300), 
                         activeTimeout = $window.setTimeout(function() {
                             updateTime(momentInstance);
                         }, 1e3 * secondsUntilUpdate);
@@ -7670,13 +7675,13 @@ function(window, angular, undefined) {
                 }
                 var currentValue, unwatchChanges, activeTimeout = null, currentFormat = angularMomentConfig.format, withoutSuffix = amTimeAgoConfig.withoutSuffix, titleFormat = amTimeAgoConfig.titleFormat, localDate = new Date().getTime(), preprocess = angularMomentConfig.preprocess, modelName = attr.amTimeAgo.replace(/^::/, ""), isBindOnce = 0 === attr.amTimeAgo.indexOf("::"), isTimeElement = "TIME" === element[0].nodeName.toUpperCase();
                 unwatchChanges = scope.$watch(modelName, function(value) {
-                    if (void 0 === value || null === value || "" === value) return cancelTimer(), void (currentValue && (element.text(""), 
-                    updateDateTimeAttr(""), currentValue = null));
-                    currentValue = value, updateMoment(), void 0 !== value && isBindOnce && unwatchChanges();
+                    return "undefined" == typeof value || null === value || "" === value ? (cancelTimer(), 
+                    void (currentValue && (element.text(""), updateDateTimeAttr(""), currentValue = null))) : (currentValue = value, 
+                    updateMoment(), void (void 0 !== value && isBindOnce && unwatchChanges()));
                 }), angular.isDefined(attr.amWithoutSuffix) && scope.$watch(attr.amWithoutSuffix, function(value) {
                     "boolean" == typeof value ? (withoutSuffix = value, updateMoment()) : withoutSuffix = amTimeAgoConfig.withoutSuffix;
                 }), attr.$observe("amFormat", function(format) {
-                    void 0 !== format && (currentFormat = format, updateMoment());
+                    "undefined" != typeof format && (currentFormat = format, updateMoment());
                 }), attr.$observe("amPreprocess", function(newValue) {
                     preprocess = newValue, updateMoment();
                 }), scope.$on("$destroy", function() {
@@ -7708,25 +7713,25 @@ function(window, angular, undefined) {
             };
         } ]).filter("amCalendar", [ "moment", "amMoment", function(moment, amMoment) {
             return function(value, preprocess) {
-                if (void 0 === value || null === value) return "";
+                if ("undefined" == typeof value || null === value) return "";
                 value = amMoment.preprocessDate(value, preprocess);
                 var date = moment(value);
                 return date.isValid() ? amMoment.applyTimezone(date).calendar() : "";
             };
         } ]).filter("amDateFormat", [ "moment", "amMoment", function(moment, amMoment) {
             return function(value, format, preprocess) {
-                if (void 0 === value || null === value) return "";
+                if ("undefined" == typeof value || null === value) return "";
                 value = amMoment.preprocessDate(value, preprocess);
                 var date = moment(value);
                 return date.isValid() ? amMoment.applyTimezone(date).format(format) : "";
             };
         } ]).filter("amDurationFormat", [ "moment", function(moment) {
             return function(value, format, suffix) {
-                return void 0 === value || null === value ? "" : moment.duration(value, format).humanize(suffix);
+                return "undefined" == typeof value || null === value ? "" : moment.duration(value, format).humanize(suffix);
             };
         } ]).filter("amTimeAgo", [ "moment", "amMoment", function(moment, amMoment) {
             return function(value, preprocess, suffix) {
-                if (void 0 === value || null === value) return "";
+                if ("undefined" == typeof value || null === value) return "";
                 value = amMoment.preprocessDate(value, preprocess);
                 var date = moment(value);
                 return date.isValid() ? amMoment.applyTimezone(date).fromNow(suffix) : "";
@@ -7767,7 +7772,7 @@ function(window, angular, undefined) {
     function indexOf(array, value) {
         if (Array.prototype.indexOf) return array.indexOf(value, Number(arguments[2]) || 0);
         var len = array.length >>> 0, from = Number(arguments[2]) || 0;
-        for (from = from < 0 ? Math.ceil(from) : Math.floor(from), from < 0 && (from += len); from < len; from++) if (from in array && array[from] === value) return from;
+        for (from = 0 > from ? Math.ceil(from) : Math.floor(from), 0 > from && (from += len); len > from; from++) if (from in array && array[from] === value) return from;
         return -1;
     }
     function inheritParams(currentParams, newParams, $current, $to) {
@@ -7878,7 +7883,7 @@ function(window, angular, undefined) {
                 extend(promises, parent.$$promises), parent.$$values ? (merged = merge(values, omit(parent.$$values, invocableKeys)), 
                 result.$$inheritedValues = omit(parent.$$values, invocableKeys), done()) : (parent.$$inheritedValues && (result.$$inheritedValues = omit(parent.$$inheritedValues, invocableKeys)), 
                 parent.then(done, fail));
-                for (var i = 0, ii = plan.length; i < ii; i += 3) locals.hasOwnProperty(plan[i]) ? done() : invoke(plan[i], plan[i + 1], plan[i + 2]);
+                for (var i = 0, ii = plan.length; ii > i; i += 3) locals.hasOwnProperty(plan[i]) ? done() : invoke(plan[i], plan[i + 1], plan[i + 2]);
                 return result;
             };
         }, this.resolve = function(invocables, locals, parent, self) {
@@ -7959,7 +7964,7 @@ function(window, angular, undefined) {
             search.length > 0) for (last = 0; m = searchPlaceholder.exec(search); ) p = matchDetails(m, !0), 
             param = addParameter(p.id, p.type, p.cfg, "search"), last = placeholder.lastIndex;
         } else this.sourcePath = pattern, this.sourceSearch = "";
-        compiled += quoteRegExp(segment) + (!1 === config.strict ? "/?" : "") + "$", segments.push(segment), 
+        compiled += quoteRegExp(segment) + (config.strict === !1 ? "/?" : "") + "$", segments.push(segment), 
         this.regexp = new RegExp(compiled, config.caseInsensitive ? "i" : undefined), this.prefix = segments[0], 
         this.$$paramNames = paramNames;
     }
@@ -8001,9 +8006,9 @@ function(window, angular, undefined) {
                 encode: valToString,
                 decode: valFromString,
                 is: regexpMatches,
-                pattern: /[^/]*/
+                pattern: /[^\/]*/
             },
-            int: {
+            "int": {
                 encode: valToString,
                 decode: function(val) {
                     return parseInt(val, 10);
@@ -8021,7 +8026,7 @@ function(window, angular, undefined) {
                     return 0 !== parseInt(val, 10);
                 },
                 is: function(val) {
-                    return !0 === val || !1 === val;
+                    return val === !0 || val === !1;
                 },
                 pattern: /0|1/
             },
@@ -8048,7 +8053,7 @@ function(window, angular, undefined) {
                 decode: angular.fromJson,
                 is: angular.isObject,
                 equals: angular.equals,
-                pattern: /[^/]*/
+                pattern: /[^\/]*/
             },
             any: {
                 encode: angular.identity,
@@ -8068,7 +8073,7 @@ function(window, angular, undefined) {
             return isDefined(value) && (isStrictMode = value), isStrictMode;
         }, this.defaultSquashPolicy = function(value) {
             if (!isDefined(value)) return defaultSquashPolicy;
-            if (!0 !== value && !1 !== value && !isString(value)) throw new Error("Invalid squash policy: " + value + ". Valid policies: false, true, arbitrary-string");
+            if (value !== !0 && value !== !1 && !isString(value)) throw new Error("Invalid squash policy: " + value + ". Valid policies: false, true, arbitrary-string");
             return defaultSquashPolicy = value, value;
         }, this.compile = function(pattern, config) {
             return new UrlMatcher(pattern, extend(getDefaultConfig(), config));
@@ -8097,8 +8102,8 @@ function(window, angular, undefined) {
             }), this;
         } ], this.Param = function(id, type, config, location) {
             function unwrapShorthand(config) {
-                var keys = isObject(config) ? objectKeys(config) : [];
-                return -1 === indexOf(keys, "value") && -1 === indexOf(keys, "type") && -1 === indexOf(keys, "squash") && -1 === indexOf(keys, "array") && (config = {
+                var keys = isObject(config) ? objectKeys(config) : [], isShorthand = -1 === indexOf(keys, "value") && -1 === indexOf(keys, "type") && -1 === indexOf(keys, "squash") && -1 === indexOf(keys, "array");
+                return isShorthand && (config = {
                     value: config
                 }), config.$$fn = isInjectable(config.value) ? config.value : function() {
                     return config.value;
@@ -8106,11 +8111,11 @@ function(window, angular, undefined) {
             }
             function getType(config, urlType, location) {
                 if (config.type && urlType) throw new Error("Param '" + id + "' has two type configurations.");
-                return urlType || (config.type ? config.type instanceof Type ? config.type : new Type(config.type) : "config" === location ? $types.any : $types.string);
+                return urlType ? urlType : config.type ? config.type instanceof Type ? config.type : new Type(config.type) : "config" === location ? $types.any : $types.string;
             }
             function getArrayMode() {
                 var arrayDefaults = {
-                    array: "search" === location && "auto"
+                    array: "search" === location ? "auto" : !1
                 }, arrayParamNomenclature = id.match(/\[\]$/) ? {
                     array: !0
                 } : {};
@@ -8118,9 +8123,9 @@ function(window, angular, undefined) {
             }
             function getSquashPolicy(config, isOptional) {
                 var squash = config.squash;
-                if (!isOptional || !1 === squash) return !1;
+                if (!isOptional || squash === !1) return !1;
                 if (!isDefined(squash) || null == squash) return defaultSquashPolicy;
-                if (!0 === squash || isString(squash)) return squash;
+                if (squash === !0 || isString(squash)) return squash;
                 throw new Error("Invalid squash policy: '" + squash + "'. Valid policies: false, true, or arbitrary string");
             }
             function getReplace(config, arrayMode, isOptional, squash) {
@@ -8232,7 +8237,7 @@ function(window, angular, undefined) {
             var result = $injector.invoke(handler, handler, {
                 $match: match
             });
-            return !isDefined(result) || result;
+            return isDefined(result) ? result : !0;
         }
         function $get($location, $rootScope, $injector, $browser) {
             function appendBasePath(url, isHtml5, absolute) {
@@ -8241,13 +8246,13 @@ function(window, angular, undefined) {
             function update(evt) {
                 function check(rule) {
                     var handled = rule($injector, $location);
-                    return !!handled && (isString(handled) && $location.replace().url(handled), !0);
+                    return handled ? (isString(handled) && $location.replace().url(handled), !0) : !1;
                 }
                 if (!evt || !evt.defaultPrevented) {
                     var ignoreUpdate = lastPushedUrl && $location.url() === lastPushedUrl;
                     if (lastPushedUrl = undefined, ignoreUpdate) return !0;
                     var i, n = rules.length;
-                    for (i = 0; i < n; i++) if (check(rules[i])) return;
+                    for (i = 0; n > i; i++) if (check(rules[i])) return;
                     otherwise && check(otherwise);
                 }
             }
@@ -8263,8 +8268,8 @@ function(window, angular, undefined) {
                     return listen();
                 },
                 update: function(read) {
-                    if (read) return void (location = $location.url());
-                    $location.url() !== location && ($location.url(location), $location.replace());
+                    return read ? void (location = $location.url()) : void ($location.url() !== location && ($location.url(location), 
+                    $location.replace()));
                 },
                 push: function(urlMatcher, params, options) {
                     $location.url(urlMatcher.format(params || {})), lastPushedUrl = options && options.$$avoidResync ? $location.url() : undefined, 
@@ -8333,11 +8338,11 @@ function(window, angular, undefined) {
         }
         function findState(stateOrName, base) {
             if (!stateOrName) return undefined;
-            var isStr = isString(stateOrName), name = isStr ? stateOrName : stateOrName.name;
-            if (isRelative(name)) {
+            var isStr = isString(stateOrName), name = isStr ? stateOrName : stateOrName.name, path = isRelative(name);
+            if (path) {
                 if (!base) throw new Error("No reference point given for path '" + name + "'");
                 base = findState(base);
-                for (var rel = name.split("."), i = 0, pathLength = rel.length, current = base; i < pathLength; i++) if ("" !== rel[i] || 0 !== i) {
+                for (var rel = name.split("."), i = 0, pathLength = rel.length, current = base; pathLength > i; i++) if ("" !== rel[i] || 0 !== i) {
                     if ("^" !== rel[i]) break;
                     if (!current.parent) throw new Error("Path '" + name + "' not valid for state '" + base.name + "'");
                     current = current.parent;
@@ -8382,7 +8387,7 @@ function(window, angular, undefined) {
             if ("**" === globSegments[0] && (segments = segments.slice(indexOf(segments, globSegments[1])), 
             segments.unshift("**")), "**" === globSegments[globSegments.length - 1] && (segments.splice(indexOf(segments, globSegments[globSegments.length - 2]) + 1, Number.MAX_VALUE), 
             segments.push("**")), globSegments.length != segments.length) return !1;
-            for (var i = 0, l = globSegments.length; i < l; i++) "*" === globSegments[i] && (segments[i] = "*");
+            for (var i = 0, l = globSegments.length; l > i; i++) "*" === globSegments[i] && (segments[i] = "*");
             return segments.join("") === globSegments.join("");
         }
         function decorator(name, func) {
@@ -8487,7 +8492,7 @@ function(window, angular, undefined) {
                 var toPath = to.path, keep = 0, state = toPath[keep], locals = root.locals, toLocals = [];
                 if (!options.reload) for (;state && state === fromPath[keep] && state.ownParams.$$equals(toParams, fromParams); ) locals = toLocals[keep] = state.locals, 
                 keep++, state = toPath[keep];
-                if (shouldTriggerReload(to, from, locals, options)) return !1 !== to.self.reloadOnSearch && $urlRouter.update(), 
+                if (shouldTriggerReload(to, from, locals, options)) return to.self.reloadOnSearch !== !1 && $urlRouter.update(), 
                 $state.transition = null, $q.when($state.current);
                 if (toParams = filterByKeys(to.params.$$keys(), toParams || {}), options.notify && $rootScope.$broadcast("$stateChangeStart", to.self, toParams, from.self, fromParams).defaultPrevented) return $urlRouter.update(), 
                 TransitionPrevented;
@@ -8518,7 +8523,7 @@ function(window, angular, undefined) {
                     relative: $state.$current
                 }, options || {});
                 var state = findState(stateOrName, options.relative);
-                return isDefined(state) ? $state.$current === state && (!params || equalForKeys(state.params.$$values(params), $stateParams)) : undefined;
+                return isDefined(state) ? $state.$current !== state ? !1 : params ? equalForKeys(state.params.$$values(params), $stateParams) : !0 : undefined;
             }, $state.includes = function(stateOrName, params, options) {
                 if (options = extend({
                     relative: $state.$current
@@ -8527,7 +8532,7 @@ function(window, angular, undefined) {
                     stateOrName = $state.$current.name;
                 }
                 var state = findState(stateOrName, options.relative);
-                return isDefined(state) ? !!isDefined($state.$current.includes[state.name]) && (!params || equalForKeys(state.params.$$values(params), $stateParams, objectKeys(params))) : undefined;
+                return isDefined(state) ? isDefined($state.$current.includes[state.name]) ? params ? equalForKeys(state.params.$$values(params), $stateParams, objectKeys(params)) : !0 : !1 : undefined;
             }, $state.href = function(stateOrName, params, options) {
                 options = extend({
                     lossy: !0,
@@ -8551,7 +8556,7 @@ function(window, angular, undefined) {
             }, $state;
         }
         function shouldTriggerReload(to, from, locals, options) {
-            if (to === from && (locals === from.locals && !options.reload || !1 === to.self.reloadOnSearch)) return !0;
+            return to !== from || (locals !== from.locals || options.reload) && to.self.reloadOnSearch !== !1 ? void 0 : !0;
         }
         var root, $state, states = {}, queue = {}, abstractKey = "abstract", stateBuilder = {
             parent: function(state) {
@@ -8604,7 +8609,7 @@ function(window, angular, undefined) {
             name: "",
             url: "^",
             views: null,
-            abstract: !0
+            "abstract": !0
         }), root.navigable = null, this.decorator = decorator, this.state = state, this.$get = $get, 
         $get.$inject = [ "$rootScope", "$q", "$view", "$injector", "$resolve", "$stateParams", "$urlRouter", "$location", "$urlMatcherFactory" ];
     }
@@ -8612,8 +8617,7 @@ function(window, angular, undefined) {
         function $get($rootScope, $templateFactory) {
             return {
                 load: function(name, options) {
-                    var result;
-                    return options = extend({
+                    var result, defaults = {
                         template: null,
                         controller: null,
                         view: null,
@@ -8621,7 +8625,8 @@ function(window, angular, undefined) {
                         notify: !0,
                         async: !0,
                         params: {}
-                    }, options), options.view && (result = $templateFactory.fromConfig(options.view, options.params, options.locals)), 
+                    };
+                    return options = extend(defaults, options), options.view && (result = $templateFactory.fromConfig(options.view, options.params, options.locals)), 
                     result && options.notify && $rootScope.$broadcast("$viewContentLoading", options), 
                     result;
                 }
@@ -8687,8 +8692,7 @@ function(window, angular, undefined) {
             }
             return statics();
         }
-        var service = getService(), $animator = service("$animator"), $animate = service("$animate");
-        return {
+        var service = getService(), $animator = service("$animator"), $animate = service("$animate"), directive = {
             restrict: "ECA",
             terminal: !0,
             priority: 400,
@@ -8723,6 +8727,7 @@ function(window, angular, undefined) {
                 };
             }
         };
+        return directive;
     }
     function $ViewDirectiveFill($compile, $controller, $state, $interpolate) {
         return {
@@ -8756,7 +8761,8 @@ function(window, angular, undefined) {
     }
     function parseStateRef(ref, current) {
         var parsed, preparsed = ref.match(/^\s*({[^}]*})\s*$/);
-        if (preparsed && (ref = current + "(" + preparsed[1] + ")"), !(parsed = ref.replace(/\n/g, " ").match(/^([^(]+?)\s*(\((.*)\))?$/)) || 4 !== parsed.length) throw new Error("Invalid state ref '" + ref + "'");
+        if (preparsed && (ref = current + "(" + preparsed[1] + ")"), parsed = ref.replace(/\n/g, " ").match(/^([^(]+?)\s*(\((.*)\))?$/), 
+        !parsed || 4 !== parsed.length) throw new Error("Invalid state ref '" + ref + "'");
         return {
             state: parsed[1],
             paramExpr: parsed[3] || null
@@ -8764,7 +8770,7 @@ function(window, angular, undefined) {
     }
     function stateContext(el) {
         var stateData = el.parent().inheritedData("$uiView");
-        if (stateData && stateData.state && stateData.state.name) return stateData.state;
+        return stateData && stateData.state && stateData.state.name ? stateData.state : void 0;
     }
     function $StateRefDirective($state, $timeout) {
         var allowedOptions = [ "location", "inherit", "reload" ];
@@ -8783,15 +8789,15 @@ function(window, angular, undefined) {
                     if (newVal && (params = angular.copy(newVal)), nav) {
                         newHref = $state.href(ref.state, params, options);
                         var activeDirective = uiSrefActive[1] || uiSrefActive[0];
-                        if (activeDirective && activeDirective.$$setStateInfo(ref.state, params), null === newHref) return nav = !1, 
-                        !1;
-                        attrs.$set(attr, newHref);
+                        return activeDirective && activeDirective.$$setStateInfo(ref.state, params), null === newHref ? (nav = !1, 
+                        !1) : void attrs.$set(attr, newHref);
                     }
                 };
                 ref.paramExpr && (scope.$watch(ref.paramExpr, function(newVal, oldVal) {
                     newVal !== params && update(newVal);
                 }, !0), params = angular.copy(scope.$eval(ref.paramExpr))), update(), isForm || element.bind("click", function(e) {
-                    if (!((e.which || e.button) > 1 || e.ctrlKey || e.metaKey || e.shiftKey || element.attr("target"))) {
+                    var button = e.which || e.button;
+                    if (!(button > 1 || e.ctrlKey || e.metaKey || e.shiftKey || element.attr("target"))) {
                         var transition = $timeout(function() {
                             $state.go(ref.state, params, options);
                         });
@@ -8813,7 +8819,7 @@ function(window, angular, undefined) {
                     isMatch() ? $element.addClass(activeClass) : $element.removeClass(activeClass);
                 }
                 function isMatch() {
-                    return void 0 !== $attrs.uiSrefActiveEq ? state && $state.is(state.name, params) : state && $state.includes(state.name, params);
+                    return "undefined" != typeof $attrs.uiSrefActiveEq ? state && $state.is(state.name, params) : state && $state.includes(state.name, params);
                 }
                 var state, params, activeClass;
                 activeClass = $interpolate($attrs.uiSrefActiveEq || $attrs.uiSrefActive || "", !1)($scope), 
@@ -8859,20 +8865,21 @@ function(window, angular, undefined) {
             function unquoteDashes(str) {
                 return str.replace(/\\-/, "-");
             }
-            return map(map(reverseString(string).split(/-(?!\\)/), reverseString), unquoteDashes).reverse();
+            var split = reverseString(string).split(/-(?!\\)/), allReversed = map(split, reverseString);
+            return map(allReversed, unquoteDashes).reverse();
         }
         var m = this.regexp.exec(path);
         if (!m) return null;
         searchParams = searchParams || {};
         var i, j, paramName, paramNames = this.parameters(), nTotal = paramNames.length, nPath = this.segments.length - 1, values = {};
         if (nPath !== m.length - 1) throw new Error("Unbalanced capture group in route '" + this.source + "'");
-        for (i = 0; i < nPath; i++) {
+        for (i = 0; nPath > i; i++) {
             paramName = paramNames[i];
             var param = this.params[paramName], paramVal = m[i + 1];
             for (j = 0; j < param.replace; j++) param.replace[j].from === paramVal && (paramVal = param.replace[j].to);
-            paramVal && !0 === param.array && (paramVal = decodePathArray(paramVal)), values[paramName] = param.value(paramVal);
+            paramVal && param.array === !0 && (paramVal = decodePathArray(paramVal)), values[paramName] = param.value(paramVal);
         }
-        for (;i < nTotal; i++) paramName = paramNames[i], values[paramName] = this.params[paramName].value(searchParams[paramName]);
+        for (;nTotal > i; i++) paramName = paramNames[i], values[paramName] = this.params[paramName].value(searchParams[paramName]);
         return values;
     }, UrlMatcher.prototype.parameters = function(param) {
         return isDefined(param) ? this.params[param] || null : this.$$paramNames;
@@ -8888,19 +8895,19 @@ function(window, angular, undefined) {
         var segments = this.segments, params = this.parameters(), paramset = this.params;
         if (!this.validates(values)) return null;
         var i, search = !1, nPath = segments.length - 1, nTotal = params.length, result = segments[0];
-        for (i = 0; i < nTotal; i++) {
-            var isPathParam = i < nPath, name = params[i], param = paramset[name], value = param.value(values[name]), isDefaultValue = param.isOptional && param.type.equals(param.value(), value), squash = !!isDefaultValue && param.squash, encoded = param.type.encode(value);
+        for (i = 0; nTotal > i; i++) {
+            var isPathParam = nPath > i, name = params[i], param = paramset[name], value = param.value(values[name]), isDefaultValue = param.isOptional && param.type.equals(param.value(), value), squash = isDefaultValue ? param.squash : !1, encoded = param.type.encode(value);
             if (isPathParam) {
                 var nextSegment = segments[i + 1];
-                if (!1 === squash) null != encoded && (isArray(encoded) ? result += map(encoded, encodeDashes).join("-") : result += encodeURIComponent(encoded)), 
-                result += nextSegment; else if (!0 === squash) {
+                if (squash === !1) null != encoded && (result += isArray(encoded) ? map(encoded, encodeDashes).join("-") : encodeURIComponent(encoded)), 
+                result += nextSegment; else if (squash === !0) {
                     var capture = result.match(/\/$/) ? /\/?(.*)/ : /(.*)/;
                     result += nextSegment.match(capture)[1];
                 } else isString(squash) && (result += squash + nextSegment);
             } else {
-                if (null == encoded || isDefaultValue && !1 !== squash) continue;
+                if (null == encoded || isDefaultValue && squash !== !1) continue;
                 isArray(encoded) || (encoded = [ encoded ]), encoded = map(encoded, encodeURIComponent).join("&" + name + "="), 
-                result += (search ? "&" : "?") + name + "=" + encoded, search = !0;
+                result += (search ? "&" : "?") + (name + "=" + encoded), search = !0;
             }
         }
         return result;
@@ -8946,7 +8953,7 @@ function(window, angular, undefined) {
                 return function(val) {
                     val = arrayWrap(val);
                     var result = map(val, callback);
-                    return !0 === allTruthyMode ? 0 === filter(result, falsey).length : arrayUnwrap(result);
+                    return allTruthyMode === !0 ? 0 === filter(result, falsey).length : arrayUnwrap(result);
                 };
             }
             function arrayEqualsHandler(callback) {
@@ -9011,7 +9018,7 @@ function(window, angular, undefined) {
         function isMatchingElement(elm1, elm2) {
             return extractElementNode(elm1) == extractElementNode(elm2);
         }
-        var noop = angular.noop, forEach = angular.forEach, selectors = $animateProvider.$$selectors, ELEMENT_NODE = 1, NG_ANIMATE_STATE = "$$ngAnimateState", NG_ANIMATE_CLASS_NAME = "ng-animate", rootAnimateState = {
+        var noop = angular.noop, forEach = angular.forEach, selectors = $animateProvider.$$selectors, ELEMENT_NODE = 1, NG_ANIMATE_STATE = "$$ngAnimateState", NG_ANIMATE_CHILDREN = "$$ngAnimateChildren", NG_ANIMATE_CLASS_NAME = "ng-animate", rootAnimateState = {
             running: !0
         };
         $provide.decorator("$animate", [ "$delegate", "$injector", "$sniffer", "$rootElement", "$$asyncCallback", "$rootScope", "$document", function($delegate, $injector, $sniffer, $rootElement, $$asyncCallback, $rootScope, $document) {
@@ -9034,14 +9041,14 @@ function(window, angular, undefined) {
             function animationRunner(element, animationEvent, className) {
                 function registerAnimation(animationFactory, event) {
                     var afterFn = animationFactory[event], beforeFn = animationFactory["before" + event.charAt(0).toUpperCase() + event.substr(1)];
-                    if (afterFn || beforeFn) return "leave" == event && (beforeFn = afterFn, afterFn = null), 
+                    return afterFn || beforeFn ? ("leave" == event && (beforeFn = afterFn, afterFn = null), 
                     after.push({
                         event: event,
                         fn: afterFn
                     }), before.push({
                         event: event,
                         fn: beforeFn
-                    }), !0;
+                    }), !0) : void 0;
                 }
                 function run(fns, cancellations, allCompleteFn) {
                     function afterAnimationComplete(index) {
@@ -9087,7 +9094,8 @@ function(window, angular, undefined) {
                     if (isAnimatableClassName(classes)) {
                         var beforeComplete = noop, beforeCancel = [], before = [], afterComplete = noop, afterCancel = [], after = [], animationLookup = (" " + classes).replace(/\s+/g, ".");
                         return forEach(lookup(animationLookup), function(animationFactory) {
-                            !registerAnimation(animationFactory, animationEvent) && isSetClassOperation && (registerAnimation(animationFactory, "addClass"), 
+                            var created = registerAnimation(animationFactory, animationEvent);
+                            !created && isSetClassOperation && (registerAnimation(animationFactory, "addClass"), 
                             registerAnimation(animationFactory, "removeClass"));
                         }), {
                             node: node,
@@ -9197,7 +9205,7 @@ function(window, angular, undefined) {
                 }), fireBeforeCallbackAsync(), runner.before(function(cancelled) {
                     var data = element.data(NG_ANIMATE_STATE);
                     cancelled = cancelled || !data || !data.active[className] || runner.isClassBased && data.active[className].event != animationEvent, 
-                    fireDOMOperation(), !0 === cancelled ? closeAnimation() : (fireAfterCallbackAsync(), 
+                    fireDOMOperation(), cancelled === !0 ? closeAnimation() : (fireAfterCallbackAsync(), 
                     runner.after(closeAnimation));
                 });
             }
@@ -9217,9 +9225,9 @@ function(window, angular, undefined) {
             function cleanup(element, className) {
                 if (isMatchingElement(element, $rootElement)) rootAnimateState.disabled || (rootAnimateState.running = !1, 
                 rootAnimateState.structural = !1); else if (className) {
-                    var data = element.data(NG_ANIMATE_STATE) || {}, removeAnimations = !0 === className;
+                    var data = element.data(NG_ANIMATE_STATE) || {}, removeAnimations = className === !0;
                     !removeAnimations && data.active && data.active[className] && (data.totalActive--, 
-                    delete data.active[className]), !removeAnimations && data.totalActive || (element.removeClass(NG_ANIMATE_CLASS_NAME), 
+                    delete data.active[className]), (removeAnimations || !data.totalActive) && (element.removeClass(NG_ANIMATE_CLASS_NAME), 
                     element.removeData(NG_ANIMATE_STATE));
                 }
             }
@@ -9231,8 +9239,8 @@ function(window, angular, undefined) {
                     if (0 === parentElement.length) break;
                     var isRoot = isMatchingElement(parentElement, $rootElement), state = isRoot ? rootAnimateState : parentElement.data(NG_ANIMATE_STATE) || {};
                     if (state.disabled) return !0;
-                    if (isRoot && (hasParent = !0), !1 !== allowChildAnimations) {
-                        var animateChildrenFlag = parentElement.data("$$ngAnimateChildren");
+                    if (isRoot && (hasParent = !0), allowChildAnimations !== !1) {
+                        var animateChildrenFlag = parentElement.data(NG_ANIMATE_CHILDREN);
                         angular.isDefined(animateChildrenFlag) && (allowChildAnimations = animateChildrenFlag);
                     }
                     parentRunningAnimation = parentRunningAnimation || state.running || state.last && !state.last.isClassBased;
@@ -9328,7 +9336,7 @@ function(window, angular, undefined) {
                 var node = extractElementNode(element);
                 element = angular.element(node), animationElementQueue.push(element);
                 var futureTimestamp = Date.now() + totalTime;
-                futureTimestamp <= closingTimestamp || ($timeout.cancel(closingTimer), closingTimestamp = futureTimestamp, 
+                closingTimestamp >= futureTimestamp || ($timeout.cancel(closingTimer), closingTimestamp = futureTimestamp, 
                 closingTimer = $timeout(function() {
                     closeAllAnimations(animationElementQueue), animationElementQueue = [];
                 }, totalTime, !1));
@@ -9475,13 +9483,13 @@ function(window, angular, undefined) {
                 }), style;
             }
             function animateBefore(animationEvent, element, className, calculationDecorator) {
-                if (animateSetup(animationEvent, element, className, calculationDecorator)) return function(cancelled) {
+                return animateSetup(animationEvent, element, className, calculationDecorator) ? function(cancelled) {
                     cancelled && animateClose(element, className);
-                };
+                } : void 0;
             }
             function animateAfter(animationEvent, element, className, afterAnimationComplete) {
-                if (element.data(NG_ANIMATE_CSS_DATA_KEY)) return animateRun(animationEvent, element, className, afterAnimationComplete);
-                animateClose(element, className), afterAnimationComplete();
+                return element.data(NG_ANIMATE_CSS_DATA_KEY) ? animateRun(animationEvent, element, className, afterAnimationComplete) : (animateClose(element, className), 
+                void afterAnimationComplete());
             }
             function animate(animationEvent, element, className, animationComplete) {
                 var preReflowCancellation = animateBefore(animationEvent, element, className);
@@ -9528,10 +9536,9 @@ function(window, angular, undefined) {
                         var timings = fn();
                         return element.attr("class", klass), timings;
                     });
-                    if (cancellationMethod) return afterReflow(element, function() {
+                    return cancellationMethod ? (afterReflow(element, function() {
                         unblockTransitions(element, className), unblockKeyframeAnimations(element), animationCompleted();
-                    }), cancellationMethod;
-                    clearCacheAfterReflow(), animationCompleted();
+                    }), cancellationMethod) : (clearCacheAfterReflow(), void animationCompleted());
                 },
                 beforeAddClass: function(element, className, animationCompleted) {
                     var cancellationMethod = animateBefore("addClass", element, suffixClasses(className, "-add"), function(fn) {
@@ -9539,14 +9546,14 @@ function(window, angular, undefined) {
                         var timings = fn();
                         return element.removeClass(className), timings;
                     });
-                    if (cancellationMethod) return afterReflow(element, function() {
+                    return cancellationMethod ? (afterReflow(element, function() {
                         unblockTransitions(element, className), unblockKeyframeAnimations(element), animationCompleted();
-                    }), cancellationMethod;
-                    clearCacheAfterReflow(), animationCompleted();
+                    }), cancellationMethod) : (clearCacheAfterReflow(), void animationCompleted());
                 },
                 setClass: function(element, add, remove, animationCompleted) {
-                    return remove = suffixClasses(remove, "-remove"), add = suffixClasses(add, "-add"), 
-                    animateAfter("setClass", element, remove + " " + add, animationCompleted);
+                    remove = suffixClasses(remove, "-remove"), add = suffixClasses(add, "-add");
+                    var className = remove + " " + add;
+                    return animateAfter("setClass", element, className, animationCompleted);
                 },
                 addClass: function(element, className, animationCompleted) {
                     return animateAfter("addClass", element, suffixClasses(className, "-add"), animationCompleted);
@@ -9558,10 +9565,9 @@ function(window, angular, undefined) {
                         var timings = fn();
                         return element.attr("class", klass), timings;
                     });
-                    if (cancellationMethod) return afterReflow(element, function() {
+                    return cancellationMethod ? (afterReflow(element, function() {
                         unblockTransitions(element, className), unblockKeyframeAnimations(element), animationCompleted();
-                    }), cancellationMethod;
-                    animationCompleted();
+                    }), cancellationMethod) : void animationCompleted();
                 },
                 removeClass: function(element, className, animationCompleted) {
                     return animateAfter("removeClass", element, suffixClasses(className, "-remove"), animationCompleted);
@@ -9576,7 +9582,7 @@ function(window, angular, undefined) {
     }
     function lookupDottedPath(obj, path) {
         if (!isValidDottedPath(path)) throw $resourceMinErr("badmember", 'Dotted member path "@{0}" is invalid.', path);
-        for (var keys = path.split("."), i = 0, ii = keys.length; i < ii && obj !== undefined; i++) {
+        for (var keys = path.split("."), i = 0, ii = keys.length; ii > i && obj !== undefined; i++) {
             var key = keys[i];
             obj = null !== obj ? obj[key] : undefined;
         }
@@ -9688,7 +9694,7 @@ function(window, angular, undefined) {
             remove: {
                 method: "DELETE"
             },
-            delete: {
+            "delete": {
                 method: "DELETE"
             }
         }, noop = angular.noop, forEach = angular.forEach, extend = angular.extend, copy = angular.copy, isFunction = angular.isFunction;
@@ -9792,7 +9798,8 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
     closeOthers: !0
 }).controller("AccordionController", [ "$scope", "$attrs", "accordionConfig", function($scope, $attrs, accordionConfig) {
     this.groups = [], this.closeOthers = function(openGroup) {
-        (angular.isDefined($attrs.closeOthers) ? $scope.$eval($attrs.closeOthers) : accordionConfig.closeOthers) && angular.forEach(this.groups, function(group) {
+        var closeOthers = angular.isDefined($attrs.closeOthers) ? $scope.$eval($attrs.closeOthers) : accordionConfig.closeOthers;
+        closeOthers && angular.forEach(this.groups, function(group) {
             group !== openGroup && (group.isOpen = !1);
         });
     }, this.addGroup = function(groupScope) {
@@ -9801,7 +9808,8 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
             that.removeGroup(groupScope);
         });
     }, this.removeGroup = function(group) {
-        -1 !== this.groups.indexOf(group) && this.groups.splice(this.groups.indexOf(group), 1);
+        var index = this.groups.indexOf(group);
+        -1 !== index && this.groups.splice(this.groups.indexOf(group), 1);
     };
 } ]).directive("accordion", function() {
     return {
@@ -9995,10 +10003,10 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
         return slides.indexOf(slide);
     }, $scope.next = function() {
         var newIndex = (currentIndex + 1) % slides.length;
-        if (!$scope.$currentTransition) return self.select(slides[newIndex], "next");
+        return $scope.$currentTransition ? void 0 : self.select(slides[newIndex], "next");
     }, $scope.prev = function() {
-        var newIndex = currentIndex - 1 < 0 ? slides.length - 1 : currentIndex - 1;
-        if (!$scope.$currentTransition) return self.select(slides[newIndex], "prev");
+        var newIndex = 0 > currentIndex - 1 ? slides.length - 1 : currentIndex - 1;
+        return $scope.$currentTransition ? void 0 : self.select(slides[newIndex], "prev");
     }, $scope.select = function(slide) {
         self.select(slide);
     }, $scope.isActive = function(slide) {
@@ -10112,7 +10120,7 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
         return new Date(year, month, 0).getDate();
     }
     function getDates(startDate, n) {
-        for (var dates = new Array(n), current = startDate, i = 0; i < n; ) dates[i++] = new Date(current), 
+        for (var dates = new Array(n), current = startDate, i = 0; n > i; ) dates[i++] = new Date(current), 
         current.setDate(current.getDate() + 1);
         return dates;
     }
@@ -10137,14 +10145,14 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
         name: "day",
         getVisibleDates: function(date, selected) {
             var year = date.getFullYear(), month = date.getMonth(), firstDayOfMonth = new Date(year, month, 1), difference = startingDay - firstDayOfMonth.getDay(), numDisplayedFromPreviousMonth = difference > 0 ? 7 - difference : -difference, firstDate = new Date(firstDayOfMonth), numDates = 0;
-            numDisplayedFromPreviousMonth > 0 && (firstDate.setDate(1 - numDisplayedFromPreviousMonth), 
+            numDisplayedFromPreviousMonth > 0 && (firstDate.setDate(-numDisplayedFromPreviousMonth + 1), 
             numDates += numDisplayedFromPreviousMonth), numDates += getDaysInMonth(year, month + 1), 
             numDates += (7 - numDates % 7) % 7;
-            for (var days = getDates(firstDate, numDates), labels = new Array(7), i = 0; i < numDates; i++) {
+            for (var days = getDates(firstDate, numDates), labels = new Array(7), i = 0; numDates > i; i++) {
                 var dt = new Date(days[i]);
                 days[i] = makeDate(dt, format.day, selected && selected.getDate() === dt.getDate() && selected.getMonth() === dt.getMonth() && selected.getFullYear() === dt.getFullYear(), dt.getMonth() !== month);
             }
-            for (var j = 0; j < 7; j++) labels[j] = dateFilter(days[j].date, format.dayHeader);
+            for (var j = 0; 7 > j; j++) labels[j] = dateFilter(days[j].date, format.dayHeader);
             return {
                 objects: days,
                 title: dateFilter(date, format.dayTitle),
@@ -10161,7 +10169,7 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
     }, {
         name: "month",
         getVisibleDates: function(date, selected) {
-            for (var months = new Array(12), year = date.getFullYear(), i = 0; i < 12; i++) {
+            for (var months = new Array(12), year = date.getFullYear(), i = 0; 12 > i; i++) {
                 var dt = new Date(year, i, 1);
                 months[i] = makeDate(dt, format.month, selected && selected.getMonth() === i && selected.getFullYear() === year);
             }
@@ -10180,7 +10188,7 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
     }, {
         name: "year",
         getVisibleDates: function(date, selected) {
-            for (var years = new Array(yearRange), year = date.getFullYear(), startYear = parseInt((year - 1) / yearRange, 10) * yearRange + 1, i = 0; i < yearRange; i++) {
+            for (var years = new Array(yearRange), year = date.getFullYear(), startYear = parseInt((year - 1) / yearRange, 10) * yearRange + 1, i = 0; yearRange > i; i++) {
                 var dt = new Date(startYear + i, 0, 1);
                 years[i] = makeDate(dt, format.year, selected && selected.getFullYear() === dt.getFullYear());
             }
@@ -10328,7 +10336,7 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
             attrs.isOpen && (getIsOpen = $parse(attrs.isOpen), setIsOpen = getIsOpen.assign, 
             originalScope.$watch(getIsOpen, function(value) {
                 scope.isOpen = !!value;
-            })), scope.isOpen = !!getIsOpen && getIsOpen(originalScope);
+            })), scope.isOpen = getIsOpen ? getIsOpen(originalScope) : !1;
             var documentClickBind = function(event) {
                 scope.isOpen && event.target !== element[0] && scope.$apply(function() {
                     setOpen(!1);
@@ -10507,9 +10515,9 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
         backdropScope && (backdropScope.index = newBackdropIndex);
     }), $document.bind("keydown", function(evt) {
         var modal;
-        27 === evt.which && (modal = openedWindows.top()) && modal.value.keyboard && $rootScope.$apply(function() {
+        27 === evt.which && (modal = openedWindows.top(), modal && modal.value.keyboard && $rootScope.$apply(function() {
             $modalStack.dismiss(modal.key);
-        });
+        }));
     }), $modalStack.open = function(modalInstance, modal) {
         openedWindows.add(modalInstance, {
             deferred: modal.deferred,
@@ -10576,11 +10584,11 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
                 return templateAndResolvePromise.then(function(tplAndVars) {
                     var modalScope = (modalOptions.scope || $rootScope).$new();
                     modalScope.$close = modalInstance.close, modalScope.$dismiss = modalInstance.dismiss;
-                    var ctrlLocals = {}, resolveIter = 1;
+                    var ctrlInstance, ctrlLocals = {}, resolveIter = 1;
                     modalOptions.controller && (ctrlLocals.$scope = modalScope, ctrlLocals.$modalInstance = modalInstance, 
                     angular.forEach(modalOptions.resolve, function(value, key) {
                         ctrlLocals[key] = tplAndVars[resolveIter++];
-                    }), $controller(modalOptions.controller, ctrlLocals)), $modalStack.open(modalInstance, {
+                    }), ctrlInstance = $controller(modalOptions.controller, ctrlLocals)), $modalStack.open(modalInstance, {
                         scope: modalScope,
                         deferred: modalResultDeferred,
                         content: tplAndVars[0],
@@ -10663,11 +10671,12 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
             paginationCtrl.init(config.itemsPerPage), attrs.maxSize && scope.$parent.$watch($parse(attrs.maxSize), function(value) {
                 maxSize = parseInt(value, 10), paginationCtrl.render();
             }), paginationCtrl.getPages = function(currentPage, totalPages) {
-                var pages = [], startPage = 1, endPage = totalPages, isMaxSized = angular.isDefined(maxSize) && maxSize < totalPages;
+                var pages = [], startPage = 1, endPage = totalPages, isMaxSized = angular.isDefined(maxSize) && totalPages > maxSize;
                 isMaxSized && (rotate ? (startPage = Math.max(currentPage - Math.floor(maxSize / 2), 1), 
-                (endPage = startPage + maxSize - 1) > totalPages && (endPage = totalPages, startPage = endPage - maxSize + 1)) : (startPage = (Math.ceil(currentPage / maxSize) - 1) * maxSize + 1, 
+                endPage = startPage + maxSize - 1, endPage > totalPages && (endPage = totalPages, 
+                startPage = endPage - maxSize + 1)) : (startPage = (Math.ceil(currentPage / maxSize) - 1) * maxSize + 1, 
                 endPage = Math.min(startPage + maxSize - 1, totalPages)));
-                for (var number = startPage; number <= endPage; number++) {
+                for (var number = startPage; endPage >= number; number++) {
                     var page = makePage(number, number, paginationCtrl.isActive(number), !1);
                     pages.push(page);
                 }
@@ -10676,7 +10685,7 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
                         var previousPageSet = makePage(startPage - 1, "...", !1, !1);
                         pages.unshift(previousPageSet);
                     }
-                    if (endPage < totalPages) {
+                    if (totalPages > endPage) {
                         var nextPageSet = makePage(endPage + 1, "...", !1, !1);
                         pages.push(nextPageSet);
                     }
@@ -10731,9 +10740,9 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
     };
 } ]), angular.module("ui.bootstrap.tooltip", [ "ui.bootstrap.position", "ui.bootstrap.bindHtml" ]).provider("$tooltip", function() {
     function snake_case(name) {
-        var regexp = /[A-Z]/g;
+        var regexp = /[A-Z]/g, separator = "-";
         return name.replace(regexp, function(letter, pos) {
-            return (pos ? "-" : "") + letter.toLowerCase();
+            return (pos ? separator : "") + letter.toLowerCase();
         });
     }
     var defaultOptions = {
@@ -10752,10 +10761,10 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
     }, this.$get = [ "$window", "$compile", "$timeout", "$parse", "$document", "$position", "$interpolate", function($window, $compile, $timeout, $parse, $document, $position, $interpolate) {
         return function(type, prefix, defaultTriggerShow) {
             function getTriggers(trigger) {
-                var show = trigger || options.trigger || defaultTriggerShow;
+                var show = trigger || options.trigger || defaultTriggerShow, hide = triggerMap[show] || show;
                 return {
                     show: show,
-                    hide: triggerMap[show] || show
+                    hide: hide
                 };
             }
             var options = angular.extend({}, defaultOptions, globalOptions), directiveName = snake_case(type), startSym = $interpolate.startSymbol(), endSym = $interpolate.endSymbol(), template = "<div " + directiveName + '-popup title="' + startSym + "tt_title" + endSym + '" content="' + startSym + "tt_content" + endSym + '" placement="' + startSym + "tt_placement" + endSym + '" animation="tt_animation" is-open="tt_isOpen"></div>';
@@ -10769,7 +10778,7 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
                             scope.tt_isOpen ? hideTooltipBind() : showTooltipBind();
                         }
                         function showTooltipBind() {
-                            hasEnableExp && !scope.$eval(attrs[prefix + "Enable"]) || (scope.tt_popupDelay ? (popupTimeout = $timeout(show, scope.tt_popupDelay, !1), 
+                            (!hasEnableExp || scope.$eval(attrs[prefix + "Enable"])) && (scope.tt_popupDelay ? (popupTimeout = $timeout(show, scope.tt_popupDelay, !1), 
                             popupTimeout.then(function(reposition) {
                                 reposition();
                             })) : show()());
@@ -10797,7 +10806,7 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
                         function removeTooltip() {
                             tooltip && (tooltip.remove(), tooltip = null);
                         }
-                        var tooltip, transitionTimeout, popupTimeout, appendToBody = !!angular.isDefined(options.appendToBody) && options.appendToBody, triggers = getTriggers(void 0), hasRegisteredTriggers = !1, hasEnableExp = angular.isDefined(attrs[prefix + "Enable"]), positionTooltip = function() {
+                        var tooltip, transitionTimeout, popupTimeout, appendToBody = angular.isDefined(options.appendToBody) ? options.appendToBody : !1, triggers = getTriggers(void 0), hasRegisteredTriggers = !1, hasEnableExp = angular.isDefined(attrs[prefix + "Enable"]), positionTooltip = function() {
                             var position, ttWidth, ttHeight, ttPosition;
                             switch (position = appendToBody ? $position.offset(element) : $position.position(element), 
                             ttWidth = tooltip.prop("offsetWidth"), ttHeight = tooltip.prop("offsetHeight"), 
@@ -10984,7 +10993,7 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
         for (var defaultOptions = {
             stateOn: this.stateOn,
             stateOff: this.stateOff
-        }, i = 0, n = states.length; i < n; i++) states[i] = angular.extend({
+        }, i = 0, n = states.length; n > i; i++) states[i] = angular.extend({
             index: i
         }, defaultOptions, states[i]);
         return states;
@@ -11039,8 +11048,8 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
         controller: "TabsetController",
         templateUrl: "template/tabs/tabset.html",
         link: function(scope, element, attrs) {
-            scope.vertical = !!angular.isDefined(attrs.vertical) && scope.$parent.$eval(attrs.vertical), 
-            scope.justified = !!angular.isDefined(attrs.justified) && scope.$parent.$eval(attrs.justified), 
+            scope.vertical = angular.isDefined(attrs.vertical) ? scope.$parent.$eval(attrs.vertical) : !1, 
+            scope.justified = angular.isDefined(attrs.justified) ? scope.$parent.$eval(attrs.justified) : !1, 
             scope.type = angular.isDefined(attrs.type) ? scope.$parent.$eval(attrs.type) : "tabs";
         }
     };
@@ -11118,13 +11127,13 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
         templateUrl: "template/timepicker/timepicker.html",
         link: function(scope, element, attrs, ngModel) {
             function getHoursFromTemplate() {
-                var hours = parseInt(scope.hours, 10);
-                if (scope.showMeridian ? hours > 0 && hours < 13 : hours >= 0 && hours < 24) return scope.showMeridian && (12 === hours && (hours = 0), 
-                scope.meridian === meridians[1] && (hours += 12)), hours;
+                var hours = parseInt(scope.hours, 10), valid = scope.showMeridian ? hours > 0 && 13 > hours : hours >= 0 && 24 > hours;
+                return valid ? (scope.showMeridian && (12 === hours && (hours = 0), scope.meridian === meridians[1] && (hours += 12)), 
+                hours) : void 0;
             }
             function getMinutesFromTemplate() {
                 var minutes = parseInt(scope.minutes, 10);
-                return minutes >= 0 && minutes < 60 ? minutes : void 0;
+                return minutes >= 0 && 60 > minutes ? minutes : void 0;
             }
             function pad(value) {
                 return angular.isDefined(value) && value.toString().length < 2 ? "0" + value : value;
@@ -11159,8 +11168,8 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
                         refresh());
                     } else updateTemplate();
                 });
-                var inputs = element.find("input"), hoursInputEl = inputs.eq(0), minutesInputEl = inputs.eq(1);
-                if (angular.isDefined(attrs.mousewheel) ? scope.$eval(attrs.mousewheel) : timepickerConfig.mousewheel) {
+                var inputs = element.find("input"), hoursInputEl = inputs.eq(0), minutesInputEl = inputs.eq(1), mousewheel = angular.isDefined(attrs.mousewheel) ? scope.$eval(attrs.mousewheel) : timepickerConfig.mousewheel;
+                if (mousewheel) {
                     var isScrollingUp = function(e) {
                         e.originalEvent && (e = e.originalEvent);
                         var delta = e.wheelDelta ? e.wheelDelta : -e.deltaY;
@@ -11233,7 +11242,7 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
     return {
         require: "ngModel",
         link: function(originalScope, element, attrs, modelCtrl) {
-            var hasFocus, minSearch = originalScope.$eval(attrs.typeaheadMinLength) || 1, waitTime = originalScope.$eval(attrs.typeaheadWaitMs) || 0, isEditable = !1 !== originalScope.$eval(attrs.typeaheadEditable), isLoadingSetter = $parse(attrs.typeaheadLoading).assign || angular.noop, onSelectCallback = $parse(attrs.typeaheadOnSelect), inputFormatter = attrs.typeaheadInputFormatter ? $parse(attrs.typeaheadInputFormatter) : void 0, appendToBody = !!attrs.typeaheadAppendToBody && $parse(attrs.typeaheadAppendToBody), $setModelValue = $parse(attrs.ngModel).assign, parserResult = typeaheadParser.parse(attrs.typeahead), popUpEl = angular.element("<div typeahead-popup></div>");
+            var hasFocus, minSearch = originalScope.$eval(attrs.typeaheadMinLength) || 1, waitTime = originalScope.$eval(attrs.typeaheadWaitMs) || 0, isEditable = originalScope.$eval(attrs.typeaheadEditable) !== !1, isLoadingSetter = $parse(attrs.typeaheadLoading).assign || angular.noop, onSelectCallback = $parse(attrs.typeaheadOnSelect), inputFormatter = attrs.typeaheadInputFormatter ? $parse(attrs.typeaheadInputFormatter) : void 0, appendToBody = attrs.typeaheadAppendToBody ? $parse(attrs.typeaheadAppendToBody) : !1, $setModelValue = $parse(attrs.ngModel).assign, parserResult = typeaheadParser.parse(attrs.typeahead), popUpEl = angular.element("<div typeahead-popup></div>");
             popUpEl.attr({
                 matches: "matches",
                 active: "activeIdx",
@@ -11362,7 +11371,7 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
         return query ? matchItem.replace(new RegExp(escapeRegexp(query), "gi"), "<strong>$&</strong>") : matchItem;
     };
 }), angular.module("template/accordion/accordion-group.html", []).run([ "$templateCache", function($templateCache) {
-    $templateCache.put("template/accordion/accordion-group.html", '<div class="panel panel-default">\n  <div class="panel-heading">\n    <h4 class="panel-title">\n      <a class="accordion-toggle" ng-click="isOpen = !isOpen" accordion-transclude="heading">{{heading}}</a>\n    </h4>\n  </div>\n  <div class="panel-collapse" collapse="!isOpen">\n\t  <div class="panel-body" ng-transclude></div>\n  </div>\n</div>');
+    $templateCache.put("template/accordion/accordion-group.html", '<div class="panel panel-default">\n  <div class="panel-heading">\n    <h4 class="panel-title">\n      <a class="accordion-toggle" ng-click="isOpen = !isOpen" accordion-transclude="heading">{{heading}}</a>\n    </h4>\n  </div>\n  <div class="panel-collapse" collapse="!isOpen">\n	  <div class="panel-body" ng-transclude></div>\n  </div>\n</div>');
 } ]), angular.module("template/accordion/accordion.html", []).run([ "$templateCache", function($templateCache) {
     $templateCache.put("template/accordion/accordion.html", '<div class="panel-group" ng-transclude></div>');
 } ]), angular.module("template/alert/alert.html", []).run([ "$templateCache", function($templateCache) {
@@ -11374,7 +11383,7 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
 } ]), angular.module("template/datepicker/datepicker.html", []).run([ "$templateCache", function($templateCache) {
     $templateCache.put("template/datepicker/datepicker.html", '<table>\n  <thead>\n    <tr>\n      <th><button type="button" class="btn btn-default btn-sm pull-left" ng-click="move(-1)"><i class="glyphicon glyphicon-chevron-left"></i></button></th>\n      <th colspan="{{rows[0].length - 2 + showWeekNumbers}}"><button type="button" class="btn btn-default btn-sm btn-block" ng-click="toggleMode()"><strong>{{title}}</strong></button></th>\n      <th><button type="button" class="btn btn-default btn-sm pull-right" ng-click="move(1)"><i class="glyphicon glyphicon-chevron-right"></i></button></th>\n    </tr>\n    <tr ng-show="labels.length > 0" class="h6">\n      <th ng-show="showWeekNumbers" class="text-center">#</th>\n      <th ng-repeat="label in labels" class="text-center">{{label}}</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr ng-repeat="row in rows">\n      <td ng-show="showWeekNumbers" class="text-center"><em>{{ getWeekNumber(row) }}</em></td>\n      <td ng-repeat="dt in row" class="text-center">\n        <button type="button" style="width:100%;" class="btn btn-default btn-sm" ng-class="{\'btn-info\': dt.selected}" ng-click="select(dt.date)" ng-disabled="dt.disabled"><span ng-class="{\'text-muted\': dt.secondary}">{{dt.label}}</span></button>\n      </td>\n    </tr>\n  </tbody>\n</table>\n');
 } ]), angular.module("template/datepicker/popup.html", []).run([ "$templateCache", function($templateCache) {
-    $templateCache.put("template/datepicker/popup.html", "<ul class=\"dropdown-menu\" ng-style=\"{display: (isOpen && 'block') || 'none', top: position.top+'px', left: position.left+'px'}\">\n\t<li ng-transclude></li>\n" + '\t<li ng-show="showButtonBar" style="padding:10px 9px 2px">\n\t\t<span class="btn-group">\n\t\t\t<button type="button" class="btn btn-sm btn-info" ng-click="today()">{{currentText}}</button>\n\t\t\t<button type="button" class="btn btn-sm btn-default" ng-click="showWeeks = ! showWeeks" ng-class="{active: showWeeks}">{{toggleWeeksText}}</button>\n\t\t\t<button type="button" class="btn btn-sm btn-danger" ng-click="clear()">{{clearText}}</button>\n\t\t</span>\n\t\t<button type="button" class="btn btn-sm btn-success pull-right" ng-click="isOpen = false">{{closeText}}</button>\n\t</li>\n</ul>\n');
+    $templateCache.put("template/datepicker/popup.html", "<ul class=\"dropdown-menu\" ng-style=\"{display: (isOpen && 'block') || 'none', top: position.top+'px', left: position.left+'px'}\">\n	<li ng-transclude></li>\n" + '	<li ng-show="showButtonBar" style="padding:10px 9px 2px">\n		<span class="btn-group">\n			<button type="button" class="btn btn-sm btn-info" ng-click="today()">{{currentText}}</button>\n			<button type="button" class="btn btn-sm btn-default" ng-click="showWeeks = ! showWeeks" ng-class="{active: showWeeks}">{{toggleWeeksText}}</button>\n			<button type="button" class="btn btn-sm btn-danger" ng-click="clear()">{{clearText}}</button>\n		</span>\n		<button type="button" class="btn btn-sm btn-success pull-right" ng-click="isOpen = false">{{closeText}}</button>\n	</li>\n</ul>\n');
 } ]), angular.module("template/modal/backdrop.html", []).run([ "$templateCache", function($templateCache) {
     $templateCache.put("template/modal/backdrop.html", '<div class="modal-backdrop fade" ng-class="{in: animate}" ng-style="{\'z-index\': 1040 + index*10}"></div>');
 } ]), angular.module("template/modal/window.html", []).run([ "$templateCache", function($templateCache) {
@@ -11404,7 +11413,7 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
 } ]), angular.module("template/tabs/tabset.html", []).run([ "$templateCache", function($templateCache) {
     $templateCache.put("template/tabs/tabset.html", '\n<div class="tabbable">\n  <ul class="nav {{type && \'nav-\' + type}}" ng-class="{\'nav-stacked\': vertical, \'nav-justified\': justified}" ng-transclude></ul>\n  <div class="tab-content">\n    <div class="tab-pane" \n         ng-repeat="tab in tabs" \n         ng-class="{active: tab.active}"\n         tab-content-transclude="tab">\n    </div>\n  </div>\n</div>\n');
 } ]), angular.module("template/timepicker/timepicker.html", []).run([ "$templateCache", function($templateCache) {
-    $templateCache.put("template/timepicker/timepicker.html", '<table>\n\t<tbody>\n\t\t<tr class="text-center">\n\t\t\t<td><a ng-click="incrementHours()" class="btn btn-link"><span class="glyphicon glyphicon-chevron-up"></span></a></td>\n\t\t\t<td>&nbsp;</td>\n\t\t\t<td><a ng-click="incrementMinutes()" class="btn btn-link"><span class="glyphicon glyphicon-chevron-up"></span></a></td>\n\t\t\t<td ng-show="showMeridian"></td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td style="width:50px;" class="form-group" ng-class="{\'has-error\': invalidHours}">\n\t\t\t\t<input type="text" ng-model="hours" ng-change="updateHours()" class="form-control text-center" ng-mousewheel="incrementHours()" ng-readonly="readonlyInput" maxlength="2">\n\t\t\t</td>\n\t\t\t<td>:</td>\n\t\t\t<td style="width:50px;" class="form-group" ng-class="{\'has-error\': invalidMinutes}">\n\t\t\t\t<input type="text" ng-model="minutes" ng-change="updateMinutes()" class="form-control text-center" ng-readonly="readonlyInput" maxlength="2">\n\t\t\t</td>\n\t\t\t<td ng-show="showMeridian"><button type="button" class="btn btn-default text-center" ng-click="toggleMeridian()">{{meridian}}</button></td>\n\t\t</tr>\n\t\t<tr class="text-center">\n\t\t\t<td><a ng-click="decrementHours()" class="btn btn-link"><span class="glyphicon glyphicon-chevron-down"></span></a></td>\n\t\t\t<td>&nbsp;</td>\n\t\t\t<td><a ng-click="decrementMinutes()" class="btn btn-link"><span class="glyphicon glyphicon-chevron-down"></span></a></td>\n\t\t\t<td ng-show="showMeridian"></td>\n\t\t</tr>\n\t</tbody>\n</table>\n');
+    $templateCache.put("template/timepicker/timepicker.html", '<table>\n	<tbody>\n		<tr class="text-center">\n			<td><a ng-click="incrementHours()" class="btn btn-link"><span class="glyphicon glyphicon-chevron-up"></span></a></td>\n			<td>&nbsp;</td>\n			<td><a ng-click="incrementMinutes()" class="btn btn-link"><span class="glyphicon glyphicon-chevron-up"></span></a></td>\n			<td ng-show="showMeridian"></td>\n		</tr>\n		<tr>\n			<td style="width:50px;" class="form-group" ng-class="{\'has-error\': invalidHours}">\n				<input type="text" ng-model="hours" ng-change="updateHours()" class="form-control text-center" ng-mousewheel="incrementHours()" ng-readonly="readonlyInput" maxlength="2">\n			</td>\n			<td>:</td>\n			<td style="width:50px;" class="form-group" ng-class="{\'has-error\': invalidMinutes}">\n				<input type="text" ng-model="minutes" ng-change="updateMinutes()" class="form-control text-center" ng-readonly="readonlyInput" maxlength="2">\n			</td>\n			<td ng-show="showMeridian"><button type="button" class="btn btn-default text-center" ng-click="toggleMeridian()">{{meridian}}</button></td>\n		</tr>\n		<tr class="text-center">\n			<td><a ng-click="decrementHours()" class="btn btn-link"><span class="glyphicon glyphicon-chevron-down"></span></a></td>\n			<td>&nbsp;</td>\n			<td><a ng-click="decrementMinutes()" class="btn btn-link"><span class="glyphicon glyphicon-chevron-down"></span></a></td>\n			<td ng-show="showMeridian"></td>\n		</tr>\n	</tbody>\n</table>\n');
 } ]), angular.module("template/typeahead/typeahead-match.html", []).run([ "$templateCache", function($templateCache) {
     $templateCache.put("template/typeahead/typeahead-match.html", '<a tabindex="-1" bind-html-unsafe="match.label | typeaheadHighlight:query"></a>');
 } ]), angular.module("template/typeahead/typeahead-popup.html", []).run([ "$templateCache", function($templateCache) {
@@ -11441,7 +11450,7 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
         if (angular.isString(target) && void 0 !== replace) if (angular.isArray(replace) || angular.isObject(replace) || (replace = [ replace ]), 
         angular.isArray(replace)) {
             var rlen = replace.length, rfx = function(str, i) {
-                return i = parseInt(i, 10), i >= 0 && i < rlen ? replace[i] : str;
+                return i = parseInt(i, 10), i >= 0 && rlen > i ? replace[i] : str;
             };
             target = target.replace(/\$([0-9]+)/g, rfx);
         } else angular.forEach(replace, function(value, key) {
@@ -11522,7 +11531,7 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
         }
     };
     return function(text, inflector) {
-        return !1 !== inflector && angular.isString(text) ? (inflector = inflector || "humanize", 
+        return inflector !== !1 && angular.isString(text) ? (inflector = inflector || "humanize", 
         inflectors[inflector](text)) : text;
     };
 }), angular.module("ui.jq", []).value("uiJqConfig", {}).directive("uiJq", [ "uiJqConfig", "$timeout", function(uiJqConfig, $timeout) {
@@ -11587,7 +11596,7 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
             });
         }), elm.bind(mode, function(event) {
             var metaPressed = !(!event.metaKey || event.ctrlKey), altPressed = !!event.altKey, ctrlPressed = !!event.ctrlKey, shiftPressed = !!event.shiftKey, keyCode = event.keyCode;
-            "keypress" === mode && !shiftPressed && keyCode >= 97 && keyCode <= 122 && (keyCode -= 32), 
+            "keypress" === mode && !shiftPressed && keyCode >= 97 && 122 >= keyCode && (keyCode -= 32), 
             angular.forEach(combinations, function(combination) {
                 var mainKeyPressed = combination.keys[keysByCode[keyCode]] || combination.keys[keyCode.toString()], metaRequired = !!combination.keys.meta, altRequired = !!combination.keys.alt, ctrlRequired = !!combination.keys.ctrl, shiftRequired = !!combination.keys.shift;
                 mainKeyPressed && metaRequired === metaPressed && altRequired === altPressed && ctrlRequired === ctrlPressed && shiftRequired === shiftPressed && scope.$apply(function() {
@@ -11676,7 +11685,7 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
                     iElement.unbind("focus", eventHandler), eventsBound = !1);
                 }
                 function validateValue(value) {
-                    return !value.length || value.length >= minRequiredLength;
+                    return value.length ? value.length >= minRequiredLength : !0;
                 }
                 function unmaskValue(value) {
                     var valueUnmasked = "", maskPatternsCopy = maskPatterns.slice();
@@ -11696,7 +11705,7 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
                 }
                 function getPlaceholderChar(i) {
                     var placeholder = iAttrs.placeholder;
-                    return void 0 !== placeholder && placeholder[i] ? placeholder[i] : "_";
+                    return "undefined" != typeof placeholder && placeholder[i] ? placeholder[i] : "_";
                 }
                 function getMaskComponents() {
                     return maskPlaceholder.replace(/[_]+/g, "_").replace(/([^_]+)([a-zA-Z0-9])([^_])/g, "$1$2_$3").split("_");
@@ -11713,7 +11722,7 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
                         });
                     }
                     maskCaretMap.push(maskCaretMap.slice().pop() + 1), maskComponents = getMaskComponents(), 
-                    maskProcessed = maskCaretMap.length > 1;
+                    maskProcessed = maskCaretMap.length > 1 ? !0 : !1;
                 }
                 function blurHandler() {
                     linkOptions.clearOnBlur && (oldCaretPosition = 0, oldSelectionLength = 0, isValid && 0 !== value.length || (valueMasked = "", 
@@ -11731,11 +11740,11 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
                     e = e || {};
                     var eventWhich = e.which, eventType = e.type;
                     if (16 !== eventWhich && 91 !== eventWhich) {
-                        var valMasked, val = iElement.val(), valOld = oldValue, valUnmasked = unmaskValue(val), valUnmaskedOld = oldValueUnmasked, valAltered = !1, caretPos = getCaretPosition(this) || 0, caretPosOld = oldCaretPosition || 0, caretPosDelta = caretPos - caretPosOld, caretPosMin = maskCaretMap[0], caretPosMax = maskCaretMap[valUnmasked.length] || maskCaretMap.slice().shift(), selectionLenOld = oldSelectionLength || 0, isSelected = getSelectionLength(this) > 0, wasSelected = selectionLenOld > 0, isAddition = val.length > valOld.length || selectionLenOld && val.length > valOld.length - selectionLenOld, isDeletion = val.length < valOld.length || selectionLenOld && val.length === valOld.length - selectionLenOld, isSelection = eventWhich >= 37 && eventWhich <= 40 && e.shiftKey, isKeyLeftArrow = 37 === eventWhich, isKeyBackspace = 8 === eventWhich || "keyup" !== eventType && isDeletion && -1 === caretPosDelta, isKeyDelete = 46 === eventWhich || "keyup" !== eventType && isDeletion && 0 === caretPosDelta && !wasSelected, caretBumpBack = (isKeyLeftArrow || isKeyBackspace || "click" === eventType) && caretPos > caretPosMin;
+                        var valMasked, val = iElement.val(), valOld = oldValue, valUnmasked = unmaskValue(val), valUnmaskedOld = oldValueUnmasked, valAltered = !1, caretPos = getCaretPosition(this) || 0, caretPosOld = oldCaretPosition || 0, caretPosDelta = caretPos - caretPosOld, caretPosMin = maskCaretMap[0], caretPosMax = maskCaretMap[valUnmasked.length] || maskCaretMap.slice().shift(), selectionLenOld = oldSelectionLength || 0, isSelected = getSelectionLength(this) > 0, wasSelected = selectionLenOld > 0, isAddition = val.length > valOld.length || selectionLenOld && val.length > valOld.length - selectionLenOld, isDeletion = val.length < valOld.length || selectionLenOld && val.length === valOld.length - selectionLenOld, isSelection = eventWhich >= 37 && 40 >= eventWhich && e.shiftKey, isKeyLeftArrow = 37 === eventWhich, isKeyBackspace = 8 === eventWhich || "keyup" !== eventType && isDeletion && -1 === caretPosDelta, isKeyDelete = 46 === eventWhich || "keyup" !== eventType && isDeletion && 0 === caretPosDelta && !wasSelected, caretBumpBack = (isKeyLeftArrow || isKeyBackspace || "click" === eventType) && caretPos > caretPosMin;
                         if (oldSelectionLength = getSelectionLength(this), !isSelection && (!isSelected || "click" !== eventType && "keyup" !== eventType)) {
                             if ("input" === eventType && isDeletion && !wasSelected && valUnmasked === valUnmaskedOld) {
                                 for (;isKeyBackspace && caretPos > caretPosMin && !isValidCaretPosition(caretPos); ) caretPos--;
-                                for (;isKeyDelete && caretPos < caretPosMax && -1 === maskCaretMap.indexOf(caretPos); ) caretPos++;
+                                for (;isKeyDelete && caretPosMax > caretPos && -1 === maskCaretMap.indexOf(caretPos); ) caretPos++;
                                 var charIndex = maskCaretMap.indexOf(caretPos);
                                 valUnmasked = valUnmasked.substring(0, charIndex) + valUnmasked.substring(charIndex + 1), 
                                 valAltered = !0;
@@ -11743,9 +11752,9 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
                             for (valMasked = maskValue(valUnmasked), oldValue = valMasked, oldValueUnmasked = valUnmasked, 
                             iElement.val(valMasked), valAltered && scope.$apply(function() {
                                 controller.$setViewValue(valUnmasked);
-                            }), isAddition && caretPos <= caretPosMin && (caretPos = caretPosMin + 1), caretBumpBack && caretPos--, 
-                            caretPos = caretPos > caretPosMax ? caretPosMax : caretPos < caretPosMin ? caretPosMin : caretPos; !isValidCaretPosition(caretPos) && caretPos > caretPosMin && caretPos < caretPosMax; ) caretPos += caretBumpBack ? -1 : 1;
-                            (caretBumpBack && caretPos < caretPosMax || isAddition && !isValidCaretPosition(caretPosOld)) && caretPos++, 
+                            }), isAddition && caretPosMin >= caretPos && (caretPos = caretPosMin + 1), caretBumpBack && caretPos--, 
+                            caretPos = caretPos > caretPosMax ? caretPosMax : caretPosMin > caretPos ? caretPosMin : caretPos; !isValidCaretPosition(caretPos) && caretPos > caretPosMin && caretPosMax > caretPos; ) caretPos += caretBumpBack ? -1 : 1;
+                            (caretBumpBack && caretPosMax > caretPos || isAddition && !isValidCaretPosition(caretPosOld)) && caretPos++, 
                             oldCaretPosition = caretPos, setCaretPosition(this, caretPos);
                         }
                     }
@@ -11787,7 +11796,8 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
                     "true" === val && (modelViewValue = !0);
                 }), scope.$watch(iAttrs.ngModel, function(val) {
                     if (modelViewValue && val) {
-                        $parse(iAttrs.ngModel).assign(scope, controller.$viewValue);
+                        var model = $parse(iAttrs.ngModel);
+                        model.assign(scope, controller.$viewValue);
                     }
                 }), controller.$formatters.push(formatter), controller.$parsers.push(parser), iElement.bind("mousedown mouseup", mouseDownUpHandler), 
                 Array.prototype.indexOf || (Array.prototype.indexOf = function(searchElement) {
@@ -11795,9 +11805,9 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
                     var t = Object(this), len = t.length >>> 0;
                     if (0 === len) return -1;
                     var n = 0;
-                    if (arguments.length > 1 && (n = Number(arguments[1]), n !== n ? n = 0 : 0 !== n && n !== 1 / 0 && n !== -1 / 0 && (n = (n > 0 || -1) * Math.floor(Math.abs(n)))), 
+                    if (arguments.length > 1 && (n = Number(arguments[1]), n !== n ? n = 0 : 0 !== n && n !== 1 / 0 && n !== -(1 / 0) && (n = (n > 0 || -1) * Math.floor(Math.abs(n)))), 
                     n >= len) return -1;
-                    for (var k = n >= 0 ? n : Math.max(len - Math.abs(n), 0); k < len; k++) if (k in t && t[k] === searchElement) return k;
+                    for (var k = n >= 0 ? n : Math.max(len - Math.abs(n), 0); len > k; k++) if (k in t && t[k] === searchElement) return k;
                     return -1;
                 });
             };
@@ -11872,7 +11882,7 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
             var convertToPx, css, getMeasurements, getStyle, getWidthHeight, isWindow, scrollTo;
             return css = angular.element.prototype.css, element.prototype.css = function(name, value) {
                 var elem, self;
-                if (self = this, (elem = self[0]) && 3 !== elem.nodeType && 8 !== elem.nodeType && elem.style) return css.call(self, name, value);
+                return self = this, elem = self[0], elem && 3 !== elem.nodeType && 8 !== elem.nodeType && elem.style ? css.call(self, name, value) : void 0;
             }, isWindow = function(obj) {
                 return obj && obj.document && obj.location && obj.alert && obj.setInterval;
             }, scrollTo = function(self, direction, value) {
@@ -11924,7 +11934,7 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
                     outer: measurements.base,
                     outerfull: measurements.base + measurements.margin
                 }[measure] : (computedStyle = getStyle(elem), result = computedStyle[direction], 
-                (result < 0 || null === result) && (result = elem.style[direction] || 0), result = parseFloat(result) || 0, 
+                (0 > result || null === result) && (result = elem.style[direction] || 0), result = parseFloat(result) || 0, 
                 {
                     base: result - measurements.padding - measurements.border,
                     outer: result,
@@ -11935,7 +11945,7 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
                     var children, elem, i, parent, self, _i, _ref;
                     if (self = this, elem = self[0], parent = self.parent(), children = parent.contents(), 
                     children[0] === elem) return parent.prepend(newElem);
-                    for (i = _i = 1, _ref = children.length - 1; 1 <= _ref ? _i <= _ref : _i >= _ref; i = 1 <= _ref ? ++_i : --_i) if (children[i] === elem) return void angular.element(children[i - 1]).after(newElem);
+                    for (i = _i = 1, _ref = children.length - 1; _ref >= 1 ? _ref >= _i : _i >= _ref; i = _ref >= 1 ? ++_i : --_i) if (children[i] === elem) return void angular.element(children[i - 1]).after(newElem);
                     throw new Error("invalid DOM structure " + elem.outerHTML);
                 },
                 height: function(value) {
@@ -11952,15 +11962,15 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
                         if (void 0 === value) return self;
                         throw new Error("offset setter method is not implemented");
                     }
-                    if (box = {
+                    return box = {
                         top: 0,
                         left: 0
-                    }, elem = self[0], doc = elem && elem.ownerDocument) return docElem = doc.documentElement, 
+                    }, elem = self[0], (doc = elem && elem.ownerDocument) ? (docElem = doc.documentElement, 
                     null != elem.getBoundingClientRect && (box = elem.getBoundingClientRect()), win = doc.defaultView || doc.parentWindow, 
                     {
                         top: box.top + (win.pageYOffset || docElem.scrollTop) - (docElem.clientTop || 0),
                         left: box.left + (win.pageXOffset || docElem.scrollLeft) - (docElem.clientLeft || 0)
-                    };
+                    }) : void 0;
                 },
                 scrollTop: function(value) {
                     return scrollTo(this, "top", value);
@@ -11969,13 +11979,13 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
                     return scrollTo(this, "left", value);
                 }
             }, function(value, key) {
-                if (!element.prototype[key]) return element.prototype[key] = value;
+                return element.prototype[key] ? void 0 : element.prototype[key] = value;
             });
         }
     };
 } ]).run([ "$log", "$window", "jqLiteExtras", function(console, window, jqLiteExtras) {
     "use strict";
-    if (!window.jQuery) return jqLiteExtras.registerFor(angular.element);
+    return window.jQuery ? void 0 : jqLiteExtras.registerFor(angular.element);
 } ]), angular.module("ui.scroll", []).directive("uiScrollViewport", [ "$log", function() {
     "use strict";
     return {
@@ -11993,14 +12003,15 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
         compile: function(elementTemplate, attr, linker) {
             return function($scope, element, $attr, controllers) {
                 var adapter, adjustBuffer, adjustRowHeight, bof, bottomVisiblePos, buffer, bufferPadding, bufferSize, clipBottom, clipTop, datasource, datasourceName, doAdjustment, enqueueFetch, eof, eventListener, fetch, finalize, first, getValueChain, hideElementBeforeAppend, insert, isDatasource, isLoading, itemName, loading, log, match, next, pending, reload, removeFromBuffer, resizeHandler, ridActual, scrollHandler, scrollHeight, shouldLoadBottom, shouldLoadTop, showElementAfterRender, tempScope, topVisible, topVisibleElement, topVisibleItem, topVisiblePos, topVisibleScope, viewport, viewportScope, wheelHandler;
-                if (log = console.debug || console.log, !(match = $attr.uiScroll.match(/^\s*(\w+)\s+in\s+([\w\.]+)\s*$/))) throw new Error("Expected uiScroll in form of '_item_ in _datasource_' but got '" + $attr.uiScroll + "'");
+                if (log = console.debug || console.log, match = $attr.uiScroll.match(/^\s*(\w+)\s+in\s+([\w\.]+)\s*$/), 
+                !match) throw new Error("Expected uiScroll in form of '_item_ in _datasource_' but got '" + $attr.uiScroll + "'");
                 if (itemName = match[1], datasourceName = match[2], isDatasource = function(datasource) {
                     return angular.isObject(datasource) && datasource.get && angular.isFunction(datasource.get);
                 }, getValueChain = function(targetScope, target) {
                     var chain;
                     return targetScope ? (chain = target.match(/^([\w]+)\.(.+)$/), chain && 3 === chain.length ? getValueChain(targetScope[chain[1]], chain[2]) : targetScope[target]) : null;
                 }, datasource = getValueChain($scope, datasourceName), !isDatasource(datasource) && (datasource = $injector.get(datasourceName), 
-                !isDatasource(datasource))) throw new Error(datasourceName + " is not a valid datasource");
+                !isDatasource(datasource))) throw new Error("" + datasourceName + " is not a valid datasource");
                 return bufferSize = Math.max(3, +$attr.bufferSize || 10), bufferPadding = function() {
                     return viewport.outerHeight() * Math.max(.1, +$attr.padding || .1);
                 }, scrollHeight = function(elem) {
@@ -12008,7 +12019,7 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
                     return null != (_ref = elem[0].scrollHeight) ? _ref : elem[0].document.documentElement.scrollHeight;
                 }, adapter = null, linker(tempScope = $scope.$new(), function(template) {
                     var bottomPadding, createPadding, padding, repeaterType, topPadding, viewport;
-                    if ("dl" === (repeaterType = template[0].localName)) throw new Error("ui-scroll directive does not support <" + template[0].localName + "> as a repeating tag: " + template[0].outerHTML);
+                    if (repeaterType = template[0].localName, "dl" === repeaterType) throw new Error("ui-scroll directive does not support <" + template[0].localName + "> as a repeating tag: " + template[0].outerHTML);
                     return "li" !== repeaterType && "tr" !== repeaterType && (repeaterType = "div"), 
                     viewport = controllers[0] && controllers[0].viewport ? controllers[0].viewport : angular.element(window), 
                     viewport.css({
@@ -12064,16 +12075,16 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
                 }), angular.isDefined($attr.topVisibleScope) && (topVisibleScope = function(scope) {
                     return viewportScope[$attr.topVisibleScope] = scope;
                 }), topVisible = function(item) {
-                    if (topVisibleItem && topVisibleItem(item.scope[itemName]), topVisibleElement && topVisibleElement(item.element), 
-                    topVisibleScope && topVisibleScope(item.scope), datasource.topVisible) return datasource.topVisible(item);
+                    return topVisibleItem && topVisibleItem(item.scope[itemName]), topVisibleElement && topVisibleElement(item.element), 
+                    topVisibleScope && topVisibleScope(item.scope), datasource.topVisible ? datasource.topVisible(item) : void 0;
                 }, loading = angular.isDefined($attr.isLoading) ? function(value) {
-                    if (viewportScope[$attr.isLoading] = value, datasource.loading) return datasource.loading(value);
+                    return viewportScope[$attr.isLoading] = value, datasource.loading ? datasource.loading(value) : void 0;
                 } : function(value) {
-                    if (datasource.loading) return datasource.loading(value);
+                    return datasource.loading ? datasource.loading(value) : void 0;
                 }, ridActual = 0, first = 1, next = 1, buffer = [], pending = [], eof = !1, bof = !1, 
                 isLoading = !1, removeFromBuffer = function(start, stop) {
                     var i, _i;
-                    for (i = _i = start; start <= stop ? _i < stop : _i > stop; i = start <= stop ? ++_i : --_i) buffer[i].scope.$destroy(), 
+                    for (i = _i = start; stop >= start ? stop > _i : _i > stop; i = stop >= start ? ++_i : --_i) buffer[i].scope.$destroy(), 
                     buffer[i].element.remove();
                     return buffer.splice(start, stop - start);
                 }, reload = function() {
@@ -12087,34 +12098,34 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
                     return !eof && adapter.bottomDataPos() < bottomVisiblePos() + bufferPadding();
                 }, clipBottom = function() {
                     var bottomHeight, i, item, itemHeight, itemTop, newRow, overage, rowTop, _i, _ref;
-                    for (bottomHeight = 0, overage = 0, i = _i = _ref = buffer.length - 1; _ref <= 0 ? _i <= 0 : _i >= 0; i = _ref <= 0 ? ++_i : --_i) if (item = buffer[i], 
+                    for (bottomHeight = 0, overage = 0, i = _i = _ref = buffer.length - 1; 0 >= _ref ? 0 >= _i : _i >= 0; i = 0 >= _ref ? ++_i : --_i) if (item = buffer[i], 
                     itemTop = item.element.offset().top, newRow = rowTop !== itemTop, rowTop = itemTop, 
                     newRow && (itemHeight = item.element.outerHeight(!0)), adapter.bottomDataPos() - bottomHeight - itemHeight > bottomVisiblePos() + bufferPadding()) newRow && (bottomHeight += itemHeight), 
                     overage++, eof = !1; else {
                         if (newRow) break;
                         overage++;
                     }
-                    if (overage > 0) return adapter.bottomPadding(adapter.bottomPadding() + bottomHeight), 
-                    removeFromBuffer(buffer.length - overage, buffer.length), next -= overage, log("clipped off bottom " + overage + " bottom padding " + adapter.bottomPadding());
+                    return overage > 0 ? (adapter.bottomPadding(adapter.bottomPadding() + bottomHeight), 
+                    removeFromBuffer(buffer.length - overage, buffer.length), next -= overage, log("clipped off bottom " + overage + " bottom padding " + adapter.bottomPadding())) : void 0;
                 }, shouldLoadTop = function() {
                     return !bof && adapter.topDataPos() > topVisiblePos() - bufferPadding();
                 }, clipTop = function() {
                     var item, itemHeight, itemTop, newRow, overage, rowTop, topHeight, _i, _len;
-                    for (topHeight = 0, overage = 0, _i = 0, _len = buffer.length; _i < _len; _i++) if (item = buffer[_i], 
+                    for (topHeight = 0, overage = 0, _i = 0, _len = buffer.length; _len > _i; _i++) if (item = buffer[_i], 
                     itemTop = item.element.offset().top, newRow = rowTop !== itemTop, rowTop = itemTop, 
                     newRow && (itemHeight = item.element.outerHeight(!0)), adapter.topDataPos() + topHeight + itemHeight < topVisiblePos() - bufferPadding()) newRow && (topHeight += itemHeight), 
                     overage++, bof = !1; else {
                         if (newRow) break;
                         overage++;
                     }
-                    if (overage > 0) return adapter.topPadding(adapter.topPadding() + topHeight), removeFromBuffer(0, overage), 
-                    first += overage, log("clipped off top " + overage + " top padding " + adapter.topPadding());
+                    return overage > 0 ? (adapter.topPadding(adapter.topPadding() + topHeight), removeFromBuffer(0, overage), 
+                    first += overage, log("clipped off top " + overage + " top padding " + adapter.topPadding())) : void 0;
                 }, enqueueFetch = function(rid, direction, scrolling) {
-                    if (isLoading || (isLoading = !0, loading(!0)), 1 === pending.push(direction)) return fetch(rid, scrolling);
+                    return isLoading || (isLoading = !0, loading(!0)), 1 === pending.push(direction) ? fetch(rid, scrolling) : void 0;
                 }, hideElementBeforeAppend = function(element) {
                     return element.displayTemp = element.css("display"), element.css("display", "none");
                 }, showElementAfterRender = function(element) {
-                    if (element.hasOwnProperty("displayTemp")) return element.css("display", element.displayTemp);
+                    return element.hasOwnProperty("displayTemp") ? element.css("display", element.displayTemp) : void 0;
                 }, insert = function(index, item) {
                     var itemScope, toBeAppended, wrapper;
                     return itemScope = $scope.$new(), itemScope[itemName] = item, toBeAppended = index > first, 
@@ -12138,7 +12149,7 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
                     if (log("top {actual=" + adapter.topDataPos() + " visible from=" + topVisiblePos() + " bottom {visible through=" + bottomVisiblePos() + " actual=" + adapter.bottomDataPos() + "}"), 
                     shouldLoadBottom() ? enqueueFetch(rid, !0, scrolling) : shouldLoadTop() && enqueueFetch(rid, !1, scrolling), 
                     finalize && finalize(rid), 0 === pending.length) {
-                        for (topHeight = 0, _results = [], _i = 0, _len = buffer.length; _i < _len; _i++) {
+                        for (topHeight = 0, _results = [], _i = 0, _len = buffer.length; _len > _i; _i++) {
                             if (item = buffer[_i], itemTop = item.element.offset().top, newRow = rowTop !== itemTop, 
                             rowTop = itemTop, newRow && (itemHeight = item.element.outerHeight(!0)), !(newRow && adapter.topDataPos() + topHeight + itemHeight < topVisiblePos())) {
                                 newRow && topVisible(item);
@@ -12151,10 +12162,10 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
                 }, adjustBuffer = function(rid, scrolling, newItems, finalize) {
                     return newItems && newItems.length ? $timeout(function() {
                         var itemTop, row, rowTop, rows, _i, _j, _len, _len1;
-                        for (rows = [], _i = 0, _len = newItems.length; _i < _len; _i++) row = newItems[_i], 
+                        for (rows = [], _i = 0, _len = newItems.length; _len > _i; _i++) row = newItems[_i], 
                         element = row.wrapper.element, showElementAfterRender(element), itemTop = element.offset().top, 
                         rowTop !== itemTop && (rows.push(row), rowTop = itemTop);
-                        for (_j = 0, _len1 = rows.length; _j < _len1; _j++) row = rows[_j], adjustRowHeight(row.appended, row.wrapper);
+                        for (_j = 0, _len1 = rows.length; _len1 > _j; _j++) row = rows[_j], adjustRowHeight(row.appended, row.wrapper);
                         return doAdjustment(rid, scrolling, finalize);
                     }) : doAdjustment(rid, scrolling, finalize);
                 }, finalize = function(rid, scrolling, newItems) {
@@ -12167,7 +12178,7 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
                         var item, newItems, _i, _len;
                         if (!rid || rid === ridActual) {
                             if (newItems = [], result.length < bufferSize && (eof = !0, adapter.bottomPadding(0)), 
-                            result.length > 0) for (clipTop(), _i = 0, _len = result.length; _i < _len; _i++) item = result[_i], 
+                            result.length > 0) for (clipTop(), _i = 0, _len = result.length; _len > _i; _i++) item = result[_i], 
                             newItems.push(insert(++next, item));
                             return finalize(rid, scrolling, newItems);
                         }
@@ -12175,18 +12186,18 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
                         var i, newItems, _i, _ref;
                         if (!rid || rid === ridActual) {
                             if (newItems = [], result.length < bufferSize && (bof = !0, adapter.topPadding(0)), 
-                            result.length > 0) for (buffer.length && clipBottom(), i = _i = _ref = result.length - 1; _ref <= 0 ? _i <= 0 : _i >= 0; i = _ref <= 0 ? ++_i : --_i) newItems.unshift(insert(--first, result[i]));
+                            result.length > 0) for (buffer.length && clipBottom(), i = _i = _ref = result.length - 1; 0 >= _ref ? 0 >= _i : _i >= 0; i = 0 >= _ref ? ++_i : --_i) newItems.unshift(insert(--first, result[i]));
                             return finalize(rid, scrolling, newItems);
                         }
                     });
                 }, resizeHandler = function() {
-                    if (!$rootScope.$$phase && !isLoading) return adjustBuffer(null, !1), $scope.$apply();
+                    return $rootScope.$$phase || isLoading ? void 0 : (adjustBuffer(null, !1), $scope.$apply());
                 }, viewport.bind("resize", resizeHandler), scrollHandler = function() {
-                    if (!$rootScope.$$phase && !isLoading) return adjustBuffer(null, !0), $scope.$apply();
+                    return $rootScope.$$phase || isLoading ? void 0 : (adjustBuffer(null, !0), $scope.$apply());
                 }, viewport.bind("scroll", scrollHandler), wheelHandler = function(event) {
                     var scrollTop, yMax;
-                    if (scrollTop = viewport[0].scrollTop, yMax = viewport[0].scrollHeight - viewport[0].clientHeight, 
-                    0 === scrollTop && !bof || scrollTop === yMax && !eof) return event.preventDefault();
+                    return scrollTop = viewport[0].scrollTop, yMax = viewport[0].scrollHeight - viewport[0].clientHeight, 
+                    0 === scrollTop && !bof || scrollTop === yMax && !eof ? event.preventDefault() : void 0;
                 }, viewport.bind("mousewheel", wheelHandler), $scope.$watch(datasource.revision, function() {
                     return reload();
                 }), eventListener = datasource.scope ? datasource.scope.$new() : $scope.$new(), 
@@ -12197,27 +12208,27 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
                     var wrapper, _fn, _i, _len, _ref;
                     if (angular.isFunction(locator)) for (_fn = function(wrapper) {
                         return locator(wrapper.scope);
-                    }, _i = 0, _len = buffer.length; _i < _len; _i++) wrapper = buffer[_i], _fn(wrapper); else 0 <= (_ref = locator - first - 1) && _ref < buffer.length && (buffer[locator - first - 1].scope[itemName] = newItem);
+                    }, _i = 0, _len = buffer.length; _len > _i; _i++) wrapper = buffer[_i], _fn(wrapper); else 0 <= (_ref = locator - first - 1) && _ref < buffer.length && (buffer[locator - first - 1].scope[itemName] = newItem);
                     return null;
                 }), eventListener.$on("delete.items", function(event, locator) {
                     var i, item, temp, wrapper, _fn, _i, _j, _k, _len, _len1, _len2, _ref;
                     if (angular.isFunction(locator)) {
-                        for (temp = [], _i = 0, _len = buffer.length; _i < _len; _i++) item = buffer[_i], 
+                        for (temp = [], _i = 0, _len = buffer.length; _len > _i; _i++) item = buffer[_i], 
                         temp.unshift(item);
                         for (_fn = function(wrapper) {
-                            if (locator(wrapper.scope)) return removeFromBuffer(temp.length - 1 - i, temp.length - i), 
-                            next--;
-                        }, i = _j = 0, _len1 = temp.length; _j < _len1; i = ++_j) wrapper = temp[i], _fn(wrapper);
+                            return locator(wrapper.scope) ? (removeFromBuffer(temp.length - 1 - i, temp.length - i), 
+                            next--) : void 0;
+                        }, i = _j = 0, _len1 = temp.length; _len1 > _j; i = ++_j) wrapper = temp[i], _fn(wrapper);
                     } else 0 <= (_ref = locator - first - 1) && _ref < buffer.length && (removeFromBuffer(locator - first - 1, locator - first), 
                     next--);
-                    for (i = _k = 0, _len2 = buffer.length; _k < _len2; i = ++_k) item = buffer[i], 
+                    for (i = _k = 0, _len2 = buffer.length; _len2 > _k; i = ++_k) item = buffer[i], 
                     item.scope.$index = first + i;
                     return adjustBuffer(null, !1);
                 }), eventListener.$on("insert.item", function(event, locator, item) {
                     var i, inserted, _i, _len, _ref;
                     if (inserted = [], angular.isFunction(locator)) throw new Error("not implemented - Insert with locator function");
                     for (0 <= (_ref = locator - first - 1) && _ref < buffer.length && (inserted.push(insert(locator, item)), 
-                    next++), i = _i = 0, _len = buffer.length; _i < _len; i = ++_i) item = buffer[i], 
+                    next++), i = _i = 0, _len = buffer.length; _len > _i; i = ++_i) item = buffer[i], 
                     item.scope.$index = first + i;
                     return adjustBuffer(null, !1, inserted);
                 });
@@ -12227,7 +12238,9 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
 } ]), angular.module("ui.scrollfix", []).directive("uiScrollfix", [ "$window", function($window) {
     "use strict";
     function getWindowScrollTop() {
-        return angular.isDefined($window.pageYOffset) ? $window.pageYOffset : (document.compatMode && "BackCompat" !== document.compatMode ? document.documentElement : document.body).scrollTop;
+        if (angular.isDefined($window.pageYOffset)) return $window.pageYOffset;
+        var iebody = document.compatMode && "BackCompat" !== document.compatMode ? document.documentElement : document.body;
+        return iebody.scrollTop;
     }
     return {
         require: "^?uiScrollfixTarget",
@@ -12235,7 +12248,7 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
             function onScroll() {
                 var limit = absolute ? attrs.uiScrollfix : elm[0].offsetTop + shift, offset = uiScrollfixTarget ? $target[0].scrollTop : getWindowScrollTop();
                 !elm.hasClass("ui-scrollfix") && offset > limit ? (elm.addClass("ui-scrollfix"), 
-                fixLimit = limit) : elm.hasClass("ui-scrollfix") && offset < fixLimit && elm.removeClass("ui-scrollfix");
+                fixLimit = limit) : elm.hasClass("ui-scrollfix") && fixLimit > offset && elm.removeClass("ui-scrollfix");
             }
             var fixLimit, absolute = !0, shift = 0, $target = uiScrollfixTarget && uiScrollfixTarget.$element || angular.element($window);
             attrs.uiScrollfix ? "string" == typeof attrs.uiScrollfix && ("-" === attrs.uiScrollfix.charAt(0) ? (absolute = !1, 
@@ -12277,7 +12290,7 @@ angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$t
 } ]), angular.module("ui.unique", []).filter("unique", [ "$parse", function($parse) {
     "use strict";
     return function(items, filterOn) {
-        if (!1 === filterOn) return items;
+        if (filterOn === !1) return items;
         if ((filterOn || angular.isUndefined(filterOn)) && angular.isArray(items)) {
             var newItems = [], get = angular.isString(filterOn) ? $parse(filterOn) : function(item) {
                 return item;
@@ -12454,10 +12467,10 @@ function(window, angular, undefined) {
     function _each(object, callback, args) {
         var name, i = 0, length = object.length, isObj = void 0 === length || "[object Array]" !== Object.prototype.toString.apply(object) || "function" == typeof object;
         if (args) if (isObj) {
-            for (name in object) if (!1 === callback.apply(object[name], args)) break;
-        } else for (;i < length && !1 !== callback.apply(object[i++], args); ) ; else if (isObj) {
-            for (name in object) if (!1 === callback.call(object[name], name, object[name])) break;
-        } else for (;i < length && !1 !== callback.call(object[i], i, object[i++]); ) ;
+            for (name in object) if (callback.apply(object[name], args) === !1) break;
+        } else for (;length > i && callback.apply(object[i++], args) !== !1; ) ; else if (isObj) {
+            for (name in object) if (callback.call(object[name], name, object[name]) === !1) break;
+        } else for (;length > i && callback.call(object[i], i, object[i++]) !== !1; ) ;
         return object;
     }
     function _escape(data) {
@@ -12483,7 +12496,7 @@ function(window, angular, undefined) {
             text = text.replace(/\r\n/g, "\n");
             for (var result = "", i = 0; i < text.length; i++) {
                 var c = text.charCodeAt(i);
-                c < 128 ? result += String.fromCharCode(c) : c > 127 && c < 2048 ? (result += String.fromCharCode(c >> 6 | 192), 
+                128 > c ? result += String.fromCharCode(c) : c > 127 && 2048 > c ? (result += String.fromCharCode(c >> 6 | 192), 
                 result += String.fromCharCode(63 & c | 128)) : (result += String.fromCharCode(c >> 12 | 224), 
                 result += String.fromCharCode(c >> 6 & 63 | 128), result += String.fromCharCode(63 & c | 128));
             }
@@ -12492,12 +12505,10 @@ function(window, angular, undefined) {
             var keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
             text = utf8(text);
             var chr1, chr2, chr3, enc1, enc2, enc3, enc4, result = "", i = 0;
-            do {
-                chr1 = text.charCodeAt(i++), chr2 = text.charCodeAt(i++), chr3 = text.charCodeAt(i++), 
-                enc1 = chr1 >> 2, enc2 = (3 & chr1) << 4 | chr2 >> 4, enc3 = (15 & chr2) << 2 | chr3 >> 6, 
-                enc4 = 63 & chr3, isNaN(chr2) ? enc3 = enc4 = 64 : isNaN(chr3) && (enc4 = 64), result += keyStr.charAt(enc1) + keyStr.charAt(enc2) + keyStr.charAt(enc3) + keyStr.charAt(enc4), 
-                chr1 = chr2 = chr3 = "", enc1 = enc2 = enc3 = enc4 = "";
-            } while (i < text.length);
+            do chr1 = text.charCodeAt(i++), chr2 = text.charCodeAt(i++), chr3 = text.charCodeAt(i++), 
+            enc1 = chr1 >> 2, enc2 = (3 & chr1) << 4 | chr2 >> 4, enc3 = (15 & chr2) << 2 | chr3 >> 6, 
+            enc4 = 63 & chr3, isNaN(chr2) ? enc3 = enc4 = 64 : isNaN(chr3) && (enc4 = 64), result += keyStr.charAt(enc1) + keyStr.charAt(enc2) + keyStr.charAt(enc3) + keyStr.charAt(enc4), 
+            chr1 = chr2 = chr3 = "", enc1 = enc2 = enc3 = enc4 = ""; while (i < text.length);
             return result;
         }, mergeHeaders = function() {
             for (var result = arguments[0], i = 1; i < arguments.length; i++) {
@@ -12508,7 +12519,7 @@ function(window, angular, undefined) {
         }, ajax = function(method, url, options, callback) {
             "function" == typeof options && (callback = options, options = {}), options.cache = options.cache || !1, 
             options.data = options.data || {}, options.headers = options.headers || {}, options.jsonp = options.jsonp || !1, 
-            options.async = void 0 === options.async || options.async;
+            options.async = void 0 === options.async ? !0 : options.async;
             var payload, headers = mergeHeaders({
                 accept: "*/*",
                 "content-type": "application/x-www-form-urlencoded;charset=UTF-8"
@@ -12518,7 +12529,7 @@ function(window, angular, undefined) {
                 var queryString = [];
                 if (payload && (queryString.push(payload), payload = null), options.cache || queryString.push("_=" + new Date().getTime()), 
                 options.jsonp && (queryString.push("callback=" + options.jsonp), queryString.push("jsonp=" + options.jsonp)), 
-                queryString = queryString.join("&"), queryString.length > 1 && (url.indexOf("?") > -1 ? url += "&" + queryString : url += "?" + queryString), 
+                queryString = queryString.join("&"), queryString.length > 1 && (url += url.indexOf("?") > -1 ? "&" + queryString : "?" + queryString), 
                 options.jsonp) {
                     var head = document.getElementsByTagName("head")[0], script = document.createElement("script");
                     return script.type = "text/javascript", script.src = url, void head.appendChild(script);
@@ -12547,8 +12558,7 @@ function(window, angular, undefined) {
                     }
                 }, xhr.send(payload);
             });
-        };
-        ({
+        }, http = {
             authBasic: function(username, password) {
                 ajax.headers.Authorization = "Basic " + base64(username + ":" + password);
             },
@@ -12587,7 +12597,8 @@ function(window, angular, undefined) {
             trace: function(url, options, callback) {
                 return ajax("TRACE", url, options, callback);
             }
-        })[options.type ? options.type.toLowerCase() : "get"](options.url, options, function(status, data) {
+        }, methode = options.type ? options.type.toLowerCase() : "get";
+        http[methode](options.url, options, function(status, data) {
             200 === status || 0 === status && data.text() ? options.success(data.json(), status, null) : options.error(data.text(), status, null);
         });
     }
@@ -12597,7 +12608,7 @@ function(window, angular, undefined) {
         "string" == typeof o.ns && (o.ns = {
             namespaces: [ o.ns ],
             defaultNs: o.ns
-        }), "string" == typeof o.fallbackNS && (o.fallbackNS = [ o.fallbackNS ]), "string" != typeof o.fallbackLng && "boolean" != typeof o.fallbackLng || (o.fallbackLng = [ o.fallbackLng ]), 
+        }), "string" == typeof o.fallbackNS && (o.fallbackNS = [ o.fallbackNS ]), ("string" == typeof o.fallbackLng || "boolean" == typeof o.fallbackLng) && (o.fallbackLng = [ o.fallbackLng ]), 
         o.interpolationPrefixEscaped = f.regexEscape(o.interpolationPrefix), o.interpolationSuffixEscaped = f.regexEscape(o.interpolationSuffix), 
         o.lng || (o.lng = f.detectLanguage()), languages = f.toLanguages(o.lng), currentLng = languages[0], 
         f.log("currentLng set to: " + currentLng), o.useCookie && f.cookie.read(o.cookieName) !== currentLng && f.cookie.create(o.cookieName, currentLng, o.cookieExpirationTime, o.cookieDomain), 
@@ -12607,24 +12618,23 @@ function(window, angular, undefined) {
             return options = options || {}, options.lng = options.lng || lngTranslate.lng, translate(key, options);
         }, lngTranslate.lng = currentLng), pluralExtensions.setCurrentLng(currentLng), $ && o.setJqueryExt && addJqueryFunct();
         var deferred;
-        if ($ && $.Deferred && (deferred = $.Deferred()), o.resStore) {
-            if (resStore = o.resStore, initialized = !0, cb && cb(lngTranslate), deferred && deferred.resolve(lngTranslate), 
-            deferred) return deferred.promise();
-        } else {
+        if ($ && $.Deferred && (deferred = $.Deferred()), !o.resStore) {
             var lngsToLoad = f.toLanguages(o.lng);
             "string" == typeof o.preload && (o.preload = [ o.preload ]);
-            for (var i = 0, l = o.preload.length; i < l; i++) for (var pres = f.toLanguages(o.preload[i]), y = 0, len = pres.length; y < len; y++) lngsToLoad.indexOf(pres[y]) < 0 && lngsToLoad.push(pres[y]);
-            if (i18n.sync.load(lngsToLoad, o, function(err, store) {
+            for (var i = 0, l = o.preload.length; l > i; i++) for (var pres = f.toLanguages(o.preload[i]), y = 0, len = pres.length; len > y; y++) lngsToLoad.indexOf(pres[y]) < 0 && lngsToLoad.push(pres[y]);
+            return i18n.sync.load(lngsToLoad, o, function(err, store) {
                 resStore = store, initialized = !0, cb && cb(lngTranslate), deferred && deferred.resolve(lngTranslate);
-            }), deferred) return deferred.promise();
+            }), deferred ? deferred.promise() : void 0;
         }
+        return resStore = o.resStore, initialized = !0, cb && cb(lngTranslate), deferred && deferred.resolve(lngTranslate), 
+        deferred ? deferred.promise() : void 0;
     }
     function isInitialized() {
         return initialized;
     }
     function preload(lngs, cb) {
         "string" == typeof lngs && (lngs = [ lngs ]);
-        for (var i = 0, l = lngs.length; i < l; i++) o.preload.indexOf(lngs[i]) < 0 && o.preload.push(lngs[i]);
+        for (var i = 0, l = lngs.length; l > i; i++) o.preload.indexOf(lngs[i]) < 0 && o.preload.push(lngs[i]);
         return init(cb);
     }
     function addResourceBundle(lng, ns, resources, deep) {
@@ -12676,10 +12686,10 @@ function(window, angular, undefined) {
             }
         }, lngsToLoad = f.toLanguages(o.lng);
         "string" == typeof o.preload && (o.preload = [ o.preload ]);
-        for (var i = 0, l = o.preload.length; i < l; i++) for (var pres = f.toLanguages(o.preload[i]), y = 0, len = pres.length; y < len; y++) lngsToLoad.indexOf(pres[y]) < 0 && lngsToLoad.push(pres[y]);
-        for (var lngNeedLoad = [], a = 0, lenA = lngsToLoad.length; a < lenA; a++) {
+        for (var i = 0, l = o.preload.length; l > i; i++) for (var pres = f.toLanguages(o.preload[i]), y = 0, len = pres.length; len > y; y++) lngsToLoad.indexOf(pres[y]) < 0 && lngsToLoad.push(pres[y]);
+        for (var lngNeedLoad = [], a = 0, lenA = lngsToLoad.length; lenA > a; a++) {
             var needLoad = !1, resSet = resStore[lngsToLoad[a]];
-            if (resSet) for (var b = 0, lenB = namespaces.length; b < lenB; b++) resSet[namespaces[b]] || (needLoad = !0); else needLoad = !0;
+            if (resSet) for (var b = 0, lenB = namespaces.length; lenB > b; b++) resSet[namespaces[b]] || (needLoad = !0); else needLoad = !0;
             needLoad && lngNeedLoad.push(lngsToLoad[a]);
         }
         lngNeedLoad.length ? i18n.sync._fetch(lngNeedLoad, opts, function(err, store) {
@@ -12687,7 +12697,8 @@ function(window, angular, undefined) {
             f.each(namespaces, function(nsIndex, nsValue) {
                 o.ns.namespaces.indexOf(nsValue) < 0 && o.ns.namespaces.push(nsValue), f.each(lngNeedLoad, function(lngIndex, lngValue) {
                     resStore[lngValue] = resStore[lngValue] || {}, resStore[lngValue][nsValue] = store[lngValue][nsValue], 
-                    0 === --todo && cb && (o.useLocalStorage && i18n.sync._storeLocal(resStore), cb());
+                    todo--, 0 === todo && cb && (o.useLocalStorage && i18n.sync._storeLocal(resStore), 
+                    cb());
                 });
             });
         }) : cb && cb();
@@ -12737,21 +12748,24 @@ function(window, angular, undefined) {
         }
         function localize(ele, options) {
             var key = ele.attr(o.selectorAttr);
-            if (key || void 0 === key || !1 === key || (key = ele.text() || ele.val()), key) {
+            if (key || "undefined" == typeof key || key === !1 || (key = ele.text() || ele.val()), 
+            key) {
                 var target = ele, targetSelector = ele.data("i18n-target");
-                if (targetSelector && (target = ele.find(targetSelector) || ele), options || !0 !== o.useDataAttrOptions || (options = ele.data("i18n-options")), 
+                if (targetSelector && (target = ele.find(targetSelector) || ele), options || o.useDataAttrOptions !== !0 || (options = ele.data("i18n-options")), 
                 options = options || {}, key.indexOf(";") >= 0) {
                     var keys = key.split(";");
                     $.each(keys, function(m, k) {
                         "" !== k && parse(target, k, options);
                     });
                 } else parse(target, key, options);
-                !0 === o.useDataAttrOptions && ele.data("i18n-options", options);
+                o.useDataAttrOptions === !0 && ele.data("i18n-options", options);
             }
         }
         $.t = $.t || translate, $.fn.i18n = function(options) {
             return this.each(function() {
-                localize($(this), options), $(this).find("[" + o.selectorAttr + "]").each(function() {
+                localize($(this), options);
+                var elements = $(this).find("[" + o.selectorAttr + "]");
+                elements.each(function() {
                     localize($(this), options);
                 });
             });
@@ -12769,9 +12783,10 @@ function(window, angular, undefined) {
     }
     function applyReuse(translated, options) {
         var comma = ",", options_open = "{", options_close = "}", opts = f.extend({}, options);
-        for (delete opts.postProcess; -1 != translated.indexOf(o.reusePrefix) && !(++replacementCounter > o.maxRecursion); ) {
+        for (delete opts.postProcess; -1 != translated.indexOf(o.reusePrefix) && (replacementCounter++, 
+        !(replacementCounter > o.maxRecursion)); ) {
             var index_of_opening = translated.lastIndexOf(o.reusePrefix), index_of_end_of_closing = translated.indexOf(o.reuseSuffix, index_of_opening) + o.reuseSuffix.length, token = translated.substring(index_of_opening, index_of_end_of_closing), token_without_symbols = token.replace(o.reusePrefix, "").replace(o.reuseSuffix, "");
-            if (index_of_end_of_closing <= index_of_opening) return f.error("there is an missing closing in following translation value", translated), 
+            if (index_of_opening >= index_of_end_of_closing) return f.error("there is an missing closing in following translation value", translated), 
             "";
             if (-1 != token_without_symbols.indexOf(comma)) {
                 var index_of_token_end_of_closing = token_without_symbols.indexOf(comma);
@@ -12830,7 +12845,7 @@ function(window, angular, undefined) {
         key = parts[1]), void 0 === found && o.sendMissing && "function" == typeof o.missingKeyHandler && (options.lng ? o.missingKeyHandler(lngs[0], ns, key, notFound, lngs) : o.missingKeyHandler(o.lng, ns, key, notFound, lngs));
         var postProcessorsToApply;
         postProcessorsToApply = "string" == typeof o.postProcess && "" !== o.postProcess ? [ o.postProcess ] : "array" == typeof o.postProcess || "object" == typeof o.postProcess ? o.postProcess : [], 
-        "string" == typeof options.postProcess && "" !== options.postProcess ? postProcessorsToApply = postProcessorsToApply.concat([ options.postProcess ]) : "array" != typeof options.postProcess && "object" != typeof options.postProcess || (postProcessorsToApply = postProcessorsToApply.concat(options.postProcess)), 
+        "string" == typeof options.postProcess && "" !== options.postProcess ? postProcessorsToApply = postProcessorsToApply.concat([ options.postProcess ]) : ("array" == typeof options.postProcess || "object" == typeof options.postProcess) && (postProcessorsToApply = postProcessorsToApply.concat(options.postProcess)), 
         void 0 !== found && postProcessorsToApply.length && postProcessorsToApply.forEach(function(postProcessor) {
             postProcessors[postProcessor] && (found = postProcessors[postProcessor](found, key, options));
         });
@@ -12865,7 +12880,8 @@ function(window, angular, undefined) {
         }
         if (hasContext(options)) {
             optionWithoutCount = f.extend({}, options), delete optionWithoutCount.context, optionWithoutCount.defaultValue = o.contextNotFound;
-            if ((translated = translate(ns + o.nsseparator + key + "_" + options.context, optionWithoutCount)) != o.contextNotFound) return applyReplacement(translated, {
+            var contextKey = ns + o.nsseparator + key + "_" + options.context;
+            if (translated = translate(contextKey, optionWithoutCount), translated != o.contextNotFound) return applyReplacement(translated, {
                 context: options.context
             });
         }
@@ -12880,7 +12896,7 @@ function(window, angular, undefined) {
                 var pluralExtension = pluralExtensions.get(lngs[0], options.count);
                 pluralExtension >= 0 ? pluralKey = pluralKey + "_" + pluralExtension : 1 === pluralExtension && (pluralKey = ns + o.nsseparator + key);
             } else pluralKey = ns + o.nsseparator + key;
-            if ((translated = translate(pluralKey, optionWithoutCount)) != o.pluralNotFound) return applyReplacement(translated, {
+            if (translated = translate(pluralKey, optionWithoutCount), translated != o.pluralNotFound) return applyReplacement(translated, {
                 count: options.count,
                 interpolationPrefix: options.interpolationPrefix,
                 interpolationSuffix: options.interpolationSuffix
@@ -12895,20 +12911,22 @@ function(window, angular, undefined) {
             var clone = lngs.slice();
             if (clone.shift(), options = f.extend(options, {
                 lngs: clone
-            }), options._origLng = optionWithoutCount._origLng, delete options.lng, (translated = translate(ns + o.nsseparator + key, options)) != o.pluralNotFound) return translated;
+            }), options._origLng = optionWithoutCount._origLng, delete options.lng, translated = translate(ns + o.nsseparator + key, options), 
+            translated != o.pluralNotFound) return translated;
         }
         if (needsIndefiniteArticle(options)) {
             var optionsWithoutIndef = f.extend({}, options);
             delete optionsWithoutIndef.indefinite_article, optionsWithoutIndef.defaultValue = o.indefiniteNotFound;
-            if ((translated = translate(ns + o.nsseparator + key + (options.count && !needsPlural(options, lngs[0]) || !options.count ? o.indefiniteSuffix : ""), optionsWithoutIndef)) != o.indefiniteNotFound) return translated;
+            var indefiniteKey = ns + o.nsseparator + key + (options.count && !needsPlural(options, lngs[0]) || !options.count ? o.indefiniteSuffix : "");
+            if (translated = translate(indefiniteKey, optionsWithoutIndef), translated != o.indefiniteNotFound) return translated;
         }
-        for (var found, keys = key.split(o.keyseparator), i = 0, len = lngs.length; i < len && void 0 === found; i++) {
+        for (var found, keys = key.split(o.keyseparator), i = 0, len = lngs.length; len > i && void 0 === found; i++) {
             for (var l = lngs[i], x = 0, value = resStore[l] && resStore[l][ns]; keys[x]; ) value = value && value[keys[x]], 
             x++;
             if (void 0 !== value && (!o.showKeyIfEmpty || "" !== value)) {
                 var valueType = Object.prototype.toString.apply(value);
                 if ("string" == typeof value) value = applyReplacement(value, options), value = applyReuse(value, options); else if ("[object Array]" !== valueType || o.returnObjectTrees || options.returnObjectTrees) {
-                    if (null === value && !0 === o.fallbackOnNull) value = void 0; else if (null !== value) if (o.returnObjectTrees || options.returnObjectTrees) {
+                    if (null === value && o.fallbackOnNull === !0) value = void 0; else if (null !== value) if (o.returnObjectTrees || options.returnObjectTrees) {
                         if ("[object Number]" !== valueType && "[object Function]" !== valueType && "[object RegExp]" !== valueType) {
                             var copy = "[object Array]" === valueType ? [] : {};
                             f.each(value, function(m) {
@@ -12918,13 +12936,14 @@ function(window, angular, undefined) {
                     } else o.objectTreeKeyHandler && "function" == typeof o.objectTreeKeyHandler ? value = o.objectTreeKeyHandler(key, value, l, ns, options) : (value = "key '" + ns + ":" + key + " (" + l + ")' returned an object instead of string.", 
                     f.log(value));
                 } else value = value.join("\n"), value = applyReplacement(value, options), value = applyReuse(value, options);
-                "string" == typeof value && "" === value.trim() && !0 === o.fallbackOnEmpty && (value = void 0), 
+                "string" == typeof value && "" === value.trim() && o.fallbackOnEmpty === !0 && (value = void 0), 
                 found = value;
             }
         }
-        if (void 0 === found && !options.isFallbackLookup && (!0 === o.fallbackToDefaultNS || o.fallbackNS && o.fallbackNS.length > 0)) {
+        if (void 0 === found && !options.isFallbackLookup && (o.fallbackToDefaultNS === !0 || o.fallbackNS && o.fallbackNS.length > 0)) {
             if (options.isFallbackLookup = !0, o.fallbackNS.length) {
-                for (var y = 0, lenY = o.fallbackNS.length; y < lenY; y++) if ((found = _find(o.fallbackNS[y] + o.nsseparator + key, options)) || "" === found && !1 === o.fallbackOnEmpty) {
+                for (var y = 0, lenY = o.fallbackNS.length; lenY > y; y++) if (found = _find(o.fallbackNS[y] + o.nsseparator + key, options), 
+                found || "" === found && o.fallbackOnEmpty === !1) {
                     var foundValue = found.indexOf(o.nsseparator) > -1 ? found.split(o.nsseparator)[1] : found, notFoundValue = notFound.indexOf(o.nsseparator) > -1 ? notFound.split(o.nsseparator)[1] : notFound;
                     if (foundValue !== notFoundValue) break;
                 }
@@ -12935,11 +12954,12 @@ function(window, angular, undefined) {
     }
     function detectLanguage() {
         var detectedLng, whitelist = o.lngWhitelist || [], userLngChoices = [];
-        if ("undefined" != typeof window && function() {
+        if ("undefined" != typeof window && !function() {
             for (var query = window.location.search.substring(1), params = query.split("&"), i = 0; i < params.length; i++) {
                 var pos = params[i].indexOf("=");
                 if (pos > 0) {
-                    params[i].substring(0, pos) == o.detectLngQS && userLngChoices.push(params[i].substring(pos + 1));
+                    var key = params[i].substring(0, pos);
+                    key == o.detectLngQS && userLngChoices.push(params[i].substring(pos + 1));
                 }
             }
         }(), o.useCookie && "undefined" != typeof document) {
@@ -12974,9 +12994,9 @@ function(window, angular, undefined) {
         var t = Object(this), len = t.length >>> 0;
         if (0 === len) return -1;
         var n = 0;
-        if (arguments.length > 0 && (n = Number(arguments[1]), n != n ? n = 0 : 0 != n && n != 1 / 0 && n != -1 / 0 && (n = (n > 0 || -1) * Math.floor(Math.abs(n)))), 
+        if (arguments.length > 0 && (n = Number(arguments[1]), n != n ? n = 0 : 0 != n && n != 1 / 0 && n != -(1 / 0) && (n = (n > 0 || -1) * Math.floor(Math.abs(n)))), 
         n >= len) return -1;
-        for (var k = n >= 0 ? n : Math.max(len - Math.abs(n), 0); k < len; k++) if (k in t && t[k] === searchElement) return k;
+        for (var k = n >= 0 ? n : Math.max(len - Math.abs(n), 0); len > k; k++) if (k in t && t[k] === searchElement) return k;
         return -1;
     }), Array.prototype.lastIndexOf || (Array.prototype.lastIndexOf = function(searchElement) {
         "use strict";
@@ -12984,7 +13004,7 @@ function(window, angular, undefined) {
         var t = Object(this), len = t.length >>> 0;
         if (0 === len) return -1;
         var n = len;
-        arguments.length > 1 && (n = Number(arguments[1]), n != n ? n = 0 : 0 != n && n != 1 / 0 && n != -1 / 0 && (n = (n > 0 || -1) * Math.floor(Math.abs(n))));
+        arguments.length > 1 && (n = Number(arguments[1]), n != n ? n = 0 : 0 != n && n != 1 / 0 && n != -(1 / 0) && (n = (n > 0 || -1) * Math.floor(Math.abs(n))));
         for (var k = n >= 0 ? Math.min(n, len - 1) : len - Math.abs(n); k >= 0; k--) if (k in t && t[k] === searchElement) return k;
         return -1;
     }), "function" != typeof String.prototype.trim && (String.prototype.trim = function() {
@@ -12995,7 +13015,7 @@ function(window, angular, undefined) {
     root.i18n && (conflictReference = root.i18n), root.i18n = i18n), sync = {
         load: function(lngs, options, cb) {
             options.useLocalStorage ? sync._loadLocal(lngs, options, function(err, store) {
-                for (var missingLngs = [], i = 0, len = lngs.length; i < len; i++) store[lngs[i]] || missingLngs.push(lngs[i]);
+                for (var missingLngs = [], i = 0, len = lngs.length; len > i; i++) store[lngs[i]] || missingLngs.push(lngs[i]);
                 missingLngs.length > 0 ? sync._fetch(missingLngs, options, function(err, fetched) {
                     f.extend(store, fetched), sync._storeLocal(fetched), cb(null, store);
                 }) : cb(null, store);
@@ -13010,7 +13030,7 @@ function(window, angular, undefined) {
                 f.each(lngs, function(key, lng) {
                     var local = f.localStorage.getItem("res_" + lng);
                     local && (local = JSON.parse(local), local.i18nStamp && local.i18nStamp + options.localStorageExpirationTime > nowMS && (store[lng] = local)), 
-                    0 === --todo && cb(null, store);
+                    todo--, 0 === todo && cb(null, store);
                 });
             }
         },
@@ -13049,7 +13069,7 @@ function(window, angular, undefined) {
                     f.each(lngs, function(lngIndex, lngValue) {
                         var loadComplete = function(err, data) {
                             err && (errors = errors || [], errors.push(err)), store[lngValue] = store[lngValue] || {}, 
-                            store[lngValue][nsValue] = data, 0 === --todo && cb(errors, store);
+                            store[lngValue][nsValue] = data, todo--, 0 === todo && cb(errors, store);
                         };
                         "function" == typeof options.customLoad ? options.customLoad(lngValue, nsValue, options, loadComplete) : sync._fetchOne(lngValue, nsValue, options, loadComplete);
                     });
@@ -13069,7 +13089,7 @@ function(window, angular, undefined) {
                 },
                 error: function(xhr, status, error) {
                     if (status && 200 == status || xhr && xhr.status && 200 == xhr.status) f.error("There is a typo in: " + url); else if (status && 404 == status || xhr && xhr.status && 404 == xhr.status) f.log("Does not exist: " + url); else {
-                        var theStatus = status || (xhr && xhr.status ? xhr.status : null);
+                        var theStatus = status ? status : xhr && xhr.status ? xhr.status : null;
                         f.log(theStatus + " when loading " + url);
                     }
                     done(error, {});
@@ -13083,26 +13103,26 @@ function(window, angular, undefined) {
             var payload = {};
             payload[key] = defaultValue;
             var urls = [];
-            if ("fallback" === o.sendMissingTo && !1 !== o.fallbackLng[0]) for (var i = 0; i < o.fallbackLng.length; i++) urls.push({
+            if ("fallback" === o.sendMissingTo && o.fallbackLng[0] !== !1) for (var i = 0; i < o.fallbackLng.length; i++) urls.push({
                 lng: o.fallbackLng[i],
                 url: applyReplacement(o.resPostPath, {
                     lng: o.fallbackLng[i],
                     ns: ns
                 })
-            }); else if ("current" === o.sendMissingTo || "fallback" === o.sendMissingTo && !1 === o.fallbackLng[0]) urls.push({
+            }); else if ("current" === o.sendMissingTo || "fallback" === o.sendMissingTo && o.fallbackLng[0] === !1) urls.push({
                 lng: lng,
                 url: applyReplacement(o.resPostPath, {
                     lng: lng,
                     ns: ns
                 })
-            }); else if ("all" === o.sendMissingTo) for (var i = 0, l = lngs.length; i < l; i++) urls.push({
+            }); else if ("all" === o.sendMissingTo) for (var i = 0, l = lngs.length; l > i; i++) urls.push({
                 lng: lngs[i],
                 url: applyReplacement(o.resPostPath, {
                     lng: lngs[i],
                     ns: ns
                 })
             });
-            for (var y = 0, len = urls.length; y < len; y++) {
+            for (var y = 0, len = urls.length; len > y; y++) {
                 var item = urls[y];
                 f.ajax({
                     url: item.url,
@@ -13229,7 +13249,7 @@ function(window, angular, undefined) {
         },
         getCountyIndexOfLng: function(lng) {
             var lng_index = 0;
-            return "nb-NO" !== lng && "nn-NO" !== lng && "nb-no" !== lng && "nn-no" !== lng || (lng_index = 1), 
+            return ("nb-NO" === lng || "nn-NO" === lng || "nb-no" === lng || "nn-no" === lng) && (lng_index = 1), 
             lng_index;
         },
         toLanguages: function(lng) {
@@ -13286,16 +13306,16 @@ function(window, angular, undefined) {
             return 0;
         },
         4: function(n) {
-            return Number(n % 10 == 1 && n % 100 != 11 ? 0 : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? 1 : 2);
+            return Number(n % 10 == 1 && n % 100 != 11 ? 0 : n % 10 >= 2 && 4 >= n % 10 && (10 > n % 100 || n % 100 >= 20) ? 1 : 2);
         },
         5: function(n) {
-            return Number(0 === n ? 0 : 1 == n ? 1 : 2 == n ? 2 : n % 100 >= 3 && n % 100 <= 10 ? 3 : n % 100 >= 11 ? 4 : 5);
+            return Number(0 === n ? 0 : 1 == n ? 1 : 2 == n ? 2 : n % 100 >= 3 && 10 >= n % 100 ? 3 : n % 100 >= 11 ? 4 : 5);
         },
         6: function(n) {
-            return Number(1 == n ? 0 : n >= 2 && n <= 4 ? 1 : 2);
+            return Number(1 == n ? 0 : n >= 2 && 4 >= n ? 1 : 2);
         },
         7: function(n) {
-            return Number(1 == n ? 0 : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? 1 : 2);
+            return Number(1 == n ? 0 : n % 10 >= 2 && 4 >= n % 10 && (10 > n % 100 || n % 100 >= 20) ? 1 : 2);
         },
         8: function(n) {
             return Number(1 == n ? 0 : 2 == n ? 1 : 8 != n && 11 != n ? 2 : 3);
@@ -13304,10 +13324,10 @@ function(window, angular, undefined) {
             return Number(n >= 2);
         },
         10: function(n) {
-            return Number(1 == n ? 0 : 2 == n ? 1 : n < 7 ? 2 : n < 11 ? 3 : 4);
+            return Number(1 == n ? 0 : 2 == n ? 1 : 7 > n ? 2 : 11 > n ? 3 : 4);
         },
         11: function(n) {
-            return Number(1 == n || 11 == n ? 0 : 2 == n || 12 == n ? 1 : n > 2 && n < 20 ? 2 : 3);
+            return Number(1 == n || 11 == n ? 0 : 2 == n || 12 == n ? 1 : n > 2 && 20 > n ? 2 : 3);
         },
         12: function(n) {
             return Number(n % 10 != 1 || n % 100 == 11);
@@ -13319,7 +13339,7 @@ function(window, angular, undefined) {
             return Number(1 == n ? 0 : 2 == n ? 1 : 3 == n ? 2 : 3);
         },
         15: function(n) {
-            return Number(n % 10 == 1 && n % 100 != 11 ? 0 : n % 10 >= 2 && (n % 100 < 10 || n % 100 >= 20) ? 1 : 2);
+            return Number(n % 10 == 1 && n % 100 != 11 ? 0 : n % 10 >= 2 && (10 > n % 100 || n % 100 >= 20) ? 1 : 2);
         },
         16: function(n) {
             return Number(n % 10 == 1 && n % 100 != 11 ? 0 : 0 !== n ? 1 : 2);
@@ -13331,10 +13351,10 @@ function(window, angular, undefined) {
             return Number(1 == n ? 1 : 2);
         },
         19: function(n) {
-            return Number(1 == n ? 0 : 0 === n || n % 100 > 1 && n % 100 < 11 ? 1 : n % 100 > 10 && n % 100 < 20 ? 2 : 3);
+            return Number(1 == n ? 0 : 0 === n || n % 100 > 1 && 11 > n % 100 ? 1 : n % 100 > 10 && 20 > n % 100 ? 2 : 3);
         },
         20: function(n) {
-            return Number(1 == n ? 0 : 0 === n || n % 100 > 0 && n % 100 < 20 ? 1 : 2);
+            return Number(1 == n ? 0 : 0 === n || n % 100 > 0 && 20 > n % 100 ? 1 : 2);
         },
         21: function(n) {
             return Number(n % 100 == 1 ? 1 : n % 100 == 2 ? 2 : n % 100 == 3 || n % 100 == 4 ? 3 : 0);
@@ -13363,7 +13383,8 @@ function(window, angular, undefined) {
         },
         needsPlural: function(lng, count) {
             var ext, parts = lng.split("-");
-            return !((ext = pluralExtensions.currentRule && pluralExtensions.currentRule.lng === lng ? pluralExtensions.currentRule.rule : pluralExtensions.rules[parts[f.getCountyIndexOfLng(lng)]]) && ext.numbers.length <= 1) && 1 !== this.get(lng, count);
+            return ext = pluralExtensions.currentRule && pluralExtensions.currentRule.lng === lng ? pluralExtensions.currentRule.rule : pluralExtensions.rules[parts[f.getCountyIndexOfLng(lng)]], 
+            ext && ext.numbers.length <= 1 ? !1 : 1 !== this.get(lng, count);
         },
         get: function(lng, count) {
             function getResult(l, c) {
@@ -13377,7 +13398,8 @@ function(window, angular, undefined) {
                 }
                 return 1 === c ? "1" : "-1";
             }
-            return getResult(lng.split("-")[f.getCountyIndexOfLng(lng)], count);
+            var parts = lng.split("-");
+            return getResult(parts[f.getCountyIndexOfLng(lng)], count);
         }
     }, postProcessors = {}, addPostProcessor = function(name, fc) {
         postProcessors[name] = fc;
@@ -13395,7 +13417,7 @@ function(window, angular, undefined) {
         };
         return str_format.format = function(parse_tree, argv) {
             var arg, i, k, match, pad, pad_character, pad_length, cursor = 1, tree_length = parse_tree.length, node_type = "", output = [];
-            for (i = 0; i < tree_length; i++) if ("string" === (node_type = get_type(parse_tree[i]))) output.push(parse_tree[i]); else if ("array" === node_type) {
+            for (i = 0; tree_length > i; i++) if (node_type = get_type(parse_tree[i]), "string" === node_type) output.push(parse_tree[i]); else if ("array" === node_type) {
                 if (match = parse_tree[i], match[2]) for (arg = argv[cursor], k = 0; k < match[2].length; k++) {
                     if (!arg.hasOwnProperty(match[2][k])) throw sprintf('[sprintf] property "%s" does not exist', match[2][k]);
                     arg = arg[match[2][k]];
@@ -13493,7 +13515,7 @@ angular.module("jm.i18next").provider("$i18next", function() {
                 translations = {}, t = localize, $rootScope.$$phase || $rootScope.$digest(), $rootScope.$broadcast("i18nextLanguageChange", i18n.lng()), 
                 i18nDeferred.resolve();
             }), i18nDeferred.promise;
-            if (!(++triesToLoadI18next < 5)) throw new Error("[ng-i18next] Can't find i18next!");
+            if (triesToLoadI18next++, !(5 > triesToLoadI18next)) throw new Error("[ng-i18next] Can't find i18next!");
             $timeout(function() {
                 return init(options);
             }, 400);
@@ -13504,7 +13526,7 @@ angular.module("jm.i18next").provider("$i18next", function() {
         }
         function translate(key, options, hasOwnOptions) {
             var lng = options.lng || "auto";
-            translations[lng] || (translations[lng] = {}), t ? translations[lng][key] && !hasOwnOptions || (translations[lng][key] = t(key, options)) : translations[lng][key] = "defaultLoadingValue" in options ? options.defaultLoadingValue : "defaultValue" in options ? options.defaultValue : "defaultLoadingValue" in globalOptions ? globalOptions.defaultLoadingValue : key;
+            translations[lng] || (translations[lng] = {}), t ? (!translations[lng][key] || hasOwnOptions) && (translations[lng][key] = t(key, options)) : translations[lng][key] = "defaultLoadingValue" in options ? options.defaultLoadingValue : "defaultValue" in options ? options.defaultValue : "defaultLoadingValue" in globalOptions ? globalOptions.defaultLoadingValue : key;
         }
         function $i18nextTanslate(key, options) {
             var mergedOptions, lng, hasOwnOptions = !!options, hasOwnNsOption = hasOwnOptions && options.ns, hasGlobalNsObj = globalOptions && globalOptions.ns, defaultOptions = globalOptions;
@@ -13564,7 +13586,8 @@ angular.module("jm.i18next").provider("$i18next", function() {
         }
         var argsUnregister, stringUnregister;
         this.localize = function(key, noWatch) {
-            for (var keys = key.split(";"), i = 0; i < keys.length; ++i) "" !== (key = keys[i].trim()) && parse(key, noWatch);
+            for (var keys = key.split(";"), i = 0; i < keys.length; ++i) key = keys[i].trim(), 
+            "" !== key && parse(key, noWatch);
         };
     }
     return {
@@ -13574,8 +13597,7 @@ angular.module("jm.i18next").provider("$i18next", function() {
         require: "ngI18next",
         link: function(scope, element, attrs, ctrl) {
             function observe(value) {
-                if ("" === (translationValue = value.replace(/^\s+|\s+$/g, ""))) return setupWatcher();
-                ctrl.localize(translationValue);
+                return translationValue = value.replace(/^\s+|\s+$/g, ""), "" === translationValue ? setupWatcher() : void ctrl.localize(translationValue);
             }
             function setupWatcher() {
                 if (!setupWatcher.done) {
@@ -13607,118 +13629,196 @@ angular.module("jm.i18next").provider("$i18next", function() {
         return $i18next(string, options);
     }
     return i18nextFilter.$stateful = !0, i18nextFilter;
-} ]), angular.module("dndLists", []).directive("dndDraggable", [ "$parse", "$timeout", "dndDropEffectWorkaround", "dndDragTypeWorkaround", function($parse, $timeout, dndDropEffectWorkaround, dndDragTypeWorkaround) {
-    return function(scope, element, attr) {
-        element.attr("draggable", "true"), attr.dndDisableIf && scope.$watch(attr.dndDisableIf, function(disabled) {
-            element.attr("draggable", !disabled);
-        }), element.on("dragstart", function(event) {
-            event = event.originalEvent || event, event.dataTransfer.setData("Text", angular.toJson(scope.$eval(attr.dndDraggable))), 
-            event.dataTransfer.effectAllowed = attr.dndEffectAllowed || "move", element.addClass("dndDragging"), 
-            $timeout(function() {
-                element.addClass("dndDraggingSource");
-            }, 0), dndDropEffectWorkaround.dropEffect = "none", dndDragTypeWorkaround.isDragging = !0, 
-            dndDragTypeWorkaround.dragType = attr.dndType ? scope.$eval(attr.dndType) : void 0, 
-            $parse(attr.dndDragstart)(scope, {
-                event: event
-            }), event.stopPropagation();
-        }), element.on("dragend", function(event) {
-            event = event.originalEvent || event;
-            var dropEffect = dndDropEffectWorkaround.dropEffect;
-            scope.$apply(function() {
-                switch (dropEffect) {
-                  case "move":
-                    $parse(attr.dndMoved)(scope, {
-                        event: event
+} ]), function(dndLists) {
+    function filterEffects(effects, effectAllowed) {
+        return "all" == effectAllowed ? effects : effects.filter(function(effect) {
+            return -1 != effectAllowed.toLowerCase().indexOf(effect);
+        });
+    }
+    var MIME_TYPE = "application/x-dnd", EDGE_MIME_TYPE = "application/json", MSIE_MIME_TYPE = "Text", ALL_EFFECTS = [ "move", "copy", "link" ];
+    dndLists.directive("dndDraggable", [ "$parse", "$timeout", function($parse, $timeout) {
+        return function(scope, element, attr) {
+            element.attr("draggable", "true"), attr.dndDisableIf && scope.$watch(attr.dndDisableIf, function(disabled) {
+                element.attr("draggable", !disabled);
+            }), element.on("dragstart", function(event) {
+                if (event = event.originalEvent || event, "false" == element.attr("draggable")) return !0;
+                dndState.isDragging = !0, dndState.itemType = attr.dndType && scope.$eval(attr.dndType).toLowerCase(), 
+                dndState.dropEffect = "none", dndState.effectAllowed = attr.dndEffectAllowed || ALL_EFFECTS[0], 
+                event.dataTransfer.effectAllowed = dndState.effectAllowed;
+                var item = scope.$eval(attr.dndDraggable), mimeType = MIME_TYPE + (dndState.itemType ? "-" + dndState.itemType : "");
+                try {
+                    event.dataTransfer.setData(mimeType, angular.toJson(item));
+                } catch (e) {
+                    var data = angular.toJson({
+                        item: item,
+                        type: dndState.itemType
                     });
-                    break;
-
-                  case "copy":
-                    $parse(attr.dndCopied)(scope, {
-                        event: event
-                    });
+                    try {
+                        event.dataTransfer.setData(EDGE_MIME_TYPE, data);
+                    } catch (e) {
+                        var effectsAllowed = filterEffects(ALL_EFFECTS, dndState.effectAllowed);
+                        event.dataTransfer.effectAllowed = effectsAllowed[0], event.dataTransfer.setData(MSIE_MIME_TYPE, data);
+                    }
                 }
-            }), element.removeClass("dndDragging"), element.removeClass("dndDraggingSource"), 
-            dndDragTypeWorkaround.isDragging = !1, event.stopPropagation();
-        }), element.on("click", function(event) {
-            event = event.originalEvent || event, scope.$apply(function() {
-                $parse(attr.dndSelected)(scope, {
+                if (element.addClass("dndDragging"), $timeout(function() {
+                    element.addClass("dndDraggingSource");
+                }, 0), event._dndHandle && event.dataTransfer.setDragImage && event.dataTransfer.setDragImage(element[0], 0, 0), 
+                $parse(attr.dndDragstart)(scope, {
                     event: event
-                });
-            }), event.stopPropagation();
-        }), element.on("selectstart", function() {
-            return this.dragDrop && this.dragDrop(), !1;
-        });
-    };
-} ]).directive("dndList", [ "$parse", "$timeout", "dndDropEffectWorkaround", "dndDragTypeWorkaround", function($parse, $timeout, dndDropEffectWorkaround, dndDragTypeWorkaround) {
-    return function(scope, element, attr) {
-        function isMouseInFirstHalf(event, targetNode, relativeToParent) {
-            var mousePointer = horizontal ? event.offsetX || event.layerX : event.offsetY || event.layerY, targetSize = horizontal ? targetNode.offsetWidth : targetNode.offsetHeight, targetPosition = horizontal ? targetNode.offsetLeft : targetNode.offsetTop;
-            return targetPosition = relativeToParent ? targetPosition : 0, mousePointer < targetPosition + targetSize / 2;
-        }
-        function getPlaceholderIndex() {
-            return Array.prototype.indexOf.call(listNode.children, placeholderNode);
-        }
-        function isDropAllowed(event) {
-            if (!dndDragTypeWorkaround.isDragging && !externalSources) return !1;
-            if (!hasTextMimetype(event.dataTransfer.types)) return !1;
-            if (attr.dndAllowedTypes && dndDragTypeWorkaround.isDragging) {
-                var allowed = scope.$eval(attr.dndAllowedTypes);
-                if (angular.isArray(allowed) && -1 === allowed.indexOf(dndDragTypeWorkaround.dragType)) return !1;
-            }
-            return !attr.dndDisableIf || !scope.$eval(attr.dndDisableIf);
-        }
-        function stopDragover() {
-            return placeholder.remove(), element.removeClass("dndDragover"), !0;
-        }
-        function invokeCallback(expression, event, item) {
-            return $parse(expression)(scope, {
-                event: event,
-                index: getPlaceholderIndex(),
-                item: item || void 0,
-                external: !dndDragTypeWorkaround.isDragging,
-                type: dndDragTypeWorkaround.isDragging ? dndDragTypeWorkaround.dragType : void 0
+                }), attr.dndCallback) {
+                    var callback = $parse(attr.dndCallback);
+                    dndState.callback = function(params) {
+                        return callback(scope, params || {});
+                    };
+                }
+                event.stopPropagation();
+            }), element.on("dragend", function(event) {
+                event = event.originalEvent || event, scope.$apply(function() {
+                    var dropEffect = dndState.dropEffect, cb = {
+                        copy: "dndCopied",
+                        link: "dndLinked",
+                        move: "dndMoved",
+                        none: "dndCanceled"
+                    };
+                    $parse(attr[cb[dropEffect]])(scope, {
+                        event: event
+                    }), $parse(attr.dndDragend)(scope, {
+                        event: event,
+                        dropEffect: dropEffect
+                    });
+                }), dndState.isDragging = !1, dndState.callback = void 0, element.removeClass("dndDragging"), 
+                element.removeClass("dndDraggingSource"), event.stopPropagation(), $timeout(function() {
+                    element.removeClass("dndDraggingSource");
+                }, 0);
+            }), element.on("click", function(event) {
+                attr.dndSelected && (event = event.originalEvent || event, scope.$apply(function() {
+                    $parse(attr.dndSelected)(scope, {
+                        event: event
+                    });
+                }), event.stopPropagation());
+            }), element.on("selectstart", function() {
+                this.dragDrop && this.dragDrop();
             });
-        }
-        function hasTextMimetype(types) {
-            if (!types) return !0;
-            for (var i = 0; i < types.length; i++) if ("Text" === types[i] || "text/plain" === types[i]) return !0;
-            return !1;
-        }
-        var placeholder = angular.element("<li class='dndPlaceholder'></li>"), placeholderNode = placeholder[0], listNode = element[0], horizontal = attr.dndHorizontalList && scope.$eval(attr.dndHorizontalList), externalSources = attr.dndExternalSources && scope.$eval(attr.dndExternalSources);
-        element.on("dragover", function(event) {
-            if (event = event.originalEvent || event, !isDropAllowed(event)) return !0;
-            if (placeholderNode.parentNode != listNode && element.append(placeholder), event.target !== listNode) {
-                for (var listItemNode = event.target; listItemNode.parentNode !== listNode && listItemNode.parentNode; ) listItemNode = listItemNode.parentNode;
-                listItemNode.parentNode === listNode && listItemNode !== placeholderNode && (isMouseInFirstHalf(event, listItemNode) ? listNode.insertBefore(placeholderNode, listItemNode) : listNode.insertBefore(placeholderNode, listItemNode.nextSibling));
-            } else if (isMouseInFirstHalf(event, placeholderNode, !0)) for (;placeholderNode.previousElementSibling && (isMouseInFirstHalf(event, placeholderNode.previousElementSibling, !0) || 0 === placeholderNode.previousElementSibling.offsetHeight); ) listNode.insertBefore(placeholderNode, placeholderNode.previousElementSibling); else for (;placeholderNode.nextElementSibling && !isMouseInFirstHalf(event, placeholderNode.nextElementSibling, !0); ) listNode.insertBefore(placeholderNode, placeholderNode.nextElementSibling.nextElementSibling);
-            return attr.dndDragover && !invokeCallback(attr.dndDragover, event) ? stopDragover() : (element.addClass("dndDragover"), 
-            event.preventDefault(), event.stopPropagation(), !1);
-        }), element.on("drop", function(event) {
-            if (event = event.originalEvent || event, !isDropAllowed(event)) return !0;
-            event.preventDefault();
-            var transferredObject, data = event.dataTransfer.getData("Text") || event.dataTransfer.getData("text/plain");
-            try {
-                transferredObject = JSON.parse(data);
-            } catch (e) {
-                return stopDragover();
+        };
+    } ]), dndLists.directive("dndList", [ "$parse", function($parse) {
+        return function(scope, element, attr) {
+            function getMimeType(types) {
+                if (!types) return MSIE_MIME_TYPE;
+                for (var i = 0; i < types.length; i++) if (types[i] == MSIE_MIME_TYPE || types[i] == EDGE_MIME_TYPE || types[i].substr(0, MIME_TYPE.length) == MIME_TYPE) return types[i];
+                return null;
             }
-            if (attr.dndDrop && !(transferredObject = invokeCallback(attr.dndDrop, event, transferredObject))) return stopDragover();
-            var targetArray = scope.$eval(attr.dndList);
-            return scope.$apply(function() {
-                targetArray.splice(getPlaceholderIndex(), 0, transferredObject);
-            }), "none" === event.dataTransfer.dropEffect ? "copy" === event.dataTransfer.effectAllowed || "move" === event.dataTransfer.effectAllowed ? dndDropEffectWorkaround.dropEffect = event.dataTransfer.effectAllowed : dndDropEffectWorkaround.dropEffect = event.ctrlKey ? "copy" : "move" : dndDropEffectWorkaround.dropEffect = event.dataTransfer.dropEffect, 
-            stopDragover(), event.stopPropagation(), !1;
-        }), element.on("dragleave", function(event) {
-            event = event.originalEvent || event, element.removeClass("dndDragover"), $timeout(function() {
-                element.hasClass("dndDragover") || placeholder.remove();
-            }, 100);
-        });
-    };
-} ]).factory("dndDragTypeWorkaround", function() {
-    return {};
-}).factory("dndDropEffectWorkaround", function() {
-    return {};
-});
+            function getItemType(mimeType) {
+                return dndState.isDragging ? dndState.itemType || void 0 : mimeType == MSIE_MIME_TYPE || mimeType == EDGE_MIME_TYPE ? null : mimeType && mimeType.substr(MIME_TYPE.length + 1) || void 0;
+            }
+            function isDropAllowed(itemType) {
+                return listSettings.disabled ? !1 : listSettings.externalSources || dndState.isDragging ? listSettings.allowedTypes && null !== itemType ? itemType && -1 != listSettings.allowedTypes.indexOf(itemType) : !0 : !1;
+            }
+            function getDropEffect(event, ignoreDataTransfer) {
+                var effects = ALL_EFFECTS;
+                return ignoreDataTransfer || (effects = filterEffects(effects, event.dataTransfer.effectAllowed)), 
+                dndState.isDragging && (effects = filterEffects(effects, dndState.effectAllowed)), 
+                attr.dndEffectAllowed && (effects = filterEffects(effects, attr.dndEffectAllowed)), 
+                effects.length ? event.ctrlKey && -1 != effects.indexOf("copy") ? "copy" : event.altKey && -1 != effects.indexOf("link") ? "link" : effects[0] : "none";
+            }
+            function stopDragover() {
+                return placeholder.remove(), element.removeClass("dndDragover"), !0;
+            }
+            function invokeCallback(expression, event, dropEffect, itemType, index, item) {
+                return $parse(expression)(scope, {
+                    callback: dndState.callback,
+                    dropEffect: dropEffect,
+                    event: event,
+                    external: !dndState.isDragging,
+                    index: void 0 !== index ? index : getPlaceholderIndex(),
+                    item: item || void 0,
+                    type: itemType
+                });
+            }
+            function getPlaceholderIndex() {
+                return Array.prototype.indexOf.call(listNode.children, placeholderNode);
+            }
+            function getPlaceholderElement() {
+                var placeholder;
+                return angular.forEach(element.children(), function(childNode) {
+                    var child = angular.element(childNode);
+                    child.hasClass("dndPlaceholder") && (placeholder = child);
+                }), placeholder || angular.element("<li class='dndPlaceholder'></li>");
+            }
+            var placeholder = getPlaceholderElement();
+            placeholder.remove();
+            var placeholderNode = placeholder[0], listNode = element[0], listSettings = {};
+            element.on("dragenter", function(event) {
+                event = event.originalEvent || event;
+                var types = attr.dndAllowedTypes && scope.$eval(attr.dndAllowedTypes);
+                listSettings = {
+                    allowedTypes: angular.isArray(types) && types.join("|").toLowerCase().split("|"),
+                    disabled: attr.dndDisableIf && scope.$eval(attr.dndDisableIf),
+                    externalSources: attr.dndExternalSources && scope.$eval(attr.dndExternalSources),
+                    horizontal: attr.dndHorizontalList && scope.$eval(attr.dndHorizontalList)
+                };
+                var mimeType = getMimeType(event.dataTransfer.types);
+                return mimeType && isDropAllowed(getItemType(mimeType)) ? void event.preventDefault() : !0;
+            }), element.on("dragover", function(event) {
+                event = event.originalEvent || event;
+                var mimeType = getMimeType(event.dataTransfer.types), itemType = getItemType(mimeType);
+                if (!mimeType || !isDropAllowed(itemType)) return !0;
+                if (placeholderNode.parentNode != listNode && element.append(placeholder), event.target != listNode) {
+                    for (var listItemNode = event.target; listItemNode.parentNode != listNode && listItemNode.parentNode; ) listItemNode = listItemNode.parentNode;
+                    if (listItemNode.parentNode == listNode && listItemNode != placeholderNode) {
+                        var rect = listItemNode.getBoundingClientRect();
+                        if (listSettings.horizontal) var isFirstHalf = event.clientX < rect.left + rect.width / 2; else var isFirstHalf = event.clientY < rect.top + rect.height / 2;
+                        listNode.insertBefore(placeholderNode, isFirstHalf ? listItemNode : listItemNode.nextSibling);
+                    }
+                }
+                var ignoreDataTransfer = mimeType == MSIE_MIME_TYPE, dropEffect = getDropEffect(event, ignoreDataTransfer);
+                return "none" == dropEffect ? stopDragover() : attr.dndDragover && !invokeCallback(attr.dndDragover, event, dropEffect, itemType) ? stopDragover() : (event.preventDefault(), 
+                ignoreDataTransfer || (event.dataTransfer.dropEffect = dropEffect), element.addClass("dndDragover"), 
+                event.stopPropagation(), !1);
+            }), element.on("drop", function(event) {
+                event = event.originalEvent || event;
+                var mimeType = getMimeType(event.dataTransfer.types), itemType = getItemType(mimeType);
+                if (!mimeType || !isDropAllowed(itemType)) return !0;
+                event.preventDefault();
+                try {
+                    var data = JSON.parse(event.dataTransfer.getData(mimeType));
+                } catch (e) {
+                    return stopDragover();
+                }
+                if ((mimeType == MSIE_MIME_TYPE || mimeType == EDGE_MIME_TYPE) && (itemType = data.type || void 0, 
+                data = data.item, !isDropAllowed(itemType))) return stopDragover();
+                var ignoreDataTransfer = mimeType == MSIE_MIME_TYPE, dropEffect = getDropEffect(event, ignoreDataTransfer);
+                if ("none" == dropEffect) return stopDragover();
+                var index = getPlaceholderIndex();
+                return attr.dndDrop && (data = invokeCallback(attr.dndDrop, event, dropEffect, itemType, index, data), 
+                !data) ? stopDragover() : (dndState.dropEffect = dropEffect, ignoreDataTransfer || (event.dataTransfer.dropEffect = dropEffect), 
+                data !== !0 && scope.$apply(function() {
+                    scope.$eval(attr.dndList).splice(index, 0, data);
+                }), invokeCallback(attr.dndInserted, event, dropEffect, itemType, index, data), 
+                stopDragover(), event.stopPropagation(), !1);
+            }), element.on("dragleave", function(event) {
+                event = event.originalEvent || event;
+                var newTarget = document.elementFromPoint(event.clientX, event.clientY);
+                listNode.contains(newTarget) && !event._dndPhShown ? event._dndPhShown = !0 : stopDragover();
+            });
+        };
+    } ]), dndLists.directive("dndNodrag", function() {
+        return function(scope, element, attr) {
+            element.attr("draggable", "true"), element.on("dragstart", function(event) {
+                event = event.originalEvent || event, event._dndHandle || (event.dataTransfer.types && event.dataTransfer.types.length || event.preventDefault(), 
+                event.stopPropagation());
+            }), element.on("dragend", function(event) {
+                event = event.originalEvent || event, event._dndHandle || event.stopPropagation();
+            });
+        };
+    }), dndLists.directive("dndHandle", function() {
+        return function(scope, element, attr) {
+            element.attr("draggable", "true"), element.on("dragstart dragend", function(event) {
+                event = event.originalEvent || event, event._dndHandle = !0;
+            });
+        };
+    });
+    var dndState = {};
+}(angular.module("dndLists", []));
 
 var mod;
 
@@ -13749,7 +13849,8 @@ mod.directive("infiniteScroll", [ "$rootScope", "$window", "$interval", "THROTTL
             }, v = function(a, b) {
                 var d, e, f;
                 return f = null, e = 0, d = function() {
-                    return e = new Date().getTime(), c.cancel(f), f = null, a.call(), null;
+                    var b;
+                    return e = new Date().getTime(), c.cancel(f), f = null, a.call(), b = null;
                 }, function() {
                     var g, h;
                     return g = new Date().getTime(), h = b - (g - e), 0 >= h ? (clearTimeout(f), c.cancel(f), 
@@ -13779,7 +13880,7 @@ mod.directive("infiniteScroll", [ "$rootScope", "$window", "$interval", "THROTTL
             }, 0, 1);
         }
     };
-} ]), function(a, b) {
+} ]), !function(a, b) {
     "function" == typeof define && define.amd ? define([], b) : "object" == typeof module && module.exports ? module.exports = b() : a.Papa = b();
 }(this, function() {
     "use strict";
@@ -13819,7 +13920,7 @@ mod.directive("infiniteScroll", [ "$rootScope", "$window", "$interval", "THROTTL
                 b.length > 0 && (c += k);
             }
             for (var h = 0; h < b.length; h++) {
-                for (var l = d ? a.length : b[h].length, m = 0; m < l; m++) {
+                for (var l = d ? a.length : b[h].length, m = 0; l > m; m++) {
                     m > 0 && (c += j);
                     var n = d && e ? a[m] : m;
                     c += f(b[h][n], m);
@@ -13829,7 +13930,10 @@ mod.directive("infiniteScroll", [ "$rootScope", "$window", "$interval", "THROTTL
             return c;
         }
         function f(a, b) {
-            return void 0 === a || null === a ? "" : (a = a.toString().replace(m, l + l), "boolean" == typeof h && h || h instanceof Array && h[b] || g(a, y.BAD_DELIMITERS) || a.indexOf(j) > -1 || " " === a.charAt(0) || " " === a.charAt(a.length - 1) ? l + a + l : a);
+            if ("undefined" == typeof a || null === a) return "";
+            a = a.toString().replace(m, l + l);
+            var c = "boolean" == typeof h && h || h instanceof Array && h[b] || g(a, y.BAD_DELIMITERS) || a.indexOf(j) > -1 || " " === a.charAt(0) || " " === a.charAt(a.length - 1);
+            return c ? l + a + l : a;
         }
         function g(a, b) {
             for (var c = 0; c < b.length; c++) if (a.indexOf(b[c]) > -1) return !0;
@@ -13901,9 +14005,9 @@ mod.directive("infiniteScroll", [ "$rootScope", "$window", "$interval", "THROTTL
         }
         a = a || {}, a.chunkSize || (a.chunkSize = y.RemoteChunkSize), c.call(this, a);
         var d;
-        this._nextChunk = t ? function() {
+        t ? this._nextChunk = function() {
             this._readChunk(), this._chunkLoaded();
-        } : function() {
+        } : this._nextChunk = function() {
             this._readChunk();
         }, this.stream = function(a) {
             this._input = a, this._nextChunk();
@@ -13987,7 +14091,7 @@ mod.directive("infiniteScroll", [ "$rootScope", "$window", "$interval", "THROTTL
             }
         }
         function e(b, c) {
-            return !0 === (a.dynamicTyping[b] || a.dynamicTyping) ? "true" === c || "TRUE" === c || "false" !== c && "FALSE" !== c && j(c) : c;
+            return (a.dynamicTyping[b] || a.dynamicTyping) === !0 ? "true" === c || "TRUE" === c || "false" !== c && "FALSE" !== c && j(c) : c;
         }
         function f() {
             if (!w || !a.header && !a.dynamicTyping) return w;
@@ -14002,7 +14106,7 @@ mod.directive("infiniteScroll", [ "$rootScope", "$window", "$interval", "THROTTL
             return a.header && w.meta && (w.meta.fields = v), w;
         }
         function g(b, c) {
-            for (var d, e, f, g = [ ",", "\t", "|", ";", y.RECORD_SEP, y.UNIT_SEP ], i = 0; i < g.length; i++) {
+            for (var d, e, f, g = [ ",", "	", "|", ";", y.RECORD_SEP, y.UNIT_SEP ], i = 0; i < g.length; i++) {
                 var j = g[i], k = 0, l = 0;
                 f = void 0;
                 for (var m = new h({
@@ -14011,9 +14115,9 @@ mod.directive("infiniteScroll", [ "$rootScope", "$window", "$interval", "THROTTL
                     preview: 10
                 }).parse(b), n = 0; n < m.data.length; n++) {
                     var o = m.data[n].length;
-                    l += o, void 0 !== f ? o > 1 && (k += Math.abs(o - f), f = o) : f = o;
+                    l += o, "undefined" != typeof f ? o > 1 && (k += Math.abs(o - f), f = o) : f = o;
                 }
-                m.data.length > 0 && (l /= m.data.length), (void 0 === e || k < e) && l > 1.99 && (e = k, 
+                m.data.length > 0 && (l /= m.data.length), ("undefined" == typeof e || e > k) && l > 1.99 && (e = k, 
                 d = j);
             }
             return a.delimiter = d, {
@@ -14029,7 +14133,8 @@ mod.directive("infiniteScroll", [ "$rootScope", "$window", "$interval", "THROTTL
             return e >= b.length / 2 ? "\r\n" : "\r";
         }
         function j(a) {
-            return p.test(a) ? parseFloat(a) : a;
+            var b = p.test(a);
+            return b ? parseFloat(a) : a;
         }
         function k(a, b, c, d) {
             w.errors.push({
@@ -14087,7 +14192,7 @@ mod.directive("infiniteScroll", [ "$rootScope", "$window", "$interval", "THROTTL
         a = a || {};
         var b = a.delimiter, c = a.newline, d = a.comments, e = a.step, f = a.preview, g = a.fastMode, h = a.quoteChar || '"';
         if (("string" != typeof b || y.BAD_DELIMITERS.indexOf(b) > -1) && (b = ","), d === b) throw "Comment character same as delimiter";
-        !0 === d ? d = "#" : ("string" != typeof d || y.BAD_DELIMITERS.indexOf(d) > -1) && (d = !1), 
+        d === !0 ? d = "#" : ("string" != typeof d || y.BAD_DELIMITERS.indexOf(d) > -1) && (d = !1), 
         "\n" != c && "\r" != c && "\r\n" != c && (c = "\n");
         var i = 0, j = !1;
         this.parse = function(a, k, l) {
@@ -14095,8 +14200,8 @@ mod.directive("infiniteScroll", [ "$rootScope", "$window", "$interval", "THROTTL
                 w.push(a), z = i;
             }
             function n(b) {
-                return l ? p() : (void 0 === b && (b = a.substr(i)), y.push(b), i = r, m(y), v && q(), 
-                p());
+                return l ? p() : ("undefined" == typeof b && (b = a.substr(i)), y.push(b), i = r, 
+                m(y), v && q(), p());
             }
             function o(b) {
                 i = b, m(y), y = [], D = a.indexOf(c, i);
@@ -14122,7 +14227,7 @@ mod.directive("infiniteScroll", [ "$rootScope", "$window", "$interval", "THROTTL
             i = 0;
             var w = [], x = [], y = [], z = 0;
             if (!a) return p();
-            if (g || !1 !== g && -1 === a.indexOf(h)) {
+            if (g || g !== !1 && -1 === a.indexOf(h)) {
                 for (var A = a.split(c), B = 0; B < A.length; B++) {
                     var y = A[B];
                     if (i += y.length, B !== A.length - 1) i += c.length; else if (l) return p();
@@ -14138,7 +14243,7 @@ mod.directive("infiniteScroll", [ "$rootScope", "$window", "$interval", "THROTTL
             for (var C = a.indexOf(b, i), D = a.indexOf(c, i), E = new RegExp(h + h, "g"); ;) if (a[i] !== h) if (d && 0 === y.length && a.substr(i, u) === d) {
                 if (-1 === D) return p();
                 i = D + t, D = a.indexOf(c, i), C = a.indexOf(b, i);
-            } else if (-1 !== C && (C < D || -1 === D)) y.push(a.substring(i, C)), i = C + s, 
+            } else if (-1 !== C && (D > C || -1 === D)) y.push(a.substring(i, C)), i = C + s, 
             C = a.indexOf(b, i); else {
                 if (-1 === D) break;
                 if (y.push(a.substring(i, D)), o(D + t), v && (q(), j)) return p();
@@ -14227,7 +14332,7 @@ mod.directive("infiniteScroll", [ "$rootScope", "$window", "$interval", "THROTTL
     }
     function n(a) {
         var b = a.data;
-        if (void 0 === y.WORKER_ID && b && (y.WORKER_ID = b.workerId), "string" == typeof b.input) s.postMessage({
+        if ("undefined" == typeof y.WORKER_ID && b && (y.WORKER_ID = b.workerId), "string" == typeof b.input) s.postMessage({
             workerId: y.WORKER_ID,
             results: y.parse(b.input, b.config),
             finished: !0
@@ -14255,7 +14360,7 @@ mod.directive("infiniteScroll", [ "$rootScope", "$window", "$interval", "THROTTL
         return "function" == typeof a;
     }
     var r, s = function() {
-        return "undefined" != typeof self ? self : "undefined" != typeof window ? window : void 0 !== s ? s : {};
+        return "undefined" != typeof self ? self : "undefined" != typeof window ? window : "undefined" != typeof s ? s : {};
     }(), t = !s.document && !!s.postMessage, u = t && /(\?|&)papaworker(=|&|$)/.test(s.location.search), v = !1, w = {}, x = 0, y = {};
     if (y.parse = a, y.unparse = b, y.RECORD_SEP = String.fromCharCode(30), y.UNIT_SEP = String.fromCharCode(31), 
     y.BYTE_ORDER_MARK = "\ufeff", y.BAD_DELIMITERS = [ "\r", "\n", '"', y.BYTE_ORDER_MARK ], 
@@ -14290,7 +14395,8 @@ mod.directive("infiniteScroll", [ "$rootScope", "$window", "$interval", "THROTTL
             }
             var e = a.config || {}, f = [];
             return this.each(function(a) {
-                if ("INPUT" !== z(this).prop("tagName").toUpperCase() || "file" !== z(this).attr("type").toLowerCase() || !s.FileReader || !this.files || 0 === this.files.length) return !0;
+                var b = "INPUT" === z(this).prop("tagName").toUpperCase() && "file" === z(this).attr("type").toLowerCase() && s.FileReader;
+                if (!b || !this.files || 0 === this.files.length) return !0;
                 for (var c = 0; c < this.files.length; c++) f.push({
                     file: this.files[c],
                     inputElem: this,
@@ -14308,7 +14414,7 @@ mod.directive("infiniteScroll", [ "$rootScope", "$window", "$interval", "THROTTL
 
 var saveAs = saveAs || function(e) {
     "use strict";
-    if (!(void 0 === e || "undefined" != typeof navigator && /MSIE [1-9]\./.test(navigator.userAgent))) {
+    if (!("undefined" == typeof e || "undefined" != typeof navigator && /MSIE [1-9]\./.test(navigator.userAgent))) {
         var t = e.document, n = function() {
             return e.URL || e.webkitURL || e;
         }, r = t.createElementNS("http://www.w3.org/1999/xhtml", "a"), o = "download" in r, a = function(e) {
@@ -14345,20 +14451,19 @@ var saveAs = saveAs || function(e) {
                 if ((f || m && i) && e.FileReader) {
                     var r = new FileReader();
                     return r.onloadend = function() {
-                        var t = f ? r.result : r.result.replace(/^data:[^;]*;/, "data:attachment/file;");
-                        e.open(t, "_blank") || (e.location.href = t), t = void 0, v.readyState = v.DONE, 
-                        h();
+                        var t = f ? r.result : r.result.replace(/^data:[^;]*;/, "data:attachment/file;"), n = e.open(t, "_blank");
+                        n || (e.location.href = t), t = void 0, v.readyState = v.DONE, h();
                     }, r.readAsDataURL(t), void (v.readyState = v.INIT);
                 }
                 if (y || (y = n().createObjectURL(t)), m) e.location.href = y; else {
-                    e.open(y, "_blank") || (e.location.href = y);
+                    var o = e.open(y, "_blank");
+                    o || (e.location.href = y);
                 }
                 v.readyState = v.DONE, h(), c(y);
             };
-            if (v.readyState = v.INIT, o) return y = n().createObjectURL(t), void setTimeout(function() {
+            return v.readyState = v.INIT, o ? (y = n().createObjectURL(t), void setTimeout(function() {
                 r.href = y, r.download = u, a(r), h(), c(y), v.readyState = v.DONE;
-            });
-            S();
+            })) : void S();
         }, w = v.prototype, m = function(e, t, n) {
             return new v(e, t || e.name || "download", n);
         };
@@ -14490,7 +14595,7 @@ var saveAs = saveAs || function(e) {
                             try {
                                 if (results.length) entries = entries.concat(Array.prototype.slice.call(results || [], 0)), 
                                 readEntries(); else {
-                                    for (var i = 0; i < entries.length; i++) traverseFileTree(files, entries[i], (path || "") + entry.name + "/");
+                                    for (var i = 0; i < entries.length; i++) traverseFileTree(files, entries[i], (path ? path : "") + entry.name + "/");
                                     processing--;
                                 }
                             } catch (e) {
@@ -14503,7 +14608,7 @@ var saveAs = saveAs || function(e) {
                     readEntries();
                 } else processing++, entry.file(function(file) {
                     try {
-                        processing--, file.path = (path || "") + file.name, addFile(file);
+                        processing--, file.path = (path ? path : "") + file.name, addFile(file);
                     } catch (e) {
                         processing--, console.error(e);
                     }
@@ -14728,7 +14833,7 @@ var saveAs = saveAs || function(e) {
             };
             var i, j;
             this.call = function() {
-                for (i = 0, j = this.q.length; i < j; i++) this.q[i].call();
+                for (i = 0, j = this.q.length; j > i; i++) this.q[i].call();
             };
         }
         function getComputedStyle(element, prop) {
@@ -14761,14 +14866,12 @@ var saveAs = saveAs || function(e) {
                 addResizeListener(element.resizeSensor.lastElementChild, myResized);
             }
         }
-        if ("array" == typeof element || "undefined" != typeof jQuery && element instanceof jQuery || "undefined" != typeof Elements && element instanceof Elements) for (var i = 0, j = element.length; i < j; i++) attachResizeEvent(element[i], callback); else attachResizeEvent(element, callback);
+        if ("array" == typeof element || "undefined" != typeof jQuery && element instanceof jQuery || "undefined" != typeof Elements && element instanceof Elements) for (var i = 0, j = element.length; j > i; i++) attachResizeEvent(element[i], callback); else attachResizeEvent(element, callback);
     };
 }(), RC4.getStringBytes = function(string) {
     for (var output = [], i = 0; i < string.length; i++) {
         var c = string.charCodeAt(i), bytes = [];
-        do {
-            bytes.push(255 & c), c >>= 8;
-        } while (c > 0);
+        do bytes.push(255 & c), c >>= 8; while (c > 0);
         output = output.concat(bytes.reverse());
     }
     return output;
@@ -14784,7 +14887,7 @@ var saveAs = saveAs || function(e) {
 }, RNG.prototype.nextByte = function() {
     return this._state.next();
 }, RNG.prototype.uniform = function() {
-    for (var BYTES = 7, output = 0, i = 0; i < BYTES; i++) output *= 256, output += this.nextByte();
+    for (var BYTES = 7, output = 0, i = 0; BYTES > i; i++) output *= 256, output += this.nextByte();
     return output / (Math.pow(2, 8 * BYTES) - 1);
 }, RNG.prototype.random = function(n, m) {
     return null == n ? this.uniform() : (null == m && (m = n, n = 0), n + Math.floor(this.uniform() * (m - n)));
@@ -14799,26 +14902,532 @@ var saveAs = saveAs || function(e) {
     return -Math.log(this.uniform() || Math.pow(2, -53));
 }, RNG.prototype.poisson = function(mean) {
     var L = Math.exp(-(mean || 1)), k = 0, p = 1;
-    do {
-        k++, p *= this.uniform();
-    } while (p > L);
+    do k++, p *= this.uniform(); while (p > L);
     return k - 1;
 }, RNG.prototype.gamma = function(a) {
-    var d = (a < 1 ? 1 + a : a) - 1 / 3, c = 1 / Math.sqrt(9 * d);
+    var d = (1 > a ? 1 + a : a) - 1 / 3, c = 1 / Math.sqrt(9 * d);
     do {
-        do {
-            var x = this.normal(), v = Math.pow(c * x + 1, 3);
-        } while (v <= 0);
+        do var x = this.normal(), v = Math.pow(c * x + 1, 3); while (0 >= v);
         var u = this.uniform(), x2 = Math.pow(x, 2);
     } while (u >= 1 - .0331 * x2 * x2 && Math.log(u) >= .5 * x2 + d * (1 - v + Math.log(v)));
-    return a < 1 ? d * v * Math.exp(this.exponential() / -a) : d * v;
+    return 1 > a ? d * v * Math.exp(this.exponential() / -a) : d * v;
 }, RNG.roller = function(expr, rng) {
     var parts = expr.split(/(\d+)?d(\d+)([+-]\d+)?/).slice(1), dice = parseFloat(parts[0]) || 1, sides = parseFloat(parts[1]), mod = parseFloat(parts[2]) || 0;
     return rng = rng || new RNG(), function() {
-        for (var total = dice + mod, i = 0; i < dice; i++) total += rng.random(sides);
+        for (var total = dice + mod, i = 0; dice > i; i++) total += rng.random(sides);
         return total;
     };
-}, RNG.$ = new RNG(), function() {
+}, RNG.$ = new RNG(), function(factory) {
+    "function" == typeof define && define.amd ? define([ "jquery" ], function($) {
+        factory($, window, document);
+    }) : "object" == typeof module && module.exports ? module.exports = factory(require("jquery"), window, document) : factory(jQuery, window, document);
+}(function($, window, document, undefined) {
+    "use strict";
+    function Plugin(element, options) {
+        this.telInput = $(element), this.options = $.extend({}, defaults, options), this.ns = "." + pluginName + id++, 
+        this.isGoodBrowser = Boolean(element.setSelectionRange), this.hadInitialPlaceholder = Boolean($(element).attr("placeholder"));
+    }
+    var pluginName = "intlTelInput", id = 1, defaults = {
+        allowDropdown: !0,
+        autoHideDialCode: !0,
+        autoPlaceholder: "polite",
+        customPlaceholder: null,
+        dropdownContainer: "",
+        excludeCountries: [],
+        formatOnDisplay: !0,
+        geoIpLookup: null,
+        hiddenInput: "",
+        initialCountry: "",
+        localizedCountries: null,
+        nationalMode: !0,
+        onlyCountries: [],
+        placeholderNumberType: "MOBILE",
+        preferredCountries: [ "us", "gb" ],
+        separateDialCode: !1,
+        utilsScript: ""
+    }, keys = {
+        UP: 38,
+        DOWN: 40,
+        ENTER: 13,
+        ESC: 27,
+        PLUS: 43,
+        A: 65,
+        Z: 90,
+        SPACE: 32,
+        TAB: 9
+    }, regionlessNanpNumbers = [ "800", "822", "833", "844", "855", "866", "877", "880", "881", "882", "883", "884", "885", "886", "887", "888", "889" ];
+    $(window).on("load", function() {
+        $.fn[pluginName].windowLoaded = !0;
+    }), Plugin.prototype = {
+        _init: function() {
+            return this.options.nationalMode && (this.options.autoHideDialCode = !1), this.options.separateDialCode && (this.options.autoHideDialCode = this.options.nationalMode = !1), 
+            this.isMobile = /Android.+Mobile|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent), 
+            this.isMobile && ($("body").addClass("iti-mobile"), this.options.dropdownContainer || (this.options.dropdownContainer = "body")), 
+            this.autoCountryDeferred = new $.Deferred(), this.utilsScriptDeferred = new $.Deferred(), 
+            this.selectedCountryData = {}, this._processCountryData(), this._generateMarkup(), 
+            this._setInitialState(), this._initListeners(), this._initRequests(), [ this.autoCountryDeferred, this.utilsScriptDeferred ];
+        },
+        _processCountryData: function() {
+            this._processAllCountries(), this._processCountryCodes(), this._processPreferredCountries(), 
+            this.options.localizedCountries && this._translateCountriesByLocale(), (this.options.onlyCountries.length || this.options.localizedCountries) && this.countries.sort(this._countryNameSort);
+        },
+        _addCountryCode: function(iso2, dialCode, priority) {
+            dialCode in this.countryCodes || (this.countryCodes[dialCode] = []);
+            var index = priority || 0;
+            this.countryCodes[dialCode][index] = iso2;
+        },
+        _processAllCountries: function() {
+            if (this.options.onlyCountries.length) {
+                var lowerCaseOnlyCountries = this.options.onlyCountries.map(function(country) {
+                    return country.toLowerCase();
+                });
+                this.countries = allCountries.filter(function(country) {
+                    return lowerCaseOnlyCountries.indexOf(country.iso2) > -1;
+                });
+            } else if (this.options.excludeCountries.length) {
+                var lowerCaseExcludeCountries = this.options.excludeCountries.map(function(country) {
+                    return country.toLowerCase();
+                });
+                this.countries = allCountries.filter(function(country) {
+                    return -1 === lowerCaseExcludeCountries.indexOf(country.iso2);
+                });
+            } else this.countries = allCountries;
+        },
+        _translateCountriesByLocale: function() {
+            for (var i = 0; i < this.countries.length; i++) {
+                var iso = this.countries[i].iso2.toLowerCase();
+                iso in this.options.localizedCountries && (this.countries[i].name = this.options.localizedCountries[iso]);
+            }
+        },
+        _countryNameSort: function(a, b) {
+            return a.name.localeCompare(b.name);
+        },
+        _processCountryCodes: function() {
+            this.countryCodes = {};
+            for (var i = 0; i < this.countries.length; i++) {
+                var c = this.countries[i];
+                if (this._addCountryCode(c.iso2, c.dialCode, c.priority), c.areaCodes) for (var j = 0; j < c.areaCodes.length; j++) this._addCountryCode(c.iso2, c.dialCode + c.areaCodes[j]);
+            }
+        },
+        _processPreferredCountries: function() {
+            this.preferredCountries = [];
+            for (var i = 0; i < this.options.preferredCountries.length; i++) {
+                var countryCode = this.options.preferredCountries[i].toLowerCase(), countryData = this._getCountryData(countryCode, !1, !0);
+                countryData && this.preferredCountries.push(countryData);
+            }
+        },
+        _generateMarkup: function() {
+            this.telInput.attr("autocomplete", "off");
+            var parentClass = "intl-tel-input";
+            this.options.allowDropdown && (parentClass += " allow-dropdown"), this.options.separateDialCode && (parentClass += " separate-dial-code"), 
+            this.telInput.wrap($("<div>", {
+                "class": parentClass
+            })), this.flagsContainer = $("<div>", {
+                "class": "flag-container"
+            }).insertBefore(this.telInput);
+            var selectedFlag = $("<div>", {
+                "class": "selected-flag"
+            });
+            selectedFlag.appendTo(this.flagsContainer), this.selectedFlagInner = $("<div>", {
+                "class": "iti-flag"
+            }).appendTo(selectedFlag), this.options.separateDialCode && (this.selectedDialCode = $("<div>", {
+                "class": "selected-dial-code"
+            }).appendTo(selectedFlag)), this.options.allowDropdown ? (selectedFlag.attr("tabindex", "0"), 
+            $("<div>", {
+                "class": "iti-arrow"
+            }).appendTo(selectedFlag), this.countryList = $("<ul>", {
+                "class": "country-list hide"
+            }), this.preferredCountries.length && (this._appendListItems(this.preferredCountries, "preferred"), 
+            $("<li>", {
+                "class": "divider"
+            }).appendTo(this.countryList)), this._appendListItems(this.countries, ""), this.countryListItems = this.countryList.children(".country"), 
+            this.options.dropdownContainer ? this.dropdown = $("<div>", {
+                "class": "intl-tel-input iti-container"
+            }).append(this.countryList) : this.countryList.appendTo(this.flagsContainer)) : this.countryListItems = $(), 
+            this.options.hiddenInput && (this.hiddenInput = $("<input>", {
+                type: "hidden",
+                name: this.options.hiddenInput
+            }).insertAfter(this.telInput));
+        },
+        _appendListItems: function(countries, className) {
+            for (var tmp = "", i = 0; i < countries.length; i++) {
+                var c = countries[i];
+                tmp += "<li class='country " + className + "' data-dial-code='" + c.dialCode + "' data-country-code='" + c.iso2 + "'>", 
+                tmp += "<div class='flag-box'><div class='iti-flag " + c.iso2 + "'></div></div>", 
+                tmp += "<span class='country-name'>" + c.name + "</span>", tmp += "<span class='dial-code'>+" + c.dialCode + "</span>", 
+                tmp += "</li>";
+            }
+            this.countryList.append(tmp);
+        },
+        _setInitialState: function() {
+            var val = this.telInput.val();
+            this._getDialCode(val) && (!this._isRegionlessNanp(val) || this.options.nationalMode && !this.options.initialCountry) ? this._updateFlagFromNumber(val) : "auto" !== this.options.initialCountry && (this.options.initialCountry ? this._setFlag(this.options.initialCountry.toLowerCase()) : (this.defaultCountry = this.preferredCountries.length ? this.preferredCountries[0].iso2 : this.countries[0].iso2, 
+            val || this._setFlag(this.defaultCountry)), val || this.options.nationalMode || this.options.autoHideDialCode || this.options.separateDialCode || this.telInput.val("+" + this.selectedCountryData.dialCode)), 
+            val && this._updateValFromNumber(val);
+        },
+        _initListeners: function() {
+            this._initKeyListeners(), this.options.autoHideDialCode && this._initFocusListeners(), 
+            this.options.allowDropdown && this._initDropdownListeners(), this.hiddenInput && this._initHiddenInputListener();
+        },
+        _initHiddenInputListener: function() {
+            var that = this, form = this.telInput.closest("form");
+            form.length && form.submit(function() {
+                that.hiddenInput.val(that.getNumber());
+            });
+        },
+        _initDropdownListeners: function() {
+            var that = this, label = this.telInput.closest("label");
+            label.length && label.on("click" + this.ns, function(e) {
+                that.countryList.hasClass("hide") ? that.telInput.focus() : e.preventDefault();
+            });
+            var selectedFlag = this.selectedFlagInner.parent();
+            selectedFlag.on("click" + this.ns, function(e) {
+                !that.countryList.hasClass("hide") || that.telInput.prop("disabled") || that.telInput.prop("readonly") || that._showDropdown();
+            }), this.flagsContainer.on("keydown" + that.ns, function(e) {
+                var isDropdownHidden = that.countryList.hasClass("hide");
+                !isDropdownHidden || e.which != keys.UP && e.which != keys.DOWN && e.which != keys.SPACE && e.which != keys.ENTER || (e.preventDefault(), 
+                e.stopPropagation(), that._showDropdown()), e.which == keys.TAB && that._closeDropdown();
+            });
+        },
+        _initRequests: function() {
+            var that = this;
+            this.options.utilsScript ? $.fn[pluginName].windowLoaded ? $.fn[pluginName].loadUtils(this.options.utilsScript, this.utilsScriptDeferred) : $(window).on("load", function() {
+                $.fn[pluginName].loadUtils(that.options.utilsScript, that.utilsScriptDeferred);
+            }) : this.utilsScriptDeferred.resolve(), "auto" === this.options.initialCountry ? this._loadAutoCountry() : this.autoCountryDeferred.resolve();
+        },
+        _loadAutoCountry: function() {
+            $.fn[pluginName].autoCountry ? this.handleAutoCountry() : $.fn[pluginName].startedLoadingAutoCountry || ($.fn[pluginName].startedLoadingAutoCountry = !0, 
+            "function" == typeof this.options.geoIpLookup && this.options.geoIpLookup(function(countryCode) {
+                $.fn[pluginName].autoCountry = countryCode.toLowerCase(), setTimeout(function() {
+                    $(".intl-tel-input input").intlTelInput("handleAutoCountry");
+                });
+            }));
+        },
+        _initKeyListeners: function() {
+            var that = this;
+            this.telInput.on("keyup" + this.ns, function() {
+                that._updateFlagFromNumber(that.telInput.val()) && that._triggerCountryChange();
+            }), this.telInput.on("cut" + this.ns + " paste" + this.ns, function() {
+                setTimeout(function() {
+                    that._updateFlagFromNumber(that.telInput.val()) && that._triggerCountryChange();
+                });
+            });
+        },
+        _cap: function(number) {
+            var max = this.telInput.attr("maxlength");
+            return max && number.length > max ? number.substr(0, max) : number;
+        },
+        _initFocusListeners: function() {
+            var that = this;
+            this.telInput.on("mousedown" + this.ns, function(e) {
+                that.telInput.is(":focus") || that.telInput.val() || (e.preventDefault(), that.telInput.focus());
+            }), this.telInput.on("focus" + this.ns, function(e) {
+                that.telInput.val() || that.telInput.prop("readonly") || !that.selectedCountryData.dialCode || (that.telInput.val("+" + that.selectedCountryData.dialCode), 
+                that.telInput.one("keypress.plus" + that.ns, function(e) {
+                    e.which == keys.PLUS && that.telInput.val("");
+                }), setTimeout(function() {
+                    var input = that.telInput[0];
+                    if (that.isGoodBrowser) {
+                        var len = that.telInput.val().length;
+                        input.setSelectionRange(len, len);
+                    }
+                }));
+            });
+            var form = this.telInput.prop("form");
+            form && $(form).on("submit" + this.ns, function() {
+                that._removeEmptyDialCode();
+            }), this.telInput.on("blur" + this.ns, function() {
+                that._removeEmptyDialCode();
+            });
+        },
+        _removeEmptyDialCode: function() {
+            var value = this.telInput.val(), startsPlus = "+" == value.charAt(0);
+            if (startsPlus) {
+                var numeric = this._getNumeric(value);
+                numeric && this.selectedCountryData.dialCode != numeric || this.telInput.val("");
+            }
+            this.telInput.off("keypress.plus" + this.ns);
+        },
+        _getNumeric: function(s) {
+            return s.replace(/\D/g, "");
+        },
+        _showDropdown: function() {
+            this._setDropdownPosition();
+            var activeListItem = this.countryList.children(".active");
+            activeListItem.length && (this._highlightListItem(activeListItem), this._scrollTo(activeListItem)), 
+            this._bindDropdownListeners(), this.selectedFlagInner.children(".iti-arrow").addClass("up"), 
+            this.telInput.trigger("open:countrydropdown");
+        },
+        _setDropdownPosition: function() {
+            var that = this;
+            if (this.options.dropdownContainer && this.dropdown.appendTo(this.options.dropdownContainer), 
+            this.dropdownHeight = this.countryList.removeClass("hide").outerHeight(), !this.isMobile) {
+                var pos = this.telInput.offset(), inputTop = pos.top, windowTop = $(window).scrollTop(), dropdownFitsBelow = inputTop + this.telInput.outerHeight() + this.dropdownHeight < windowTop + $(window).height(), dropdownFitsAbove = inputTop - this.dropdownHeight > windowTop;
+                if (this.countryList.toggleClass("dropup", !dropdownFitsBelow && dropdownFitsAbove), 
+                this.options.dropdownContainer) {
+                    var extraTop = !dropdownFitsBelow && dropdownFitsAbove ? 0 : this.telInput.innerHeight();
+                    this.dropdown.css({
+                        top: inputTop + extraTop,
+                        left: pos.left
+                    }), $(window).on("scroll" + this.ns, function() {
+                        that._closeDropdown();
+                    });
+                }
+            }
+        },
+        _bindDropdownListeners: function() {
+            var that = this;
+            this.countryList.on("mouseover" + this.ns, ".country", function(e) {
+                that._highlightListItem($(this));
+            }), this.countryList.on("click" + this.ns, ".country", function(e) {
+                that._selectListItem($(this));
+            });
+            var isOpening = !0;
+            $("html").on("click" + this.ns, function(e) {
+                isOpening || that._closeDropdown(), isOpening = !1;
+            });
+            var query = "", queryTimer = null;
+            $(document).on("keydown" + this.ns, function(e) {
+                e.preventDefault(), e.which == keys.UP || e.which == keys.DOWN ? that._handleUpDownKey(e.which) : e.which == keys.ENTER ? that._handleEnterKey() : e.which == keys.ESC ? that._closeDropdown() : (e.which >= keys.A && e.which <= keys.Z || e.which == keys.SPACE) && (queryTimer && clearTimeout(queryTimer), 
+                query += String.fromCharCode(e.which), that._searchForCountry(query), queryTimer = setTimeout(function() {
+                    query = "";
+                }, 1e3));
+            });
+        },
+        _handleUpDownKey: function(key) {
+            var current = this.countryList.children(".highlight").first(), next = key == keys.UP ? current.prev() : current.next();
+            next.length && (next.hasClass("divider") && (next = key == keys.UP ? next.prev() : next.next()), 
+            this._highlightListItem(next), this._scrollTo(next));
+        },
+        _handleEnterKey: function() {
+            var currentCountry = this.countryList.children(".highlight").first();
+            currentCountry.length && this._selectListItem(currentCountry);
+        },
+        _searchForCountry: function(query) {
+            for (var i = 0; i < this.countries.length; i++) if (this._startsWith(this.countries[i].name, query)) {
+                var listItem = this.countryList.children("[data-country-code=" + this.countries[i].iso2 + "]").not(".preferred");
+                this._highlightListItem(listItem), this._scrollTo(listItem, !0);
+                break;
+            }
+        },
+        _startsWith: function(a, b) {
+            return a.substr(0, b.length).toUpperCase() == b;
+        },
+        _updateValFromNumber: function(number) {
+            if (this.options.formatOnDisplay && window.intlTelInputUtils && this.selectedCountryData) {
+                var format = this.options.separateDialCode || !this.options.nationalMode && "+" == number.charAt(0) ? intlTelInputUtils.numberFormat.INTERNATIONAL : intlTelInputUtils.numberFormat.NATIONAL;
+                number = intlTelInputUtils.formatNumber(number, this.selectedCountryData.iso2, format);
+            }
+            number = this._beforeSetNumber(number), this.telInput.val(number);
+        },
+        _updateFlagFromNumber: function(number) {
+            number && this.options.nationalMode && "1" == this.selectedCountryData.dialCode && "+" != number.charAt(0) && ("1" != number.charAt(0) && (number = "1" + number), 
+            number = "+" + number);
+            var dialCode = this._getDialCode(number), countryCode = null, numeric = this._getNumeric(number);
+            if (dialCode) {
+                var countryCodes = this.countryCodes[this._getNumeric(dialCode)], alreadySelected = $.inArray(this.selectedCountryData.iso2, countryCodes) > -1, isNanpAreaCode = "+1" == dialCode && numeric.length >= 4, nanpSelected = "1" == this.selectedCountryData.dialCode;
+                if ((!nanpSelected || !this._isRegionlessNanp(numeric)) && (!alreadySelected || isNanpAreaCode)) for (var j = 0; j < countryCodes.length; j++) if (countryCodes[j]) {
+                    countryCode = countryCodes[j];
+                    break;
+                }
+            } else "+" == number.charAt(0) && numeric.length ? countryCode = "" : number && "+" != number || (countryCode = this.defaultCountry);
+            return null !== countryCode ? this._setFlag(countryCode) : !1;
+        },
+        _isRegionlessNanp: function(number) {
+            var numeric = this._getNumeric(number);
+            if ("1" == numeric.charAt(0)) {
+                var areaCode = numeric.substr(1, 3);
+                return $.inArray(areaCode, regionlessNanpNumbers) > -1;
+            }
+            return !1;
+        },
+        _highlightListItem: function(listItem) {
+            this.countryListItems.removeClass("highlight"), listItem.addClass("highlight");
+        },
+        _getCountryData: function(countryCode, ignoreOnlyCountriesOption, allowFail) {
+            for (var countryList = ignoreOnlyCountriesOption ? allCountries : this.countries, i = 0; i < countryList.length; i++) if (countryList[i].iso2 == countryCode) return countryList[i];
+            if (allowFail) return null;
+            throw new Error("No country data for '" + countryCode + "'");
+        },
+        _setFlag: function(countryCode) {
+            var prevCountry = this.selectedCountryData.iso2 ? this.selectedCountryData : {};
+            this.selectedCountryData = countryCode ? this._getCountryData(countryCode, !1, !1) : {}, 
+            this.selectedCountryData.iso2 && (this.defaultCountry = this.selectedCountryData.iso2), 
+            this.selectedFlagInner.attr("class", "iti-flag " + countryCode);
+            var title = countryCode ? this.selectedCountryData.name + ": +" + this.selectedCountryData.dialCode : "Unknown";
+            if (this.selectedFlagInner.parent().attr("title", title), this.options.separateDialCode) {
+                var dialCode = this.selectedCountryData.dialCode ? "+" + this.selectedCountryData.dialCode : "", parent = this.telInput.parent();
+                prevCountry.dialCode && parent.removeClass("iti-sdc-" + (prevCountry.dialCode.length + 1)), 
+                dialCode && parent.addClass("iti-sdc-" + dialCode.length), this.selectedDialCode.text(dialCode);
+            }
+            return this._updatePlaceholder(), this.countryListItems.removeClass("active"), countryCode && this.countryListItems.find(".iti-flag." + countryCode).first().closest(".country").addClass("active"), 
+            prevCountry.iso2 !== countryCode;
+        },
+        _updatePlaceholder: function() {
+            var shouldSetPlaceholder = "aggressive" === this.options.autoPlaceholder || !this.hadInitialPlaceholder && (this.options.autoPlaceholder === !0 || "polite" === this.options.autoPlaceholder);
+            if (window.intlTelInputUtils && shouldSetPlaceholder) {
+                var numberType = intlTelInputUtils.numberType[this.options.placeholderNumberType], placeholder = this.selectedCountryData.iso2 ? intlTelInputUtils.getExampleNumber(this.selectedCountryData.iso2, this.options.nationalMode, numberType) : "";
+                placeholder = this._beforeSetNumber(placeholder), "function" == typeof this.options.customPlaceholder && (placeholder = this.options.customPlaceholder(placeholder, this.selectedCountryData)), 
+                this.telInput.attr("placeholder", placeholder);
+            }
+        },
+        _selectListItem: function(listItem) {
+            var flagChanged = this._setFlag(listItem.attr("data-country-code"));
+            if (this._closeDropdown(), this._updateDialCode(listItem.attr("data-dial-code"), !0), 
+            this.telInput.focus(), this.isGoodBrowser) {
+                var len = this.telInput.val().length;
+                this.telInput[0].setSelectionRange(len, len);
+            }
+            flagChanged && this._triggerCountryChange();
+        },
+        _closeDropdown: function() {
+            this.countryList.addClass("hide"), this.selectedFlagInner.children(".iti-arrow").removeClass("up"), 
+            $(document).off(this.ns), $("html").off(this.ns), this.countryList.off(this.ns), 
+            this.options.dropdownContainer && (this.isMobile || $(window).off("scroll" + this.ns), 
+            this.dropdown.detach()), this.telInput.trigger("close:countrydropdown");
+        },
+        _scrollTo: function(element, middle) {
+            var container = this.countryList, containerHeight = container.height(), containerTop = container.offset().top, containerBottom = containerTop + containerHeight, elementHeight = element.outerHeight(), elementTop = element.offset().top, elementBottom = elementTop + elementHeight, newScrollTop = elementTop - containerTop + container.scrollTop(), middleOffset = containerHeight / 2 - elementHeight / 2;
+            if (containerTop > elementTop) middle && (newScrollTop -= middleOffset), container.scrollTop(newScrollTop); else if (elementBottom > containerBottom) {
+                middle && (newScrollTop += middleOffset);
+                var heightDifference = containerHeight - elementHeight;
+                container.scrollTop(newScrollTop - heightDifference);
+            }
+        },
+        _updateDialCode: function(newDialCode, hasSelectedListItem) {
+            var newNumber, inputVal = this.telInput.val();
+            if (newDialCode = "+" + newDialCode, "+" == inputVal.charAt(0)) {
+                var prevDialCode = this._getDialCode(inputVal);
+                newNumber = prevDialCode ? inputVal.replace(prevDialCode, newDialCode) : newDialCode;
+            } else {
+                if (this.options.nationalMode || this.options.separateDialCode) return;
+                if (inputVal) newNumber = newDialCode + inputVal; else {
+                    if (!hasSelectedListItem && this.options.autoHideDialCode) return;
+                    newNumber = newDialCode;
+                }
+            }
+            this.telInput.val(newNumber);
+        },
+        _getDialCode: function(number) {
+            var dialCode = "";
+            if ("+" == number.charAt(0)) for (var numericChars = "", i = 0; i < number.length; i++) {
+                var c = number.charAt(i);
+                if ($.isNumeric(c) && (numericChars += c, this.countryCodes[numericChars] && (dialCode = number.substr(0, i + 1)), 
+                4 == numericChars.length)) break;
+            }
+            return dialCode;
+        },
+        _getFullNumber: function() {
+            var prefix, val = $.trim(this.telInput.val()), dialCode = this.selectedCountryData.dialCode, numericVal = this._getNumeric(val), normalizedVal = "1" == numericVal.charAt(0) ? numericVal : "1" + numericVal;
+            return prefix = this.options.separateDialCode ? "+" + dialCode : "+" != val.charAt(0) && "1" != val.charAt(0) && dialCode && "1" == dialCode.charAt(0) && 4 == dialCode.length && dialCode != normalizedVal.substr(0, 4) ? dialCode.substr(1) : "", 
+            prefix + val;
+        },
+        _beforeSetNumber: function(number) {
+            if (this.options.separateDialCode) {
+                var dialCode = this._getDialCode(number);
+                if (dialCode) {
+                    null !== this.selectedCountryData.areaCodes && (dialCode = "+" + this.selectedCountryData.dialCode);
+                    var start = " " === number[dialCode.length] || "-" === number[dialCode.length] ? dialCode.length + 1 : dialCode.length;
+                    number = number.substr(start);
+                }
+            }
+            return this._cap(number);
+        },
+        _triggerCountryChange: function() {
+            this.telInput.trigger("countrychange", this.selectedCountryData);
+        },
+        handleAutoCountry: function() {
+            "auto" === this.options.initialCountry && (this.defaultCountry = $.fn[pluginName].autoCountry, 
+            this.telInput.val() || this.setCountry(this.defaultCountry), this.autoCountryDeferred.resolve());
+        },
+        handleUtils: function() {
+            window.intlTelInputUtils && (this.telInput.val() && this._updateValFromNumber(this.telInput.val()), 
+            this._updatePlaceholder()), this.utilsScriptDeferred.resolve();
+        },
+        destroy: function() {
+            if (this.allowDropdown && (this._closeDropdown(), this.selectedFlagInner.parent().off(this.ns), 
+            this.telInput.closest("label").off(this.ns)), this.options.autoHideDialCode) {
+                var form = this.telInput.prop("form");
+                form && $(form).off(this.ns);
+            }
+            this.telInput.off(this.ns);
+            var container = this.telInput.parent();
+            container.before(this.telInput).remove();
+        },
+        getExtension: function() {
+            return window.intlTelInputUtils ? intlTelInputUtils.getExtension(this._getFullNumber(), this.selectedCountryData.iso2) : "";
+        },
+        getNumber: function(format) {
+            return window.intlTelInputUtils ? intlTelInputUtils.formatNumber(this._getFullNumber(), this.selectedCountryData.iso2, format) : "";
+        },
+        getNumberType: function() {
+            return window.intlTelInputUtils ? intlTelInputUtils.getNumberType(this._getFullNumber(), this.selectedCountryData.iso2) : -99;
+        },
+        getSelectedCountryData: function() {
+            return this.selectedCountryData;
+        },
+        getValidationError: function() {
+            return window.intlTelInputUtils ? intlTelInputUtils.getValidationError(this._getFullNumber(), this.selectedCountryData.iso2) : -99;
+        },
+        isValidNumber: function() {
+            var val = $.trim(this._getFullNumber()), countryCode = this.options.nationalMode ? this.selectedCountryData.iso2 : "";
+            return window.intlTelInputUtils ? intlTelInputUtils.isValidNumber(val, countryCode) : null;
+        },
+        setCountry: function(countryCode) {
+            countryCode = countryCode.toLowerCase(), this.selectedFlagInner.hasClass(countryCode) || (this._setFlag(countryCode), 
+            this._updateDialCode(this.selectedCountryData.dialCode, !1), this._triggerCountryChange());
+        },
+        setNumber: function(number) {
+            var flagChanged = this._updateFlagFromNumber(number);
+            this._updateValFromNumber(number), flagChanged && this._triggerCountryChange();
+        },
+        setPlaceholderNumberType: function(type) {
+            this.options.placeholderNumberType = type, this._updatePlaceholder();
+        }
+    }, $.fn[pluginName] = function(options) {
+        var args = arguments;
+        if (options === undefined || "object" == typeof options) {
+            var deferreds = [];
+            return this.each(function() {
+                if (!$.data(this, "plugin_" + pluginName)) {
+                    var instance = new Plugin(this, options), instanceDeferreds = instance._init();
+                    deferreds.push(instanceDeferreds[0]), deferreds.push(instanceDeferreds[1]), $.data(this, "plugin_" + pluginName, instance);
+                }
+            }), $.when.apply(null, deferreds);
+        }
+        if ("string" == typeof options && "_" !== options[0]) {
+            var returns;
+            return this.each(function() {
+                var instance = $.data(this, "plugin_" + pluginName);
+                instance instanceof Plugin && "function" == typeof instance[options] && (returns = instance[options].apply(instance, Array.prototype.slice.call(args, 1))), 
+                "destroy" === options && $.data(this, "plugin_" + pluginName, null);
+            }), returns !== undefined ? returns : this;
+        }
+    }, $.fn[pluginName].getCountryData = function() {
+        return allCountries;
+    }, $.fn[pluginName].loadUtils = function(path, utilsScriptDeferred) {
+        $.fn[pluginName].loadedUtilsScript ? utilsScriptDeferred && utilsScriptDeferred.resolve() : ($.fn[pluginName].loadedUtilsScript = !0, 
+        $.ajax({
+            type: "GET",
+            url: path,
+            complete: function() {
+                $(".intl-tel-input input").intlTelInput("handleUtils");
+            },
+            dataType: "script",
+            cache: !0
+        }));
+    }, $.fn[pluginName].defaults = defaults, $.fn[pluginName].version = "12.4.0";
+    for (var allCountries = [ [ "Afghanistan (‫افغانستان‬‎)", "af", "93" ], [ "Albania (Shqipëri)", "al", "355" ], [ "Algeria (‫الجزائر‬‎)", "dz", "213" ], [ "American Samoa", "as", "1684" ], [ "Andorra", "ad", "376" ], [ "Angola", "ao", "244" ], [ "Anguilla", "ai", "1264" ], [ "Antigua and Barbuda", "ag", "1268" ], [ "Argentina", "ar", "54" ], [ "Armenia (Հայաստան)", "am", "374" ], [ "Aruba", "aw", "297" ], [ "Australia", "au", "61", 0 ], [ "Austria (Österreich)", "at", "43" ], [ "Azerbaijan (Azərbaycan)", "az", "994" ], [ "Bahamas", "bs", "1242" ], [ "Bahrain (‫البحرين‬‎)", "bh", "973" ], [ "Bangladesh (বাংলাদেশ)", "bd", "880" ], [ "Barbados", "bb", "1246" ], [ "Belarus (Беларусь)", "by", "375" ], [ "Belgium (België)", "be", "32" ], [ "Belize", "bz", "501" ], [ "Benin (Bénin)", "bj", "229" ], [ "Bermuda", "bm", "1441" ], [ "Bhutan (འབྲུག)", "bt", "975" ], [ "Bolivia", "bo", "591" ], [ "Bosnia and Herzegovina (Босна и Херцеговина)", "ba", "387" ], [ "Botswana", "bw", "267" ], [ "Brazil (Brasil)", "br", "55" ], [ "British Indian Ocean Territory", "io", "246" ], [ "British Virgin Islands", "vg", "1284" ], [ "Brunei", "bn", "673" ], [ "Bulgaria (България)", "bg", "359" ], [ "Burkina Faso", "bf", "226" ], [ "Burundi (Uburundi)", "bi", "257" ], [ "Cambodia (កម្ពុជា)", "kh", "855" ], [ "Cameroon (Cameroun)", "cm", "237" ], [ "Canada", "ca", "1", 1, [ "204", "226", "236", "249", "250", "289", "306", "343", "365", "387", "403", "416", "418", "431", "437", "438", "450", "506", "514", "519", "548", "579", "581", "587", "604", "613", "639", "647", "672", "705", "709", "742", "778", "780", "782", "807", "819", "825", "867", "873", "902", "905" ] ], [ "Cape Verde (Kabu Verdi)", "cv", "238" ], [ "Caribbean Netherlands", "bq", "599", 1 ], [ "Cayman Islands", "ky", "1345" ], [ "Central African Republic (République centrafricaine)", "cf", "236" ], [ "Chad (Tchad)", "td", "235" ], [ "Chile", "cl", "56" ], [ "China (中国)", "cn", "86" ], [ "Christmas Island", "cx", "61", 2 ], [ "Cocos (Keeling) Islands", "cc", "61", 1 ], [ "Colombia", "co", "57" ], [ "Comoros (‫جزر القمر‬‎)", "km", "269" ], [ "Congo (DRC) (Jamhuri ya Kidemokrasia ya Kongo)", "cd", "243" ], [ "Congo (Republic) (Congo-Brazzaville)", "cg", "242" ], [ "Cook Islands", "ck", "682" ], [ "Costa Rica", "cr", "506" ], [ "Côte d’Ivoire", "ci", "225" ], [ "Croatia (Hrvatska)", "hr", "385" ], [ "Cuba", "cu", "53" ], [ "Curaçao", "cw", "599", 0 ], [ "Cyprus (Κύπρος)", "cy", "357" ], [ "Czech Republic (Česká republika)", "cz", "420" ], [ "Denmark (Danmark)", "dk", "45" ], [ "Djibouti", "dj", "253" ], [ "Dominica", "dm", "1767" ], [ "Dominican Republic (República Dominicana)", "do", "1", 2, [ "809", "829", "849" ] ], [ "Ecuador", "ec", "593" ], [ "Egypt (‫مصر‬‎)", "eg", "20" ], [ "El Salvador", "sv", "503" ], [ "Equatorial Guinea (Guinea Ecuatorial)", "gq", "240" ], [ "Eritrea", "er", "291" ], [ "Estonia (Eesti)", "ee", "372" ], [ "Ethiopia", "et", "251" ], [ "Falkland Islands (Islas Malvinas)", "fk", "500" ], [ "Faroe Islands (Føroyar)", "fo", "298" ], [ "Fiji", "fj", "679" ], [ "Finland (Suomi)", "fi", "358", 0 ], [ "France", "fr", "33" ], [ "French Guiana (Guyane française)", "gf", "594" ], [ "French Polynesia (Polynésie française)", "pf", "689" ], [ "Gabon", "ga", "241" ], [ "Gambia", "gm", "220" ], [ "Georgia (საქართველო)", "ge", "995" ], [ "Germany (Deutschland)", "de", "49" ], [ "Ghana (Gaana)", "gh", "233" ], [ "Gibraltar", "gi", "350" ], [ "Greece (Ελλάδα)", "gr", "30" ], [ "Greenland (Kalaallit Nunaat)", "gl", "299" ], [ "Grenada", "gd", "1473" ], [ "Guadeloupe", "gp", "590", 0 ], [ "Guam", "gu", "1671" ], [ "Guatemala", "gt", "502" ], [ "Guernsey", "gg", "44", 1 ], [ "Guinea (Guinée)", "gn", "224" ], [ "Guinea-Bissau (Guiné Bissau)", "gw", "245" ], [ "Guyana", "gy", "592" ], [ "Haiti", "ht", "509" ], [ "Honduras", "hn", "504" ], [ "Hong Kong (香港)", "hk", "852" ], [ "Hungary (Magyarország)", "hu", "36" ], [ "Iceland (Ísland)", "is", "354" ], [ "India (भारत)", "in", "91" ], [ "Indonesia", "id", "62" ], [ "Iran (‫ایران‬‎)", "ir", "98" ], [ "Iraq (‫العراق‬‎)", "iq", "964" ], [ "Ireland", "ie", "353" ], [ "Isle of Man", "im", "44", 2 ], [ "Israel (‫ישראל‬‎)", "il", "972" ], [ "Italy (Italia)", "it", "39", 0 ], [ "Jamaica", "jm", "1", 4, [ "876", "658" ] ], [ "Japan (日本)", "jp", "81" ], [ "Jersey", "je", "44", 3 ], [ "Jordan (‫الأردن‬‎)", "jo", "962" ], [ "Kazakhstan (Казахстан)", "kz", "7", 1 ], [ "Kenya", "ke", "254" ], [ "Kiribati", "ki", "686" ], [ "Kosovo", "xk", "383" ], [ "Kuwait (‫الكويت‬‎)", "kw", "965" ], [ "Kyrgyzstan (Кыргызстан)", "kg", "996" ], [ "Laos (ລາວ)", "la", "856" ], [ "Latvia (Latvija)", "lv", "371" ], [ "Lebanon (‫لبنان‬‎)", "lb", "961" ], [ "Lesotho", "ls", "266" ], [ "Liberia", "lr", "231" ], [ "Libya (‫ليبيا‬‎)", "ly", "218" ], [ "Liechtenstein", "li", "423" ], [ "Lithuania (Lietuva)", "lt", "370" ], [ "Luxembourg", "lu", "352" ], [ "Macau (澳門)", "mo", "853" ], [ "Macedonia (FYROM) (Македонија)", "mk", "389" ], [ "Madagascar (Madagasikara)", "mg", "261" ], [ "Malawi", "mw", "265" ], [ "Malaysia", "my", "60" ], [ "Maldives", "mv", "960" ], [ "Mali", "ml", "223" ], [ "Malta", "mt", "356" ], [ "Marshall Islands", "mh", "692" ], [ "Martinique", "mq", "596" ], [ "Mauritania (‫موريتانيا‬‎)", "mr", "222" ], [ "Mauritius (Moris)", "mu", "230" ], [ "Mayotte", "yt", "262", 1 ], [ "Mexico (México)", "mx", "52" ], [ "Micronesia", "fm", "691" ], [ "Moldova (Republica Moldova)", "md", "373" ], [ "Monaco", "mc", "377" ], [ "Mongolia (Монгол)", "mn", "976" ], [ "Montenegro (Crna Gora)", "me", "382" ], [ "Montserrat", "ms", "1664" ], [ "Morocco (‫المغرب‬‎)", "ma", "212", 0 ], [ "Mozambique (Moçambique)", "mz", "258" ], [ "Myanmar (Burma) (မြန်မာ)", "mm", "95" ], [ "Namibia (Namibië)", "na", "264" ], [ "Nauru", "nr", "674" ], [ "Nepal (नेपाल)", "np", "977" ], [ "Netherlands (Nederland)", "nl", "31" ], [ "New Caledonia (Nouvelle-Calédonie)", "nc", "687" ], [ "New Zealand", "nz", "64" ], [ "Nicaragua", "ni", "505" ], [ "Niger (Nijar)", "ne", "227" ], [ "Nigeria", "ng", "234" ], [ "Niue", "nu", "683" ], [ "Norfolk Island", "nf", "672" ], [ "North Korea (조선 민주주의 인민 공화국)", "kp", "850" ], [ "Northern Mariana Islands", "mp", "1670" ], [ "Norway (Norge)", "no", "47", 0 ], [ "Oman (‫عُمان‬‎)", "om", "968" ], [ "Pakistan (‫پاکستان‬‎)", "pk", "92" ], [ "Palau", "pw", "680" ], [ "Palestine (‫فلسطين‬‎)", "ps", "970" ], [ "Panama (Panamá)", "pa", "507" ], [ "Papua New Guinea", "pg", "675" ], [ "Paraguay", "py", "595" ], [ "Peru (Perú)", "pe", "51" ], [ "Philippines", "ph", "63" ], [ "Poland (Polska)", "pl", "48" ], [ "Portugal", "pt", "351" ], [ "Puerto Rico", "pr", "1", 3, [ "787", "939" ] ], [ "Qatar (‫قطر‬‎)", "qa", "974" ], [ "Réunion (La Réunion)", "re", "262", 0 ], [ "Romania (România)", "ro", "40" ], [ "Russia (Россия)", "ru", "7", 0 ], [ "Rwanda", "rw", "250" ], [ "Saint Barthélemy", "bl", "590", 1 ], [ "Saint Helena", "sh", "290" ], [ "Saint Kitts and Nevis", "kn", "1869" ], [ "Saint Lucia", "lc", "1758" ], [ "Saint Martin (Saint-Martin (partie française))", "mf", "590", 2 ], [ "Saint Pierre and Miquelon (Saint-Pierre-et-Miquelon)", "pm", "508" ], [ "Saint Vincent and the Grenadines", "vc", "1784" ], [ "Samoa", "ws", "685" ], [ "San Marino", "sm", "378" ], [ "São Tomé and Príncipe (São Tomé e Príncipe)", "st", "239" ], [ "Saudi Arabia (‫المملكة العربية السعودية‬‎)", "sa", "966" ], [ "Senegal (Sénégal)", "sn", "221" ], [ "Serbia (Србија)", "rs", "381" ], [ "Seychelles", "sc", "248" ], [ "Sierra Leone", "sl", "232" ], [ "Singapore", "sg", "65" ], [ "Sint Maarten", "sx", "1721" ], [ "Slovakia (Slovensko)", "sk", "421" ], [ "Slovenia (Slovenija)", "si", "386" ], [ "Solomon Islands", "sb", "677" ], [ "Somalia (Soomaaliya)", "so", "252" ], [ "South Africa", "za", "27" ], [ "South Korea (대한민국)", "kr", "82" ], [ "South Sudan (‫جنوب السودان‬‎)", "ss", "211" ], [ "Spain (España)", "es", "34" ], [ "Sri Lanka (ශ්‍රී ලංකාව)", "lk", "94" ], [ "Sudan (‫السودان‬‎)", "sd", "249" ], [ "Suriname", "sr", "597" ], [ "Svalbard and Jan Mayen", "sj", "47", 1 ], [ "Swaziland", "sz", "268" ], [ "Sweden (Sverige)", "se", "46" ], [ "Switzerland (Schweiz)", "ch", "41" ], [ "Syria (‫سوريا‬‎)", "sy", "963" ], [ "Taiwan (台灣)", "tw", "886" ], [ "Tajikistan", "tj", "992" ], [ "Tanzania", "tz", "255" ], [ "Thailand (ไทย)", "th", "66" ], [ "Timor-Leste", "tl", "670" ], [ "Togo", "tg", "228" ], [ "Tokelau", "tk", "690" ], [ "Tonga", "to", "676" ], [ "Trinidad and Tobago", "tt", "1868" ], [ "Tunisia (‫تونس‬‎)", "tn", "216" ], [ "Turkey (Türkiye)", "tr", "90" ], [ "Turkmenistan", "tm", "993" ], [ "Turks and Caicos Islands", "tc", "1649" ], [ "Tuvalu", "tv", "688" ], [ "U.S. Virgin Islands", "vi", "1340" ], [ "Uganda", "ug", "256" ], [ "Ukraine (Україна)", "ua", "380" ], [ "United Arab Emirates (‫الإمارات العربية المتحدة‬‎)", "ae", "971" ], [ "United Kingdom", "gb", "44", 0 ], [ "United States", "us", "1", 0 ], [ "Uruguay", "uy", "598" ], [ "Uzbekistan (Oʻzbekiston)", "uz", "998" ], [ "Vanuatu", "vu", "678" ], [ "Vatican City (Città del Vaticano)", "va", "39", 1 ], [ "Venezuela", "ve", "58" ], [ "Vietnam (Việt Nam)", "vn", "84" ], [ "Wallis and Futuna (Wallis-et-Futuna)", "wf", "681" ], [ "Western Sahara (‫الصحراء الغربية‬‎)", "eh", "212", 1 ], [ "Yemen (‫اليمن‬‎)", "ye", "967" ], [ "Zambia", "zm", "260" ], [ "Zimbabwe", "zw", "263" ], [ "Åland Islands", "ax", "358", 1 ] ], i = 0; i < allCountries.length; i++) {
+        var c = allCountries[i];
+        allCountries[i] = {
+            name: c[0],
+            iso2: c[1],
+            dialCode: c[2],
+            priority: c[3] || 0,
+            areaCodes: c[4] || null
+        };
+    }
+}), function() {
     angular.module("angular-date-picker-polyfill", []);
 }.call(this), function() {
     angular.module("angular-date-picker-polyfill").directive("aaCalendar", [ "aaMonthUtil", "aaDateUtil", "$filter", function(aaMonthUtil, aaDateUtil, $filter) {
@@ -14857,10 +15466,10 @@ var saveAs = saveAs || function(e) {
     angular.module("angular-date-picker-polyfill").factory("aaDateUtil", function() {
         return {
             dateObjectsAreEqualToDay: function(d1, d2) {
-                return !(!angular.isDate(d1) || !angular.isDate(d2)) && (d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate());
+                return angular.isDate(d1) && angular.isDate(d2) ? d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate() : !1;
             },
             dateObjectsAreEqualToMonth: function(d1, d2) {
-                return !(!angular.isDate(d1) || !angular.isDate(d2)) && (d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth());
+                return angular.isDate(d1) && angular.isDate(d2) ? d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() : !1;
             },
             convertToDate: function(val) {
                 var d;
@@ -14878,23 +15487,24 @@ var saveAs = saveAs || function(e) {
     linker = function(scope, elem, attrs, ngModelCtrl, $compile, aaDateUtil, includeTimepicker) {
         var compileTemplate, init, setupNonInputEvents, setupNonInputValidatorAndFormatter, setupPopupTogglingEvents, setupViewActionMethods;
         return null == includeTimepicker && (includeTimepicker = !1), init = function() {
-            if (compileTemplate(), setupViewActionMethods(), setupPopupTogglingEvents(), "INPUT" !== elem.prop("tagName") || "date" !== attrs.type && "datetime-local" !== attrs.type) return setupNonInputEvents(), 
-            setupNonInputValidatorAndFormatter();
+            return compileTemplate(), setupViewActionMethods(), setupPopupTogglingEvents(), 
+            "INPUT" !== elem.prop("tagName") || "date" !== attrs.type && "datetime-local" !== attrs.type ? (setupNonInputEvents(), 
+            setupNonInputValidatorAndFormatter()) : void 0;
         }, setupNonInputValidatorAndFormatter = function() {
             ngModelCtrl.$formatters.unshift(aaDateUtil.convertToDate);
         }, compileTemplate = function() {
             var $popup, popupDiv, tmpl, useAmPm;
             return elem.wrap("<div class='aa-date-input'></div>"), tmpl = "<div class='aa-datepicker-popup' data-ng-show='isOpen'>\n  <div class='aa-datepicker-popup-close' data-ng-click='closePopup()'></div>\n  <div data-aa-calendar ng-model='ngModel'></div>", 
-            includeTimepicker && (useAmPm = null == attrs.useAmPm || (!0 === attrs.useAmPm || "true" === attrs.useAmPm), 
+            includeTimepicker && (useAmPm = null != attrs.useAmPm ? attrs.useAmPm === !0 || "true" === attrs.useAmPm : !0, 
             tmpl += "<div data-aa-timepicker use-am-pm='" + useAmPm + "' ng-model='ngModel'></div>"), 
             tmpl += "</div>", popupDiv = angular.element(tmpl), $popup = $compile(popupDiv)(scope), 
             elem.after($popup);
         }, setupPopupTogglingEvents = function() {
             var $wrapper, onDocumentClick, wrapperClicked;
             return scope.$on("aa:calendar:set-date", function() {
-                if (!includeTimepicker) return scope.closePopup();
+                return includeTimepicker ? void 0 : scope.closePopup();
             }), wrapperClicked = !1, elem.on("focus", function(e) {
-                if (!scope.isOpen) return scope.$apply(function() {
+                return scope.isOpen ? void 0 : scope.$apply(function() {
                     return scope.openPopup();
                 });
             }), $wrapper = elem.parent(), $wrapper.on("mousedown", function(e) {
@@ -14902,19 +15512,19 @@ var saveAs = saveAs || function(e) {
                     return wrapperClicked = !1;
                 }, 100);
             }), elem.on("blur", function(e) {
-                if (scope.isOpen && !wrapperClicked) return scope.$apply(function() {
+                return scope.isOpen && !wrapperClicked ? scope.$apply(function() {
                     return scope.closePopup();
-                });
+                }) : void 0;
             }), onDocumentClick = function(e) {
-                if (scope.isOpen && !wrapperClicked) return scope.$apply(function() {
+                return scope.isOpen && !wrapperClicked ? scope.$apply(function() {
                     return scope.closePopup();
-                });
+                }) : void 0;
             }, angular.element(window.document).on("mousedown", onDocumentClick), scope.$on("$destroy", function() {
                 return elem.off("focus"), elem.off("blur"), $wrapper.off("mousedown"), angular.element(window.document).off("mousedown", onDocumentClick);
             });
         }, setupNonInputEvents = function() {
             return elem.on("click", function(e) {
-                if (!scope.isOpen) return scope.$apply(function() {
+                return scope.isOpen ? void 0 : scope.$apply(function() {
                     return scope.openPopup();
                 });
             }), scope.$on("$destroy", function() {
@@ -14957,7 +15567,7 @@ var saveAs = saveAs || function(e) {
                 ngModel: "="
             },
             compile: function(elem, attrs) {
-                if (null != attrs.ngModel && ("date" === attrs.type || "datetime-local" === attrs.type)) return function(scope, elem, attrs, ngModelCtrl) {
+                return null == attrs.ngModel || "date" !== attrs.type && "datetime-local" !== attrs.type ? void 0 : function(scope, elem, attrs, ngModelCtrl) {
                     return linker(scope, elem, attrs, ngModelCtrl, $compile, aaDateUtil, "datetime-local" === attrs.type);
                 };
             }
@@ -14967,17 +15577,17 @@ var saveAs = saveAs || function(e) {
     angular.module("angular-date-picker-polyfill").factory("aaMonthUtil", [ "aaDateUtil", function(aaDateUtil) {
         return {
             numberOfDaysInMonth: function(year, month) {
-                return [ 31, year % 4 == 0 && year % 100 != 0 || year % 400 == 0 ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ][month];
+                return [ 31, year % 4 === 0 && year % 100 !== 0 || year % 400 === 0 ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ][month];
             },
             generateMonthArray: function(year, month, selected) {
-                var arr, d, endDate, obj, offset, today, weekNum, _i;
+                var arr, d, dayIndex, endDate, obj, offset, today, weekNum, _i;
                 for (null == selected && (selected = null), d = new Date(year, month, 1), today = new Date(), 
                 endDate = new Date(year, month, this.numberOfDaysInMonth(year, month)), offset = d.getDay(), 
-                d.setDate(d.getDate() + -1 * offset), arr = [], weekNum = 0; d <= endDate; ) {
-                    for (arr.push([]), _i = 0; _i <= 6; ++_i) obj = {
+                d.setDate(d.getDate() + -1 * offset), arr = [], weekNum = 0; endDate >= d; ) {
+                    for (arr.push([]), dayIndex = _i = 0; 6 >= _i; dayIndex = ++_i) obj = {
                         date: angular.copy(d),
                         isToday: aaDateUtil.dateObjectsAreEqualToDay(d, today),
-                        isSelected: !(!selected || !aaDateUtil.dateObjectsAreEqualToDay(d, selected)),
+                        isSelected: selected && aaDateUtil.dateObjectsAreEqualToDay(d, selected) ? !0 : !1,
                         isOtherMonth: d.getMonth() !== month
                     }, arr[weekNum].push(obj), d.setDate(d.getDate() + 1);
                     weekNum += 1;
@@ -15001,7 +15611,7 @@ var saveAs = saveAs || function(e) {
                     amPm = "PM";
                     break;
 
-                  case h <= 12:
+                  case 12 >= h:
                     h -= 12, amPm = "PM";
                 }
                 return m = d.getMinutes(), [ h, m, amPm ];
@@ -15026,12 +15636,12 @@ var saveAs = saveAs || function(e) {
                     return setupSelectOptions(), resetToNull();
                 }, setupSelectOptions = function() {
                     var _i, _j, _results, _results1;
-                    return scope.useAmPm = null == attrs.useAmPm || (!0 === attrs.useAmPm || "true" === attrs.useAmPm), 
+                    return scope.useAmPm = null != attrs.useAmPm ? attrs.useAmPm === !0 || "true" === attrs.useAmPm : !0, 
                     scope.hourOptions = scope.useAmPm ? [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 ] : function() {
-                        for (_results = [], _i = 0; _i <= 23; _i++) _results.push(_i);
+                        for (_results = [], _i = 0; 23 >= _i; _i++) _results.push(_i);
                         return _results;
                     }.apply(this), scope.minuteOptions = function() {
-                        for (_results1 = [], _j = 0; _j <= 59; _j++) _results1.push(_j);
+                        for (_results1 = [], _j = 0; 59 >= _j; _j++) _results1.push(_j);
                         return _results1;
                     }.apply(this), scope.amPmOptions = [ "AM", "PM" ];
                 }, resetToNull = function() {
@@ -15045,10 +15655,10 @@ var saveAs = saveAs || function(e) {
                     scope.minute = _ref[1], scope.amPm = _ref[2], _ref) : resetToNull();
                 }, scope.setTimeFromFields = function() {
                     var d;
-                    if (null != scope.hour && null == scope.minute && (scope.minute = 0), null != scope.hour && scope.useAmPm && null == scope.amPm && (scope.amPm = "AM"), 
-                    !(null == scope.hour || null == scope.minute || scope.useAmPm && null == scope.amPm)) return d = null != ngModelCtrl.$viewValue && angular.isDate(ngModelCtrl.$viewValue) ? new Date(ngModelCtrl.$viewValue) : aaDateUtil.todayStart(), 
+                    return null != scope.hour && null == scope.minute && (scope.minute = 0), null != scope.hour && scope.useAmPm && null == scope.amPm && (scope.amPm = "AM"), 
+                    null == scope.hour || null == scope.minute || scope.useAmPm && null == scope.amPm ? void 0 : (d = null != ngModelCtrl.$viewValue && angular.isDate(ngModelCtrl.$viewValue) ? new Date(ngModelCtrl.$viewValue) : aaDateUtil.todayStart(), 
                     aaTimeUtil.applyTimeValuesToDateObject([ scope.hour, parseInt(scope.minute), scope.amPm ], d), 
-                    ngModelCtrl.$setViewValue(d);
+                    ngModelCtrl.$setViewValue(d));
                 }, init();
             },
             template: "<div class='aa-timepicker'>\n  <select\n    tabindex='-1'\n    class='aa-timepicker-hour'\n    ng-model='hour'\n    ng-options='hour as hour for hour in hourOptions'\n    ng-change='setTimeFromFields()'>\n  </select>\n  <select\n    tabindex='-1'\n    class='aa-timepicker-minute'\n    ng-model='minute'\n    ng-options=\"min as ((min < 10) ? ('0' + min) : ('' + min)) for min in minuteOptions\"\n    ng-change='setTimeFromFields()'>\n  </select>\n  <select\n    tabindex='-1'\n    class='aa-timepicker-ampm'\n    ng-show='useAmPm'\n    ng-model='amPm'\n    ng-options='v for v in amPmOptions'\n    ng-change='setTimeFromFields()'>\n  </select>\n</div>"
@@ -15056,7 +15666,7 @@ var saveAs = saveAs || function(e) {
     } ]);
 }.call(this), function($, window, document) {
     "use strict";
-    var BROWSER_IS_IE7, BROWSER_SCROLLBAR_WIDTH, DOMSCROLL, DOWN, DRAG, ENTER, MOUSEDOWN, MOUSEENTER, MOUSEMOVE, MOUSEUP, MOUSEWHEEL, NanoScroll, PANEDOWN, RESIZE, SCROLL, TOUCHMOVE, UP, WHEEL, cAF, defaults, getBrowserScrollbarWidth, hasTransform, isFFWithBuggyScrollbar, rAF, transform, _elementStyle, _prefixStyle, _vendor;
+    var BROWSER_IS_IE7, BROWSER_SCROLLBAR_WIDTH, DOMSCROLL, DOWN, DRAG, ENTER, KEYDOWN, KEYUP, MOUSEDOWN, MOUSEENTER, MOUSEMOVE, MOUSEUP, MOUSEWHEEL, NanoScroll, PANEDOWN, RESIZE, SCROLL, SCROLLBAR, TOUCHMOVE, UP, WHEEL, cAF, defaults, getBrowserScrollbarWidth, hasTransform, isFFWithBuggyScrollbar, rAF, transform, _elementStyle, _prefixStyle, _vendor;
     defaults = {
         paneClass: "nano-pane",
         sliderClass: "nano-slider",
@@ -15070,19 +15680,20 @@ var saveAs = saveAs || function(e) {
         sliderMaxHeight: null,
         documentContext: null,
         windowContext: null
-    }, SCROLL = "scroll", MOUSEDOWN = "mousedown", MOUSEENTER = "mouseenter", MOUSEMOVE = "mousemove", 
-    MOUSEWHEEL = "mousewheel", MOUSEUP = "mouseup", RESIZE = "resize", DRAG = "drag", 
-    ENTER = "enter", UP = "up", PANEDOWN = "panedown", DOMSCROLL = "DOMMouseScroll", 
-    DOWN = "down", WHEEL = "wheel", TOUCHMOVE = "touchmove", BROWSER_IS_IE7 = "Microsoft Internet Explorer" === window.navigator.appName && /msie 7./i.test(window.navigator.appVersion) && window.ActiveXObject, 
+    }, SCROLLBAR = "scrollbar", SCROLL = "scroll", MOUSEDOWN = "mousedown", MOUSEENTER = "mouseenter", 
+    MOUSEMOVE = "mousemove", MOUSEWHEEL = "mousewheel", MOUSEUP = "mouseup", RESIZE = "resize", 
+    DRAG = "drag", ENTER = "enter", UP = "up", PANEDOWN = "panedown", DOMSCROLL = "DOMMouseScroll", 
+    DOWN = "down", WHEEL = "wheel", KEYDOWN = "keydown", KEYUP = "keyup", TOUCHMOVE = "touchmove", 
+    BROWSER_IS_IE7 = "Microsoft Internet Explorer" === window.navigator.appName && /msie 7./i.test(window.navigator.appVersion) && window.ActiveXObject, 
     BROWSER_SCROLLBAR_WIDTH = null, rAF = window.requestAnimationFrame, cAF = window.cancelAnimationFrame, 
     _elementStyle = document.createElement("div").style, _vendor = function() {
-        var i, vendors, _i, _len;
-        for (vendors = [ "t", "webkitT", "MozT", "msT", "OT" ], i = _i = 0, _len = vendors.length; _i < _len; i = ++_i) if (vendors[i], 
-        vendors[i] + "ransform" in _elementStyle) return vendors[i].substr(0, vendors[i].length - 1);
+        var i, transform, vendor, vendors, _i, _len;
+        for (vendors = [ "t", "webkitT", "MozT", "msT", "OT" ], i = _i = 0, _len = vendors.length; _len > _i; i = ++_i) if (vendor = vendors[i], 
+        transform = vendors[i] + "ransform", transform in _elementStyle) return vendors[i].substr(0, vendors[i].length - 1);
         return !1;
     }(), _prefixStyle = function(style) {
-        return !1 !== _vendor && ("" === _vendor ? style : _vendor + style.charAt(0).toUpperCase() + style.substr(1));
-    }, transform = _prefixStyle("transform"), hasTransform = !1 !== transform, getBrowserScrollbarWidth = function() {
+        return _vendor === !1 ? !1 : "" === _vendor ? style : _vendor + style.charAt(0).toUpperCase() + style.substr(1);
+    }, transform = _prefixStyle("transform"), hasTransform = transform !== !1, getBrowserScrollbarWidth = function() {
         var outer, outerStyle, scrollbarWidth;
         return outer = document.createElement("div"), outerStyle = outer.style, outerStyle.position = "absolute", 
         outerStyle.width = "100px", outerStyle.height = "100px", outerStyle.overflow = SCROLL, 
@@ -15090,8 +15701,8 @@ var saveAs = saveAs || function(e) {
         document.body.removeChild(outer), scrollbarWidth;
     }, isFFWithBuggyScrollbar = function() {
         var isOSXFF, ua, version;
-        return ua = window.navigator.userAgent, !!(isOSXFF = /(?=.+Mac OS X)(?=.+Firefox)/.test(ua)) && (version = /Firefox\/\d{2}\./.exec(ua), 
-        version && (version = version[0].replace(/\D+/g, "")), isOSXFF && +version > 23);
+        return ua = window.navigator.userAgent, (isOSXFF = /(?=.+Mac OS X)(?=.+Firefox)/.test(ua)) ? (version = /Firefox\/\d{2}\./.exec(ua), 
+        version && (version = version[0].replace(/\D+/g, "")), isOSXFF && +version > 23) : !1;
     }, NanoScroll = function() {
         function NanoScroll(el, options) {
             this.el = el, this.options = options, BROWSER_SCROLLBAR_WIDTH || (BROWSER_SCROLLBAR_WIDTH = getBrowserScrollbarWidth()), 
@@ -15189,16 +15800,16 @@ var saveAs = saveAs || function(e) {
         }, NanoScroll.prototype.addEvents = function() {
             var events;
             this.removeEvents(), events = this.events, this.options.disableResize || this.win.bind(RESIZE, events[RESIZE]), 
-            this.iOSNativeScrolling || (this.slider.bind(MOUSEDOWN, events[DOWN]), this.pane.bind(MOUSEDOWN, events[PANEDOWN]).bind(MOUSEWHEEL + " " + DOMSCROLL, events[WHEEL])), 
-            this.$content.bind(SCROLL + " " + MOUSEWHEEL + " " + DOMSCROLL + " " + TOUCHMOVE, events[SCROLL]);
+            this.iOSNativeScrolling || (this.slider.bind(MOUSEDOWN, events[DOWN]), this.pane.bind(MOUSEDOWN, events[PANEDOWN]).bind("" + MOUSEWHEEL + " " + DOMSCROLL, events[WHEEL])), 
+            this.$content.bind("" + SCROLL + " " + MOUSEWHEEL + " " + DOMSCROLL + " " + TOUCHMOVE, events[SCROLL]);
         }, NanoScroll.prototype.removeEvents = function() {
             var events;
             events = this.events, this.win.unbind(RESIZE, events[RESIZE]), this.iOSNativeScrolling || (this.slider.unbind(), 
-            this.pane.unbind()), this.$content.unbind(SCROLL + " " + MOUSEWHEEL + " " + DOMSCROLL + " " + TOUCHMOVE, events[SCROLL]);
+            this.pane.unbind()), this.$content.unbind("" + SCROLL + " " + MOUSEWHEEL + " " + DOMSCROLL + " " + TOUCHMOVE, events[SCROLL]);
         }, NanoScroll.prototype.generate = function() {
-            var cssRule, currentPadding, options, pane, paneClass, sliderClass;
+            var contentClass, cssRule, currentPadding, options, pane, paneClass, sliderClass;
             return options = this.options, paneClass = options.paneClass, sliderClass = options.sliderClass, 
-            options.contentClass, (pane = this.$el.children("." + paneClass)).length || pane.children("." + sliderClass).length || this.$el.append('<div class="' + paneClass + '"><div class="' + sliderClass + '" /></div>'), 
+            contentClass = options.contentClass, (pane = this.$el.children("." + paneClass)).length || pane.children("." + sliderClass).length || this.$el.append('<div class="' + paneClass + '"><div class="' + sliderClass + '" /></div>'), 
             this.pane = this.$el.children("." + paneClass), this.slider = this.pane.find("." + sliderClass), 
             0 === BROWSER_SCROLLBAR_WIDTH && isFFWithBuggyScrollbar() ? (currentPadding = window.getComputedStyle(this.content, null).getPropertyValue("padding-right").replace(/[^0-9.]+/g, ""), 
             cssRule = {
@@ -15230,23 +15841,23 @@ var saveAs = saveAs || function(e) {
             this.pane.css({
                 opacity: this.options.alwaysVisible ? 1 : "",
                 visibility: this.options.alwaysVisible ? "visible" : ""
-            }), contentPosition = this.$content.css("position"), "static" !== contentPosition && "relative" !== contentPosition || (right = parseInt(this.$content.css("right"), 10)) && this.$content.css({
+            }), contentPosition = this.$content.css("position"), ("static" === contentPosition || "relative" === contentPosition) && (right = parseInt(this.$content.css("right"), 10), 
+            right && this.$content.css({
                 right: "",
                 marginRight: right
-            }), this);
+            })), this);
         }, NanoScroll.prototype.scroll = function() {
-            if (this.isActive) return this.sliderY = Math.max(0, this.sliderY), this.sliderY = Math.min(this.maxSliderTop, this.sliderY), 
+            return this.isActive ? (this.sliderY = Math.max(0, this.sliderY), this.sliderY = Math.min(this.maxSliderTop, this.sliderY), 
             this.$content.scrollTop(this.maxScrollTop * this.sliderY / this.maxSliderTop), this.iOSNativeScrolling || (this.updateScrollValues(), 
-            this.setOnScrollStyles()), this;
+            this.setOnScrollStyles()), this) : void 0;
         }, NanoScroll.prototype.scrollBottom = function(offsetY) {
-            if (this.isActive) return this.$content.scrollTop(this.contentHeight - this.$content.height() - offsetY).trigger(MOUSEWHEEL), 
-            this.stop().restore(), this;
+            return this.isActive ? (this.$content.scrollTop(this.contentHeight - this.$content.height() - offsetY).trigger(MOUSEWHEEL), 
+            this.stop().restore(), this) : void 0;
         }, NanoScroll.prototype.scrollTop = function(offsetY) {
-            if (this.isActive) return this.$content.scrollTop(+offsetY).trigger(MOUSEWHEEL), 
-            this.stop().restore(), this;
+            return this.isActive ? (this.$content.scrollTop(+offsetY).trigger(MOUSEWHEEL), this.stop().restore(), 
+            this) : void 0;
         }, NanoScroll.prototype.scrollTo = function(node) {
-            if (this.isActive) return this.scrollTop(this.$el.find(node).get(0).offsetTop), 
-            this;
+            return this.isActive ? (this.scrollTop(this.$el.find(node).get(0).offsetTop), this) : void 0;
         }, NanoScroll.prototype.stop = function() {
             return cAF && this.scrollRAF && (cAF(this.scrollRAF), this.scrollRAF = null), this.stopped = !0, 
             this.removeEvents(), this.iOSNativeScrolling || this.pane.hide(), this;
@@ -15257,12 +15868,12 @@ var saveAs = saveAs || function(e) {
                 right: ""
             })), this;
         }, NanoScroll.prototype.flash = function() {
-            if (!this.iOSNativeScrolling && this.isActive) return this.reset(), this.pane.addClass("flashed"), 
+            return !this.iOSNativeScrolling && this.isActive ? (this.reset(), this.pane.addClass("flashed"), 
             setTimeout(function(_this) {
                 return function() {
                     _this.pane.removeClass("flashed");
                 };
-            }(this), this.options.flashDelay), this;
+            }(this), this.options.flashDelay), this) : void 0;
         }, NanoScroll;
     }(), $.fn.nanoScroller = function(settings) {
         return this.each(function() {
@@ -15291,15 +15902,16 @@ var saveAs = saveAs || function(e) {
                 clone: !1,
                 includeMargin: !1
             }, configs = $.extend(defaults, options), $target = this.eq(0);
-            if (!0 === configs.clone) fix = function() {
-                $target = $target.clone().attr("style", "position: absolute !important; top: -1000 !important; ").appendTo("body");
+            if (configs.clone === !0) fix = function() {
+                var style = "position: absolute !important; top: -1000 !important; ";
+                $target = $target.clone().attr("style", style).appendTo("body");
             }, restore = function() {
                 $target.remove();
             }; else {
                 var $hidden, tmp = [], style = "";
                 fix = function() {
                     $hidden = $target.parents().addBack().filter(":hidden"), style += "visibility: hidden !important; display: block !important; ", 
-                    !0 === configs.absolute && (style += "position: absolute !important; "), $hidden.each(function() {
+                    configs.absolute === !0 && (style += "position: absolute !important; "), $hidden.each(function() {
                         var $this = $(this), thisStyle = $this.attr("style");
                         tmp.push(thisStyle), $this.attr("style", thisStyle ? thisStyle + ";" + style : style);
                     });
@@ -15315,7 +15927,7 @@ var saveAs = saveAs || function(e) {
             return restore(), actual;
         }
     });
-}(jQuery), function() {
+}(jQuery), !function() {
     "use strict";
     function a(a, b, c) {
         "addEventListener" in window ? a.addEventListener(b, c, !1) : "attachEvent" in window && a.attachEvent("on" + b, c);
@@ -15335,7 +15947,7 @@ var saveAs = saveAs || function(e) {
     }
     function f() {
         function a(a) {
-            return "true" === a;
+            return "true" === a ? !0 : !1;
         }
         var b = X.substr(_).split(":");
         ab = b[0], M = void 0 !== b[1] ? Number(b[1]) : M, P = void 0 !== b[2] ? a(b[2]) : P, 
@@ -15404,7 +16016,7 @@ var saveAs = saveAs || function(e) {
                 c("Set targetOrigin: " + a), db = a;
             },
             size: function(a, b) {
-                var c = (a || "") + (b ? "," + b : "");
+                var c = "" + (a ? a : "") + (b ? "," + b : "");
                 E(), D("size", "parentIFrame.size(" + c + ")", a, b);
             }
         });
@@ -15450,7 +16062,8 @@ var saveAs = saveAs || function(e) {
     function t() {
         function a(a) {
             function b(a) {
-                if (/^\d+(px)?$/i.test(a)) return parseInt(a, K);
+                var b = /^\d+(px)?$/i;
+                if (b.test(a)) return parseInt(a, K);
                 var d = c.style.left, e = c.runtimeStyle.left;
                 return c.runtimeStyle.left = c.currentStyle.left, c.style.left = a || 0, a = c.style.pixelLeft, 
                 c.style.left = d, c.runtimeStyle.left = e, a;
@@ -15506,7 +16119,8 @@ var saveAs = saveAs || function(e) {
         }
         function i() {
             function a(a, b) {
-                return !(Math.abs(a - b) <= fb);
+                var c = Math.abs(a - b) <= fb;
+                return !c;
             }
             return n = void 0 !== d ? d : jb[V](), o = void 0 !== e ? e : C(), a(S, n) || P && a(ib, o);
         }
@@ -15573,8 +16187,8 @@ var saveAs = saveAs || function(e) {
         }
         function j() {
             return a.data.split(":")[2] in {
-                true: 1,
-                false: 1
+                "true": 1,
+                "false": 1
             };
         }
         b() && (T && j() ? f() : "reset" === h() ? g() : a.data === X || i() || d("Unexpected message (" + a.data + ")"));
@@ -15639,8 +16253,9 @@ var t = void 0, u = !1, sjcl = {
     b = a.length;
     var h = 1;
     for (4 !== b && 6 !== b && 8 !== b && q(new sjcl.exception.invalid("invalid aes key size")), 
-    this.a = [ d = a.slice(0), e = [] ], a = b; a < 4 * b + 28; a++) c = d[a - 1], (0 == a % b || 8 === b && 4 == a % b) && (c = f[c >>> 24] << 24 ^ f[c >> 16 & 255] << 16 ^ f[c >> 8 & 255] << 8 ^ f[255 & c], 
-    0 == a % b && (c = c << 8 ^ c >>> 24 ^ h << 24, h = h << 1 ^ 283 * (h >> 7))), d[a] = d[a - b] ^ c;
+    this.a = [ d = a.slice(0), e = [] ], a = b; 4 * b + 28 > a; a++) c = d[a - 1], (0 === a % b || 8 === b && 4 === a % b) && (c = f[c >>> 24] << 24 ^ f[c >> 16 & 255] << 16 ^ f[c >> 8 & 255] << 8 ^ f[255 & c], 
+    0 === a % b && (c = c << 8 ^ c >>> 24 ^ h << 24, h = h << 1 ^ 283 * (h >> 7))), 
+    d[a] = d[a - b] ^ c;
     for (b = 0; a; b++, a--) c = d[3 & b ? a : a - 4], e[b] = 4 >= a || 4 > b ? c : g[0][f[c >>> 24]] ^ g[1][f[c >> 16 & 255]] ^ g[2][f[c >> 8 & 255]] ^ g[3][f[255 & c]];
 }, sjcl.cipher.aes.prototype = {
     encrypt: function(a) {
@@ -15680,7 +16295,7 @@ var t = void 0, u = !1, sjcl = {
         if (32 * a.length < b) return a;
         a = a.slice(0, Math.ceil(b / 32));
         var c = a.length;
-        return b &= 31, 0 < c && b && (a[c - 1] = sjcl.bitArray.partial(b, a[c - 1] & 2147483648 >> b - 1, 1)), 
+        return b &= 31, c > 0 && b && (a[c - 1] = sjcl.bitArray.partial(b, a[c - 1] & 2147483648 >> b - 1, 1)), 
         a;
     },
     partial: function(a, b, c) {
@@ -15697,10 +16312,10 @@ var t = void 0, u = !1, sjcl = {
     },
     P: function(a, b, c, d) {
         var e;
-        for (e = 0, d === t && (d = []); 32 <= b; b -= 32) d.push(c), c = 0;
+        for (e = 0, d === t && (d = []); b >= 32; b -= 32) d.push(c), c = 0;
         if (0 === b) return d.concat(a);
         for (e = 0; e < a.length; e++) d.push(c | a[e] >>> b), c = a[e] << 32 - b;
-        return e = a.length ? a[a.length - 1] : 0, a = sjcl.bitArray.getPartial(e), d.push(sjcl.bitArray.partial(b + a & 31, 32 < b + a ? c : d.pop(), 1)), 
+        return e = a.length ? a[a.length - 1] : 0, a = sjcl.bitArray.getPartial(e), d.push(sjcl.bitArray.partial(b + a & 31, b + a > 32 ? c : d.pop(), 1)), 
         d;
     },
     k: function(a, b) {
@@ -15709,21 +16324,21 @@ var t = void 0, u = !1, sjcl = {
 }, sjcl.codec.utf8String = {
     fromBits: function(a) {
         var d, e, b = "", c = sjcl.bitArray.bitLength(a);
-        for (d = 0; d < c / 8; d++) 0 == (3 & d) && (e = a[d / 4]), b += String.fromCharCode(e >>> 24), 
+        for (d = 0; c / 8 > d; d++) 0 === (3 & d) && (e = a[d / 4]), b += String.fromCharCode(e >>> 24), 
         e <<= 8;
         return decodeURIComponent(escape(b));
     },
     toBits: function(a) {
         a = unescape(encodeURIComponent(a));
         var c, b = [], d = 0;
-        for (c = 0; c < a.length; c++) d = d << 8 | a.charCodeAt(c), 3 == (3 & c) && (b.push(d), 
+        for (c = 0; c < a.length; c++) d = d << 8 | a.charCodeAt(c), 3 === (3 & c) && (b.push(d), 
         d = 0);
         return 3 & c && b.push(sjcl.bitArray.partial(8 * (3 & c), d)), b;
     }
 }, sjcl.codec.hex = {
     fromBits: function(a) {
         var c, b = "";
-        for (c = 0; c < a.length; c++) b += (0xf00000000000 + (0 | a[c])).toString(16).substr(4);
+        for (c = 0; c < a.length; c++) b += ((0 | a[c]) + 0xf00000000000).toString(16).substr(4);
         return b.substr(0, sjcl.bitArray.bitLength(a) / 4);
     },
     toBits: function(a) {
@@ -15744,7 +16359,7 @@ var t = void 0, u = !1, sjcl = {
         a = a.replace(/\s|=/g, "");
         var d, h, c = [], e = 0, f = sjcl.codec.base64.J, g = 0;
         for (b && (f = f.substr(0, 62) + "-_"), d = 0; d < a.length; d++) h = f.indexOf(a.charAt(d)), 
-        0 > h && q(new sjcl.exception.invalid("this isn't base64!")), 26 < e ? (e -= 26, 
+        0 > h && q(new sjcl.exception.invalid("this isn't base64!")), e > 26 ? (e -= 26, 
         c.push(g ^ h >>> e), g = h << 32 - e) : (e += 6, g ^= h << 32 - e);
         return 56 & e && c.push(sjcl.bitArray.partial(56 & e, g, 1)), c;
     }
@@ -15767,7 +16382,7 @@ var t = void 0, u = !1, sjcl = {
     update: function(a) {
         "string" == typeof a && (a = sjcl.codec.utf8String.toBits(a));
         var b, c = this.n = sjcl.bitArray.concat(this.n, a);
-        for (b = this.g, a = this.g = b + sjcl.bitArray.bitLength(a), b = 512 + b & -512; b <= a; b += 512) z(this, c.splice(0, 16));
+        for (b = this.g, a = this.g = b + sjcl.bitArray.bitLength(a), b = 512 + b & -512; a >= b; b += 512) z(this, c.splice(0, 16));
         return this;
     },
     finalize: function() {
@@ -15784,7 +16399,7 @@ var t = void 0, u = !1, sjcl = {
         }
         var d, b = 0, c = 2;
         a: for (;64 > b; c++) {
-            for (d = 2; d * d <= c; d++) if (0 == c % d) continue a;
+            for (d = 2; c >= d * d; d++) if (0 === c % d) continue a;
             8 > b && (this.N[b] = a(Math.pow(c, .5))), this.a[b] = a(Math.pow(c, 1 / 3)), b++;
         }
     }
@@ -15794,7 +16409,7 @@ var t = void 0, u = !1, sjcl = {
         var f, g = b.slice(0), h = sjcl.bitArray, l = h.bitLength(c) / 8, k = h.bitLength(g) / 8;
         for (e = e || 64, d = d || [], 7 > l && q(new sjcl.exception.invalid("ccm: iv must be at least 7 bytes")), 
         f = 2; 4 > f && k >>> 8 * f; f++) ;
-        return f < 15 - l && (f = 15 - l), c = h.clamp(c, 8 * (15 - f)), b = sjcl.mode.ccm.L(a, b, c, d, e, f), 
+        return 15 - l > f && (f = 15 - l), c = h.clamp(c, 8 * (15 - f)), b = sjcl.mode.ccm.L(a, b, c, d, e, f), 
         g = sjcl.mode.ccm.o(a, g, c, b, e, f), h.concat(g.data, g.tag);
     },
     decrypt: function(a, b, c, d, e) {
@@ -15802,13 +16417,13 @@ var t = void 0, u = !1, sjcl = {
         var f = sjcl.bitArray, g = f.bitLength(c) / 8, h = f.bitLength(b), l = f.clamp(b, h - e), k = f.bitSlice(b, h - e), h = (h - e) / 8;
         for (7 > g && q(new sjcl.exception.invalid("ccm: iv must be at least 7 bytes")), 
         b = 2; 4 > b && h >>> 8 * b; b++) ;
-        return b < 15 - g && (b = 15 - g), c = f.clamp(c, 8 * (15 - b)), l = sjcl.mode.ccm.o(a, l, c, k, e, b), 
+        return 15 - g > b && (b = 15 - g), c = f.clamp(c, 8 * (15 - b)), l = sjcl.mode.ccm.o(a, l, c, k, e, b), 
         a = sjcl.mode.ccm.L(a, l.data, c, d, e, b), f.equal(l.tag, a) || q(new sjcl.exception.corrupt("ccm: tag doesn't match")), 
         l.data;
     },
     L: function(a, b, c, d, e, f) {
         var g = [], h = sjcl.bitArray, l = h.k;
-        if (e /= 8, (e % 2 || 4 > e || 16 < e) && q(new sjcl.exception.invalid("ccm: invalid tag length")), 
+        if (e /= 8, (e % 2 || 4 > e || e > 16) && q(new sjcl.exception.invalid("ccm: invalid tag length")), 
         (4294967295 < d.length || 4294967295 < b.length) && q(new sjcl.exception.bug("ccm: can't deal with 4GiB or more data")), 
         f = [ h.partial(8, (d.length ? 64 : 0) | e - 2 << 2 | f - 1) ], f = h.concat(f, c), 
         f[3] |= h.bitLength(b) / 8, f = a.encrypt(f), d.length) for (c = h.bitLength(d) / 8, 
@@ -15826,7 +16441,7 @@ var t = void 0, u = !1, sjcl = {
             tag: d,
             data: []
         };
-        for (g = 0; g < l; g += 4) c[3]++, e = a.encrypt(c), b[g] ^= e[0], b[g + 1] ^= e[1], 
+        for (g = 0; l > g; g += 4) c[3]++, e = a.encrypt(c), b[g] ^= e[0], b[g + 1] ^= e[1], 
         b[g + 2] ^= e[2], b[g + 3] ^= e[3];
         return {
             tag: d,
@@ -15851,7 +16466,7 @@ var t = void 0, u = !1, sjcl = {
         128 !== sjcl.bitArray.bitLength(c) && q(new sjcl.exception.invalid("ocb iv must be 128 bits")), 
         e = e || 64;
         var m, p, g = sjcl.mode.ocb2.H, h = sjcl.bitArray, l = h.k, k = [ 0, 0, 0, 0 ], n = g(a.encrypt(c)), s = sjcl.bitArray.bitLength(b) - e, r = [];
-        for (d = d || [], c = 0; c + 4 < s / 32; c += 4) m = l(n, a.decrypt(l(n, b.slice(c, c + 4)))), 
+        for (d = d || [], c = 0; s / 32 > c + 4; c += 4) m = l(n, a.decrypt(l(n, b.slice(c, c + 4)))), 
         k = l(k, m), r = r.concat(m), n = g(n);
         return p = s - 32 * c, m = a.encrypt(l(n, [ 0, 0, 0, p ])), m = l(m, h.clamp(b.slice(c), p).concat([ 0, 0, 0 ])), 
         k = l(k, m), k = a.encrypt(l(k, l(n, g(n)))), d.length && (k = l(k, f ? d : sjcl.mode.ocb2.pmac(a, d))), 
@@ -15876,22 +16491,22 @@ var t = void 0, u = !1, sjcl = {
     },
     decrypt: function(a, b, c, d, e) {
         var f = b.slice(0), g = sjcl.bitArray, h = g.bitLength(f);
-        return e = e || 128, d = d || [], e <= h ? (b = g.bitSlice(f, h - e), f = g.bitSlice(f, 0, h - e)) : (b = f, 
+        return e = e || 128, d = d || [], h >= e ? (b = g.bitSlice(f, h - e), f = g.bitSlice(f, 0, h - e)) : (b = f, 
         f = []), a = sjcl.mode.gcm.o(u, a, f, d, c, e), g.equal(a.tag, b) || q(new sjcl.exception.corrupt("gcm: tag doesn't match")), 
         a.data;
     },
     W: function(a, b) {
         var c, d, e, f, g, h = sjcl.bitArray.k;
         for (e = [ 0, 0, 0, 0 ], f = b.slice(0), c = 0; 128 > c; c++) {
-            for ((d = 0 != (a[Math.floor(c / 32)] & 1 << 31 - c % 32)) && (e = h(e, f)), g = 0 != (1 & f[3]), 
-            d = 3; 0 < d; d--) f[d] = f[d] >>> 1 | (1 & f[d - 1]) << 31;
+            for ((d = 0 !== (a[Math.floor(c / 32)] & 1 << 31 - c % 32)) && (e = h(e, f)), g = 0 !== (1 & f[3]), 
+            d = 3; d > 0; d--) f[d] = f[d] >>> 1 | (1 & f[d - 1]) << 31;
             f[0] >>>= 1, g && (f[0] ^= -520093696);
         }
         return e;
     },
     f: function(a, b, c) {
         var d, e = c.length;
-        for (b = b.slice(0), d = 0; d < e; d += 4) b[0] ^= 4294967295 & c[d], b[1] ^= 4294967295 & c[d + 1], 
+        for (b = b.slice(0), d = 0; e > d; d += 4) b[0] ^= 4294967295 & c[d], b[1] ^= 4294967295 & c[d + 1], 
         b[2] ^= 4294967295 & c[d + 2], b[3] ^= 4294967295 & c[d + 3], b = sjcl.mode.gcm.W(b, a);
         return b;
     },
@@ -15901,7 +16516,7 @@ var t = void 0, u = !1, sjcl = {
         96 === h ? (e = e.slice(0), e = r.concat(e, [ 1 ])) : (e = sjcl.mode.gcm.f(g, [ 0, 0, 0, 0 ], e), 
         e = sjcl.mode.gcm.f(g, e, [ 0, 0, Math.floor(h / 4294967296), 4294967295 & h ])), 
         h = sjcl.mode.gcm.f(g, [ 0, 0, 0, 0 ], d), n = e.slice(0), d = h.slice(0), a || (d = sjcl.mode.gcm.f(g, h, c)), 
-        k = 0; k < m; k += 4) n[3]++, l = b.encrypt(n), c[k] ^= l[0], c[k + 1] ^= l[1], 
+        k = 0; m > k; k += 4) n[3]++, l = b.encrypt(n), c[k] ^= l[0], c[k + 1] ^= l[1], 
         c[k + 2] ^= l[2], c[k + 3] ^= l[3];
         return c = r.clamp(c, p), a && (d = sjcl.mode.gcm.f(g, h, c)), a = [ Math.floor(s / 4294967296), 4294967295 & s, Math.floor(p / 4294967296), 4294967295 & p ], 
         d = sjcl.mode.gcm.f(g, d, a), l = b.encrypt(e), d[0] ^= l[0], d[1] ^= l[1], d[2] ^= l[2], 
@@ -15913,7 +16528,7 @@ var t = void 0, u = !1, sjcl = {
 }, sjcl.misc.hmac = function(a, b) {
     this.M = b = b || sjcl.hash.sha256;
     var d, c = [ [], [] ], e = b.prototype.blockSize / 32;
-    for (this.m = [ new b(), new b() ], a.length > e && (a = b.hash(a)), d = 0; d < e; d++) c[0][d] = 909522486 ^ a[d], 
+    for (this.m = [ new b(), new b() ], a.length > e && (a = b.hash(a)), d = 0; e > d; d++) c[0][d] = 909522486 ^ a[d], 
     c[1][d] = 1549556828 ^ a[d];
     this.m[0].update(c[0]), this.m[1].update(c[1]), this.G = new b(this.m[0]);
 }, sjcl.misc.hmac.prototype.encrypt = sjcl.misc.hmac.prototype.mac = function(a) {
@@ -15932,7 +16547,7 @@ var t = void 0, u = !1, sjcl = {
     e = e || sjcl.misc.hmac, a = new e(a);
     var f, g, h, l, k = [], n = sjcl.bitArray;
     for (l = 1; 32 * k.length < (d || 1); l++) {
-        for (e = f = a.encrypt(n.concat(b, [ l ])), g = 1; g < c; g++) for (f = a.encrypt(f), 
+        for (e = f = a.encrypt(n.concat(b, [ l ])), g = 1; c > g; g++) for (f = a.encrypt(f), 
         h = 0; h < f.length; h++) e[h] ^= f[h];
         k = k.concat(e);
     }
@@ -15961,7 +16576,7 @@ var t = void 0, u = !1, sjcl = {
             this.A = new sjcl.cipher.aes(this.a), d = 0; 4 > d && (this.e[d] = this.e[d] + 1 | 0, 
             !this.e[d]); d++) ;
         }
-        for (d = 0; d < a; d += 4) 0 == (d + 1) % this.S && A(this), e = B(this), c.push(e[0], e[1], e[2], e[3]);
+        for (d = 0; a > d; d += 4) 0 === (d + 1) % this.S && A(this), e = B(this), c.push(e[0], e[1], e[2], e[3]);
         return A(this), c.slice(0, a);
     },
     setDefaultParanoia: function(a) {
@@ -15977,12 +16592,12 @@ var t = void 0, u = !1, sjcl = {
             break;
 
           case "object":
-            if ("[object Uint32Array]" === (c = Object.prototype.toString.call(a))) {
+            if (c = Object.prototype.toString.call(a), "[object Uint32Array]" === c) {
                 for (e = [], c = 0; c < a.length; c++) e.push(a[c]);
                 a = e;
             } else for ("[object Array]" !== c && (l = 1), c = 0; c < a.length && !l; c++) "number" != typeof a[c] && (l = 1);
             if (!l) {
-                if (b === t) for (c = b = 0; c < a.length; c++) for (e = a[c]; 0 < e; ) b++, e >>>= 1;
+                if (b === t) for (c = b = 0; c < a.length; c++) for (e = a[c]; e > 0; ) b++, e >>>= 1;
                 this.b[g].update([ d, this.C++, 2, b, f, a.length ].concat(a));
             }
             break;
@@ -16003,7 +16618,7 @@ var t = void 0, u = !1, sjcl = {
         return a = this.I[a !== t ? a : this.B], this.i && this.i >= a ? this.h[0] > this.R && new Date().valueOf() > this.O ? this.w | this.u : this.u : this.c >= a ? this.w | this.l : this.l;
     },
     getProgress: function(a) {
-        return a = this.I[a || this.B], this.i >= a ? 1 : this.c > a ? 1 : this.c / a;
+        return a = this.I[a ? a : this.B], this.i >= a ? 1 : this.c > a ? 1 : this.c / a;
     },
     startCollectors: function() {
         this.p || (window.addEventListener ? (window.addEventListener("load", this.r, u), 
@@ -16135,5 +16750,7 @@ sjcl.misc.cachedPbkdf2 = function(a, b) {
     };
 }, Random = {}, Random.getRandomInteger = function(max) {
     var random, bit_length = max.bitLength();
-    return random = sjcl.random.randomWords(bit_length / 32, 0), new BigInt(sjcl.codec.hex.fromBits(random), 16).mod(max);
+    random = sjcl.random.randomWords(bit_length / 32, 0);
+    var rand_bi = new BigInt(sjcl.codec.hex.fromBits(random), 16);
+    return rand_bi.mod(max);
 };

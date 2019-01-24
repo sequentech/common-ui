@@ -2,13 +2,16 @@
   <div
     class="form-group"
     ng-class="{'has-error': fieldForm.input.$dirty && fieldForm.input.$invalid}">
-    <label for="input" class="control-label col-sm-4">
-      <span>{{field.name}}</span>
+    <label for="input{{index}}" class="control-label col-sm-4">
+      <span ng-if="field.name == 'username'" ng-i18next="avRegistration.usernameLabel"></span>
+      <span ng-if="field.name != 'username'">{{field.name}}</span>
     </label>
     <div class="col-sm-8">
       <input
         type="text"
         name="input"
+        id="input{{index}}"
+        aria-label="input{{index}}-textarea"
         class="form-control"
         minlength="{{field.min}}"
         maxlength="{{field.max}}"

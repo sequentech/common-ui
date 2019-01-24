@@ -22,4 +22,4 @@ angular.module('avRegistration')
       scope: true,
       templateUrl: 'avRegistration/fields/password-field-directive/password-field-directive.html'
     };
-  });
+});

@@ -72,6 +72,7 @@
     "loadingRegistration": "Cargando",
     "successRegistration": "Exitoso",
     "errorRegistration": "Erro",
+    "otpHelp": "Recibirás un SMS con el código de autenticación en el próximo paso",
 
     "invalidCredentials": "La autenticación falló, posiblemente por alguno de estos motivos:\n- Las credenciales son inválidas\n- El usuario está inactivo\n- El usuario ha excedido el máximo número de revotos permitidos para esta votación\n- Existe un problema técnico en el servidor\nSi el problema persistiera, por favor contacto con soporte via __support__",
     "invalidDataRegEx": "Datos inválidos",
@@ -89,17 +90,17 @@
     
     "documentation": { 
       "title": "Documentación",
-      "first_line": "Puedes encontrar más información sobre la votación en los siguientes enlaces:",
+      "first_line": "Podes atopar máis información sobre a votación nas seguintes ligazóns:",
       "faq": "Preguntas Frecuentes",
       "overview": "Esquema General",
       "authorities": "Lista de Autoridades",
       "technical": "Descripción técnica",
-      "security_contact": "Contacto de seguridad"
+      "security_contact": "Contacto de seguridade"
     }
   },
   
   "avCommon": {
-    "poweredBy": "Funciona amb <strong><a href=\"__url__\" target=\"_blank\">__name__</a></strong>",
+    "poweredBy": "Funciona con <strong><a href=\"__url__\" target=\"_blank\">__name__</a></strong>",
     "foot": {
         "contact": "Contacto",
         "contactsupport": "Contacto de soporte",
