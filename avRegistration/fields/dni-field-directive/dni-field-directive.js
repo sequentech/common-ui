@@ -41,12 +41,12 @@ angular.module('avRegistration')
         var numbers = "1234567890";
         var last_char = "";
         var dni4 = "";
-        for (var i = 0; i < dni3.lenth; i++) {
-          var char = dni3[i];
-          if ((last_char==="" || '1234567890'.indexOf(last_char) === -1) && c === '0') {
+        for (var j = 0; j < dni3.lenth; j++) {
+          var char2 = dni3[j];
+          if ((last_char==="" || '1234567890'.indexOf(last_char) === -1) && char2 === '0') {
           }
-          dni4 += char;
-          last_char = char;
+          dni4 += char2;
+          last_char = char2;
         }
         return dni4;
       }
