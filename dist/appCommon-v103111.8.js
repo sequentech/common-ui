@@ -1,21 +1,28 @@
 angular.module("avRegistration", [ "ui.bootstrap", "ui.utils", "ui.router" ]), angular.module("avRegistration").config(function() {}), 
 angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "ConfigService", "$interval", "$location", function($http, $cookies, ConfigService, $interval, $location) {
-    var backendUrl = ConfigService.authAPI, authId = ConfigService.freeAuthId, authmethod = {};
-    return authmethod.captcha_code = null, authmethod.captcha_image_url = "", authmethod.captcha_status = "", 
-    authmethod.admin = !1, authmethod.getAuthevent = function() {
-        var adminId = ConfigService.freeAuthId + "", href = $location.path(), authevent = "", adminMatch = href.match(/^\/admin\//), boothMatch = href.match(/^\/booth\/([0-9]+)\//), electionsMatch = href.match(/^\/(elections|election)\/([0-9]+)\//);
-        return _.isArray(adminMatch) ? authevent = adminId : _.isArray(boothMatch) && 2 === boothMatch.length ? authevent = boothMatch[1] : _.isArray(electionsMatch) && 3 === electionsMatch.length && (authevent = electionsMatch[2]), 
-        authevent;
-    }, authmethod.isAdmin = function() {
-        return authmethod.isLoggedIn() && authmethod.admin;
-    }, authmethod.isLoggedIn = function() {
-        var auth = $http.defaults.headers.common.Authorization;
-        return auth && auth.length > 0;
-    }, authmethod.signup = function(data, authevent) {
-        var eid = authevent || authId;
-        return $http.post(backendUrl + "auth-event/" + eid + "/register/", data);
-    }, authmethod.getUserInfoExtra = function() {
-        if (!authmethod.isLoggedIn()) {
+    var backendUrl = ConfigService.authAPI, authId = ConfigService.freeAuthId, authmethod = {
+        captcha_code: null,
+        captcha_image_url: "",
+        captcha_status: "",
+        admin: !1,
+        getAuthevent: function() {
+            var adminId = ConfigService.freeAuthId + "", href = $location.path(), authevent = "", adminMatch = href.match(/^\/admin\//), boothMatch = href.match(/^\/booth\/([0-9]+)\//), electionsMatch = href.match(/^\/(elections|election)\/([0-9]+)\//);
+            return _.isArray(adminMatch) ? authevent = adminId : _.isArray(boothMatch) && 2 === boothMatch.length ? authevent = boothMatch[1] : _.isArray(electionsMatch) && 3 === electionsMatch.length && (authevent = electionsMatch[2]), 
+            authevent;
+        },
+        isAdmin: function() {
+            return authmethod.isLoggedIn() && authmethod.admin;
+        },
+        isLoggedIn: function() {
+            var auth = $http.defaults.headers.common.Authorization;
+            return auth && 0 < auth.length;
+        },
+        signup: function(data, authevent) {
+            var eid = authevent || authId;
+            return $http.post(backendUrl + "auth-event/" + eid + "/register/", data);
+        },
+        getUserInfoExtra: function() {
+            if (authmethod.isLoggedIn()) return $http.get(backendUrl + "user/extra/", {});
             var data = {
                 success: function() {
                     return data;
@@ -29,43 +36,49 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                 }
             };
             return data;
-        }
-        return $http.get(backendUrl + "user/extra/", {});
-    }, authmethod.getActivity = function(eid, page, size, filterOptions, filterStr, receiver_id) {
-        var params = {}, url = backendUrl + "auth-event/" + eid + "/activity/";
-        return "max" === size ? params.size = 500 : angular.isNumber(size) && size > 0 && 500 > size ? params.size = parseInt(size) : params.size = 10, 
-        angular.isNumber(page) ? params.page = parseInt(page) : params.page = 1, angular.isNumber(receiver_id) && (params.receiver_id = receiver_id), 
-        _.extend(params, filterOptions), filterStr && filterStr.length > 0 && (params.filter = filterStr), 
-        $http.get(url, {
-            params: params
-        });
-    }, authmethod.getBallotBoxes = function(eid, page, size, filterOptions, filterStr) {
-        var params = {}, url = backendUrl + "auth-event/" + eid + "/ballot-box/";
-        return "max" === size ? params.size = 500 : angular.isNumber(size) && size > 0 && 500 > size ? params.size = parseInt(size) : params.size = 10, 
-        angular.isNumber(page) ? params.page = parseInt(page) : params.page = 1, _.extend(params, filterOptions), 
-        filterStr && filterStr.length > 0 && (params.filter = filterStr), $http.get(url, {
-            params: params
-        });
-    }, authmethod.createBallotBox = function(eid, name) {
-        var params = {
-            name: name
-        }, url = backendUrl + "auth-event/" + eid + "/ballot-box/";
-        return $http.post(url, params);
-    }, authmethod.postTallySheet = function(eid, ballot_box_id, data) {
-        var url = backendUrl + "auth-event/" + eid + "/ballot-box/" + ballot_box_id + "/tally-sheet/";
-        return $http.post(url, data);
-    }, authmethod.getTallySheet = function(eid, ballot_box_id, tally_sheet_id) {
-        var url = null;
-        return url = tally_sheet_id ? backendUrl + "auth-event/" + eid + "/ballot-box/" + ballot_box_id + "/tally-sheet/" + tally_sheet_id + "/" : backendUrl + "auth-event/" + eid + "/ballot-box/" + ballot_box_id + "/tally-sheet/", 
-        $http.get(url);
-    }, authmethod.deleteTallySheet = function(eid, ballot_box_id, tally_sheet_id) {
-        var url = backendUrl + "auth-event/" + eid + "/ballot-box/" + ballot_box_id + "/tally-sheet/" + tally_sheet_id + "/";
-        return $http["delete"](url, {});
-    }, authmethod.deleteBallotBox = function(eid, ballot_box_id) {
-        var url = backendUrl + "auth-event/" + eid + "/ballot-box/" + ballot_box_id + "/delete/";
-        return $http["delete"](url, {});
-    }, authmethod.updateUserExtra = function(extra) {
-        if (!authmethod.isLoggedIn()) {
+        },
+        getActivity: function(eid, page, size, filterOptions, filterStr, receiver_id) {
+            var params = {}, url = backendUrl + "auth-event/" + eid + "/activity/";
+            return "max" === size ? params.size = 500 : angular.isNumber(size) && 0 < size && size < 500 ? params.size = parseInt(size) : params.size = 10, 
+            angular.isNumber(page) ? params.page = parseInt(page) : params.page = 1, angular.isNumber(receiver_id) && (params.receiver_id = receiver_id), 
+            _.extend(params, filterOptions), filterStr && 0 < filterStr.length && (params.filter = filterStr), 
+            $http.get(url, {
+                params: params
+            });
+        },
+        getBallotBoxes: function(eid, page, size, filterOptions, filterStr) {
+            var params = {}, url = backendUrl + "auth-event/" + eid + "/ballot-box/";
+            return "max" === size ? params.size = 500 : angular.isNumber(size) && 0 < size && size < 500 ? params.size = parseInt(size) : params.size = 10, 
+            angular.isNumber(page) ? params.page = parseInt(page) : params.page = 1, _.extend(params, filterOptions), 
+            filterStr && 0 < filterStr.length && (params.filter = filterStr), $http.get(url, {
+                params: params
+            });
+        },
+        createBallotBox: function(eid, name) {
+            var params = {
+                name: name
+            }, url = backendUrl + "auth-event/" + eid + "/ballot-box/";
+            return $http.post(url, params);
+        },
+        postTallySheet: function(eid, ballot_box_id, data) {
+            var url = backendUrl + "auth-event/" + eid + "/ballot-box/" + ballot_box_id + "/tally-sheet/";
+            return $http.post(url, data);
+        },
+        getTallySheet: function(eid, ballot_box_id, tally_sheet_id) {
+            var url = null;
+            return url = tally_sheet_id ? backendUrl + "auth-event/" + eid + "/ballot-box/" + ballot_box_id + "/tally-sheet/" + tally_sheet_id + "/" : backendUrl + "auth-event/" + eid + "/ballot-box/" + ballot_box_id + "/tally-sheet/", 
+            $http.get(url);
+        },
+        deleteTallySheet: function(eid, ballot_box_id, tally_sheet_id) {
+            var url = backendUrl + "auth-event/" + eid + "/ballot-box/" + ballot_box_id + "/tally-sheet/" + tally_sheet_id + "/";
+            return $http.delete(url, {});
+        },
+        deleteBallotBox: function(eid, ballot_box_id) {
+            var url = backendUrl + "auth-event/" + eid + "/ballot-box/" + ballot_box_id + "/delete/";
+            return $http.delete(url, {});
+        },
+        updateUserExtra: function(extra) {
+            if (authmethod.isLoggedIn()) return $http.post(backendUrl + "user/extra/", extra);
             var data = {
                 success: function() {
                     return data;
@@ -79,10 +92,9 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                 }
             };
             return data;
-        }
-        return $http.post(backendUrl + "user/extra/", extra);
-    }, authmethod.getUserInfo = function(userid) {
-        if (!authmethod.isLoggedIn()) {
+        },
+        getUserInfo: function(userid) {
+            if (authmethod.isLoggedIn()) return void 0 === userid ? $http.get(backendUrl + "user/", {}) : $http.get(backendUrl + "user/%d" % userid, {});
             var data = {
                 success: function() {
                     return data;
@@ -96,10 +108,9 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                 }
             };
             return data;
-        }
-        return "undefined" == typeof userid ? $http.get(backendUrl + "user/", {}) : $http.get(backendUrl + "user/%d" % userid, {});
-    }, authmethod.ping = function() {
-        if (!authmethod.isLoggedIn()) {
+        },
+        ping: function() {
+            if (authmethod.isLoggedIn()) return $http.get(backendUrl + "auth-event/" + authId + "/ping/");
             var data = {
                 success: function() {
                     return data;
@@ -113,164 +124,187 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                 }
             };
             return data;
-        }
-        return $http.get(backendUrl + "auth-event/" + authId + "/ping/");
-    }, authmethod.getImage = function(ev, uid) {
-        return $http.get(backendUrl + "auth-event/" + ev + "/census/img/" + uid + "/");
-    }, authmethod.login = function(data, authevent) {
-        var eid = authevent || authId;
-        return delete data.authevent, $http.post(backendUrl + "auth-event/" + eid + "/authenticate/", data);
-    }, authmethod.censusQuery = function(data, authevent) {
-        var eid = authevent || authId;
-        return delete data.authevent, $http.post(backendUrl + "auth-event/" + eid + "/census/public-query/", data);
-    }, authmethod.resendAuthCode = function(data, eid) {
-        return $http.post(backendUrl + "auth-event/" + eid + "/resend_auth_code/", data);
-    }, authmethod.getPerm = function(perm, object_type, object_id) {
-        var data = {
-            permission: perm,
-            object_type: object_type,
-            object_id: object_id + ""
-        };
-        return $http.post(backendUrl + "get-perms/", data);
-    }, authmethod.viewEvent = function(id) {
-        return $http.get(backendUrl + "auth-event/" + id + "/");
-    }, authmethod.viewEvents = function() {
-        return $http.get(backendUrl + "auth-event/");
-    }, authmethod.createEvent = function(data) {
-        return $http.post(backendUrl + "auth-event/", data);
-    }, authmethod.editEvent = function(id, data) {
-        return $http.post(backendUrl + "auth-event/" + id + "/", data);
-    }, authmethod.addCensus = function(id, data, validation) {
-        angular.isDefined(validation) || (validation = "enabled");
-        var d = {
-            "field-validation": validation,
-            census: data
-        };
-        return $http.post(backendUrl + "auth-event/" + id + "/census/", d);
-    }, authmethod.getCensus = function(id, params) {
-        return angular.isObject(params) ? $http.get(backendUrl + "auth-event/" + id + "/census/", {
-            params: params
-        }) : $http.get(backendUrl + "auth-event/" + id + "/census/");
-    }, authmethod.getRegisterFields = function(viewEventData) {
-        var fields = _.filter(angular.copy(viewEventData.extra_fields), function(item) {
-            return !0 === item.required_when_registered ? !1 : !0;
-        });
-        fields || (fields = []);
-        var found = !1;
-        _.each(fields, function(field) {
-            "sms" === viewEventData.auth_method && "tlf" === field.name ? ("text" === field.type && (field.type = "tlf"), 
-            found = !0) : "email" === viewEventData.auth_method && "email" === field.name && (found = !0);
-        }), "sms" !== viewEventData.auth_method && "sms-otp" !== viewEventData.auth_method || found ? "email" !== viewEventData.auth_method || found ? "user-and-password" === viewEventData.auth_method ? (fields.push({
-            name: "username",
-            type: "text",
-            required: !0,
-            required_on_authentication: !0
-        }), fields.push({
-            name: "password",
-            type: "password",
-            required: !0,
-            required_on_authentication: !0
-        })) : "email-and-password" === viewEventData.auth_method && (fields.push({
-            name: "email",
-            type: "email",
-            required: !0,
-            required_on_authentication: !0
-        }), fields.push({
-            name: "password",
-            type: "password",
-            required: !0,
-            required_on_authentication: !0
-        })) : fields.push({
-            name: "email",
-            type: "email",
-            required: !0,
-            required_on_authentication: !0
-        }) : fields.push({
-            name: "tlf",
-            type: "tlf",
-            required: !0,
-            required_on_authentication: !0
-        });
-        for (var i = 0; i < fields.length; i++) if ("captcha" === fields[i].type) {
-            var captcha = fields.splice(i, 1);
-            fields.push(captcha[0]);
-            break;
-        }
-        return fields;
-    }, authmethod.getCensusQueryFields = function(viewEventData) {
-        var fields = angular.copy(viewEventData.extra_fields);
-        return fields = _.filter(fields, function(field) {
-            return field.required_on_authentication;
-        });
-    }, authmethod.getLoginFields = function(viewEventData) {
-        var fields = authmethod.getRegisterFields(viewEventData);
-        "sms" === viewEventData.auth_method || "email" === viewEventData.auth_method ? fields.push({
-            name: "code",
-            type: "code",
-            required: !0,
-            required_on_authentication: !0
-        }) : "sms-otp" === viewEventData.auth_method && fields.push({
-            name: "code",
-            type: "code",
-            required: !0,
-            steps: [ 1 ],
-            required_on_authentication: !0
-        }), fields = _.filter(fields, function(field) {
-            return field.required_on_authentication;
-        });
-        for (var i = 0; i < fields.length; i++) if ("captcha" === fields[i].type) {
-            var captcha = fields.splice(i, 1);
-            fields.push(captcha[0]);
-            break;
-        }
-        return fields;
-    }, authmethod.newCaptcha = function(message) {
-        return authmethod.captcha_status = message, $http.get(backendUrl + "captcha/new/", {}).success(function(data) {
-            console.log(data), null !== data.captcha_code ? (authmethod.captcha_code = data.captcha_code, 
-            authmethod.captcha_image_url = data.image_url) : authmethod.captcha_status = "Not found";
-        });
-    }, authmethod.test = function() {
-        return $http.get(backendUrl);
-    }, authmethod.setAuth = function(auth, isAdmin, autheventid) {
-        return authmethod.admin = isAdmin, $http.defaults.headers.common.Authorization = auth, 
-        authmethod.pingTimeout || ($interval.cancel(authmethod.pingTimeout), authmethod.launchPingDaemon(autheventid), 
-        authmethod.pingTimeout = $interval(function() {
-            authmethod.launchPingDaemon(autheventid);
-        }, 500 * ConfigService.timeoutSeconds)), !1;
-    }, authmethod.electionsIds = function(page) {
-        return page || (page = 1), $http.get(backendUrl + "acl/mine/?object_type=AuthEvent&perm=edit|view&order=-pk&page=" + page);
-    }, authmethod.sendAuthCodes = function(eid, election, user_ids, auth_method, extra) {
-        var url = backendUrl + "auth-event/" + eid + "/census/send_auth/", data = {};
-        return angular.isDefined(election) && (data.msg = election.census.config.msg, "email" === auth_method && (data.subject = election.census.config.subject)), 
-        angular.isDefined(user_ids) && (data["user-ids"] = user_ids), angular.isDefined(auth_method) && (data["auth-method"] = auth_method), 
-        extra && (data.extra = extra), $http.post(url, data);
-    }, authmethod.removeUsersIds = function(eid, election, user_ids) {
-        var url = backendUrl + "auth-event/" + eid + "/census/delete/", data = {
-            "user-ids": user_ids
-        };
-        return $http.post(url, data);
-    }, authmethod.activateUsersIds = function(eid, election, user_ids, comment) {
-        var url = backendUrl + "auth-event/" + eid + "/census/activate/", data = {
-            "user-ids": user_ids,
-            comment: comment
-        };
-        return $http.post(url, data);
-    }, authmethod.deactivateUsersIds = function(eid, election, user_ids, comment) {
-        var url = backendUrl + "auth-event/" + eid + "/census/deactivate/", data = {
-            "user-ids": user_ids,
-            comment: comment
-        };
-        return $http.post(url, data);
-    }, authmethod.changeAuthEvent = function(eid, st) {
-        var url = backendUrl + "auth-event/" + eid + "/" + st + "/", data = {};
-        return $http.post(url, data);
-    }, authmethod.launchPingDaemon = function(autheventid) {
-        var postfix = "_authevent_" + autheventid;
-        $cookies["isAdmin" + postfix] && authmethod.ping().success(function(data) {
-            $cookies["auth" + postfix] = data["auth-token"], authmethod.setAuth($cookies["auth" + postfix], $cookies["isAdmin" + postfix], autheventid);
-        });
-    }, authmethod.getUserDraft = function() {
-        if (!authmethod.isLoggedIn()) {
+        },
+        getImage: function(ev, uid) {
+            return $http.get(backendUrl + "auth-event/" + ev + "/census/img/" + uid + "/");
+        },
+        login: function(data, authevent) {
+            var eid = authevent || authId;
+            return delete data.authevent, $http.post(backendUrl + "auth-event/" + eid + "/authenticate/", data);
+        },
+        censusQuery: function(data, authevent) {
+            var eid = authevent || authId;
+            return delete data.authevent, $http.post(backendUrl + "auth-event/" + eid + "/census/public-query/", data);
+        },
+        resendAuthCode: function(data, eid) {
+            return $http.post(backendUrl + "auth-event/" + eid + "/resend_auth_code/", data);
+        },
+        getPerm: function(perm, object_type, object_id) {
+            var data = {
+                permission: perm,
+                object_type: object_type,
+                object_id: object_id + ""
+            };
+            return $http.post(backendUrl + "get-perms/", data);
+        },
+        viewEvent: function(id) {
+            return $http.get(backendUrl + "auth-event/" + id + "/");
+        },
+        viewEvents: function() {
+            return $http.get(backendUrl + "auth-event/");
+        },
+        createEvent: function(data) {
+            return $http.post(backendUrl + "auth-event/", data);
+        },
+        editEvent: function(id, data) {
+            return $http.post(backendUrl + "auth-event/" + id + "/", data);
+        },
+        addCensus: function(id, data, validation) {
+            angular.isDefined(validation) || (validation = "enabled");
+            var d = {
+                "field-validation": validation,
+                census: data
+            };
+            return $http.post(backendUrl + "auth-event/" + id + "/census/", d);
+        },
+        getCensus: function(id, params) {
+            return angular.isObject(params) ? $http.get(backendUrl + "auth-event/" + id + "/census/", {
+                params: params
+            }) : $http.get(backendUrl + "auth-event/" + id + "/census/");
+        },
+        getRegisterFields: function(viewEventData) {
+            var fields = _.filter(angular.copy(viewEventData.extra_fields), function(item) {
+                return !0 !== item.required_when_registered;
+            });
+            fields || (fields = []);
+            var found = !1;
+            _.each(fields, function(field) {
+                "sms" === viewEventData.auth_method && "tlf" === field.name ? ("text" === field.type && (field.type = "tlf"), 
+                found = !0) : "email" === viewEventData.auth_method && "email" === field.name && (found = !0);
+            }), "sms" !== viewEventData.auth_method && "sms-otp" !== viewEventData.auth_method || found ? "email" !== viewEventData.auth_method || found ? "user-and-password" === viewEventData.auth_method ? (fields.push({
+                name: "username",
+                type: "text",
+                required: !0,
+                required_on_authentication: !0
+            }), fields.push({
+                name: "password",
+                type: "password",
+                required: !0,
+                required_on_authentication: !0
+            })) : "email-and-password" === viewEventData.auth_method && (fields.push({
+                name: "email",
+                type: "email",
+                required: !0,
+                required_on_authentication: !0
+            }), fields.push({
+                name: "password",
+                type: "password",
+                required: !0,
+                required_on_authentication: !0
+            })) : fields.push({
+                name: "email",
+                type: "email",
+                required: !0,
+                required_on_authentication: !0
+            }) : fields.push({
+                name: "tlf",
+                type: "tlf",
+                required: !0,
+                required_on_authentication: !0
+            });
+            for (var i = 0; i < fields.length; i++) if ("captcha" === fields[i].type) {
+                var captcha = fields.splice(i, 1);
+                fields.push(captcha[0]);
+                break;
+            }
+            return fields;
+        },
+        getCensusQueryFields: function(viewEventData) {
+            var fields = angular.copy(viewEventData.extra_fields);
+            return fields = _.filter(fields, function(field) {
+                return field.required_on_authentication;
+            });
+        },
+        getLoginFields: function(viewEventData) {
+            var fields = authmethod.getRegisterFields(viewEventData);
+            "sms" === viewEventData.auth_method || "email" === viewEventData.auth_method ? fields.push({
+                name: "code",
+                type: "code",
+                required: !0,
+                required_on_authentication: !0
+            }) : "sms-otp" === viewEventData.auth_method && fields.push({
+                name: "code",
+                type: "code",
+                required: !0,
+                steps: [ 1 ],
+                required_on_authentication: !0
+            }), fields = _.filter(fields, function(field) {
+                return field.required_on_authentication;
+            });
+            for (var i = 0; i < fields.length; i++) if ("captcha" === fields[i].type) {
+                var captcha = fields.splice(i, 1);
+                fields.push(captcha[0]);
+                break;
+            }
+            return fields;
+        },
+        newCaptcha: function(message) {
+            return authmethod.captcha_status = message, $http.get(backendUrl + "captcha/new/", {}).success(function(data) {
+                console.log(data), null !== data.captcha_code ? (authmethod.captcha_code = data.captcha_code, 
+                authmethod.captcha_image_url = data.image_url) : authmethod.captcha_status = "Not found";
+            });
+        },
+        test: function() {
+            return $http.get(backendUrl);
+        },
+        setAuth: function(auth, isAdmin, autheventid) {
+            return authmethod.admin = isAdmin, $http.defaults.headers.common.Authorization = auth, 
+            authmethod.pingTimeout || ($interval.cancel(authmethod.pingTimeout), authmethod.launchPingDaemon(autheventid), 
+            authmethod.pingTimeout = $interval(function() {
+                authmethod.launchPingDaemon(autheventid);
+            }, 500 * ConfigService.timeoutSeconds)), !1;
+        },
+        electionsIds: function(page) {
+            return page || (page = 1), $http.get(backendUrl + "acl/mine/?object_type=AuthEvent&perm=edit|view&order=-pk&page=" + page);
+        },
+        sendAuthCodes: function(eid, election, user_ids, auth_method, extra) {
+            var url = backendUrl + "auth-event/" + eid + "/census/send_auth/", data = {};
+            return angular.isDefined(election) && (data.msg = election.census.config.msg, "email" === auth_method && (data.subject = election.census.config.subject)), 
+            angular.isDefined(user_ids) && (data["user-ids"] = user_ids), angular.isDefined(auth_method) && (data["auth-method"] = auth_method), 
+            extra && (data.extra = extra), $http.post(url, data);
+        },
+        removeUsersIds: function(eid, election, user_ids) {
+            var url = backendUrl + "auth-event/" + eid + "/census/delete/", data = {
+                "user-ids": user_ids
+            };
+            return $http.post(url, data);
+        },
+        activateUsersIds: function(eid, election, user_ids, comment) {
+            var url = backendUrl + "auth-event/" + eid + "/census/activate/", data = {
+                "user-ids": user_ids,
+                comment: comment
+            };
+            return $http.post(url, data);
+        },
+        deactivateUsersIds: function(eid, election, user_ids, comment) {
+            var url = backendUrl + "auth-event/" + eid + "/census/deactivate/", data = {
+                "user-ids": user_ids,
+                comment: comment
+            };
+            return $http.post(url, data);
+        },
+        changeAuthEvent: function(eid, st) {
+            var url = backendUrl + "auth-event/" + eid + "/" + st + "/";
+            return $http.post(url, {});
+        },
+        launchPingDaemon: function(autheventid) {
+            var postfix = "_authevent_" + autheventid;
+            $cookies["isAdmin" + postfix] && authmethod.ping().success(function(data) {
+                $cookies["auth" + postfix] = data["auth-token"], authmethod.setAuth($cookies["auth" + postfix], $cookies["isAdmin" + postfix], autheventid);
+            });
+        },
+        getUserDraft: function() {
+            if (authmethod.isLoggedIn()) return $http.get(backendUrl + "user/draft/", {});
             var data = {
                 success: function() {
                     return data;
@@ -284,160 +318,154 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                 }
             };
             return data;
-        }
-        return $http.get(backendUrl + "user/draft/", {});
-    }, authmethod.uploadUserDraft = function(draft) {
-        if (!authmethod.isLoggedIn()) {
-            var data = {
-                success: function() {
-                    return data;
-                },
-                error: function(func) {
-                    return setTimeout(function() {
-                        func({
-                            message: "not-logged-in"
-                        });
-                    }, 0), data;
-                }
+        },
+        uploadUserDraft: function(draft) {
+            if (!authmethod.isLoggedIn()) {
+                var data = {
+                    success: function() {
+                        return data;
+                    },
+                    error: function(func) {
+                        return setTimeout(function() {
+                            func({
+                                message: "not-logged-in"
+                            });
+                        }, 0), data;
+                    }
+                };
+                return data;
+            }
+            var draft_data = {
+                draft_election: draft
             };
-            return data;
+            return $http.post(backendUrl + "user/draft/", draft_data);
         }
-        var draft_data = {
-            draft_election: draft
-        };
-        return $http.post(backendUrl + "user/draft/", draft_data);
-    }, authmethod;
+    };
+    return authmethod;
 } ]), angular.module("avRegistration").controller("LoginController", [ "$scope", "$stateParams", "$filter", "ConfigService", "$i18next", function($scope, $stateParams, $filter, ConfigService, $i18next) {
     $scope.event_id = $stateParams.id, $scope.code = $stateParams.code, $scope.email = $stateParams.email;
 } ]), angular.module("avRegistration").directive("avLogin", [ "Authmethod", "StateDataService", "$parse", "$state", "$location", "$cookies", "$i18next", "$window", "$timeout", "ConfigService", "Patterns", function(Authmethod, StateDataService, $parse, $state, $location, $cookies, $i18next, $window, $timeout, ConfigService, Patterns) {
-    function link(scope, element, attrs) {
-        function isValidTel(inputName) {
-            if (!document.getElementById(inputName)) return !1;
-            var telInput = angular.element(document.getElementById(inputName));
-            return telInput.intlTelInput("isValidNumber");
-        }
-        function isValidEmail(email) {
-            var pattern = Patterns.get("email");
-            return null !== email.match(pattern);
-        }
-        scope.isCensusQuery = attrs.isCensusQuery;
-        var adminId = ConfigService.freeAuthId + "", autheventid = attrs.eventId;
-        scope.orgName = ConfigService.organization.orgName, $cookies["authevent_" + adminId] && $cookies["authevent_" + adminId] === adminId && autheventid === adminId && $cookies["auth_authevent_" + adminId] && ($window.location.href = "/admin/elections"), 
-        scope.sendingData = !1, scope.currentFormStep = 0, scope.stateData = StateDataService.getData(), 
-        scope.signupLink = ConfigService.signupLink, scope.allowUserResend = !1, scope.censusQuery = "not-sent", 
-        scope.code = null, attrs.code && attrs.code.length > 0 && (scope.code = attrs.code), 
-        scope.email = null, attrs.email && attrs.email.length > 0 && (scope.email = attrs.email), 
-        scope.isAdmin = !1, autheventid === adminId && (scope.isAdmin = !0), scope.resendAuthCode = function(field) {
-            if (!scope.sendingData && _.contains([ "email", "sms", "sms-otp" ], scope.method)) {
-                var data = {};
-                if (_.contains([ "sms", "sms-otp" ], scope.method)) {
-                    if (-1 === scope.telIndex) return;
-                    if (!isValidTel("input" + scope.telIndex)) return;
-                    data.tlf = scope.telField.value;
-                } else if ("email" === scope.method) {
-                    if (-1 === scope.emailIndex) return;
-                    var email = scope.email;
-                    if (null === email && (email = scope.login_fields[scope.emailIndex].value), !isValidEmail(email)) return;
-                    data.email = email;
-                }
-                field && (field.value = ""), scope.sendingData = !0, Authmethod.resendAuthCode(data, autheventid).success(function(rcvData) {
-                    _.contains([ "sms", "sms-otp" ], scope.method) ? scope.telField.disabled = !0 : "email" === scope.method && (scope.login_fields[scope.emailIndex].disabled = !0), 
-                    scope.currentFormStep = 1, $timeout(scope.sendingDataTimeout, 3e3);
-                }).error(function(error) {
-                    $timeout(scope.sendingDataTimeout, 3e3), scope.error = $i18next("avRegistration.errorSendingAuthCode");
-                });
-            }
-        }, scope.sendingDataTimeout = function() {
-            scope.sendingData = !1;
-        }, scope.checkCensus = function(valid) {
-            if (valid && !scope.sendingData) {
-                scope.censusQuery = "querying";
-                var data = {
-                    captcha_code: Authmethod.captcha_code
-                };
-                _.each(scope.login_fields, function(field) {
-                    data[field.name] = field.value;
-                }), scope.sendingData = !0, Authmethod.censusQuery(data, autheventid).success(function(rcvData) {
-                    scope.sendingData = !1, scope.censusQueryData = rcvData, scope.censusQuery = "success";
-                }).error(function(error) {
-                    scope.sendingData = !1, scope.censusQuery = "fail";
-                });
-            }
-        }, scope.loginUser = function(valid) {
-            if (valid && !scope.sendingData) {
-                if ("sms-otp" === scope.method && 0 === scope.currentFormStep) return void scope.resendAuthCode();
-                var data = {
-                    captcha_code: Authmethod.captcha_code
-                };
-                _.each(scope.login_fields, function(field) {
-                    "email" === field.name ? scope.email = field.value : "code" === field.name && (field.value = field.value.trim().replace(/ |\n|\t|-|_/g, "").toUpperCase()), 
-                    data[field.name] = field.value;
-                }), scope.sendingData = !0, Authmethod.login(data, autheventid).success(function(rcvData) {
-                    if ("ok" === rcvData.status) {
-                        scope.khmac = rcvData.khmac;
-                        var postfix = "_authevent_" + autheventid;
-                        $cookies["authevent_" + autheventid] = autheventid, $cookies["userid" + postfix] = rcvData.username, 
-                        $cookies["user" + postfix] = scope.email, $cookies["auth" + postfix] = rcvData["auth-token"], 
-                        $cookies["isAdmin" + postfix] = scope.isAdmin, Authmethod.setAuth($cookies["auth" + postfix], scope.isAdmin, autheventid), 
-                        scope.isAdmin ? Authmethod.getUserInfo().success(function(d) {
-                            $cookies["user" + postfix] = d.email, $window.location.href = "/admin/elections";
-                        }).error(function(error) {
-                            $window.location.href = "/admin/elections";
-                        }) : angular.isDefined(rcvData["redirect-to-url"]) ? $window.location.href = rcvData["redirect-to-url"] : Authmethod.getPerm("vote", "AuthEvent", autheventid).success(function(rcvData2) {
-                            var khmac = rcvData2["permission-token"], path = khmac.split(";")[1], hash = path.split("/")[0], msg = path.split("/")[1];
-                            $window.location.href = "/booth/" + autheventid + "/vote/" + hash + "/" + msg;
-                        });
-                    } else scope.sendingData = !1, scope.status = "Not found", scope.error = $i18next("avRegistration.invalidCredentials", {
-                        support: ConfigService.contact.email
-                    });
-                }).error(function(error) {
-                    scope.sendingData = !1, scope.status = "Registration error: " + error.message, scope.error = $i18next("avRegistration.invalidCredentials", {
-                        support: ConfigService.contact.email
-                    });
-                });
-            }
-        }, scope.apply = function(authevent) {
-            scope.method = authevent.auth_method, scope.name = authevent.name, scope.registrationAllowed = "open" === authevent.census, 
-            scope.isCensusQuery ? scope.login_fields = Authmethod.getCensusQueryFields(authevent) : scope.login_fields = Authmethod.getLoginFields(authevent), 
-            scope.telIndex = -1, scope.emailIndex = -1, scope.telField = null, scope.allowUserResend = function() {
-                var ret = !1, href = $location.path(), adminMatch = href.match(/^\/admin\//), electionsMatch = href.match(/^\/(elections|election)\/([0-9]+)\//);
-                return _.isArray(adminMatch) ? ret = !0 : _.isArray(electionsMatch) && 3 === electionsMatch.length && (ret = _.isObject(authevent.auth_method_config) && _.isObject(authevent.auth_method_config.config) && !0 === authevent.auth_method_config.config.allow_user_resend), 
-                ret;
-            }();
-            var fields = _.map(scope.login_fields, function(el, index) {
-                return scope.stateData[el.name] ? (el.value = scope.stateData[el.name], el.disabled = !0) : (el.value = null, 
-                el.disabled = !1), "email" === el.type ? (null !== scope.email && (el.value = scope.email, 
-                el.disabled = !0), scope.emailIndex = index) : "code" === el.type && null !== scope.code ? (el.value = scope.code.trim().replace(/ |\n|\t|-|_/g, "").toUpperCase(), 
-                el.disabled = !0) : "tlf" === el.type && "sms" === scope.method ? (null !== scope.email && -1 === scope.email.indexOf("@") && (el.value = scope.email, 
-                el.disabled = !0), scope.telIndex = index + 1, scope.telField = el) : "tlf" === el.type && "sms-otp" === scope.method && (null !== scope.email && -1 === scope.email.indexOf("@") && (el.value = scope.email, 
-                el.disabled = !0, scope.currentFormStep = 1), scope.telIndex = index + 1, scope.telField = el), 
-                el;
-            }), filled_fields = _.filter(fields, function(el) {
-                return null !== el.value;
-            });
-            filled_fields.length === scope.login_fields.length && scope.loginUser(!0);
-        }, scope.view = function(id) {
-            Authmethod.viewEvent(id).success(function(data) {
-                "ok" === data.status ? scope.apply(data.events) : (scope.status = "Not found", document.querySelector(".input-error").style.display = "block");
-            }).error(function(error) {
-                scope.status = "Scan error: " + error.message, document.querySelector(".input-error").style.display = "block";
-            });
-        }, scope.view(autheventid), scope.goSignup = function() {
-            $state.go("registration.register", {
-                id: autheventid
-            });
-        }, scope.forgotPassword = function() {
-            console.log("forgotPassword");
-        };
-    }
     return {
         restrict: "AE",
         scope: !0,
-        link: link,
+        link: function(scope, element, attrs) {
+            scope.isCensusQuery = attrs.isCensusQuery;
+            var adminId = ConfigService.freeAuthId + "", autheventid = attrs.eventId;
+            scope.orgName = ConfigService.organization.orgName, $cookies["authevent_" + adminId] && $cookies["authevent_" + adminId] === adminId && autheventid === adminId && $cookies["auth_authevent_" + adminId] && ($window.location.href = "/admin/elections"), 
+            scope.sendingData = !1, scope.currentFormStep = 0, scope.stateData = StateDataService.getData(), 
+            scope.signupLink = ConfigService.signupLink, scope.allowUserResend = !1, scope.censusQuery = "not-sent", 
+            scope.code = null, attrs.code && 0 < attrs.code.length && (scope.code = attrs.code), 
+            scope.email = null, attrs.email && 0 < attrs.email.length && (scope.email = attrs.email), 
+            scope.isAdmin = !1, autheventid === adminId && (scope.isAdmin = !0), scope.resendAuthCode = function(field) {
+                if (!scope.sendingData && _.contains([ "email", "sms", "sms-otp" ], scope.method)) {
+                    var inputName, data = {};
+                    if (_.contains([ "sms", "sms-otp" ], scope.method)) {
+                        if (-1 === scope.telIndex) return;
+                        if (inputName = "input" + scope.telIndex, !document.getElementById(inputName) || !angular.element(document.getElementById(inputName)).intlTelInput("isValidNumber")) return;
+                        data.tlf = scope.telField.value;
+                    } else if ("email" === scope.method) {
+                        if (-1 === scope.emailIndex) return;
+                        var email = scope.email;
+                        if (null === email && (email = scope.login_fields[scope.emailIndex].value), !function(email) {
+                            var pattern = Patterns.get("email");
+                            return null !== email.match(pattern);
+                        }(email)) return;
+                        data.email = email;
+                    }
+                    field && (field.value = ""), scope.sendingData = !0, Authmethod.resendAuthCode(data, autheventid).success(function(rcvData) {
+                        _.contains([ "sms", "sms-otp" ], scope.method) ? scope.telField.disabled = !0 : "email" === scope.method && (scope.login_fields[scope.emailIndex].disabled = !0), 
+                        scope.currentFormStep = 1, $timeout(scope.sendingDataTimeout, 3e3);
+                    }).error(function(error) {
+                        $timeout(scope.sendingDataTimeout, 3e3), scope.error = $i18next("avRegistration.errorSendingAuthCode");
+                    });
+                }
+            }, scope.sendingDataTimeout = function() {
+                scope.sendingData = !1;
+            }, scope.checkCensus = function(valid) {
+                if (valid && !scope.sendingData) {
+                    scope.censusQuery = "querying";
+                    var data = {
+                        captcha_code: Authmethod.captcha_code
+                    };
+                    _.each(scope.login_fields, function(field) {
+                        data[field.name] = field.value;
+                    }), scope.sendingData = !0, Authmethod.censusQuery(data, autheventid).success(function(rcvData) {
+                        scope.sendingData = !1, scope.censusQueryData = rcvData, scope.censusQuery = "success";
+                    }).error(function(error) {
+                        scope.sendingData = !1, scope.censusQuery = "fail";
+                    });
+                }
+            }, scope.loginUser = function(valid) {
+                if (valid && !scope.sendingData) if ("sms-otp" !== scope.method || 0 !== scope.currentFormStep) {
+                    var data = {
+                        captcha_code: Authmethod.captcha_code
+                    };
+                    _.each(scope.login_fields, function(field) {
+                        "email" === field.name ? scope.email = field.value : "code" === field.name && (field.value = field.value.trim().replace(/ |\n|\t|-|_/g, "").toUpperCase()), 
+                        data[field.name] = field.value;
+                    }), scope.sendingData = !0, Authmethod.login(data, autheventid).success(function(rcvData) {
+                        if ("ok" === rcvData.status) {
+                            scope.khmac = rcvData.khmac;
+                            var postfix = "_authevent_" + autheventid;
+                            $cookies["authevent_" + autheventid] = autheventid, $cookies["userid" + postfix] = rcvData.username, 
+                            $cookies["user" + postfix] = scope.email, $cookies["auth" + postfix] = rcvData["auth-token"], 
+                            $cookies["isAdmin" + postfix] = scope.isAdmin, Authmethod.setAuth($cookies["auth" + postfix], scope.isAdmin, autheventid), 
+                            scope.isAdmin ? Authmethod.getUserInfo().success(function(d) {
+                                $cookies["user" + postfix] = d.email, $window.location.href = "/admin/elections";
+                            }).error(function(error) {
+                                $window.location.href = "/admin/elections";
+                            }) : angular.isDefined(rcvData["redirect-to-url"]) ? $window.location.href = rcvData["redirect-to-url"] : Authmethod.getPerm("vote", "AuthEvent", autheventid).success(function(rcvData2) {
+                                var path = rcvData2["permission-token"].split(";")[1], hash = path.split("/")[0], msg = path.split("/")[1];
+                                $window.location.href = "/booth/" + autheventid + "/vote/" + hash + "/" + msg;
+                            });
+                        } else scope.sendingData = !1, scope.status = "Not found", scope.error = $i18next("avRegistration.invalidCredentials", {
+                            support: ConfigService.contact.email
+                        });
+                    }).error(function(error) {
+                        scope.sendingData = !1, scope.status = "Registration error: " + error.message, scope.error = $i18next("avRegistration.invalidCredentials", {
+                            support: ConfigService.contact.email
+                        });
+                    });
+                } else scope.resendAuthCode();
+            }, scope.apply = function(authevent) {
+                var ret, href, adminMatch, electionsMatch;
+                scope.method = authevent.auth_method, scope.name = authevent.name, scope.registrationAllowed = "open" === authevent.census, 
+                scope.isCensusQuery ? scope.login_fields = Authmethod.getCensusQueryFields(authevent) : scope.login_fields = Authmethod.getLoginFields(authevent), 
+                scope.telIndex = -1, scope.emailIndex = -1, scope.telField = null, scope.allowUserResend = (ret = !1, 
+                href = $location.path(), adminMatch = href.match(/^\/admin\//), electionsMatch = href.match(/^\/(elections|election)\/([0-9]+)\//), 
+                _.isArray(adminMatch) ? ret = !0 : _.isArray(electionsMatch) && 3 === electionsMatch.length && (ret = _.isObject(authevent.auth_method_config) && _.isObject(authevent.auth_method_config.config) && !0 === authevent.auth_method_config.config.allow_user_resend), 
+                ret);
+                var fields = _.map(scope.login_fields, function(el, index) {
+                    return scope.stateData[el.name] ? (el.value = scope.stateData[el.name], el.disabled = !0) : (el.value = null, 
+                    el.disabled = !1), "email" === el.type ? (null !== scope.email && (el.value = scope.email, 
+                    el.disabled = !0), scope.emailIndex = index) : "code" === el.type && null !== scope.code ? (el.value = scope.code.trim().replace(/ |\n|\t|-|_/g, "").toUpperCase(), 
+                    el.disabled = !0) : "tlf" === el.type && "sms" === scope.method ? (null !== scope.email && -1 === scope.email.indexOf("@") && (el.value = scope.email, 
+                    el.disabled = !0), scope.telIndex = index + 1, scope.telField = el) : "tlf" === el.type && "sms-otp" === scope.method && (null !== scope.email && -1 === scope.email.indexOf("@") && (el.value = scope.email, 
+                    el.disabled = !0, scope.currentFormStep = 1), scope.telIndex = index + 1, scope.telField = el), 
+                    el;
+                });
+                _.filter(fields, function(el) {
+                    return null !== el.value;
+                }).length === scope.login_fields.length && scope.loginUser(!0);
+            }, scope.view = function(id) {
+                Authmethod.viewEvent(id).success(function(data) {
+                    "ok" === data.status ? scope.apply(data.events) : (scope.status = "Not found", document.querySelector(".input-error").style.display = "block");
+                }).error(function(error) {
+                    scope.status = "Scan error: " + error.message, document.querySelector(".input-error").style.display = "block";
+                });
+            }, scope.view(autheventid), scope.goSignup = function() {
+                $state.go("registration.register", {
+                    id: autheventid
+                });
+            }, scope.forgotPassword = function() {
+                console.log("forgotPassword");
+            };
+        },
         templateUrl: "avRegistration/login-directive/login-directive.html"
     };
 } ]), angular.module("avRegistration").controller("LogoutController", [ "$scope", "$stateParams", "$filter", "ConfigService", "$i18next", "$state", "$cookies", "Authmethod", function($scope, $stateParams, $filter, ConfigService, $i18next, $state, $cookies, Authmethod) {
-    var authevent = (ConfigService.freeAuthId, Authmethod.getAuthevent()), postfix = "_authevent_" + authevent;
+    ConfigService.freeAuthId;
+    var authevent = Authmethod.getAuthevent(), postfix = "_authevent_" + authevent;
     $cookies["user" + postfix] = "", $cookies["auth" + postfix] = "", $cookies["authevent_" + authevent] = "", 
     $cookies["userid" + postfix] = "", $cookies["isAdmin" + postfix] = !1, authevent !== ConfigService.freeAuthId + "" && authevent ? $state.go("registration.login", {
         id: $cookies["authevent_" + authevent]
@@ -445,125 +473,118 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
 } ]), angular.module("avRegistration").controller("RegisterController", [ "$scope", "$stateParams", "$filter", "ConfigService", "$i18next", function($scope, $stateParams, $filter, ConfigService, $i18next) {
     $scope.event_id = $stateParams.id, $scope.email = $stateParams.email;
 } ]), angular.module("avRegistration").directive("avRegister", [ "Authmethod", "StateDataService", "$parse", "$state", "ConfigService", "$cookies", "$i18next", "$sce", function(Authmethod, StateDataService, $parse, $state, ConfigService, $cookies, $i18next, $sce) {
-    function link(scope, element, attrs) {
-        var autheventid = attrs.eventId;
-        scope.dnieurl = ConfigService.dnieUrl + autheventid + "/", scope.register = {}, 
-        scope.sendingData = !1, scope.admin = !1, scope.email = null, attrs.email && attrs.email.length > 0 && (scope.email = attrs.email), 
-        "admin" in attrs && (scope.admin = !0), scope.getLoginDetails = function(eventId) {
-            return scope.admin ? {
-                path: "admin.login_email",
-                data: {
-                    email: scope.email
-                }
-            } : {
-                path: "election.public.show.login_email",
-                data: {
-                    id: eventId,
-                    email: scope.email
-                }
-            };
-        }, scope.signUp = function(valid) {
-            if (valid) {
-                scope.sendingData = !0;
-                var data = {
-                    captcha_code: Authmethod.captcha_code
-                };
-                _.each(scope.register_fields, function(field) {
-                    data[field.name] = field.value, "email" === field.name && "email" === scope.method ? scope.email = field.value : "tlf" === field.name && _.contains([ "sms", "sms-otp" ], scope.method) && (scope.email = field.value);
-                });
-                var details;
-                Authmethod.signup(data, autheventid).success(function(rcvData) {
-                    details = scope.getLoginDetails(autheventid), "ok" === rcvData.status ? (scope.user = rcvData.user, 
-                    StateDataService.go(details.path, details.data, data), scope.error = rcvData.msg || $sce.trustAsHtml($i18next("avRegistration.invalidRegisterData", {
-                        url: $state.href(details.path, details.data)
-                    }))) : (scope.sendingData = !1, scope.status = "Not found", scope.error = rcvData.msg || $sce.trustAsHtml($i18next("avRegistration.invalidRegisterData", {
-                        url: $state.href(details.path, details.data)
-                    })));
-                }).error(function(error) {
-                    details = scope.getLoginDetails(autheventid), scope.sendingData = !1, scope.status = "Registration error: " + error.message, 
-                    error.error_codename && "invalid-dni" === error.error_codename ? scope.error = $sce.trustAsHtml($i18next("avRegistration.invalidRegisterDNI")) : (scope.error = error.msg || $sce.trustAsHtml($i18next("avRegistration.invalidRegisterData", {
-                        url: $state.href(details.path, details.data)
-                    })), "Invalid captcha" === error.msg && Authmethod.newCaptcha());
-                });
-            }
-        }, scope.goLogin = function(event) {
-            console.log("goLogin"), event && (event.preventDefault(), event.stopPropagation()), 
-            scope.authevent && (scope.authevent.id === ConfigService.freeAuthId ? $state.go("admin.login") : $state.go("election.public.show.login", {
-                id: scope.authevent.id
-            }));
-        }, scope.apply = function(authevent) {
-            scope.method = authevent.auth_method, scope.name = authevent.name, scope.authevent = authevent, 
-            "open" !== authevent.census && (authevent.id === ConfigService.freeAuthId ? $state.go("admin.login") : $state.go("election.public.show.login", {
-                id: authevent.id
-            })), scope.register_fields = Authmethod.getRegisterFields(authevent);
-            _.map(scope.register_fields, function(el) {
-                return el.value = null, el.disabled = !1, "email" === el.type && null !== scope.email && (el.value = scope.email, 
-                el.disabled = !0), el;
-            });
-        }, scope.view = function(id) {
-            Authmethod.viewEvent(id).success(function(data) {
-                "ok" === data.status ? scope.apply(data.events) : (scope.status = "Not found", document.querySelector(".input-error").style.display = "block");
-            }).error(function(error) {
-                scope.status = "Scan error: " + error.message, document.querySelector(".input-error").style.display = "block";
-            });
-        }, scope.view(autheventid);
-    }
     return {
         restrict: "AE",
         scope: !0,
-        link: link,
+        link: function(scope, element, attrs) {
+            var autheventid = attrs.eventId;
+            scope.dnieurl = ConfigService.dnieUrl + autheventid + "/", scope.register = {}, 
+            scope.sendingData = !1, scope.admin = !1, scope.email = null, attrs.email && 0 < attrs.email.length && (scope.email = attrs.email), 
+            "admin" in attrs && (scope.admin = !0), scope.getLoginDetails = function(eventId) {
+                return scope.admin ? {
+                    path: "admin.login_email",
+                    data: {
+                        email: scope.email
+                    }
+                } : {
+                    path: "election.public.show.login_email",
+                    data: {
+                        id: eventId,
+                        email: scope.email
+                    }
+                };
+            }, scope.signUp = function(valid) {
+                if (valid) {
+                    scope.sendingData = !0;
+                    var details, data = {
+                        captcha_code: Authmethod.captcha_code
+                    };
+                    _.each(scope.register_fields, function(field) {
+                        data[field.name] = field.value, "email" === field.name && "email" === scope.method ? scope.email = field.value : "tlf" === field.name && _.contains([ "sms", "sms-otp" ], scope.method) && (scope.email = field.value);
+                    }), Authmethod.signup(data, autheventid).success(function(rcvData) {
+                        details = scope.getLoginDetails(autheventid), "ok" === rcvData.status ? (scope.user = rcvData.user, 
+                        StateDataService.go(details.path, details.data, data)) : (scope.sendingData = !1, 
+                        scope.status = "Not found"), scope.error = rcvData.msg || $sce.trustAsHtml($i18next("avRegistration.invalidRegisterData", {
+                            url: $state.href(details.path, details.data)
+                        }));
+                    }).error(function(error) {
+                        details = scope.getLoginDetails(autheventid), scope.sendingData = !1, scope.status = "Registration error: " + error.message, 
+                        error.error_codename && "invalid-dni" === error.error_codename ? scope.error = $sce.trustAsHtml($i18next("avRegistration.invalidRegisterDNI")) : (scope.error = error.msg || $sce.trustAsHtml($i18next("avRegistration.invalidRegisterData", {
+                            url: $state.href(details.path, details.data)
+                        })), "Invalid captcha" === error.msg && Authmethod.newCaptcha());
+                    });
+                }
+            }, scope.goLogin = function(event) {
+                console.log("goLogin"), event && (event.preventDefault(), event.stopPropagation()), 
+                scope.authevent && (scope.authevent.id === ConfigService.freeAuthId ? $state.go("admin.login") : $state.go("election.public.show.login", {
+                    id: scope.authevent.id
+                }));
+            }, scope.apply = function(authevent) {
+                scope.method = authevent.auth_method, scope.name = authevent.name, "open" !== (scope.authevent = authevent).census && (authevent.id === ConfigService.freeAuthId ? $state.go("admin.login") : $state.go("election.public.show.login", {
+                    id: authevent.id
+                })), scope.register_fields = Authmethod.getRegisterFields(authevent), _.map(scope.register_fields, function(el) {
+                    return el.value = null, el.disabled = !1, "email" === el.type && null !== scope.email && (el.value = scope.email, 
+                    el.disabled = !0), el;
+                });
+            }, scope.view = function(id) {
+                Authmethod.viewEvent(id).success(function(data) {
+                    "ok" === data.status ? scope.apply(data.events) : (scope.status = "Not found", document.querySelector(".input-error").style.display = "block");
+                }).error(function(error) {
+                    scope.status = "Scan error: " + error.message, document.querySelector(".input-error").style.display = "block";
+                });
+            }, scope.view(autheventid);
+        },
         templateUrl: "avRegistration/register-directive/register-directive.html"
     };
 } ]), angular.module("avRegistration").factory("Patterns", function() {
-    var patterns = {};
-    return patterns.get = function(name) {
-        return "dni" === name ? /^\d{7,8}[a-zA-Z]{1}$/i : "mail" === name || "email" === name ? /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/ : /.*/;
-    }, patterns;
+    var patterns = {
+        get: function(name) {
+            return "dni" === name ? /^\d{7,8}[a-zA-Z]{1}$/i : "mail" === name || "email" === name ? /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/ : /.*/;
+        }
+    };
+    return patterns;
 }), angular.module("avRegistration").directive("avrField", [ "$state", function($state) {
-    function link(scope, element, attrs) {
-        console.log("type = " + scope.field.type), scope.index = attrs.index;
-    }
     return {
         restrict: "AE",
         scope: !0,
-        link: link,
+        link: function(scope, element, attrs) {
+            console.log("type = " + scope.field.type), scope.index = attrs.index;
+        },
         templateUrl: "avRegistration/field-directive/field-directive.html"
     };
 } ]), angular.module("avRegistration").directive("avrEmailField", [ "$state", "Patterns", function($state, Patterns) {
-    function link(scope, element, attrs) {
-        scope.patterns = function(name) {
-            return Patterns.get(name);
-        };
-    }
     return {
         restrict: "AE",
-        link: link,
+        link: function(scope, element, attrs) {
+            scope.patterns = function(name) {
+                return Patterns.get(name);
+            };
+        },
         scope: !0,
         templateUrl: "avRegistration/fields/email-field-directive/email-field-directive.html"
     };
 } ]), angular.module("avRegistration").directive("avrDateField", [ "$state", "Patterns", function($state, Patterns) {
-    function link(scope, element, attrs) {
-        scope.years = [], scope.months = [], scope.field = scope.$parent.field;
-        var now = new Date();
-        scope.date = {
-            year: now.getFullYear(),
-            month: now.getMonth() + 1,
-            day: now.getDate()
-        };
-        var initY = new Date().getFullYear(), i = 0;
-        for (i = initY; i >= initY - 130; i--) scope.years.push(i);
-        for (i = 1; 12 >= i; i++) scope.months.push(i);
-        scope.getDays = function() {
-            var days = [], ndays = new Date(scope.date.year, scope.date.month, 0).getDate();
-            for (i = 1; ndays >= i; i++) days.push(i);
-            return days;
-        }, scope.onChange = function() {
-            scope.ngModel = scope.date.year + "-" + scope.date.month + "-" + scope.date.day;
-        };
-    }
     return {
         restrict: "AE",
-        link: link,
+        link: function(scope, element, attrs) {
+            scope.years = [], scope.months = [], scope.field = scope.$parent.field;
+            var now = new Date();
+            scope.date = {
+                year: now.getFullYear(),
+                month: now.getMonth() + 1,
+                day: now.getDate()
+            };
+            var initY = new Date().getFullYear(), i = 0;
+            for (i = initY; initY - 130 <= i; i--) scope.years.push(i);
+            for (i = 1; i <= 12; i++) scope.months.push(i);
+            scope.getDays = function() {
+                var days = [], ndays = new Date(scope.date.year, scope.date.month, 0).getDate();
+                for (i = 1; i <= ndays; i++) days.push(i);
+                return days;
+            }, scope.onChange = function() {
+                scope.ngModel = scope.date.year + "-" + scope.date.month + "-" + scope.date.day;
+            };
+        },
         scope: {
             ngModel: "=",
             label: "="
@@ -577,111 +598,101 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         templateUrl: "avRegistration/fields/password-field-directive/password-field-directive.html"
     };
 } ]), angular.module("avRegistration").directive("avrTextField", [ "$state", function($state) {
-    function link(scope, element, attrs) {
-        angular.isUndefined(scope.field.regex) ? scope.re = new RegExp("") : scope.re = new RegExp(scope.field.regex), 
-        scope.getRe = function(value) {
-            return scope.re;
-        };
-    }
     return {
         restrict: "AE",
-        link: link,
+        link: function(scope, element, attrs) {
+            angular.isUndefined(scope.field.regex) ? scope.re = new RegExp("") : scope.re = new RegExp(scope.field.regex), 
+            scope.getRe = function(value) {
+                return scope.re;
+            };
+        },
         scope: !0,
         templateUrl: "avRegistration/fields/text-field-directive/text-field-directive.html"
     };
 } ]), angular.module("avRegistration").directive("avrDniField", [ "$state", function($state) {
-    function link(scope, element, attrs) {
-        function normalize_dni(dni) {
-            if (!dni) return "";
-            for (var allowed_chars = "QWERTYUIOPASDFGHJKLZXCVBNM1234567890", dni2 = dni.toUpperCase(), dni3 = "", i = 0; i < dni2.lenth; i++) {
-                var char = dni2[i];
-                allowed_chars.indexOf(char) >= 0 && (dni3 += char);
-            }
-            for (var last_char = "", dni4 = "", i = 0; i < dni3.lenth; i++) {
-                var char = dni3[i];
-                ("" === last_char || -1 === "1234567890".indexOf(last_char)) && "0" === c, dni4 += char, 
-                last_char = char;
-            }
-            return dni4;
-        }
-        var dni_re = /^([0-9]{1,8}[A-Z]|[LMXYZ][0-9]{1,7}[A-Z])$/;
-        scope.validateDni = function(dni) {
-            var norm_dni = normalize_dni(dni);
-            if (!norm_dni.match(dni_re)) return !0;
-            var prefix = norm_dni.charAt(0), index = "LMXYZ".indexOf(prefix), niePrefix = 0;
-            index > -1 && (niePrefix = index, norm_dni = norm_dni.substr(1), "Y" === prefix ? norm_dni = "1" + norm_dni : "Z" === prefix && (norm_dni = "2" + norm_dni));
-            var dni_letters = "TRWAGMYFPDXBNJZSQVHLCKE", letter = dni_letters.charAt(parseInt(norm_dni, 10) % 23);
-            return letter === norm_dni.charAt(norm_dni.length - 1);
-        };
-    }
     return {
         restrict: "AE",
-        link: link,
+        link: function(scope, element, attrs) {
+            var dni_re = /^([0-9]{1,8}[A-Z]|[LMXYZ][0-9]{1,7}[A-Z])$/;
+            scope.validateDni = function(dni) {
+                var norm_dni = function(dni) {
+                    if (!dni) return "";
+                    for (var dni2 = dni.toUpperCase(), dni3 = "", i = 0; i < dni2.lenth; i++) {
+                        var char = dni2[i];
+                        0 <= "QWERTYUIOPASDFGHJKLZXCVBNM1234567890".indexOf(char) && (dni3 += char);
+                    }
+                    for (var last_char = "", dni4 = "", j = 0; j < dni3.lenth; j++) {
+                        var char2 = dni3[j];
+                        "" === last_char || "1234567890".indexOf(last_char), dni4 += char2, last_char = char2;
+                    }
+                    return dni4;
+                }(dni);
+                if (!norm_dni.match(dni_re)) return !0;
+                var prefix = norm_dni.charAt(0), index = "LMXYZ".indexOf(prefix);
+                return -1 < index && (norm_dni = norm_dni.substr(1), "Y" === prefix ? norm_dni = "1" + norm_dni : "Z" === prefix && (norm_dni = "2" + norm_dni)), 
+                "TRWAGMYFPDXBNJZSQVHLCKE".charAt(parseInt(norm_dni, 10) % 23) === norm_dni.charAt(norm_dni.length - 1);
+            };
+        },
         scope: !0,
         templateUrl: "avRegistration/fields/dni-field-directive/dni-field-directive.html"
     };
 } ]), angular.module("avRegistration").directive("avrCodeField", [ "$state", "Plugins", function($state, Plugins) {
-    function link(scope, element, attrs) {
-        scope.codePattern = /[abcdefghjklmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789-]{8,9}/;
-        var rand_code = "" + _.random(1e12);
-        if (scope.code_id = "input" + scope.index + rand_code, scope.showResendAuthCode = function() {
-            var data = {
-                showUserSendAuthCode: !0
-            };
-            return Plugins.hook("hide-user-send-auth-code", data), data.showUserSendAuthCode;
-        }, "sms" === scope.method || "sms-otp" === scope.method) {
-            var telInput = angular.element(document.getElementById("input" + scope.telIndex));
-            scope.isValidTel = telInput.intlTelInput("isValidNumber"), scope.$watch("telField.value", function(newValue, oldValue) {
-                scope.isValidTel = telInput.intlTelInput("isValidNumber");
-            }, !0);
-        }
-    }
     return {
         restrict: "AE",
         scope: !0,
-        link: link,
+        link: function(scope, element, attrs) {
+            scope.codePattern = /[abcdefghjklmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789-]{8,9}/;
+            var rand_code = "" + _.random(1e12);
+            if (scope.code_id = "input" + scope.index + rand_code, scope.showResendAuthCode = function() {
+                var data = {
+                    showUserSendAuthCode: !0
+                };
+                return Plugins.hook("hide-user-send-auth-code", data), data.showUserSendAuthCode;
+            }, "sms" === scope.method || "sms-otp" === scope.method) {
+                var telInput = angular.element(document.getElementById("input" + scope.telIndex));
+                scope.isValidTel = telInput.intlTelInput("isValidNumber"), scope.$watch("telField.value", function(newValue, oldValue) {
+                    scope.isValidTel = telInput.intlTelInput("isValidNumber");
+                }, !0);
+            }
+        },
         templateUrl: "avRegistration/fields/code-field-directive/code-field-directive.html"
     };
 } ]), angular.module("avRegistration").directive("avrTelField", [ "$state", "$timeout", function($state, $timeout) {
-    function link(scope, element, attrs) {
-        scope.tlfPattern = /^[+]?\d{9,14}$/, scope.isValidNumber = !0;
-        var ipData = null, ipCallbacks = [];
-        $.get("https://ipinfo.io", function() {}, "jsonp").always(function(resp) {
-            ipData = resp;
-            for (var i = 0; i < ipCallbacks.length; i++) ipCallbacks[i]();
-        }), $timeout(function() {
-            var telInput = angular.element(document.getElementById("input" + scope.index));
-            telInput.intlTelInput({
-                utilsScript: "election/utils.js",
-                separateDialCode: !0,
-                initialCountry: "auto",
-                preferredCountries: [ "es", "gb", "us" ],
-                autoPlaceholder: "aggressive",
-                placeholderNumberType: "MOBILE",
-                geoIpLookup: function(callback) {
-                    var applyCountry = function() {
-                        var countryCode = ipData && ipData.country ? ipData.country : "es";
-                        callback(countryCode);
-                    };
-                    ipData ? applyCountry() : ipCallbacks.push(applyCountry);
-                }
-            }), _.isString(scope.field.value) && 0 < scope.field.value.length && telInput.intlTelInput("setNumber", scope.field.value);
-            var validateTel = function() {
-                scope.$evalAsync(function() {
-                    var intlNumber = telInput.intlTelInput("getNumber");
-                    intlNumber && (scope.field.value = intlNumber);
-                    var isValid = telInput.intlTelInput("isValidNumber");
-                    !isValid && $("#input" + scope.index).val().replace("[ 	\n]", "").length > 0 ? (telInput.toggleClass("error", !0), 
-                    scope.isValidNumber = !1) : (telInput.toggleClass("error", !1), scope.isValidNumber = !0);
-                });
-            };
-            telInput.on("keyup change", validateTel);
-        });
-    }
     return {
         restrict: "AE",
         scope: !0,
-        link: link,
+        link: function(scope, element, attrs) {
+            scope.tlfPattern = /^[+]?\d{9,14}$/, scope.isValidNumber = !0;
+            var ipData = null, ipCallbacks = [];
+            $.get("https://ipinfo.io", function() {}, "jsonp").always(function(resp) {
+                ipData = resp;
+                for (var i = 0; i < ipCallbacks.length; i++) ipCallbacks[i]();
+            }), $timeout(function() {
+                var telInput = angular.element(document.getElementById("input" + scope.index));
+                telInput.intlTelInput({
+                    utilsScript: "election/utils.js",
+                    separateDialCode: !0,
+                    initialCountry: "auto",
+                    preferredCountries: [ "es", "gb", "us" ],
+                    autoPlaceholder: "aggressive",
+                    placeholderNumberType: "MOBILE",
+                    geoIpLookup: function(callback) {
+                        var applyCountry = function() {
+                            var countryCode = ipData && ipData.country ? ipData.country : "es";
+                            callback(countryCode);
+                        };
+                        ipData ? applyCountry() : ipCallbacks.push(applyCountry);
+                    }
+                }), _.isString(scope.field.value) && 0 < scope.field.value.length && telInput.intlTelInput("setNumber", scope.field.value), 
+                telInput.on("keyup change", function() {
+                    scope.$evalAsync(function() {
+                        var intlNumber = telInput.intlTelInput("getNumber");
+                        intlNumber && (scope.field.value = intlNumber), !telInput.intlTelInput("isValidNumber") && 0 < $("#input" + scope.index).val().replace("[ \t\n]", "").length ? (telInput.toggleClass("error", !0), 
+                        scope.isValidNumber = !1) : (telInput.toggleClass("error", !1), scope.isValidNumber = !0);
+                    });
+                });
+            });
+        },
         templateUrl: "avRegistration/fields/tel-field-directive/tel-field-directive.html"
     };
 } ]), angular.module("avRegistration").directive("avrBoolField", [ "$state", function($state) {
@@ -691,26 +702,24 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         templateUrl: "avRegistration/fields/bool-field-directive/bool-field-directive.html"
     };
 } ]), angular.module("avRegistration").directive("avrIntField", [ "$state", function($state) {
-    function link(scope, element, attrs) {
-        angular.isUndefined(scope.field.regex) ? scope.re = new RegExp("") : scope.re = new RegExp(scope.field.regex), 
-        scope.getRe = function(value) {
-            return scope.re;
-        };
-    }
     return {
         restrict: "AE",
-        link: link,
+        link: function(scope, element, attrs) {
+            angular.isUndefined(scope.field.regex) ? scope.re = new RegExp("") : scope.re = new RegExp(scope.field.regex), 
+            scope.getRe = function(value) {
+                return scope.re;
+            };
+        },
         scope: !0,
         templateUrl: "avRegistration/fields/int-field-directive/int-field-directive.html"
     };
 } ]), angular.module("avRegistration").directive("avrCaptchaField", [ "Authmethod", "$state", "$interval", function(Authmethod, $state, $interval) {
-    function link(scope, element, attrs) {
-        scope.authMethod = Authmethod, Authmethod.newCaptcha("");
-    }
     return {
         restrict: "AE",
         scope: !0,
-        link: link,
+        link: function(scope, element, attrs) {
+            (scope.authMethod = Authmethod).newCaptcha("");
+        },
         templateUrl: "avRegistration/fields/captcha-field-directive/captcha-field-directive.html"
     };
 } ]), angular.module("avRegistration").directive("avrTextareaField", [ "$state", function($state) {
@@ -720,32 +729,32 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         templateUrl: "avRegistration/fields/textarea-field-directive/textarea-field-directive.html"
     };
 } ]), angular.module("avRegistration").directive("avrImageField", [ "$state", "$timeout", function($state, $timeout) {
-    function link(scope, element, attrs) {
-        function readImage(input) {
-            if (input.files && input.files[0]) {
-                var FR = new FileReader();
-                FR.onload = function(e) {
-                    scope.field.value = e.target.result;
-                }, FR.readAsDataURL(input.files[0]);
-            }
-        }
-        $timeout(function() {
-            $("#image-field").change(function() {
-                readImage(this);
-            });
-        }, 0);
-    }
     return {
         restrict: "AE",
-        link: link,
+        link: function(scope, element, attrs) {
+            $timeout(function() {
+                $("#image-field").change(function() {
+                    !function(input) {
+                        if (input.files && input.files[0]) {
+                            var FR = new FileReader();
+                            FR.onload = function(e) {
+                                scope.field.value = e.target.result;
+                            }, FR.readAsDataURL(input.files[0]);
+                        }
+                    }(this);
+                });
+            }, 0);
+        },
         scope: !0,
         templateUrl: "avRegistration/fields/image-field-directive/image-field-directive.html"
     };
 } ]), angular.module("avRegistration").factory("Plugins", function() {
-    var plugins = {};
-    return plugins.plugins = {
-        list: []
-    }, plugins.signals = $.Callbacks("unique"), plugins.hooks = [], plugins.add = function(plugin) {
+    var plugins = {
+        plugins: {
+            list: []
+        }
+    };
+    return plugins.signals = $.Callbacks("unique"), plugins.hooks = [], plugins.add = function(plugin) {
         plugins.plugins.list.push(plugin);
     }, plugins.clear = function() {
         plugins.plugins.list = [];
@@ -758,8 +767,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         plugins.signals.fire(signalName, data);
     }, plugins.hook = function(hookname, data) {
         for (var i = 0; i < plugins.hooks.length; i++) {
-            var h = plugins.hooks[i], ret = h(hookname, data);
-            if (!ret) return !1;
+            if (!(0, plugins.hooks[i])(hookname, data)) return !1;
         }
         return !0;
     }, plugins;
@@ -781,70 +789,64 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         selector.removeClass("flashing flashing-out").dequeue(), selector.attr("is-flashing", "false");
     }));
 }, angular.module("avUi").directive("avSimpleError", [ "$resource", "$window", function($resource, $window) {
-    function link(scope, element, attrs) {
-        scope.updateTitle = function() {
-            var title = element.find(".av-simple-error-title"), marginTop = -title.height() - 45, marginLeft = -title.width() / 2;
-            title.attr("style", "margin-top: " + marginTop + "px; margin-left: " + marginLeft + "px");
-        }, scope.$watch(attrs.title, function() {
-            scope.updateTitle();
-        });
-    }
     return {
         restrict: "AE",
         scope: {},
-        link: link,
+        link: function(scope, element, attrs) {
+            scope.updateTitle = function() {
+                var title = element.find(".av-simple-error-title"), marginTop = -title.height() - 45, marginLeft = -title.width() / 2;
+                title.attr("style", "margin-top: " + marginTop + "px; margin-left: " + marginLeft + "px");
+            }, scope.$watch(attrs.title, function() {
+                scope.updateTitle();
+            });
+        },
         transclude: !0,
         templateUrl: "avUi/simple-error-directive/simple-error-directive.html"
     };
 } ]), angular.module("avUi").directive("avChangeLang", [ "$i18next", "ipCookie", "angularLoad", "amMoment", "ConfigService", function($i18next, ipCookie, angularLoad, amMoment, ConfigService) {
-    function link(scope, element, attrs) {
-        scope.deflang = window.i18n.lng(), angular.element("#ng-app").attr("lang", scope.deflang), 
-        scope.langs = $i18next.options.lngWhitelist, scope.changeLang = function(lang) {
-            $i18next.options.lng = lang, console.log("setting cookie");
-            var cookieConf = {
-                expires: 360,
-                path: "/"
-            };
-            ipCookie("lang", lang, _.extend(cookieConf, ConfigService.i18nextCookieOptions)), 
-            scope.deflang = lang, angular.element("#ng-app").attr("lang", scope.deflang), angularLoad.loadScript(ConfigService.base + "/locales/moment/" + lang + ".js").then(function() {
-                amMoment.changeLocale(lang);
-            });
-        };
-    }
     return {
         restrict: "AE",
         scope: {},
-        link: link,
+        link: function(scope, element, attrs) {
+            scope.deflang = window.i18n.lng(), angular.element("#ng-app").attr("lang", scope.deflang), 
+            scope.langs = $i18next.options.lngWhitelist, scope.changeLang = function(lang) {
+                $i18next.options.lng = lang, console.log("setting cookie"), ipCookie("lang", lang, _.extend({
+                    expires: 360,
+                    path: "/"
+                }, ConfigService.i18nextCookieOptions)), scope.deflang = lang, angular.element("#ng-app").attr("lang", scope.deflang), 
+                angularLoad.loadScript(ConfigService.base + "/locales/moment/" + lang + ".js").then(function() {
+                    amMoment.changeLocale(lang);
+                });
+            };
+        },
         templateUrl: "avUi/change-lang-directive/change-lang-directive.html"
     };
 } ]), angular.module("avUi").directive("avAffixBottom", [ "$window", "$timeout", "$parse", function($window, $timeout, $parse) {
-    var affixBottomClass = "affix-bottom", checkPosition = function(scope, instance, el, options) {
-        var affix = !1, elHeight = $(el).actual("height");
-        ($("body").height() + elHeight > window.innerHeight || instance.forceAffixWidth && window.innerWidth < instance.forceAffixWidth) && (affix = affixBottomClass), 
-        instance.affixed !== affix && (instance.affix = affix, instance.setIsAffix(scope, affix), 
-        el.removeClass("hidden"), affix ? (el.addClass(affixBottomClass), $(el).parent().css("margin-bottom", elHeight + "px")) : (el.removeClass(affixBottomClass), 
-        $(el).parent().css("margin-bottom", instance.defaultBottomMargin)));
-    };
     return {
         restrict: "EAC",
         link: function(scope, iElement, iAttrs) {
-            function callCheckPos() {
-                timeout = $timeout(function() {
-                    $timeout.cancel(timeout), checkPosition(scope, instance, iElement, iAttrs);
-                }, 100);
-            }
-            var instance = {
+            var timeout, instance = {
                 affix: !1,
                 getIsAffix: null,
                 setIsAffix: angular.noop,
                 defaultBottomMargin: iElement.css("margin-bottom"),
                 forceAffixWidth: parseInt(iAttrs.forceAffixWidth, 10)
             };
-            iAttrs.avAffixBottom.length > 0 && (instance.getIsAffix = $parse(iAttrs.avAffixBottom), 
-            instance.setIsAffix = instance.getIsAffix.assign);
-            var timeout;
-            callCheckPos(), angular.element($window).on("resize", callCheckPos), angular.element(document.body).on("resize", callCheckPos), 
-            console.log("iElement NOT resize, height = " + iElement.height()), angular.element(iElement).on("resize", callCheckPos);
+            function callCheckPos() {
+                timeout = $timeout(function() {
+                    $timeout.cancel(timeout), function(scope, instance, el, options) {
+                        var affix = !1, elHeight = $(el).actual("height");
+                        ($("body").height() + elHeight > window.innerHeight || instance.forceAffixWidth && window.innerWidth < instance.forceAffixWidth) && (affix = "affix-bottom"), 
+                        instance.affixed !== affix && (instance.affix = affix, instance.setIsAffix(scope, affix), 
+                        el.removeClass("hidden"), affix ? (el.addClass("affix-bottom"), $(el).parent().css("margin-bottom", elHeight + "px")) : (el.removeClass("affix-bottom"), 
+                        $(el).parent().css("margin-bottom", instance.defaultBottomMargin)));
+                    }(scope, instance, iElement);
+                }, 100);
+            }
+            0 < iAttrs.avAffixBottom.length && (instance.getIsAffix = $parse(iAttrs.avAffixBottom), 
+            instance.setIsAffix = instance.getIsAffix.assign), callCheckPos(), angular.element($window).on("resize", callCheckPos), 
+            angular.element(document.body).on("resize", callCheckPos), console.log("iElement NOT resize, height = " + iElement.height()), 
+            angular.element(iElement).on("resize", callCheckPos);
         }
     };
 } ]), angular.module("avUi").directive("avAutoHeight", [ "$window", "$timeout", function($window, $timeout) {
@@ -867,29 +869,9 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         }
     };
 } ]), angular.module("avUi").directive("avAffixTopOffset", [ "$window", "$timeout", "$parse", function($window, $timeout, $parse) {
-    var affixClass = "affix-top", checkPosition = function(scope, instance, el, options) {
-        var affix = !1, offset = el.offset();
-        instance.affix && $window.pageYOffset + 20 >= instance.scrollAffix || (offset.top - $window.pageYOffset < instance.avAffixTopOffset && (affix = !0), 
-        instance.affix !== affix && (instance.affix = affix, instance.scrollAffix = $window.pageYOffset, 
-        affix ? (el.addClass(affixClass), el.data("page-offset", $window.pageYOffset), el.css("position", "fixed"), 
-        el.css("float", "none"), el.css("top", Math.floor(instance.avAffixTopOffset) + "px"), 
-        el.css("left", Math.floor(instance.baseOffset.left) + "px"), el.css("width", Math.floor(instance.baseWidth) + "px"), 
-        el.css("z-index", "10"), void 0 !== options.affixPlaceholder && $(options.affixPlaceholder).addClass("affixed")) : (el.removeClass(affixClass), 
-        el.attr("style", ""), void 0 !== options.affixPlaceholder && $(options.affixPlaceholder).removeClass("affixed"))));
-    };
     return {
         restrict: "EAC",
         link: function(scope, iElement, iAttrs) {
-            function callCheckPos() {
-                checkPosition(scope, instance, iElement, iAttrs);
-            }
-            function resize() {
-                iElement.removeClass(affixClass), iElement.attr("style", ""), instance.affix = !1, 
-                instance.scrollAffix = null, $timeout(function() {
-                    instance.baseOffset = iElement.offset(), instance.baseWidth = iElement.width(), 
-                    callCheckPos();
-                }, 100);
-            }
             var instance = {
                 affix: !1,
                 scrollAffix: null,
@@ -897,7 +879,25 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                 baseWidth: iElement.width(),
                 avAffixTopOffset: parseInt(iAttrs.avAffixTopOffset, 10)
             };
-            callCheckPos(), angular.element($window).on("scroll", callCheckPos), angular.element($window).on("resize", resize);
+            function callCheckPos() {
+                !function(scope, instance, el, options) {
+                    var affix = !1, offset = el.offset();
+                    instance.affix && $window.pageYOffset + 20 >= instance.scrollAffix || (offset.top - $window.pageYOffset < instance.avAffixTopOffset && (affix = !0), 
+                    instance.affix !== affix && (instance.affix = affix, instance.scrollAffix = $window.pageYOffset, 
+                    affix ? (el.addClass("affix-top"), el.data("page-offset", $window.pageYOffset), 
+                    el.css("position", "fixed"), el.css("float", "none"), el.css("top", Math.floor(instance.avAffixTopOffset) + "px"), 
+                    el.css("left", Math.floor(instance.baseOffset.left) + "px"), el.css("width", Math.floor(instance.baseWidth) + "px"), 
+                    el.css("z-index", "10"), void 0 !== options.affixPlaceholder && $(options.affixPlaceholder).addClass("affixed")) : (el.removeClass("affix-top"), 
+                    el.attr("style", ""), void 0 !== options.affixPlaceholder && $(options.affixPlaceholder).removeClass("affixed"))));
+                }(0, instance, iElement, iAttrs);
+            }
+            callCheckPos(), angular.element($window).on("scroll", callCheckPos), angular.element($window).on("resize", function() {
+                iElement.removeClass("affix-top"), iElement.attr("style", ""), instance.affix = !1, 
+                instance.scrollAffix = null, $timeout(function() {
+                    instance.baseOffset = iElement.offset(), instance.baseWidth = iElement.width(), 
+                    callCheckPos();
+                }, 100);
+            });
         }
     };
 } ]), angular.module("avUi").directive("avAffixTop", [ "$window", "$timeout", function($window, $timeout) {
@@ -908,51 +908,27 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
     return {
         restrict: "EAC",
         link: function(scope, iElement, iAttrs) {
+            var timeout;
             function updateMarginTimeout() {
                 timeout = $timeout(function() {
                     $timeout.cancel(timeout), updateMargin(iElement, iAttrs);
                 }, 100);
             }
-            updateMargin(iElement, iAttrs), void 0 === iAttrs.minHeight && (iAttrs.minHeight = "20");
-            var timeout;
+            updateMargin(iElement, iAttrs), void 0 === iAttrs.minHeight && (iAttrs.minHeight = "20"), 
             angular.element(iElement).bind("resize", updateMarginTimeout), angular.element($window).bind("resize", updateMarginTimeout), 
             $(iAttrs.avAffixTop).change(updateMarginTimeout);
         }
     };
 } ]), angular.module("avUi").directive("avCollapsing", [ "$window", "$timeout", function($window, $timeout) {
-    function collapseEl(instance, el) {
-        var val = null;
-        return val = instance.collapseSelector ? select(instance, el, instance.collapseSelector) : angular.element(el);
-    }
     function select(instance, el, selector) {
-        var val;
-        return val = instance.parentSelector ? el.closest(instance.parentSelector).find(selector) : angular.element(selector);
+        return instance.parentSelector ? el.closest(instance.parentSelector).find(selector) : angular.element(selector);
     }
-    var checkCollapse = function(instance, el, options) {
-        var maxHeight = select(instance, el, instance.maxHeightSelector).css("max-height"), height = angular.element(el)[0].scrollHeight;
-        if (-1 === maxHeight.indexOf("px")) return void console.log("invalid non-pixels max-height for " + instance.maxHeightSelector);
-        if (maxHeight = parseInt(maxHeight.replace("px", "")), height > maxHeight) {
-            if (instance.isCollapsed) return;
-            instance.isCollapsed = !0, collapseEl(instance, el).addClass("collapsed"), select(instance, el, instance.toggleSelector).removeClass("hidden in");
-        } else {
-            if (!instance.isCollapsed) return;
-            instance.isCollapsed = !1, collapseEl(instance, el).removeClass("collapsed"), select(instance, el, instance.toggleSelector).addClass("hidden");
-        }
-    }, toggleCollapse = function(instance, el, options) {
-        instance.isCollapsed ? (collapseEl(instance, el).removeClass("collapsed"), select(instance, el, instance.toggleSelector).addClass("in")) : (collapseEl(instance, el).addClass("collapsed"), 
-        select(instance, el, instance.toggleSelector).removeClass("in")), instance.isCollapsed = !instance.isCollapsed;
-    };
+    function collapseEl(instance, el) {
+        return instance.collapseSelector ? select(instance, el, instance.collapseSelector) : angular.element(el);
+    }
     return {
         restrict: "EAC",
         link: function(scope, iElement, iAttrs) {
-            function callCheck() {
-                timeout = $timeout(function() {
-                    $timeout.cancel(timeout), checkCollapse(instance, iElement, iAttrs);
-                }, 100);
-            }
-            function launchToggle() {
-                toggleCollapse(instance, iElement, iAttrs);
-            }
             var timeout, instance = {
                 isCollapsed: !1,
                 maxHeightSelector: iAttrs.avCollapsing,
@@ -960,19 +936,37 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                 parentSelector: iAttrs.parentSelector,
                 collapseSelector: iAttrs.collapseSelector
             };
+            function callCheck() {
+                timeout = $timeout(function() {
+                    $timeout.cancel(timeout), function(instance, el, options) {
+                        var maxHeight = select(instance, el, instance.maxHeightSelector).css("max-height"), height = angular.element(el)[0].scrollHeight;
+                        if (-1 !== maxHeight.indexOf("px")) if ((maxHeight = parseInt(maxHeight.replace("px", ""))) < height) {
+                            if (instance.isCollapsed) return;
+                            instance.isCollapsed = !0, collapseEl(instance, el).addClass("collapsed"), select(instance, el, instance.toggleSelector).removeClass("hidden in");
+                        } else {
+                            if (!instance.isCollapsed) return;
+                            instance.isCollapsed = !1, collapseEl(instance, el).removeClass("collapsed"), select(instance, el, instance.toggleSelector).addClass("hidden");
+                        } else console.log("invalid non-pixels max-height for " + instance.maxHeightSelector);
+                    }(instance, iElement);
+                }, 100);
+            }
             callCheck(), angular.element($window).bind("resize", callCheck), angular.element(iElement).bind("resize", callCheck), 
-            angular.element(instance.toggleSelector).bind("click", launchToggle);
+            angular.element(instance.toggleSelector).bind("click", function() {
+                !function(instance, el, options) {
+                    instance.isCollapsed ? (collapseEl(instance, el).removeClass("collapsed"), select(instance, el, instance.toggleSelector).addClass("in")) : (collapseEl(instance, el).addClass("collapsed"), 
+                    select(instance, el, instance.toggleSelector).removeClass("in")), instance.isCollapsed = !instance.isCollapsed;
+                }(instance, iElement);
+            });
         }
     };
 } ]), angular.module("avUi").directive("avRecompile", [ "$compile", "$parse", function($compile, $parse) {
     "use strict";
-    function getElementAsHtml(el) {
-        return angular.element("<a></a>").append(el.clone()).html();
-    }
     return {
         scope: !0,
         compile: function(el) {
-            var template = getElementAsHtml(el);
+            var template = function(el) {
+                return angular.element("<a></a>").append(el.clone()).html();
+            }(el);
             return function(scope, $el, attrs) {
                 var stopWatching = scope.$parent.$watch(attrs.avRecompile, function(_new, _old) {
                     var useBoolean = attrs.hasOwnProperty("useBoolean");
@@ -991,21 +985,18 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         require: "ngModel",
         priority: 99,
         link: function(scope, elm, attr, ngModelCtrl) {
-            if ("radio" !== attr.type && "checkbox" !== attr.type) {
-                elm.unbind("input");
-                var debounce;
-                elm.bind("input", function() {
-                    $timeout.cancel(debounce), debounce = $timeout(function() {
-                        scope.$apply(function() {
-                            ngModelCtrl.$setViewValue(elm.val());
-                        });
-                    }, attr.avDebounce || 500);
-                }), elm.bind("blur", function() {
+            var debounce;
+            "radio" !== attr.type && "checkbox" !== attr.type && (elm.unbind("input"), elm.bind("input", function() {
+                $timeout.cancel(debounce), debounce = $timeout(function() {
                     scope.$apply(function() {
                         ngModelCtrl.$setViewValue(elm.val());
                     });
+                }, attr.avDebounce || 500);
+            }), elm.bind("blur", function() {
+                scope.$apply(function() {
+                    ngModelCtrl.$setViewValue(elm.val());
                 });
-            }
+            }));
         }
     };
 } ]), angular.module("avUi").service("InsideIframeService", function() {
@@ -1023,8 +1014,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         }
         if (void 0 === format && (format = "str"), 0 === total_votes) return print(0);
         var base = question.totals.valid_votes + question.totals.null_votes + question.totals.blank_votes;
-        return (void 0 === over || null === over) && (over = question.answer_total_votes_percentage), 
-        "over-valid-votes" === over || "over-total-valid-votes" === over ? base = question.totals.valid_votes : "over-total-valid-points" === over && void 0 !== question.totals.valid_points && (base = question.totals.valid_points), 
+        return null == over && (over = question.answer_total_votes_percentage), "over-valid-votes" === over || "over-total-valid-votes" === over ? base = question.totals.valid_votes : "over-total-valid-points" === over && void 0 !== question.totals.valid_points && (base = question.totals.valid_points), 
         print(100 * total_votes / base);
     };
 }), angular.module("avUi").service("CheckerService", function() {
@@ -1043,11 +1033,9 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         angular.isUndefined(d.errorData) && (d.errorData = {});
         var ret = _.every(d.checks, function(item) {
             var itemMin, itemMax, max, min, pass = !0;
-            if ("is-int" === item.check) pass = angular.isNumber(d.data[item.key], item.postfix), 
-            pass || error(item.check, {
+            if ("is-int" === item.check) (pass = angular.isNumber(d.data[item.key], item.postfix)) || error(item.check, {
                 key: item.key
-            }, item.postfix); else if ("is-array" === item.check) pass = angular.isArray(d.data[item.key], item.postfix), 
-            pass || error(item.check, {
+            }, item.postfix); else if ("is-array" === item.check) (pass = angular.isArray(d.data[item.key], item.postfix)) || error(item.check, {
                 key: item.key
             }, item.postfix); else if ("lambda" === item.check) {
                 if (!item.validator(d.data[item.key])) {
@@ -1058,44 +1046,36 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                     _.isObject(item.append) && _.isString(item.append.key) && !_.isUndefined(item.append.value) && (errorData[item.append.key] = evalValue(item.append.value, item)), 
                     error(item.check, errorData, item.postfix);
                 }
-            } else if ("is-string-if-defined" === item.check) pass = angular.isUndefined(d.data[item.key]) || angular.isString(d.data[item.key], item.postfix), 
-            pass || error(item.check, {
+            } else if ("is-string-if-defined" === item.check) (pass = angular.isUndefined(d.data[item.key]) || angular.isString(d.data[item.key], item.postfix)) || error(item.check, {
                 key: item.key
             }, item.postfix); else if ("array-length-if-defined" === item.check) {
-                if (angular.isDefined(d.data[item.key]) && (itemMin = evalValue(item.min, d.data), 
-                itemMax = evalValue(item.max, d.data), (angular.isArray(d.data[item.key]) || angular.isString(d.data[item.key])) && (min = angular.isUndefined(item.min) || d.data[item.key].length >= itemMin, 
+                if (angular.isDefined(d.data[item.key])) if (itemMin = evalValue(item.min, d.data), 
+                itemMax = evalValue(item.max, d.data), angular.isArray(d.data[item.key]) || angular.isString(d.data[item.key])) if (min = angular.isUndefined(item.min) || d.data[item.key].length >= itemMin, 
                 max = angular.isUndefined(item.max) || d.data[item.key].length <= itemMax, pass = min && max, 
                 min || error("array-length-min", {
                     key: item.key,
                     min: itemMin,
                     num: d.data[item.key].length
-                }, item.postfix), !max))) {
-                    var itemErrorData0 = {
-                        key: item.key,
-                        max: itemMax,
-                        num: d.data[item.key].length
-                    };
-                    error("array-length-max", itemErrorData0, item.postfix);
-                }
-            } else if ("is-string" === item.check) pass = angular.isString(d.data[item.key], item.postfix), 
-            pass || error(item.check, {
+                }, item.postfix), !max) error("array-length-max", {
+                    key: item.key,
+                    max: itemMax,
+                    num: d.data[item.key].length
+                }, item.postfix);
+            } else if ("is-string" === item.check) (pass = angular.isString(d.data[item.key], item.postfix)) || error(item.check, {
                 key: item.key
             }, item.postfix); else if ("array-length" === item.check) {
                 if (itemMin = evalValue(item.min, d.data), itemMax = evalValue(item.max, d.data), 
-                (angular.isArray(d.data[item.key]) || angular.isString(d.data[item.key])) && (min = angular.isUndefined(item.min) || d.data[item.key].length >= itemMin, 
+                angular.isArray(d.data[item.key]) || angular.isString(d.data[item.key])) if (min = angular.isUndefined(item.min) || d.data[item.key].length >= itemMin, 
                 max = angular.isUndefined(item.max) || d.data[item.key].length <= itemMax, pass = min && max, 
                 min || error("array-length-min", {
                     key: item.key,
                     min: itemMin,
                     num: d.data[item.key].length
-                }, item.postfix), !max)) {
-                    var itemErrorData = {
-                        key: item.key,
-                        max: itemMax,
-                        num: d.data[item.key].length
-                    };
-                    error("array-length-max", itemErrorData, item.postfix);
-                }
+                }, item.postfix), !max) error("array-length-max", {
+                    key: item.key,
+                    max: itemMax,
+                    num: d.data[item.key].length
+                }, item.postfix);
             } else if ("int-size" === item.check) itemMin = evalValue(item.min, d.data), itemMax = evalValue(item.max, d.data), 
             min = angular.isUndefined(item.min) || d.data[item.key] >= itemMin, max = angular.isUndefined(item.max) || d.data[item.key] <= itemMax, 
             pass = min && max, min || error("int-size-min", {
@@ -1158,19 +1138,19 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                     });
                 });
             }
-            return pass || "chain" !== d.data.groupType ? !0 : !1;
+            return !(!pass && "chain" === d.data.groupType);
         });
         return ret;
     }
     return checker;
 }), angular.module("avUi").service("AddDotsToIntService", function() {
     return function(number, fixedDigits) {
-        angular.isNumber(fixedDigits) && fixedDigits >= 0 && (number = number.toFixed(parseInt(fixedDigits)));
+        angular.isNumber(fixedDigits) && 0 <= fixedDigits && (number = number.toFixed(parseInt(fixedDigits)));
         var number_str = (number + "").replace(".", ","), ret = "", commaPos = number_str.length;
         -1 !== number_str.indexOf(",") && (commaPos = number_str.indexOf(","));
-        for (var i = 0; commaPos > i; i++) {
+        for (var i = 0; i < commaPos; i++) {
             var reverse = commaPos - i;
-            reverse % 3 === 0 && reverse > 0 && i > 0 && (ret += "."), ret += number_str[i];
+            reverse % 3 == 0 && 0 < reverse && 0 < i && (ret += "."), ret += number_str[i];
         }
         return ret + number_str.substr(commaPos, number_str.length);
     };
@@ -1251,14 +1231,13 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         controller: "DocumentationUiController"
     };
 }), angular.module("avUi").directive("avFoot", [ "ConfigService", function(ConfigService) {
-    function link(scope, element, attrs) {
-        scope.contact = ConfigService.contact, scope.social = ConfigService.social, scope.technology = ConfigService.technology, 
-        scope.legal = ConfigService.legal, scope.organization = ConfigService.organization;
-    }
     return {
         restrict: "AE",
         scope: {},
-        link: link,
+        link: function(scope, element, attrs) {
+            scope.contact = ConfigService.contact, scope.social = ConfigService.social, scope.technology = ConfigService.technology, 
+            scope.legal = ConfigService.legal, scope.organization = ConfigService.organization;
+        },
         templateUrl: "avUi/foot-directive/foot-directive.html"
     };
 } ]), angular.module("agora-gui-common", [ "ui.bootstrap", "ui.utils", "ui.router", "ngAnimate", "ngResource", "ngCookies", "ipCookie", "ngSanitize", "infinite-scroll", "angularMoment", "avConfig", "jm.i18next", "avRegistration", "avUi", "avTest", "angularFileUpload", "dndLists", "angularLoad", "angular-date-picker-polyfill", "ng-autofocus" ]), 
@@ -1328,12 +1307,12 @@ angular.module("jm.i18next").config([ "$i18nextProvider", "ConfigServiceProvider
     $templateCache.put("avRegistration/login-controller/login-controller.html", '<div class="col-xs-12 top-section"><div class="pad"><div av-login event-id="{{event_id}}" code="{{code}}" email="{{email}}"></div></div></div>'), 
     $templateCache.put("avRegistration/login-directive/login-directive.html", '<div class="container-fluid"><div class="row"><div class="col-sm-12 loginheader"><h2 class="tex-center" ng-if="!isCensusQuery" ng-i18next="[i18next]({name: orgName})avRegistration.loginHeader"></h2><h2 class="tex-center" ng-if="!!isCensusQuery" ng-i18next="avRegistration.censusQueryHeader"></h2></div><div class="col-sm-6"><form name="form" id="loginForm" role="form" class="form-horizontal"><div ng-repeat="field in login_fields" avr-field index="{{$index+1}}" ng-if="field.steps === undefined || field.steps.indexOf(currentFormStep) !== -1"></div><div class="col-sm-offset-4 col-sm-8 button-group"><div class="input-error" ng-if="!isCensusQuery"><div class="error text-danger" ng-if="error">{{ error }}</div></div><div class="input-warn"><span class="text-warning" ng-if="!form.$valid || sendingData" ng-i18next>avRegistration.fillValidFormText</span></div><button type="submit" class="btn btn-block btn-success" ng-if="!isCensusQuery" ng-i18next="avRegistration.loginButton" ng-click="loginUser(form.$valid)" tabindex="{{login_fields.length+1}}" ng-disabled="!form.$valid || sendingData"></button> <button type="submit" class="btn btn-block btn-success" ng-if="!!isCensusQuery" ng-i18next="avRegistration.checkCensusButton" ng-click="checkCensus(form.$valid)" tabindex="{{login_fields.length+1}}" ng-disabled="!form.$valid || sendingData"></button><div class="census-query" ng-if="isCensusQuery"><div class="input-info census-query" ng-if="censusQuery == \'querying\'"><div class="text-info" ng-i18next="avRegistration.censusQuerying"></div></div><div class="input-success census-query" ng-if="censusQuery == \'success\'"><div class="success text-success" ng-i18next="[html]avRegistration.censusSuccess"></div></div><div class="input-success census-query" ng-if="censusQuery == \'fail\'"><div class="error text-danger" ng-i18next="[html]avRegistration.censusFail"></div></div></div></div></form></div><div class="col-sm-5 col-sm-offset-1 hidden-xs" ng-if="registrationAllowed && !isCensusQuery"><h3 class="help-h3" ng-i18next="avRegistration.notRegisteredYet"></h3><p><a ng-if="!isAdmin" href="#/election/{{election.id}}/public/register" ng-i18next="avRegistration.registerHere" ng-click="goSignup()" tabindex="{{login_fields.length+2}}"></a><br><a ng-if="isAdmin" href="{{ signupLink }}" ng-i18next="avRegistration.registerHere" tabindex="{{login_fields.length+2}}"></a><br><span ng-i18next="avRegistration.fewMinutes"></span></p></div></div></div>'), 
     $templateCache.put("avRegistration/register-controller/register-controller.html", '<div class="col-xs-12 top-section"><div class="pad"><div av-register event-id="{{event_id}}" code="{{code}}" email="{{email}}"></div></div></div>'), 
-    $templateCache.put("avRegistration/register-directive/register-directive.html", '<div class="container"><div class="row"><div class="col-sm-12"><h2 ng-if="!admin" class="registerheader" ng-i18next="avRegistration.registerHeader"></h2><h2 ng-if="admin" class="registerheader" ng-i18next="avRegistration.registerAdminHeader"></h2></div></div><div class="row"><div class="col-sm-6"><div ng-if="method == \'dnie\'"><a type="submit" class="btn btn-block btn-success" ng-i18next="avRegistration.registerButton" ng-href="{{ dnieurl }}/"></a></div><form ng-if="method != \'dnie\'" name="form" id="registerForm" role="form" class="form-horizontal"><div ng-repeat="field in register_fields" avr-field index="{{$index+1}}"></div><div class="col-sm-offset-4 col-sm-8 button-group"><div class="input-error"><div class="error text-danger" ng-if="error" ng-bind-html="error"></div></div><div class="input-warn"><span class="text-warning" ng-if="!form.$valid || sendingData" ng-i18next>avRegistration.fillValidFormText</span></div><button type="submit" class="btn btn-block btn-success" ng-i18next="avRegistration.registerButton" ng-click="signUp(form.$valid)" tabindex="{{register_fields.length+1}}" ng-disabled="!form.$valid || sendingData"></button></div></form></div><div class="col-sm-5 col-sm-offset-1 help-sidebar hidden-xs"><span><h3 class="help-h3" ng-i18next="avRegistration.registerAdminFormHelpTitle"></h3><p ng-i18next>avRegistration.helpAdminRegisterForm</p></span> <span><p ng-if="!admin" ng-i18next>avRegistration.helpRegisterForm</p><h3 class="help-h3" ng-i18next="avRegistration.alreadyRegistered"></h3><p ng-i18next>[html]avRegistration.helpAlreadyRegisteredForm</p><a href="" ng-click="goLogin($event)" ng-i18next="avRegistration.loginHere"></a><br></span></div></div></div>'), 
+    $templateCache.put("avRegistration/register-directive/register-directive.html", '<div class="container"><div class="row"><div class="col-sm-12"><h2 ng-if="!admin" class="registerheader" ng-i18next="avRegistration.registerHeader"></h2><h2 ng-if="admin" class="registerheader" ng-i18next="avRegistration.registerAdminHeader"></h2></div></div><div class="row"><div class="col-sm-6"><div ng-if="method == \'dnie\'"><a type="submit" class="btn btn-block btn-success" ng-i18next="avRegistration.registerButton" ng-href="{{ dnieurl }}/"></a></div><form ng-if="method != \'dnie\'" name="form" id="registerForm" role="form" class="form-horizontal"><div ng-repeat="field in register_fields" avr-field index="{{$index+1}}"></div><div class="col-sm-offset-4 col-sm-8 button-group"><div class="input-error"><div class="error text-danger" ng-if="error" ng-bind-html="error"></div></div><div class="input-warn"><span class="text-warning" ng-if="!form.$valid || sendingData" ng-i18next>avRegistration.fillValidFormText</span></div><button type="submit" class="btn btn-block btn-success" ng-i18next="avRegistration.registerButton" ng-click="signUp(form.$valid)" tabindex="{{register_fields.length+1}}" ng-disabled="!form.$valid || sendingData"></button></div></form></div><div class="col-sm-5 col-sm-offset-1 help-sidebar hidden-xs"><span><h3 class="help-h3" ng-i18next="avRegistration.registerAdminFormHelpTitle"></h3><p ng-i18next>avRegistration.helpAdminRegisterForm</p></span><span><p ng-if="!admin" ng-i18next>avRegistration.helpRegisterForm</p><h3 class="help-h3" ng-i18next="avRegistration.alreadyRegistered"></h3><p ng-i18next>[html]avRegistration.helpAlreadyRegisteredForm</p><a href="" ng-click="goLogin($event)" ng-i18next="avRegistration.loginHere"></a><br></span></div></div></div>'), 
     $templateCache.put("avRegistration/success.html", '<div av-success><p ng-i18next="avRegistration.successRegistration"></p></div>'), 
     $templateCache.put("avUi/change-lang-directive/change-lang-directive.html", '<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{ deflang }} <span class="caret"></span></a><ul class="dropdown-menu" role="menu"><li ng-repeat="lang in langs"><a ng-click="changeLang(lang)" ng-space-click tabindex="0">{{lang}}</a></li></ul>'), 
     $templateCache.put("avUi/documentation-directive/documentation-directive.html", '<div><h2 class="text-center text-av-secondary" ng-i18next="avDocumentation.documentation.title"></h2><p ng-i18next="avDocumentation.documentation.first_line"></p><ul class="docu-ul"><li ng-if="!!documentation.faq"><a href="{{documentation.faq}}" target="_blank" ng-i18next="avDocumentation.documentation.faq"></a></li><li ng-if="!!documentation.overview"><a href="{{documentation.overview}}" target="_blank" ng-i18next="avDocumentation.documentation.overview"></a></li><li><a href="{{auths_url}}" target="_blank" ng-i18next="avDocumentation.documentation.authorities"></a></li><li ng-if="!!documentation.technical"><a href="{{documentation.technical}}" target="_blank" ng-i18next="avDocumentation.documentation.technical"></a></li><li ng-if="!!documentation.security_contact"><a href="{{documentation.security_contact}}" target="_blank" ng-i18next="avDocumentation.documentation.security_contact"></a></li></ul><div class="documentation-html-include" av-plugin-html ng-bind-html="documentation_html_include"></div></div>'), 
     $templateCache.put("avUi/foot-directive/foot-directive.html", '<div class="commonfoot"><div class="social" style="text-align: center"><span class="powered-by pull-left" ng-i18next="[html:i18next]({url: organization.orgUrl, name: organization.orgName})avCommon.poweredBy"></span> <a href="{{social.facebook}}" target="_blank" ng-if="!!social.facebook" aria-label="Facebook"><i class="fa fa-fw fa-lg fa-facebook"></i></a> <a href="{{social.twitter}}" target="_blank" ng-if="!!social.twitter" aria-label="Twitter"><i class="fa fa-fw fa-lg fa-twitter"></i></a> <a href="{{social.googleplus}}" target="_blank" ng-if="!!social.googleplus" aria-label="Google Plus"><i class="fa fa-fw fa-lg fa-google-plus"></i></a> <a href="{{social.youtube}}" target="_blank" ng-if="!!social.youtube" aria-label="Youtube"><i class="fa fa-fw fa-lg fa-youtube-play"></i></a> <a href="{{social.github}}" target="_blank" ng-if="!!social.github" aria-label="Github"><i class="fa fa-fw fa-lg fa-github"></i></a></div></div>'), 
     $templateCache.put("avUi/simple-error-directive/simple-error-directive.html", '<div class="av-simple-error-title" ng-transclude></div>'), 
-    $templateCache.put("test/test_booth_widget.html", '<!DOCTYPE html><html><head><title>Test frame</title><meta charset="UTF-8"></head><script>function getCastHmac(auth_data, callback) {\n      callback("khmac:///sha-256;5e25a9af28a33d94b8c2c0edbc83d6d87355e45b93021c35a103821557ec7dc5/voter-1110-1dee0c135afeae29e208550e7258dab7b64fb008bc606fc326d41946ab8e773f:1415185712");\n    }</script><body style="overflow-y: hidden; overflow-x: hidden; padding: 0; margin: 0"><div style="width: 100%; display: block; position: absolute; top: 0; bottom: 0; scroll: none; padding: 0; margin: 0"><a class="agoravoting-voting-booth" href="http://agora.dev/#/election/1110/vote" data-authorization-funcname="getCastHmac">Votar con Agora Voting</a><script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="http://agora.dev/avWidgets.min.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","agoravoting-widgets-js");</script></div></body></html>'), 
+    $templateCache.put("test/test_booth_widget.html", '<!DOCTYPE html><html><head><title>Test frame</title><meta charset="UTF-8"></head><script>function getCastHmac(auth_data, callback) {\n      callback("khmac:///sha-256;5e25a9af28a33d94b8c2c0edbc83d6d87355e45b93021c35a103821557ec7dc5/voter-1110-1dee0c135afeae29e208550e7258dab7b64fb008bc606fc326d41946ab8e773f:1415185712");\n    }<\/script><body style="overflow-y: hidden; overflow-x: hidden; padding: 0; margin: 0"><div style="width: 100%; display: block; position: absolute; top: 0; bottom: 0; scroll: none; padding: 0; margin: 0"><a class="agoravoting-voting-booth" href="http://agora.dev/#/election/1110/vote" data-authorization-funcname="getCastHmac">Votar con Agora Voting</a><script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="http://agora.dev/avWidgets.min.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","agoravoting-widgets-js");<\/script></div></body></html>'), 
     $templateCache.put("test/unit_test_e2e.html", '<div dynamic="html" id="dynamic-result"></div>');
 } ]);

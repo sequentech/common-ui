@@ -51,6 +51,10 @@
 		} catch(e) {}
 	}
 
+        function isFunction(obj) {
+                return Object.prototype.toString.call(obj) === '[object Function]';
+        }
+
 	function read(s, converter) {
 		var value = api.raw ? s : parseCookieValue(s);
 		return isFunction(converter) ? converter(value) : value;
@@ -67,10 +71,6 @@
 			}
 		}
 		return result;
-	}
-
-	function isFunction(obj) {
-		return Object.prototype.toString.call(obj) === '[object Function]';
 	}
 
 	var api = function (key, value, options) {

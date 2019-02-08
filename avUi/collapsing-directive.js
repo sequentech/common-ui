@@ -36,6 +36,15 @@
 angular.module('avUi')
   .directive('avCollapsing', function($window, $timeout) {
 
+    function select(instance, el, selector) {
+      var val;
+      if (!!instance.parentSelector) {
+        val = el.closest(instance.parentSelector).find(selector);
+      } else {
+        val = angular.element(selector);
+      }
+      return val;
+    }
 
     function collapseEl(instance, el) {
       var val = null;
@@ -43,16 +52,6 @@ angular.module('avUi')
         val = select(instance, el, instance.collapseSelector);
       } else {
         val = angular.element(el);
-      }
-      return val;
-    }
-
-    function select(instance, el, selector) {
-      var val;
-      if (!!instance.parentSelector) {
-        val = el.closest(instance.parentSelector).find(selector);
-      } else {
-        val = angular.element(selector);
       }
       return val;
     }
