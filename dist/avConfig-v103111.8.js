@@ -20,7 +20,7 @@
  * in this same file, which you might want to edit and tune if needed.
  */
 
-var AV_CONFIG_VERSION = '17.04';
+var AV_CONFIG_VERSION = '103111.8';
 
 var avConfigData = {
   // the base url path for ajax requests, for example for sending ballots or
@@ -138,6 +138,9 @@ var avConfigData = {
 
   // if we are in debug mode or not
   debug: true,
+
+  // Information regarding OpenID Connect authentication
+  openIDConnectProviders: [],
 
   // contact data where users can reach to a human when they need it
   contact: {

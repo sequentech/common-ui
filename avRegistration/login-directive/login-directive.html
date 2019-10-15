@@ -3,8 +3,13 @@
     <div class="col-sm-12 loginheader">
         <h2
           class="tex-center"
-          ng-if="!isCensusQuery"
+          ng-if="!isCensusQuery && method !== 'openid-connect'"
           ng-i18next="[i18next]({name: orgName})avRegistration.loginHeader">
+        </h2>
+        <h2
+          class="tex-center"
+          ng-if="!isCensusQuery && method === 'openid-connect'"
+          ng-i18next="[i18next]avRegistration.loginButton">
         </h2>
         <h2
           class="tex-center"
@@ -13,7 +18,7 @@
         </h2>
     </div>
 
-    <div class="col-sm-6">
+    <div class="col-sm-6" ng-if="method !== 'openid-connect'">
         <form name="form" id="loginForm" role="form" class="form-horizontal">
             <div
               ng-repeat="field in login_fields"
@@ -82,9 +87,10 @@
           </div>
         </form>
     </div>
+
     <div
       class="col-sm-5 col-sm-offset-1 hidden-xs"
-      ng-if="registrationAllowed && !isCensusQuery">
+      ng-if="registrationAllowed && !isCensusQuery  && method !== 'openid-connect'">
       <h3
         class="help-h3"
         ng-i18next="avRegistration.notRegisteredYet">
@@ -107,6 +113,22 @@
         <br/>
         <span ng-i18next="avRegistration.fewMinutes"></span>
       </p>
+    </div>
+
+    <div class="col-sm-12 text-center" ng-if="method === 'openid-connect'">
+        <span ng-repeat="provider in openIDConnectProviders">
+          <a
+            ng-click="openidConnectAuth(provider)"
+            alt="{{provider.description}}"
+            class="btn btn-primary btn-login">
+            <img
+              ng-if="!!provider.icon"
+              alt="{{provider.description}}"
+              class="logo-img"
+              ng-src="{{provider.icon}}" />
+            {{provider.title}}
+          </a>
+        </span>
     </div>
   </div>
 </div>

@@ -126,7 +126,7 @@ angular.module('avRegistration')
             scope.authevent = authevent;
 
             // if registration is closed, redirect to login
-            if (authevent['census'] !== 'open') {
+            if (authevent['census'] !== 'open' || scope.method === 'openid-connect') {
               if (authevent['id'] === ConfigService.freeAuthId) {
                   $state.go("admin.login");
               } else {
