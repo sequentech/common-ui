@@ -139,6 +139,9 @@ var avConfigData = {
   // if we are in debug mode or not
   debug: true,
 
+  // Information regarding OpenID Connect authentication
+  openIDConnectProviders: [],
+
   // contact data where users can reach to a human when they need it
   contact: {
     // Support contact email displayed in the footer links

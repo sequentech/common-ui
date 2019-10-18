@@ -36,8 +36,9 @@ angular.module('avRegistration')
       {
         scope.isCensusQuery = attrs.isCensusQuery;
         var adminId = ConfigService.freeAuthId + '';
-        var autheventid = attrs.eventId;
+        var autheventid = scope.eventId = attrs.eventId;
         scope.orgName = ConfigService.organization.orgName;
+        scope.openIDConnectProviders = ConfigService.openIDConnectProviders;
 
         // redirect from admin login to admin elections if login is not needed
         if (!!$cookies["authevent_" + adminId] && $cookies["authevent_" + adminId] === adminId &&
@@ -319,7 +320,10 @@ angular.module('avRegistration')
               return;
             }
 
-            scope.loginUser(true);
+            if (scope.method !== 'openid-connect')
+            {
+              scope.loginUser(true);
+            }
 
         };
 
@@ -346,6 +350,54 @@ angular.module('avRegistration')
 
         scope.forgotPassword = function() {
             console.log('forgotPassword');
+        };
+
+        // generate a cryptogrpahically secure random string
+        function randomStr()
+        {
+            /* jshint ignore:start */
+            var random = sjcl.random.randomWords(/* bitlength */ 2048 / 32, 0);
+            return sjcl.codec.hex.fromBits(random);
+            /* jshint ignore:end */
+        }
+
+        // OpenIDConnect sets a cookie that is used to create a CSRF token
+        // similar to what is mentioned here:
+        // https://developers.google.com/identity/protocols/OpenIDConnect#createxsrftoken
+        scope.openidConnectAuth = function(provider)
+        {
+            var randomState = randomStr();
+            var randomNonce = randomStr();
+            $cookies['openid-connect-csrf'] = angular.toJson({
+              randomState: randomState,
+              randomNonce: randomNonce,
+              created: Date.now(),
+              eventId: scope.eventId,
+              providerId: provider.id
+            });
+
+            // find provider
+            if (!provider)
+            {
+                scope.error = $i18next('avRegistration.openidError');
+                return;
+            }
+
+            // Craft the OpenID Connect auth URI
+            var authURI = (provider.authorization_endpoint +
+                "?response_type=id_token" +
+                "&client_id=" + encodeURIComponent(provider.client_id) +
+                "&scope=" + encodeURIComponent("openid") +
+                "&redirect_uri=" + encodeURIComponent(
+                    $window.location.origin +
+                    "/election/login-openid-connect-redirect"
+                ) +
+                "&state=" + randomState +
+                "&nonce=" + randomNonce
+            );
+
+            // Redirect to the Auth URI
+            $window.location.href = authURI;
         };
     }
     return {
