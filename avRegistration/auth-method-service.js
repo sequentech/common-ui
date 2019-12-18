@@ -351,7 +351,7 @@ angular.module('avRegistration')
               "required": true,
               "required_on_authentication": true
             });
-          } else if (viewEventData.auth_method === "email" && !found) {
+          } else if (viewEventData.auth_method in ["email", 'email-otp'] && !found) {
             fields.push({
               "name": "email",
               "type": "email",
@@ -413,7 +413,7 @@ angular.module('avRegistration')
 
         authmethod.getLoginFields = function (viewEventData) {
             var fields = authmethod.getRegisterFields(viewEventData);
-            if (viewEventData.auth_method === "sms" || viewEventData.auth_method === "email")
+            if (viewEventData.auth_method in ["sms", "email"])
             {
               fields.push({
                 "name": "code",
@@ -421,7 +421,7 @@ angular.module('avRegistration')
                 "required": true,
                 "required_on_authentication": true
               });
-            } else if (viewEventData.auth_method === "sms-otp")
+            } else if (viewEventData.auth_method in ["sms-otp", "email-otp"])
             {
               fields.push({
                 "name": "code",

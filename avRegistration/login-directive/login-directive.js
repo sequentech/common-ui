@@ -85,7 +85,7 @@ angular.module('avRegistration')
         }
 
         scope.resendAuthCode = function(field) {
-          if (scope.sendingData || !_.contains(["email", "sms", "sms-otp"], scope.method)) {
+          if (scope.sendingData || !_.contains(["email", "email-otp", "sms", "sms-otp"], scope.method)) {
               return;
           }
           var data = {};
@@ -102,7 +102,9 @@ angular.module('avRegistration')
             }
 
             data['tlf'] = scope.telField.value;
-          } else if ("email" === scope.method) { // email
+
+          // email or email-otp
+          } else if (scope.method in ["email", "email-otp"]) {
             if (-1 === scope.emailIndex) {
               return;
             }
@@ -127,7 +129,9 @@ angular.module('avRegistration')
             .success(function(rcvData) {
               if (_.contains(["sms", "sms-otp"], scope.method)) {
                 scope.telField.disabled = true;
-              }  else if ("email" === scope.method) {
+
+              // email or email-otp
+              }  else {
                 scope.login_fields[scope.emailIndex].disabled = true;
               }
               scope.currentFormStep = 1;
@@ -182,7 +186,7 @@ angular.module('avRegistration')
             }
 
             // loginUser
-            if (scope.method === 'sms-otp' && scope.currentFormStep === 0) {
+            if ((scope.method in ['sms-otp', 'email-otp']) && scope.currentFormStep === 0) {
                 scope.resendAuthCode();
                 return;
             }
@@ -290,6 +294,9 @@ angular.module('avRegistration')
                   if (scope.email !== null) {
                     el.value = scope.email;
                     el.disabled = true;
+                    if (scope.method === "email-otp") {
+                      scope.currentFormStep = 1;
+                    }
                   }
                   scope.emailIndex = index;
                 } else if (el.type === "code" && scope.code !== null) {

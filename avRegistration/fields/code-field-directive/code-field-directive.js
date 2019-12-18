@@ -29,7 +29,9 @@ angular.module('avRegistration')
         return data.showUserSendAuthCode;
       };
 
-      if ('sms' === scope.method || 'sms-otp' === scope.method) {
+      // TODO: validate email for email-otp. For now, we just allow the resend
+      // button for that use-case
+      if (scope.method in ['sms', 'sms-otp']) {
         var telInput =
           angular.element(document.getElementById('input' + scope.telIndex));
         scope.isValidTel = telInput.intlTelInput("isValidNumber");
