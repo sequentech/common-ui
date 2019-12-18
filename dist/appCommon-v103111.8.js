@@ -181,7 +181,12 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             _.each(fields, function(field) {
                 "sms" === viewEventData.auth_method && "tlf" === field.name ? ("text" === field.type && (field.type = "tlf"), 
                 found = !0) : "email" === viewEventData.auth_method && "email" === field.name && (found = !0);
-            }), "sms" !== viewEventData.auth_method && "sms-otp" !== viewEventData.auth_method || found ? "email" !== viewEventData.auth_method || found ? "user-and-password" === viewEventData.auth_method ? (fields.push({
+            }), "sms" !== viewEventData.auth_method && "sms-otp" !== viewEventData.auth_method || found ? viewEventData.auth_method in [ "email", "email-otp" ] && !found ? fields.push({
+                name: "email",
+                type: "email",
+                required: !0,
+                required_on_authentication: !0
+            }) : "user-and-password" === viewEventData.auth_method ? (fields.push({
                 name: "username",
                 type: "text",
                 required: !0,
@@ -202,11 +207,6 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                 required: !0,
                 required_on_authentication: !0
             })) : fields.push({
-                name: "email",
-                type: "email",
-                required: !0,
-                required_on_authentication: !0
-            }) : fields.push({
                 name: "tlf",
                 type: "tlf",
                 required: !0,
@@ -227,12 +227,12 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         },
         getLoginFields: function(viewEventData) {
             var fields = authmethod.getRegisterFields(viewEventData);
-            "sms" === viewEventData.auth_method || "email" === viewEventData.auth_method ? fields.push({
+            viewEventData.auth_method in [ "sms", "email" ] ? fields.push({
                 name: "code",
                 type: "code",
                 required: !0,
                 required_on_authentication: !0
-            }) : "sms-otp" === viewEventData.auth_method && fields.push({
+            }) : viewEventData.auth_method in [ "sms-otp", "email-otp" ] && fields.push({
                 name: "code",
                 type: "code",
                 required: !0,
@@ -363,13 +363,13 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             scope.code = null, attrs.code && 0 < attrs.code.length && (scope.code = attrs.code), 
             scope.email = null, attrs.email && 0 < attrs.email.length && (scope.email = attrs.email), 
             scope.isAdmin = !1, autheventid === adminId && (scope.isAdmin = !0), scope.resendAuthCode = function(field) {
-                if (!scope.sendingData && _.contains([ "email", "sms", "sms-otp" ], scope.method)) {
+                if (!scope.sendingData && _.contains([ "email", "email-otp", "sms", "sms-otp" ], scope.method)) {
                     var inputName, data = {};
                     if (_.contains([ "sms", "sms-otp" ], scope.method)) {
                         if (-1 === scope.telIndex) return;
                         if (inputName = "input" + scope.telIndex, !document.getElementById(inputName) || !angular.element(document.getElementById(inputName)).intlTelInput("isValidNumber")) return;
                         data.tlf = scope.telField.value;
-                    } else if ("email" === scope.method) {
+                    } else if (scope.method in [ "email", "email-otp" ]) {
                         if (-1 === scope.emailIndex) return;
                         var email = scope.email;
                         if (null === email && (email = scope.login_fields[scope.emailIndex].value), !function(email) {
@@ -379,7 +379,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                         data.email = email;
                     }
                     field && (field.value = ""), scope.sendingData = !0, Authmethod.resendAuthCode(data, autheventid).success(function(rcvData) {
-                        _.contains([ "sms", "sms-otp" ], scope.method) ? scope.telField.disabled = !0 : "email" === scope.method && (scope.login_fields[scope.emailIndex].disabled = !0), 
+                        _.contains([ "sms", "sms-otp" ], scope.method) ? scope.telField.disabled = !0 : scope.login_fields[scope.emailIndex].disabled = !0, 
                         scope.currentFormStep = 1, $timeout(scope.sendingDataTimeout, 3e3);
                     }).error(function(error) {
                         $timeout(scope.sendingDataTimeout, 3e3), scope.error = $i18next("avRegistration.errorSendingAuthCode");
@@ -402,7 +402,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                     });
                 }
             }, scope.loginUser = function(valid) {
-                if (valid && !scope.sendingData) if ("sms-otp" !== scope.method || 0 !== scope.currentFormStep) {
+                if (valid && !scope.sendingData) if (scope.method in [ "sms-otp", "email-otp" ] && 0 === scope.currentFormStep) scope.resendAuthCode(); else {
                     var data = {
                         captcha_code: Authmethod.captcha_code
                     };
@@ -432,7 +432,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                             support: ConfigService.contact.email
                         });
                     });
-                } else scope.resendAuthCode();
+                }
             }, scope.apply = function(authevent) {
                 var ret, href, adminMatch, electionsMatch;
                 scope.method = authevent.auth_method, scope.name = authevent.name, scope.registrationAllowed = "open" === authevent.census, 
@@ -444,7 +444,8 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                 var fields = _.map(scope.login_fields, function(el, index) {
                     return scope.stateData[el.name] ? (el.value = scope.stateData[el.name], el.disabled = !0) : (el.value = null, 
                     el.disabled = !1), "email" === el.type ? (null !== scope.email && (el.value = scope.email, 
-                    el.disabled = !0), scope.emailIndex = index) : "code" === el.type && null !== scope.code ? (el.value = scope.code.trim().replace(/ |\n|\t|-|_/g, "").toUpperCase(), 
+                    el.disabled = !0, "email-otp" === scope.method && (scope.currentFormStep = 1)), 
+                    scope.emailIndex = index) : "code" === el.type && null !== scope.code ? (el.value = scope.code.trim().replace(/ |\n|\t|-|_/g, "").toUpperCase(), 
                     el.disabled = !0) : "tlf" === el.type && "sms" === scope.method ? (null !== scope.email && -1 === scope.email.indexOf("@") && (el.value = scope.email, 
                     el.disabled = !0), scope.telIndex = index + 1, scope.telField = el) : "tlf" === el.type && "sms-otp" === scope.method && (null !== scope.email && -1 === scope.email.indexOf("@") && (el.value = scope.email, 
                     el.disabled = !0, scope.currentFormStep = 1), scope.telIndex = index + 1, scope.telField = el), 
@@ -585,7 +586,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                         captcha_code: Authmethod.captcha_code
                     };
                     _.each(scope.register_fields, function(field) {
-                        data[field.name] = field.value, "email" === field.name && "email" === scope.method ? scope.email = field.value : "tlf" === field.name && _.contains([ "sms", "sms-otp" ], scope.method) && (scope.email = field.value);
+                        data[field.name] = field.value, "email" === field.name && scope.method in [ "email", "email-otp" ] ? scope.email = field.value : "tlf" === field.name && _.contains([ "sms", "sms-otp" ], scope.method) && (scope.email = field.value);
                     }), Authmethod.signup(data, autheventid).success(function(rcvData) {
                         details = scope.getLoginDetails(autheventid), "ok" === rcvData.status ? (scope.user = rcvData.user, 
                         StateDataService.go(details.path, details.data, data)) : (scope.sendingData = !1, 
@@ -733,7 +734,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                     showUserSendAuthCode: !0
                 };
                 return Plugins.hook("hide-user-send-auth-code", data), data.showUserSendAuthCode;
-            }, "sms" === scope.method || "sms-otp" === scope.method) {
+            }, scope.method in [ "sms", "sms-otp" ]) {
                 var telInput = angular.element(document.getElementById("input" + scope.telIndex));
                 scope.isValidTel = telInput.intlTelInput("isValidNumber"), scope.$watch("telField.value", function(newValue, oldValue) {
                     scope.isValidTel = telInput.intlTelInput("isValidNumber");
@@ -1378,10 +1379,10 @@ angular.module("jm.i18next").config([ "$i18nextProvider", "ConfigServiceProvider
     $templateCache.put("avRegistration/field-directive/field-directive.html", '<div ng-switch="field.type"><div avr-email-field ng-switch-when="email"></div><div avr-password-field ng-switch-when="password"></div><div avr-code-field ng-switch-when="code"></div><div avr-text-field ng-switch-when="text"></div><div avr-dni-field ng-switch-when="dni"></div><div avr-date-field ng-switch-when="date" ng-model="field.value"></div><div avr-tel-field ng-switch-when="tlf"></div><div avr-int-field ng-switch-when="int"></div><div avr-bool-field ng-switch-when="bool"></div><div avr-captcha-field ng-switch-when="captcha"></div><div avr-textarea-field ng-switch-when="textarea"></div><div avr-image-field ng-switch-when="image"></div></div>'), 
     $templateCache.put("avRegistration/fields/bool-field-directive/bool-field-directive.html", '<div class="form-group"><label class="control-label col-sm-4"><input type="checkbox" class="form-control" aria-label="input{{index}}-bool" id="{{index}}Text" ng-model="field.value" ng-disabled="field.disabled" tabindex="{{index}}" ng-required="{{field.required}}"></label><div class="col-sm-8"><label class="text-left" for="{{index}}Text"><span ng-bind-html="field.name | addTargetBlank"></span></label><p class="help-block" ng-if="field.help" ng-bind-html="field.help | addTargetBlank"></p><div class="input-error"></div></div></div>'), 
     $templateCache.put("avRegistration/fields/captcha-field-directive/captcha-field-directive.html", '<div class="form-group"><div class="col-sm-8 col-sm-offset-4"><img ng-src="{{authMethod.captcha_image_url}}" style="width:161px;height:65px"></div><label for="{{index}}Text" class="control-label col-sm-4"><span>{{field.name}}</span></label><div class="col-sm-8"><input type="text" class="form-control" aria-label="input{{index}}-captcha" id="{{index}}Text" minlength="{{field.min}}" maxlength="{{field.max}}" ng-model="field.value" ng-disabled="field.disabled" tabindex="{{index}}" required><p class="help-block" ng-if="field.help">{{field.help}}</p><div class="input-error">{{authMethod.captcha_status}}</div></div></div>'), 
-    $templateCache.put("avRegistration/fields/code-field-directive/code-field-directive.html", '<div class="form-group"><label for="{{code_id}}" class="control-label col-sm-4" ng-i18next="avRegistration.codeLabel"></label><div class="col-sm-8"><input type="text" class="form-control" aria-label="{{code_id}}-code" id="{{code_id}}" ng-model="field.value" ng-disabled="field.disabled" tabindex="{{index}}" autocomplete="off" ng-class="{\'filled\': form[code_id].$viewValue.length > 0}" minlength="8" maxlength="9" ng-pattern="codePattern" name="{{code_id}}" ng-i18next="[placeholder]avRegistration.codePlaceholder" required><p class="help-block" ng-i18next="avRegistration.codeHelp"></p><p class="help-block code-help"><span ng-if="allowUserResend && showResendAuthCode() && !sendingData && ((\'sms\' !== method && \'sms-otp\' !== method) || isValidTel)"><b ng-i18next="avRegistration.noCodeReceivedQuestion"></b> <a ng-click="resendAuthCode(field)" ng-i18next="avRegistration.sendCodeAgain"></a> <span></span></span></p><div class="input-error"></div></div></div>'), 
+    $templateCache.put("avRegistration/fields/code-field-directive/code-field-directive.html", '<div class="form-group"><label for="{{code_id}}" class="control-label col-sm-4" ng-i18next="avRegistration.codeLabel"></label><div class="col-sm-8"><input type="text" class="form-control" aria-label="{{code_id}}-code" id="{{code_id}}" ng-model="field.value" ng-disabled="field.disabled" tabindex="{{index}}" autocomplete="off" ng-class="{\'filled\': form[code_id].$viewValue.length > 0}" minlength="8" maxlength="9" ng-pattern="codePattern" name="{{code_id}}" ng-i18next="[placeholder]avRegistration.codePlaceholder" required><p class="help-block" ng-i18next="avRegistration.codeHelp"></p><p class="help-block code-help"><span ng-if="allowUserResend && showResendAuthCode() && !sendingData && (!(method in [\'sms\', \'sms-otp\']) || isValidTel)"><b ng-i18next="avRegistration.noCodeReceivedQuestion"></b> <a ng-click="resendAuthCode(field)" ng-i18next="avRegistration.sendCodeAgain"></a> <span></span></span></p><div class="input-error"></div></div></div>'), 
     $templateCache.put("avRegistration/fields/date-field-directive/date-field-directive.html", '<div class="form-group"><label ng-if="!label" class="control-label col-sm-4">{{field.name}}</label><label class="control-label col-sm-4" ng-if="label" ng-bind="label"></label><div class="col-sm-8"><select aria-label="{{field.name}}-year" ng-model="date.year" ng-change="onChange()"><option ng-selected="date.year == item" ng-repeat="item in years" ng-value="item">{{item}}</option></select><select aria-label="{{field.name}}-month" ng-model="date.month" ng-change="onChange()"><option ng-selected="date.month == item" ng-repeat="item in months" ng-value="item">{{item}}</option></select><select aria-label="{{field.name}}-day" ng-model="date.day" ng-change="onChange()"><option ng-selected="date.day == item" ng-repeat="item in getDays()" ng-value="item">{{item}}</option></select><p class="help-block" ng-if="field.help">{{field.help}}</p></div></div>'), 
     $templateCache.put("avRegistration/fields/dni-field-directive/dni-field-directive.html", '<ng-form name="fieldForm"><div class="form-group" ng-class="{\'has-error\': fieldForm.input.$dirty && fieldForm.input.$invalid}"><label for="input{{index}}" class="control-label col-sm-4"><span>{{field.name}}</span></label><div class="col-sm-8"><input type="text" id="input{{index}}" aria-label="input{{index}}-dni" class="form-control" minlength="{{field.min}}" maxlength="{{field.max}}" ng-model="field.value" ng-model-options="{debounce: 500}" ng-disabled="field.disabled" tabindex="{{index}}" ui-validate="{dni: \'validateDni($value)\'}" ng-required="{{field.required}}"><p class="help-block" ng-i18next="avRegistration.dniHelp"></p><div class="input-error"><span class="error text-brand-danger" ng-show="fieldForm.input.$dirty && fieldForm.input.$invalid" ng-i18next="avRegistration.invalidDni"></span></div></div></div></ng-form>'), 
-    $templateCache.put("avRegistration/fields/email-field-directive/email-field-directive.html", '<div class="form-group" ng-class="{true: \'has-error\',false: \'is-required\'}[form.emailText.$dirty && form.emailText.$invalid]"><label for="emailText" class="control-label col-sm-4" ng-i18next="avRegistration.emailLabel"></label><div class="col-sm-8"><input type="text" class="form-control" ng-model="field.value" name="emailText" id="emailText" ng-i18next="[placeholder]avRegistration.emailPlaceholder" tabindex="{{index}}" ng-pattern="patterns(\'email\')" required ng-disabled="field.disabled"><div class="input-error"><small class="error text-danger" ng-show="form.emailText.$dirty && form.emailText.$invalid" ng-i18next="avRegistration.emailError"></small></div></div></div>'), 
+    $templateCache.put("avRegistration/fields/email-field-directive/email-field-directive.html", '<div class="form-group" ng-class="{true: \'has-error\',false: \'is-required\'}[form.emailText.$dirty && form.emailText.$invalid]"><label for="emailText" class="control-label col-sm-4" ng-i18next="avRegistration.emailLabel"></label><div class="col-sm-8"><input type="text" class="form-control" ng-model="field.value" name="emailText" id="emailText" ng-i18next="[placeholder]avRegistration.emailPlaceholder" tabindex="{{index}}" ng-pattern="patterns(\'email\')" required ng-disabled="field.disabled"><p class="text-warning" ng-if="\'email-otp\' === method" ng-i18next="avRegistration.otpHelp"></p><div class="input-error"><small class="error text-danger" ng-show="form.emailText.$dirty && form.emailText.$invalid" ng-i18next="avRegistration.emailError"></small></div></div></div>'), 
     $templateCache.put("avRegistration/fields/image-field-directive/image-field-directive.html", '<ng-form name="fieldForm"><div class="form-group" ng-class="{\'has-error\': fieldForm.input.$dirty && fieldForm.input.$invalid}"><label for="image-field" class="control-label col-sm-4"><span>{{field.name}}</span></label><div class="col-sm-8"><input type="file" name="image" id="image-field" aria-label="image-field{{index}}" class="form-control" ng-disabled="field.disabled" tabindex="{{index}}" ng-required="{{field.required}}"><p class="help-block" ng-i18next="avRegistration.imageHelp"></p><div class="input-error"><span class="error text-brand-danger" ng-show="fieldForm.input.$dirty && fieldForm.input.$invalid" ng-i18next="avRegistration.invalidImage"></span></div></div></div></ng-form>'), 
     $templateCache.put("avRegistration/fields/int-field-directive/int-field-directive.html", '<ng-form name="fieldForm"><div class="form-group" ng-class="{\'has-error\': fieldForm.input.$dirty && fieldForm.input.$invalid}"><label for="input{{index}}" class="control-label col-sm-4"><span>{{field.name}}</span></label><div class="col-sm-8"><input type="number" class="form-control" id="input{{index}}" aria-label="input{{index}}-int" name="input" min="{{field.min}}" max="{{field.max}}" ng-model="field.value" ng-model-options="{debounce: 500}" ng-disabled="field.disabled" ng-pattern="getRe()" tabindex="{{index}}" ng-required="{{field.required}}"><p class="help-block" ng-if="field.help">{{field.help}}</p><div class="input-error"><span class="error text-brand-danger" ng-show="fieldForm.input.$dirty && fieldForm.input.$invalid" ng-i18next="avRegistration.invalidDataRegEx"></span></div></div></div></ng-form>'), 
     $templateCache.put("avRegistration/fields/password-field-directive/password-field-directive.html", '<div class="form-group" ng-class="{true: \'has-error\',false: \'is-required\'}[form.passwordText.$dirty && form.passwordText.$invalid]"><label for="passwordText" class="control-label col-sm-4"><span ng-i18next="avRegistration.passwordLabel"></span></label><div class="col-sm-8"><input type="password" class="form-control" ng-model="field.value" id="passwordText" ng-disabled="field.disabled" ng-i18next="[placeholder]avRegistration.passwordPlaceholder" tabindex="{{index}}" required><p class="help-block"><a href="#" ng-i18next="avRegistration.forgotPassword" ng-click="forgotPassword()" tabindex="{{index+1}}"></a></p><div class="input-error"><small class="error text-danger" ng-show="form.$submitted && form.$invalid" ng-i18next="avRegistration.invalidCredentials"></small></div></div></div>'), 
