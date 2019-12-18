@@ -181,7 +181,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             _.each(fields, function(field) {
                 "sms" === viewEventData.auth_method && "tlf" === field.name ? ("text" === field.type && (field.type = "tlf"), 
                 found = !0) : "email" === viewEventData.auth_method && "email" === field.name && (found = !0);
-            }), "sms" !== viewEventData.auth_method && "sms-otp" !== viewEventData.auth_method || found ? viewEventData.auth_method in [ "email", "email-otp" ] && !found ? fields.push({
+            }), "sms" !== viewEventData.auth_method && "sms-otp" !== viewEventData.auth_method || found ? _.contains([ "email", "email-otp" ], viewEventData.auth_method) && !found ? fields.push({
                 name: "email",
                 type: "email",
                 required: !0,
@@ -227,12 +227,12 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         },
         getLoginFields: function(viewEventData) {
             var fields = authmethod.getRegisterFields(viewEventData);
-            viewEventData.auth_method in [ "sms", "email" ] ? fields.push({
+            _.contains([ "sms", "email" ], viewEventData.auth_method) ? fields.push({
                 name: "code",
                 type: "code",
                 required: !0,
                 required_on_authentication: !0
-            }) : viewEventData.auth_method in [ "sms-otp", "email-otp" ] && fields.push({
+            }) : _.contains([ "sms-otp", "email-otp" ], viewEventData.auth_method) && fields.push({
                 name: "code",
                 type: "code",
                 required: !0,
@@ -369,7 +369,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                         if (-1 === scope.telIndex) return;
                         if (inputName = "input" + scope.telIndex, !document.getElementById(inputName) || !angular.element(document.getElementById(inputName)).intlTelInput("isValidNumber")) return;
                         data.tlf = scope.telField.value;
-                    } else if (scope.method in [ "email", "email-otp" ]) {
+                    } else if (_.contains([ "email", "email-otp" ], scope.method)) {
                         if (-1 === scope.emailIndex) return;
                         var email = scope.email;
                         if (null === email && (email = scope.login_fields[scope.emailIndex].value), !function(email) {
@@ -402,7 +402,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                     });
                 }
             }, scope.loginUser = function(valid) {
-                if (valid && !scope.sendingData) if (scope.method in [ "sms-otp", "email-otp" ] && 0 === scope.currentFormStep) scope.resendAuthCode(); else {
+                if (valid && !scope.sendingData) if (_.contains([ "sms-otp", "email-otp" ], scope.method) && 0 === scope.currentFormStep) scope.resendAuthCode(); else {
                     var data = {
                         captcha_code: Authmethod.captcha_code
                     };
@@ -586,7 +586,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                         captcha_code: Authmethod.captcha_code
                     };
                     _.each(scope.register_fields, function(field) {
-                        data[field.name] = field.value, "email" === field.name && scope.method in [ "email", "email-otp" ] ? scope.email = field.value : "tlf" === field.name && _.contains([ "sms", "sms-otp" ], scope.method) && (scope.email = field.value);
+                        data[field.name] = field.value, "email" === field.name && _.contains([ "email", "email-otp" ], scope.method) ? scope.email = field.value : "tlf" === field.name && _.contains([ "sms", "sms-otp" ], scope.method) && (scope.email = field.value);
                     }), Authmethod.signup(data, autheventid).success(function(rcvData) {
                         details = scope.getLoginDetails(autheventid), "ok" === rcvData.status ? (scope.user = rcvData.user, 
                         StateDataService.go(details.path, details.data, data)) : (scope.sendingData = !1, 
@@ -734,7 +734,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                     showUserSendAuthCode: !0
                 };
                 return Plugins.hook("hide-user-send-auth-code", data), data.showUserSendAuthCode;
-            }, scope.method in [ "sms", "sms-otp" ]) {
+            }, _.contains([ "sms", "sms-otp" ], scope.method)) {
                 var telInput = angular.element(document.getElementById("input" + scope.telIndex));
                 scope.isValidTel = telInput.intlTelInput("isValidNumber"), scope.$watch("telField.value", function(newValue, oldValue) {
                     scope.isValidTel = telInput.intlTelInput("isValidNumber");

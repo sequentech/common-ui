@@ -55,7 +55,7 @@ angular.module('avRegistration')
             };
             _.each(scope.register_fields, function (field) {
               data[field.name] = field.value;
-              if (field.name === 'email' && scope.method in ['email', 'email-otp'])
+              if (field.name === 'email' && _.contains(['email', 'email-otp'], scope.method))
               {
                 scope.email = field.value;
               }

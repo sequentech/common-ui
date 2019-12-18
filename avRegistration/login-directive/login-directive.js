@@ -104,7 +104,7 @@ angular.module('avRegistration')
             data['tlf'] = scope.telField.value;
 
           // email or email-otp
-          } else if (scope.method in ["email", "email-otp"]) {
+          } else if (_.contains(["email", "email-otp"], scope.method)) {
             if (-1 === scope.emailIndex) {
               return;
             }
@@ -186,7 +186,7 @@ angular.module('avRegistration')
             }
 
             // loginUser
-            if ((scope.method in ['sms-otp', 'email-otp']) && scope.currentFormStep === 0) {
+            if (_.contains(['sms-otp', 'email-otp'], scope.method) && scope.currentFormStep === 0) {
                 scope.resendAuthCode();
                 return;
             }

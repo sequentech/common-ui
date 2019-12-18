@@ -31,7 +31,7 @@ angular.module('avRegistration')
 
       // TODO: validate email for email-otp. For now, we just allow the resend
       // button for that use-case
-      if (scope.method in ['sms', 'sms-otp']) {
+      if (_.contains(['sms', 'sms-otp'], scope.method)) {
         var telInput =
           angular.element(document.getElementById('input' + scope.telIndex));
         scope.isValidTel = telInput.intlTelInput("isValidNumber");
