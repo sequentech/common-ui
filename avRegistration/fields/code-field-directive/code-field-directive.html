@@ -20,7 +20,7 @@
             required />
         <p class="help-block" ng-i18next="avRegistration.codeHelp">
         <p class="help-block code-help">
-          <span ng-if="allowUserResend && showResendAuthCode() && !sendingData && ((method !== 'sms' && method !== 'sms-otp']) || isValidTel)">
+          <span ng-if="allowUserResend && showResendAuthCode() && !sendingData && ((method !== 'sms' && method !== 'sms-otp') || isValidTel)">
             <b ng-i18next="avRegistration.noCodeReceivedQuestion"></b>
             <a
               ng-click="resendAuthCode(field)"
