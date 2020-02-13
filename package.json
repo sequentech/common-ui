@@ -42,9 +42,7 @@
     "ng-i18next": "0.5.2",
     "papaparse": "~4.1.0",
     "rng-js": "~1.0.1",
-    "underscore": "1.8.2"
-  },
-  "dependencies": {
+    "underscore": "1.8.2",
     "angular-mocks": "~1.2",
     "bootstrap": "3.4.1",
     "font-awesome": "~4.3",
@@ -65,6 +63,8 @@
     "moment": "2.19.3",
     "ws": "7.2.1",
     "yarn": "^1.22.0"
+  },
+  "dependencies": {
   },
   "resolutions": {
     "**/angular": "~1.2",
