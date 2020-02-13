@@ -1,5 +1,6 @@
-bower_components
 node_modules
+yarn-error.log
+.yarnclean
 temp
 _SpecRunner.html
 .DS_Store
