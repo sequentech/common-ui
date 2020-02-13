@@ -118,12 +118,13 @@ module.exports = function (grunt) {
     less: {
       production: {
         options: {
+          strictImports: true
         },
         files: [{
           expand: true,
           src: ['themes/**/app.less'],
           dest: 'temp/',
-          ext: '.css',
+          ext: '.css'
         }]
       }
     },
@@ -145,37 +146,6 @@ module.exports = function (grunt) {
         dest: 'temp/templates.js'
       }
     },
-    copy: {
-      main: {
-        files: [
-          {src: ['img/**'], dest: 'dist/'},
-          {src: ['temp_data/**'], dest: 'dist/'},
-          {src: ['avUi/**/*.less'], dest: 'dist/less/'},
-          {src: ['themes/**'], dest: 'dist/'},
-          {
-            expand: true,
-            cwd: 'bower_components/bootstrap/fonts/',
-            src: ['**'],
-            dest: 'dist/themes/fonts/'
-          },
-          {
-            expand: true,
-            cwd: 'bower_components/bootstrap/fonts/',
-            src: ['**'],
-            dest: 'dist/themes/fonts/'
-          },
-          {
-            expand: true,
-            cwd: 'bower_components/font-awesome/fonts/',
-            src: ['**'],
-            dest: 'dist/fonts/'
-          }
-          //{src: ['bower_components/angular-ui-utils/ui-utils-ieshiv.min.js'], dest: 'dist/'},
-          //{src: ['bower_components/select2/*.png','bower_components/select2/*.gif'], dest:'dist/css/',flatten:true,expand:true},
-          //{src: ['bower_components/angular-mocks/angular-mocks.js'], dest: 'dist/'}
-        ]
-      }
-    },
     dom_munger:{
       read: {
         options: {
@@ -192,10 +162,10 @@ module.exports = function (grunt) {
         options: {
           remove: ['script[data-remove!="false"]','link[data-remove!="false"]'],
           append: [
-            {selector:'body',html:'<!--[if lte IE 8]><script src="/libcompat-v17.04.js"></script><![endif]--><!--[if gte IE 9]><script src="/libnocompat-v17.04.js"></script><![endif]--><!--[if !IE]><!--><script src="/libnocompat-v17.04.js"></script><!--<![endif]-->'},
+            {selector:'body',html:'<!--[if lte IE 8]><script src="/libcompat-v20.2.js"></script><![endif]--><!--[if gte IE 9]><script src="/libnocompat-v20.2.js"></script><![endif]--><!--[if !IE]><!--><script src="/libnocompat-v20.2.js"></script><!--<![endif]-->'},
             {selector:'body',html:'<!--All the source code of this program under copyright. Take a look at the license details at https://github.com/agoravoting/agora-core-view/blob/master/README.md -->'},
-            {selector:'body',html:'<script src="/appCommon-v17.04.js"></script>'},
-            {selector:'body',html:'<script src="/avPlugins-v17.04.js"></script>'},
+            {selector:'body',html:'<script src="/appCommon-v20.2.js"></script>'},
+            {selector:'body',html:'<script src="/avPlugins-v20.2.js"></script>'},
             {selector:'head',html:'<link rel="stylesheet" id="theme" href="/themes/default/app.min.css">'}
           ]
         },
@@ -225,9 +195,9 @@ module.exports = function (grunt) {
           'temp/libnocompat.js': ['<%= dom_munger.data.libnocompatjs %>'],
           'temp/lib.js': ['<%= dom_munger.data.libjs %>'],
           'temp/app.js': ['<%= dom_munger.data.appjs %>','<%= ngtemplates.main.dest %>'],
-          'dist/avConfig-v17.04.js': ['avConfig.js'],
-          'dist/avThemes-v17.04.js': ['avThemes.js'],
-          'dist/avPlugins-v17.04.js': ['plugins/**/*.js']
+          'dist/avConfig-v20.2.js': ['avConfig.js'],
+          'dist/avThemes-v20.2.js': ['avThemes.js'],
+          'dist/avPlugins-v20.2.js': ['plugins/**/*.js']
         }
       }
     },
@@ -259,16 +229,58 @@ module.exports = function (grunt) {
           beautify: true
         },
         files: {
-          'dist/appCommon-v17.04.js': 'temp/app.js',
-          'dist/libCommon-v17.04.js': 'temp/lib.js',
-          'dist/libnocompat-v17.04.js': 'temp/libnocompat.js',
-          'dist/libcompat-v17.04.js': 'temp/libcompat.js',
+          'dist/appCommon-v20.2.js': 'temp/app.js',
+          'dist/libCommon-v20.2.js': 'temp/lib.js',
+          'dist/libnocompat-v20.2.js': 'temp/libnocompat.js',
+          'dist/libcompat-v20.2.js': 'temp/libcompat.js',
           'dist/avWidgets.js': 'avWidgets.js',
 
           "dist/locales/moment/es.js": "bower_components/moment/lang/es.js",
           "dist/locales/moment/gl.js": "bower_components/moment/lang/gl.js",
           "dist/locales/moment/ca.js": "bower_components/moment/lang/ca.js"
         }
+      }
+    },
+    copy: {
+      temp: {
+        files: [
+          {
+            expand: true,
+            cwd: 'node_modules/nanoscroller/bin/css/', 
+            src: ['*'],
+            dest: 'temp/'
+          },
+        ]
+      },
+      main: {
+        files: [
+          {src: ['img/**'], dest: 'dist/'},
+          {src: ['node_modules/nanoscroller/bin/css/*.css'], dest: 'temp/'},
+          {src: ['temp_data/**'], dest: 'dist/'},
+          {src: ['avUi/**/*.less'], dest: 'dist/less/'},
+          {src: ['themes/**'], dest: 'dist/'},
+          {
+            expand: true,
+            cwd: 'bower_components/bootstrap/fonts/',
+            src: ['**'],
+            dest: 'dist/themes/fonts/'
+          },
+          {
+            expand: true,
+            cwd: 'bower_components/bootstrap/fonts/',
+            src: ['**'],
+            dest: 'dist/themes/fonts/'
+          },
+          {
+            expand: true,
+            cwd: 'bower_components/font-awesome/fonts/',
+            src: ['**'],
+            dest: 'dist/fonts/'
+          }
+          //{src: ['bower_components/angular-ui-utils/ui-utils-ieshiv.min.js'], dest: 'dist/'},
+          //{src: ['bower_components/select2/*.png','bower_components/select2/*.gif'], dest:'dist/css/',flatten:true,expand:true},
+          //{src: ['bower_components/angular-mocks/angular-mocks.js'], dest: 'dist/'}
+        ]
       }
     },
     htmlmin: {
@@ -342,7 +354,28 @@ module.exports = function (grunt) {
 
   });
 
-  grunt.registerTask('build',['check_config', 'jshint','clean:before','less','autoprefixer','dom_munger','ngtemplates','cssmin','concat','merge-json','ngAnnotate','uglify','copy','htmlmin','imagemin','clean:after']);
+  grunt.registerTask(
+    'build',
+    [
+      'check_config', 
+      'jshint',
+      'clean:before',
+      'copy:temp',
+      'less',
+      'autoprefixer',
+      'dom_munger',
+      'ngtemplates',
+      'cssmin',
+      'concat',
+      'merge-json',
+      'ngAnnotate',
+      'uglify',
+      'copy:main',
+      'htmlmin',
+      'imagemin',
+      'clean:after'
+    ]
+  );
   grunt.registerTask('serve', ['dom_munger:read','jshint','connect', 'watch']);
   grunt.registerTask('test',['dom_munger:read','karma:all_tests']);
 
