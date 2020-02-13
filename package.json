@@ -33,7 +33,7 @@
     "karma-jasmine": "~0.1.5",
     "karma-mocha-reporter": "~0.2.5",
     "karma-phantomjs-launcher": "^1.0.4",
-    "less.js": "3.0.5",
+    "less": "3.11.1",
     "load-grunt-tasks": "^3.5.0",
     "lodash": "4.17.15",
     "nanoscroller": "^0.8.7",
