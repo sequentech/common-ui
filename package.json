@@ -1,6 +1,6 @@
 {
   "name": "agora-gui-common",
-  "version": "20.1",
+  "version": "20.2",
   "devDependencies": {
     "grunt-autoprefixer": "^1.0.1",
     "grunt-browser-output": "1.0.3",
