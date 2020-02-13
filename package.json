@@ -1,6 +1,6 @@
 {
   "name": "agora-gui-common",
-  "version": "20.2",
+  "version": "20.2.0",
   "devDependencies": {
     "@bower_components/angular-bootstrap": "angular-ui/bootstrap-bower#0.10",
     "@bower_components/angular-ui-router": "angular-ui/ui-router#0.2.13",
