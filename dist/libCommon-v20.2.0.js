@@ -19687,6 +19687,23 @@ mod.directive("infiniteScroll", [ "$rootScope", "$window", "$interval", "THROTTL
     var ngFileUpload = angular.module("ngFileUpload", []);
     for (var key in angularFileUpload) ngFileUpload[key] = angularFileUpload[key];
 }(), function() {
+    "use strict";
+    function Autofocus($timeout) {
+        return {
+            restrict: "A",
+            link: function($scope, $element, $attrs) {
+                var dom = $element[0];
+                function focusIf(condition) {
+                    condition && $timeout(function() {
+                        dom.focus();
+                    }, $scope.$eval($attrs.autofocusDelay) || 0);
+                }
+                $attrs.autofocus ? $scope.$watch($attrs.autofocus, focusIf) : focusIf(!0);
+            }
+        };
+    }
+    Autofocus.$inject = [ "$timeout" ], angular.module("autofocus", []).directive("autofocus", Autofocus);
+}(), function() {
     this.ResizeSensor = function(element, callback) {
         function EventQueue() {
             var i, j;
