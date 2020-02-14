@@ -263,8 +263,8 @@ module.exports = function (grunt) {
       main: {
         files: [
           {src: ['img/**'], dest: 'dist/'},
-          {src: ['bower_components/intl-tel-input/build/img/flags.png'], dest: 'dist/img/flags.png'},
-          {src: ['bower_components/intl-tel-input/build/js/utils.js'], dest: 'dist/utils.js'},
+          {src: ['node_modules/intl-tel-input/build/img/flags.png'], dest: 'dist/img/flags.png'},
+          {src: ['node_modules/intl-tel-input/build/js/utils.js'], dest: 'dist/utils.js'},
           {src: ['node_modules/intl-tel-input/build/css/intlTelInput.css'], dest: 'dist/intlTelInput.css'},
           {src: ['node_modules/nanoscroller/bin/css/*.css'], dest: 'temp/'},
           {src: ['temp_data/**'], dest: 'dist/'},
