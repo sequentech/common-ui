@@ -36,9 +36,12 @@ angular.module('avRegistration')
 
         scope.getLoginDetails = function (eventId) {
           if (!scope.admin) {
-              return {path: 'election.public.show.login', data: {id: eventId}};
+              return {
+                path: 'election.public.show.login_email',
+                data: {id: eventId, email: scope.email}
+              };
           } else {
-              return {path: 'admin.login', data:{}};
+              return {path: 'admin.login_email', data:{email: scope.email}};
           }
         };
 
@@ -52,7 +55,13 @@ angular.module('avRegistration')
             };
             _.each(scope.register_fields, function (field) {
               data[field.name] = field.value;
-              if (field.name === 'email') {
+              if (field.name === 'email' && _.contains(['email', 'email-otp'], scope.method))
+              {
+                scope.email = field.value;
+              }
+              else if (field.name === 'tlf' &&
+                _.contains(['sms', 'sms-otp'], scope.method))
+              {
                 scope.email = field.value;
               }
             });
@@ -117,7 +126,7 @@ angular.module('avRegistration')
             scope.authevent = authevent;
 
             // if registration is closed, redirect to login
-            if (authevent['census'] !== 'open') {
+            if (authevent['census'] !== 'open' || scope.method === 'openid-connect') {
               if (authevent['id'] === ConfigService.freeAuthId) {
                   $state.go("admin.login");
               } else {

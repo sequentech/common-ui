@@ -37,6 +37,9 @@ var avConfigData = {
   // Show 'Success Action' tab in admin agora_gui
   showSuccessAction: false,
 
+  // Configurable Sign Up link
+  signupLink: "/admin/signup",
+
   // AuthApi base url
   authAPI: "https://agora/authapi/api/",
   dnieUrl: "https://agora.dev/authapi/api/authmethod/dnie/auth/",
@@ -135,6 +138,9 @@ var avConfigData = {
 
   // if we are in debug mode or not
   debug: true,
+
+  // Information regarding OpenID Connect authentication
+  openIDConnectProviders: [],
 
   // contact data where users can reach to a human when they need it
   contact: {

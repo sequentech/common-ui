@@ -207,6 +207,8 @@ module.exports = function (grunt) {
             "dist/locales/en.json": ["locales/en.json", "plugins/**/locales/en.json"],
             "dist/locales/es.json": ["locales/es.json", "plugins/**/locales/es.json"],
             "dist/locales/gl.json": ["locales/gl.json", "plugins/**/locales/gl.json"],
+            "dist/locales/sv.json": ["locales/sv.json", "plugins/**/locales/sv.json"],
+            "dist/locales/fi.json": ["locales/fi.json", "plugins/**/locales/fi.json"],
             "dist/locales/ca.json": ["locales/ca.json", "plugins/**/locales/ca.json"]
         }
       }
@@ -255,6 +257,9 @@ module.exports = function (grunt) {
       main: {
         files: [
           {src: ['img/**'], dest: 'dist/'},
+          {src: ['bower_components/intl-tel-input/build/img/flags.png'], dest: 'dist/img/flags.png'},
+          {src: ['bower_components/intl-tel-input/build/js/utils.js'], dest: 'dist/utils.js'},
+          {src: ['node_modules/intl-tel-input/build/css/intlTelInput.css'], dest: 'dist/intlTelInput.css'},
           {src: ['node_modules/nanoscroller/bin/css/*.css'], dest: 'temp/'},
           {src: ['temp_data/**'], dest: 'dist/'},
           {src: ['avUi/**/*.less'], dest: 'dist/less/'},
@@ -341,17 +346,16 @@ module.exports = function (grunt) {
         noColor: false, // If true, protractor will not use colors in its output.
         args: {
         // Arguments passed to the command
-      }
-    },
-    //your_target: {   // Grunt requires at least one target to run so you can simply put 'all: {}' here too.
-      all: {
-      options: {
-        configFile: "e2e.conf.js", // Target-specific config file
-        args: {} // Target-specific arguments
-      }
-    },
-  },
-
+        }
+      },
+      //your_target: {   // Grunt requires at least one target to run so you can simply put 'all: {}' here too.
+        all: {
+        options: {
+          configFile: "e2e.conf.js", // Target-specific config file
+          args: {} // Target-specific arguments
+        }
+      },
+    }
   });
 
   grunt.registerTask(

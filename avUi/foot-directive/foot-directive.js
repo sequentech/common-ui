@@ -23,6 +23,7 @@ angular.module('avUi')
       scope.social = ConfigService.social;
       scope.technology = ConfigService.technology;
       scope.legal = ConfigService.legal;
+      scope.organization = ConfigService.organization;
     }
 
     return {

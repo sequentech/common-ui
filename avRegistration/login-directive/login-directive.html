@@ -1,16 +1,34 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-sm-12 loginheader">
-        <h2 class="tex-center" ng-i18next="[i18next]({name: orgName})avRegistration.loginHeader"></h2>
+        <h2
+          class="tex-center"
+          ng-if="!isCensusQuery && method !== 'openid-connect'"
+          ng-i18next="[i18next]({name: orgName})avRegistration.loginHeader">
+        </h2>
+        <h2
+          class="tex-center"
+          ng-if="!isCensusQuery && method === 'openid-connect'"
+          ng-i18next="[i18next]avRegistration.loginButton">
+        </h2>
+        <h2
+          class="tex-center"
+          ng-if="!!isCensusQuery"
+          ng-i18next="avRegistration.censusQueryHeader">
+        </h2>
     </div>
 
-    <div class="col-sm-6">
+    <div class="col-sm-6" ng-if="method !== 'openid-connect'">
         <form name="form" id="loginForm" role="form" class="form-horizontal">
-            <div ng-repeat="field in login_fields" avr-field index="{{$index+1}}">
+            <div
+              ng-repeat="field in login_fields"
+              avr-field
+              index="{{$index+1}}"
+              ng-if="field.steps === undefined || field.steps.indexOf(currentFormStep) !== -1">
             </div>
 
           <div class="col-sm-offset-4 col-sm-8 button-group">
-              <div class="input-error">
+              <div class="input-error" ng-if="!isCensusQuery">
                   <div class="error text-danger" ng-if="error">{{ error }}</div>
               </div>
               <div class="input-warn">
@@ -24,23 +42,93 @@
               <button
                 type="submit"
                 class="btn btn-block btn-success"
+                ng-if="!isCensusQuery"
                 ng-i18next="avRegistration.loginButton"
                 ng-click="loginUser(form.$valid)"
                 tabindex="{{login_fields.length+1}}"
                 ng-disabled="!form.$valid || sendingData">
               </button>
+              <button
+                type="submit"
+                class="btn btn-block btn-success"
+                ng-if="!!isCensusQuery"
+                ng-i18next="avRegistration.checkCensusButton"
+                ng-click="checkCensus(form.$valid)"
+                tabindex="{{login_fields.length+1}}"
+                ng-disabled="!form.$valid || sendingData">
+              </button>
+
+              <div class="census-query" ng-if="isCensusQuery">
+                  <div
+                    class="input-info census-query"
+                    ng-if="censusQuery == 'querying'">
+                      <div
+                        class="text-info"
+                        ng-i18next="avRegistration.censusQuerying">
+                      </div>
+                  </div>
+                  <div
+                    class="input-success census-query"
+                    ng-if="censusQuery == 'success'">
+                      <div
+                        class="success text-success"
+                        ng-i18next="[html]avRegistration.censusSuccess">
+                      </div>
+                  </div>
+                  <div
+                    class="input-success census-query"
+                    ng-if="censusQuery == 'fail'">
+                      <div
+                        class="error text-danger"
+                        ng-i18next="[html]avRegistration.censusFail">
+                      </div>
+                  </div>
+              </div>
           </div>
         </form>
     </div>
+
     <div
       class="col-sm-5 col-sm-offset-1 hidden-xs"
-      ng-if="registrationAllowed">
-      <h3 class="help-h3" ng-i18next="avRegistration.notRegisteredYet"></h3>
+      ng-if="registrationAllowed && !isCensusQuery  && method !== 'openid-connect'">
+      <h3
+        class="help-h3"
+        ng-i18next="avRegistration.notRegisteredYet">
+      </h3>
       <p>
-        <a ng-if="!isAdmin" href="#/election/{{election.id}}/public/register" ng-i18next="avRegistration.registerHere" ng-click="goSignup()" tabindex="{{login_fields.length+2}}"></a><br/>
-        <a ng-if="isAdmin" ui-sref="admin.signup()" ng-i18next="avRegistration.registerHere" tabindex="{{login_fields.length+2}}"></a><br/>
+        <a
+          ng-if="!isAdmin"
+          href="#/election/{{election.id}}/public/register"
+          ng-i18next="avRegistration.registerHere"
+          ng-click="goSignup()"
+          tabindex="{{login_fields.length+2}}">
+        </a>
+        <br/>
+        <a
+          ng-if="isAdmin"
+          href="{{ signupLink }}"
+          ng-i18next="avRegistration.registerHere"
+          tabindex="{{login_fields.length+2}}">
+        </a>
+        <br/>
         <span ng-i18next="avRegistration.fewMinutes"></span>
       </p>
+    </div>
+
+    <div class="col-sm-12 text-center" ng-if="method === 'openid-connect'">
+        <span ng-repeat="provider in openIDConnectProviders">
+          <a
+            ng-click="openidConnectAuth(provider)"
+            alt="{{provider.description}}"
+            class="btn btn-primary btn-login">
+            <img
+              ng-if="!!provider.icon"
+              alt="{{provider.description}}"
+              class="logo-img"
+              ng-src="{{provider.icon}}" />
+            {{provider.title}}
+          </a>
+        </span>
     </div>
   </div>
 </div>

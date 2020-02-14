@@ -125,16 +125,52 @@ angular.module('avUi')
           if (!pass) {
             error(item.check, {key: item.key}, item.postfix);
           }
-
         } else if (item.check === "lambda") {
           if (!item.validator(d.data[item.key])) {
             var errorData = {key: item.key};
             if (!angular.isUndefined(item.appendOnErrorLambda)) {
               errorData = item.appendOnErrorLambda(d.data[item.key]);
             }
+            if (_.isObject(item.append) &&
+                _.isString(item.append.key) &&
+                !_.isUndefined(item.append.value)) {
+              errorData[item.append.key] = evalValue(item.append.value, item);
+            }
             error(item.check, errorData, item.postfix);
           }
 
+        } else if (item.check === "is-string-if-defined") {
+          pass = angular.isUndefined(d.data[item.key]) ||
+                   angular.isString(d.data[item.key], item.postfix);
+          if (!pass) {
+            error(item.check, {key: item.key}, item.postfix);
+          }
+
+        } else if (item.check === "array-length-if-defined") {
+          if (angular.isDefined(d.data[item.key])) {
+            itemMin = evalValue(item.min, d.data);
+            itemMax = evalValue(item.max, d.data);
+
+            if (angular.isArray(d.data[item.key]) || angular.isString(d.data[item.key]))
+            {
+              min = angular.isUndefined(item.min) || d.data[item.key].length >= itemMin;
+              max = angular.isUndefined(item.max) || d.data[item.key].length <= itemMax;
+              pass = min && max;
+              if (!min) {
+                error(
+                  "array-length-min",
+                  {key: item.key, min: itemMin, num: d.data[item.key].length},
+                  item.postfix);
+              }
+              if (!max) {
+                var itemErrorData0 = {key: item.key, max: itemMax, num: d.data[item.key].length};
+                error(
+                  "array-length-max",
+                  itemErrorData0,
+                  item.postfix);
+              }
+            }
+          }
         } else if (item.check === "is-string") {
           pass = angular.isString(d.data[item.key], item.postfix);
           if (!pass) {
@@ -247,6 +283,31 @@ angular.module('avUi')
                 });
               }),
             true);
+        } else if (item.check === "object-key-chain") {
+          pass = _.isString(item.key) && _.isObject(d.data[item.key]);
+          if (!!pass) {
+            var data = d.data[item.key];
+            var extra = {};
+            extra[item.append.key] = evalValue(item.append.value, data);
+            var prefix = "";
+            if (angular.isString(d.prefix)) {
+              prefix += d.prefix;
+            }
+            if (angular.isString(item.prefix)) {
+              prefix += item.prefix;
+            }
+            pass = _.every(
+              item.checks,
+              function (check, index) {
+                return checker({
+                  data: data,
+                  errorData: angular.extend({}, d.errorData, extra),
+                  onError: d.onError,
+                  checks: [check],
+                  prefix: prefix,
+                });
+              });
+          }
         }
         if (!pass && d.data.groupType === 'chain') {
           return false;

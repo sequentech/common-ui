@@ -19,13 +19,28 @@ angular.module('avRegistration')
   .directive('avrCodeField', function($state, Plugins) {
     function link(scope, element, attrs) {
       scope.codePattern = /[abcdefghjklmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789-]{8,9}/;
-      
+      var rand_code = '' + _.random(1e12);
+      scope.code_id = 'input' + scope.index + rand_code;
+
       scope.showResendAuthCode = function ()
       { 
         var data = {showUserSendAuthCode: true};
         Plugins.hook('hide-user-send-auth-code', data);
         return data.showUserSendAuthCode;
       };
+
+      // TODO: validate email for email-otp. For now, we just allow the resend
+      // button for that use-case
+      if (_.contains(['sms', 'sms-otp'], scope.method)) {
+        var telInput =
+          angular.element(document.getElementById('input' + scope.telIndex));
+        scope.isValidTel = telInput.intlTelInput("isValidNumber");
+        scope.$watch('telField.value',
+          function (newValue, oldValue) {
+            scope.isValidTel = telInput.intlTelInput("isValidNumber");
+          },
+          true);
+      }
     }
     return {
       restrict: 'AE',
