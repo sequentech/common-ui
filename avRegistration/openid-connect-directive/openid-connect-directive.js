@@ -124,6 +124,25 @@ angular.module('avRegistration')
             );
         }
 
+        // Get the decoded value of a uri parameter from any uri. The uri does not
+        // need to have any domain, it can start with the character "?"
+        function getURIParameter(paramName, uri)
+        {
+            var paramName2 = paramName.replace(/[\[\]]/g, '\\$&');
+            var rx = new RegExp('[?&]' + paramName2 + '(=([^&#]*)|&|#|$)');
+            var params = rx.exec(uri);
+
+            if (!params)
+            {
+                return null;
+            }
+
+            if (!params[2])
+            {
+                return '';
+            }
+            return decodeURIComponent(params[2].replace(/\+/g, ' '));
+        }
 
         // validates the CSRF token
         function validateCsrfToken()
@@ -170,26 +189,6 @@ angular.module('avRegistration')
                 return null;
             }
             return true;
-        }
-
-        // Get the decoded value of a uri parameter from any uri. The uri does not
-        // need to have any domain, it can start with the character "?"
-        function getURIParameter(paramName, uri)
-        {
-            var paramName2 = paramName.replace(/[\[\]]/g, '\\$&');
-            var rx = new RegExp('[?&]' + paramName2 + '(=([^&#]*)|&|#|$)');
-            var params = rx.exec(uri);
-
-            if (!params)
-            {
-                return null;
-            }
-
-            if (!params[2])
-            {
-                return '';
-            }
-            return decodeURIComponent(params[2].replace(/\+/g, ' '));
         }
 
         // Process an OpenId Connect callback coming from the provider, try to

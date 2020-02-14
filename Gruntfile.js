@@ -252,6 +252,12 @@ module.exports = function (grunt) {
             src: ['*'],
             dest: 'temp/'
           },
+          {
+            expand: true,
+            cwd: 'node_modules/intl-tel-input/build/css/', 
+            src: ['*'],
+            dest: 'temp/'
+          }
         ]
       },
       main: {
