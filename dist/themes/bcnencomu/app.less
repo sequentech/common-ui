@@ -1,0 +1,86 @@
+/**
+ * This file is part of agora-gui-common.
+ * Copyright (C) 2015-2016  Agora Voting SL <agora@agoravoting.com>
+
+ * agora-gui-common is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License.
+
+ * agora-gui-common  is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+
+ * You should have received a copy of the GNU Affero General Public License
+ * along with agora-gui-common.  If not, see <http://www.gnu.org/licenses/>.
+**/
+
+@import "../../external.less";
+
+/* Global Config */
+@av-primary: #E65C56;
+@av-secondary: #768BAB;
+@av-primary-contrast: white;
+@av-secondary-contrast: white;
+@brand-primary: @av-primary;
+@brand-success: @av-secondary;
+@link-color: @av-secondary;
+@text-success: @av-secondary;
+@state-success-text: @av-secondary;
+
+
+
+/* Admin Config */
+@av-bg: #EEE;
+@av-bg-hover: #DDD;
+@av-error-bg: #fff;
+@av-error-color: #990000;
+
+@imgdir: "../../img";
+
+@import "../../app.less";
+
+[av-booth] .navbar-unfixed-top a
+{
+  color: white;
+  text-decoration: underline;
+
+  &:hover
+  {
+    text-decoration: none;
+  }
+}
+
+.container-fluid.background.first a
+{
+  color: #fff;
+  text-decoration: underline;
+}
+
+[av-change-lang]:hover
+{
+  background-color: #eee;
+}
+.navbar-admin.adminhead .nav > li > a:focus,
+.navbar-admin.adminhead .nav > li > a:hover
+{
+  color: #000;
+}
+
+.navbar-admin.adminhead .nav > li
+{
+  a
+  {
+    color: @av-primary-contrast;
+  }
+
+  background-color: @av-primary;
+
+  &.open
+  {
+    a {
+      color: #000;
+    }
+  }
+}
+

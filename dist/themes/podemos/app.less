@@ -1,0 +1,211 @@
+/**
+ * This file is part of agora-gui-common.
+ * Copyright (C) 2015-2016  Agora Voting SL <agora@agoravoting.com>
+
+ * agora-gui-common is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License.
+
+ * agora-gui-common  is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+
+ * You should have received a copy of the GNU Affero General Public License
+ * along with agora-gui-common.  If not, see <http://www.gnu.org/licenses/>.
+**/
+
+@import "../../external.less";
+
+/* Global Config */
+@av-primary: #612d62;
+@av-secondary: white;
+@av-primary-contrast: white;
+@av-secondary-contrast: #78bbb1;
+@brand-primary: #612D62;
+@brand-success: #005c56;
+@brand-danger: #97c2b8;
+
+/* Admin Config */
+@av-bg: #EEE;
+@av-bg-hover: #DDD;
+@av-error-bg: #aa9999;
+@av-error-color: #882222;
+
+@imgdir: "../../img";
+
+@import "../../app.less";
+
+// podemos custom
+
+[av-ballot-locator-screen] {
+  .btn-success {
+    background-color: @brand-success !important;
+  }
+
+  .btn-success:hover {
+    background-color: darken(@brand-success, 12%) !important;
+  }
+}
+
+[avb-accordion-option] {
+  &.selected.highlight-selected {
+    color: @av-secondary !important;
+    background-color: @av-primary !important;
+  }
+}
+
+[av-booth] {
+  .btn-success {
+    background-color: @brand-success !important;
+  }
+
+  .btn-success:hover {
+    background-color: darken(@brand-success, 12%) !important;
+  }
+
+  .avb-top-navbar {
+    .pull-left {
+      a:hover {
+        color: @av-secondary-contrast !important;
+      }
+    }
+
+    .pull-right {
+      a:hover {
+        color: @brand-success !important;
+      }
+    }
+  }
+
+  a:hover {
+    color: @brand-success;
+  }
+}
+
+[ave-default-election] .background, [ave-public-view] .background {
+  background-color: @av-bg;
+
+  [ui-view] {
+    .top-section {
+      background-color: @av-secondary !important;
+      color: black;
+
+      h3 {
+        color: @av-primary;
+      }
+    }
+  }
+}
+
+[ave-default-election] .background.first, [ave-public-view] .background.first {
+  background-color: @av-primary;
+}
+
+[ave-default-election] .adminhead {
+  a:hover {
+    color: @brand-success !important;
+  }
+
+  .powered-by .strong, 
+  div.row.avb-top-navbar div.pull-left span.ng-scope strong.ng-scope,
+  div.row.avb-top-navbar div.text-center.ng-scope span strong.ng-scope {
+    a {
+      color: @av-secondary !important;
+    }
+
+    a:hover {
+      color: @av-secondary-contrast !important;
+    }
+  }
+}
+
+[av-foot] .commonfoot > div > div > div > div > a > i:hover {
+  color: @av-secondary-contrast !important;
+}
+
+[av-foot] .commonfoot > div > div > div > ul > li > a:hover {
+  color: @av-secondary-contrast !important;
+}
+
+[ave-default-election] .background.first .top-section {
+  color: @av-primary-contrast !important;
+}
+
+[av-change-lang] {
+  > a {
+    color: @av-secondary !important;
+  }
+
+  > a:hover, > a:active {
+    color: @brand-success !important;
+  }
+
+  .dropdown-menu li a {
+    color: black !important;
+  }
+
+  &:hover, &:active {
+    a {
+      color: black !important;
+    }
+  }
+}
+
+[ave-default-election] {
+  div.row.avb-top-navbar > div.pull-left > span > strong,
+  .top-section > div > ul > li {
+    &:hover > a {
+      color: @av-secondary-contrast !important;
+    }
+  }
+}
+
+[av-ballot-locator-screen] .navbar-unfixed-top h1, [av-booth] .navbar-unfixed-top h1 {
+ margin-top: 17px;
+ font-weight: 700;
+ font-size: 26px;
+}
+
+[av-booth] .navbar-unfixed-top a,
+[ave-default-election] .background .top-section p.election-description a {
+  color: white !important;
+  text-decoration: underline !important;
+}
+
+[ave-default-election] .background.first .top-section .election-description {
+  color: white !important;
+}
+
+[ave-default-election] .background .top-section,
+[ave-public-view] .background .top-section,
+[ave-default-election] .text-av-secondary,
+[ave-public-view] .text-av-secondary,
+[av-ballot-locator-screen] .no-header h1,
+[av-verify-results] .no-header h1
+{
+  color: #333 !important;
+}
+
+@theme-font-path: "../../themes/default";
+
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Montserrat-Regular'), url('@{theme-font-path}/zhcz-_WihjSQC0oHJ9TCYBsxEYwM7FgeyaSgU71cLG0.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Montserrat-Bold'), url('@{theme-font-path}/IQHow_FEYlDC4Gzy_m8fcgFhaRv2pGgT5Kf0An0s4MM.woff') format('woff');
+}
+
+.h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
+    font-family: Montserrat,Arial,sans-serif;
+    font-weight: 500;
+    line-height: 1.1;
+    color: inherit;
+}
