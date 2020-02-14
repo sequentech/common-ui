@@ -17332,35 +17332,65 @@ function(angular) {
     });
 }(angular), function(angular) {
     "use strict";
-    angular.module("ngCookies", [ "ng" ]).factory("$cookies", [ "$rootScope", "$browser", function($rootScope, $browser) {
-        var lastBrowserCookies, cookies = {}, lastCookies = {}, runEval = !1, copy = angular.copy, isUndefined = angular.isUndefined;
-        return $browser.addPollFn(function() {
-            var currentCookies = $browser.cookies();
-            lastBrowserCookies != currentCookies && (copy(lastBrowserCookies = currentCookies, lastCookies), 
-            copy(currentCookies, cookies), runEval && $rootScope.$apply());
-        })(), runEval = !0, $rootScope.$watch(function() {
-            var name, value, browserCookies, updated;
-            for (name in lastCookies) isUndefined(cookies[name]) && $browser.cookies(name, void 0);
-            for (name in cookies) value = cookies[name], angular.isString(value) || (value = "" + value, 
-            cookies[name] = value), value !== lastCookies[name] && ($browser.cookies(name, value), 
-            updated = !0);
-            if (updated) for (name in updated = !1, browserCookies = $browser.cookies(), cookies) cookies[name] !== browserCookies[name] && (isUndefined(browserCookies[name]) ? delete cookies[name] : cookies[name] = browserCookies[name], 
-            updated = !0);
-        }), cookies;
-    } ]).factory("$cookieStore", [ "$cookies", function($cookies) {
+    function $$CookieWriter($document, $log, $browser) {
+        var cookiePath = $browser.baseHref(), rawDocument = $document[0];
+        return function(name, value, options) {
+            rawDocument.cookie = function(name, value, options) {
+                var path, expires;
+                expires = (options = options || {}).expires, path = angular.isDefined(options.path) ? options.path : cookiePath, 
+                void 0 === value && (expires = "Thu, 01 Jan 1970 00:00:00 GMT", value = ""), angular.isString(expires) && (expires = new Date(expires));
+                var str = encodeURIComponent(name) + "=" + encodeURIComponent(value);
+                str += path ? ";path=" + path : "", str += options.domain ? ";domain=" + options.domain : "", 
+                str += expires ? ";expires=" + expires.toUTCString() : "";
+                var cookieLength = (str += options.secure ? ";secure" : "").length + 1;
+                return 4096 < cookieLength && $log.warn("Cookie '" + name + "' possibly not set or overflowed because it was too large (" + cookieLength + " > 4096 bytes)!"), 
+                str;
+            }(name, value, options);
+        };
+    }
+    angular.module("ngCookies", [ "ng" ]).provider("$cookies", [ function() {
+        var defaults = this.defaults = {};
+        function calcOptions(options) {
+            return options ? angular.extend({}, defaults, options) : defaults;
+        }
+        this.$get = [ "$$cookieReader", "$$cookieWriter", function($$cookieReader, $$cookieWriter) {
+            return {
+                get: function(key) {
+                    return $$cookieReader()[key];
+                },
+                getObject: function(key) {
+                    var value = this.get(key);
+                    return value ? angular.fromJson(value) : value;
+                },
+                getAll: function() {
+                    return $$cookieReader();
+                },
+                put: function(key, value, options) {
+                    $$cookieWriter(key, value, calcOptions(options));
+                },
+                putObject: function(key, value, options) {
+                    this.put(key, angular.toJson(value), options);
+                },
+                remove: function(key, options) {
+                    $$cookieWriter(key, void 0, calcOptions(options));
+                }
+            };
+        } ];
+    } ]), angular.module("ngCookies").factory("$cookieStore", [ "$cookies", function($cookies) {
         return {
             get: function(key) {
-                var value = $cookies[key];
-                return value ? angular.fromJson(value) : value;
+                return $cookies.getObject(key);
             },
             put: function(key, value) {
-                $cookies[key] = angular.toJson(value);
+                $cookies.putObject(key, value);
             },
             remove: function(key) {
-                delete $cookies[key];
+                $cookies.remove(key);
             }
         };
-    } ]);
+    } ]), $$CookieWriter.$inject = [ "$document", "$log", "$browser" ], angular.module("ngCookies").provider("$$cookieWriter", function() {
+        this.$get = $$CookieWriter;
+    });
 }((window, window.angular)), angular.module("ivpusic.cookie", [ "ipCookie" ]), angular.module("ipCookie", [ "ng" ]).factory("ipCookie", [ "$document", function($document) {
     "use strict";
     function tryDecodeURIComponent(value) {
