@@ -9483,118 +9483,181 @@ function q(a) {
         angularInit(window.document, bootstrap);
     }));
 }(window), window.angular.$$csp().noInlineStyle || window.angular.element(document.head).prepend('<style type="text/css">@charset "UTF-8";[ng\\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\\:form{display:block;}.ng-animate-shim{visibility:hidden;}.ng-anchor{position:absolute;}</style>'), 
-function(angular) {
+function(window, angular) {
     "use strict";
-    var $sanitizeMinErr = angular.$$minErr("$sanitize");
-    var START_TAG_REGEXP = /^<((?:[a-zA-Z])[\w:-]*)((?:\s+[\w:-]+(?:\s*=\s*(?:(?:"[^"]*")|(?:'[^']*')|[^>\s]+))?)*)\s*(\/?)\s*(>?)/, END_TAG_REGEXP = /^<\/\s*([\w:-]+)[^>]*>/, ATTR_REGEXP = /([\w:-]+)(?:\s*=\s*(?:(?:"((?:[^"])*)")|(?:'((?:[^'])*)')|([^>\s]+)))?/g, BEGIN_TAG_REGEXP = /^</, BEGING_END_TAGE_REGEXP = /^<\//, COMMENT_REGEXP = /<!--(.*?)-->/g, DOCTYPE_REGEXP = /<!DOCTYPE([^>]*?)>/i, CDATA_REGEXP = /<!\[CDATA\[(.*?)]]>/g, SURROGATE_PAIR_REGEXP = /[\uD800-\uDBFF][\uDC00-\uDFFF]/g, NON_ALPHANUMERIC_REGEXP = /([^\#-~| |!])/g, voidElements = makeMap("area,br,col,hr,img,wbr"), optionalEndTagBlockElements = makeMap("colgroup,dd,dt,li,p,tbody,td,tfoot,th,thead,tr"), optionalEndTagInlineElements = makeMap("rp,rt"), optionalEndTagElements = angular.extend({}, optionalEndTagInlineElements, optionalEndTagBlockElements), blockElements = angular.extend({}, optionalEndTagBlockElements, makeMap("address,article,aside,blockquote,caption,center,del,dir,div,dl,figure,figcaption,footer,h1,h2,h3,h4,h5,h6,header,hgroup,hr,ins,map,menu,nav,ol,pre,script,section,table,ul")), inlineElements = angular.extend({}, optionalEndTagInlineElements, makeMap("a,abbr,acronym,b,bdi,bdo,big,br,cite,code,del,dfn,em,font,i,img,ins,kbd,label,map,mark,q,ruby,rp,rt,s,samp,small,span,strike,strong,sub,sup,time,tt,u,var")), specialElements = makeMap("script,style"), validElements = angular.extend({}, voidElements, blockElements, inlineElements, optionalEndTagElements), uriAttrs = makeMap("background,cite,href,longdesc,src"), validAttrs = angular.extend({}, uriAttrs, makeMap("abbr,align,alt,axis,bgcolor,border,cellpadding,cellspacing,class,clear,color,cols,colspan,compact,coords,dir,face,headers,height,hreflang,hspace,ismap,lang,language,nohref,nowrap,rel,rev,rows,rowspan,rules,scope,scrolling,shape,size,span,start,summary,target,title,type,valign,value,vspace,width"));
-    function makeMap(str) {
-        var i, obj = {}, items = str.split(",");
-        for (i = 0; i < items.length; i++) obj[items[i]] = !0;
-        return obj;
-    }
-    var hiddenPre = document.createElement("pre"), spaceRe = /^(\s*)([\s\S]*?)(\s*)$/;
-    function decodeEntities(value) {
-        if (!value) return "";
-        var parts = spaceRe.exec(value), spaceBefore = parts[1], spaceAfter = parts[3], content = parts[2];
-        return content && (hiddenPre.innerHTML = content.replace(/</g, "&lt;"), content = "textContent" in hiddenPre ? hiddenPre.textContent : hiddenPre.innerText), 
-        spaceBefore + content + spaceAfter;
-    }
-    function encodeEntities(value) {
-        return value.replace(/&/g, "&amp;").replace(SURROGATE_PAIR_REGEXP, function(value) {
-            return "&#" + (1024 * (value.charCodeAt(0) - 55296) + (value.charCodeAt(1) - 56320) + 65536) + ";";
-        }).replace(NON_ALPHANUMERIC_REGEXP, function(value) {
-            return "&#" + value.charCodeAt(0) + ";";
-        }).replace(/</g, "&lt;").replace(/>/g, "&gt;");
-    }
-    function htmlSanitizeWriter(buf, uriValidator) {
-        var ignore = !1, out = angular.bind(buf, buf.push);
-        return {
-            start: function(tag, attrs, unary) {
-                tag = angular.lowercase(tag), !ignore && specialElements[tag] && (ignore = tag), 
-                ignore || !0 !== validElements[tag] || (out("<"), out(tag), angular.forEach(attrs, function(value, key) {
-                    var lkey = angular.lowercase(key), isImage = "img" === tag && "src" === lkey || "background" === lkey;
-                    !0 !== validAttrs[lkey] || !0 === uriAttrs[lkey] && !uriValidator(value, isImage) || (out(" "), 
-                    out(key), out('="'), out(encodeEntities(value)), out('"'));
-                }), out(unary ? "/>" : ">"));
-            },
-            end: function(tag) {
-                tag = angular.lowercase(tag), ignore || !0 !== validElements[tag] || (out("</"), 
-                out(tag), out(">")), tag == ignore && (ignore = !1);
-            },
-            chars: function(chars) {
-                ignore || out(encodeEntities(chars));
-            }
-        };
-    }
+    var bind, extend, forEach, isArray, isDefined, lowercase, noop, nodeContains, htmlParser, htmlSanitizeWriter, $sanitizeMinErr = angular.$$minErr("$sanitize");
     angular.module("ngSanitize", []).provider("$sanitize", function() {
+        var hasBeenInstantiated = !1, svgEnabled = !1;
         this.$get = [ "$$sanitizeUri", function($$sanitizeUri) {
-            return function(html) {
+            return hasBeenInstantiated = !0, svgEnabled && extend(validElements, svgElements), 
+            function(html) {
                 var buf = [];
-                return function(html, handler) {
-                    "string" != typeof html && (html = null == html ? "" : "" + html);
-                    var index, chars, match, text, stack = [], last = html;
-                    stack.last = function() {
-                        return stack[stack.length - 1];
-                    };
-                    for (;html; ) {
-                        if (chars = !(text = ""), stack.last() && specialElements[stack.last()] ? (html = html.replace(new RegExp("(.*)<\\s*\\/\\s*" + stack.last() + "[^>]*>", "i"), function(all, text) {
-                            return text = text.replace(COMMENT_REGEXP, "$1").replace(CDATA_REGEXP, "$1"), handler.chars && handler.chars(decodeEntities(text)), 
-                            "";
-                        }), parseEndTag("", stack.last())) : (0 === html.indexOf("\x3c!--") ? 0 <= (index = html.indexOf("--", 4)) && html.lastIndexOf("--\x3e", index) === index && (handler.comment && handler.comment(html.substring(4, index)), 
-                        html = html.substring(index + 3), chars = !1) : DOCTYPE_REGEXP.test(html) ? (match = html.match(DOCTYPE_REGEXP)) && (html = html.replace(match[0], ""), 
-                        chars = !1) : BEGING_END_TAGE_REGEXP.test(html) ? (match = html.match(END_TAG_REGEXP)) && (html = html.substring(match[0].length), 
-                        match[0].replace(END_TAG_REGEXP, parseEndTag), chars = !1) : BEGIN_TAG_REGEXP.test(html) && ((match = html.match(START_TAG_REGEXP)) ? (match[4] && (html = html.substring(match[0].length), 
-                        match[0].replace(START_TAG_REGEXP, parseStartTag)), chars = !1) : (text += "<", 
-                        html = html.substring(1))), chars && (index = html.indexOf("<"), text += index < 0 ? html : html.substring(0, index), 
-                        html = index < 0 ? "" : html.substring(index), handler.chars && handler.chars(decodeEntities(text)))), 
-                        html == last) throw $sanitizeMinErr("badparse", "The sanitizer was unable to parse the following block of html: {0}", html);
-                        last = html;
-                    }
-                    function parseStartTag(tag, tagName, rest, unary) {
-                        if (tagName = angular.lowercase(tagName), blockElements[tagName]) for (;stack.last() && inlineElements[stack.last()]; ) parseEndTag("", stack.last());
-                        optionalEndTagElements[tagName] && stack.last() == tagName && parseEndTag("", tagName), 
-                        (unary = voidElements[tagName] || !!unary) || stack.push(tagName);
-                        var attrs = {};
-                        rest.replace(ATTR_REGEXP, function(match, name, doubleQuotedValue, singleQuotedValue, unquotedValue) {
-                            var value = doubleQuotedValue || singleQuotedValue || unquotedValue || "";
-                            attrs[name] = decodeEntities(value);
-                        }), handler.start && handler.start(tagName, attrs, unary);
-                    }
-                    function parseEndTag(tag, tagName) {
-                        var i, pos = 0;
-                        if (tagName = angular.lowercase(tagName)) for (pos = stack.length - 1; 0 <= pos && stack[pos] != tagName; pos--) ;
-                        if (0 <= pos) {
-                            for (i = stack.length - 1; pos <= i; i--) handler.end && handler.end(stack[i]);
-                            stack.length = pos;
-                        }
-                    }
-                    parseEndTag();
-                }(html, htmlSanitizeWriter(buf, function(uri, isImage) {
-                    return !/^unsafe/.test($$sanitizeUri(uri, isImage));
+                return htmlParser(html, htmlSanitizeWriter(buf, function(uri, isImage) {
+                    return !/^unsafe:/.test($$sanitizeUri(uri, isImage));
                 })), buf.join("");
             };
-        } ];
+        } ], this.enableSvg = function(enableSvg) {
+            return isDefined(enableSvg) ? (svgEnabled = enableSvg, this) : svgEnabled;
+        }, this.addValidElements = function(elements) {
+            return hasBeenInstantiated || (isArray(elements) && (elements = {
+                htmlElements: elements
+            }), addElementsTo(svgElements, elements.svgElements), addElementsTo(voidElements, elements.htmlVoidElements), 
+            addElementsTo(validElements, elements.htmlVoidElements), addElementsTo(validElements, elements.htmlElements)), 
+            this;
+        }, this.addValidAttrs = function(attrs) {
+            return hasBeenInstantiated || extend(validAttrs, arrayToMap(attrs, !0)), this;
+        }, bind = angular.bind, extend = angular.extend, forEach = angular.forEach, isArray = angular.isArray, 
+        isDefined = angular.isDefined, lowercase = angular.$$lowercase, noop = angular.noop, 
+        htmlParser = function(html, handler) {
+            null == html ? html = "" : "string" != typeof html && (html = "" + html);
+            var inertBodyElement = getInertBodyElement(html);
+            if (!inertBodyElement) return "";
+            var mXSSAttempts = 5;
+            do {
+                if (0 === mXSSAttempts) throw $sanitizeMinErr("uinput", "Failed to sanitize html because the input is unstable");
+                mXSSAttempts--, html = inertBodyElement.innerHTML, inertBodyElement = getInertBodyElement(html);
+            } while (html !== inertBodyElement.innerHTML);
+            var node = inertBodyElement.firstChild;
+            for (;node; ) {
+                switch (node.nodeType) {
+                  case 1:
+                    handler.start(node.nodeName.toLowerCase(), attrToMap(node.attributes));
+                    break;
+
+                  case 3:
+                    handler.chars(node.textContent);
+                }
+                var nextNode;
+                if (!((nextNode = node.firstChild) || (1 === node.nodeType && handler.end(node.nodeName.toLowerCase()), 
+                nextNode = getNonDescendant("nextSibling", node)))) for (;null == nextNode && (node = getNonDescendant("parentNode", node)) !== inertBodyElement; ) nextNode = getNonDescendant("nextSibling", node), 
+                1 === node.nodeType && handler.end(node.nodeName.toLowerCase());
+                node = nextNode;
+            }
+            for (;node = inertBodyElement.firstChild; ) inertBodyElement.removeChild(node);
+        }, htmlSanitizeWriter = function(buf, uriValidator) {
+            var ignoreCurrentElement = !1, out = bind(buf, buf.push);
+            return {
+                start: function(tag, attrs) {
+                    tag = lowercase(tag), !ignoreCurrentElement && blockedElements[tag] && (ignoreCurrentElement = tag), 
+                    ignoreCurrentElement || !0 !== validElements[tag] || (out("<"), out(tag), forEach(attrs, function(value, key) {
+                        var lkey = lowercase(key), isImage = "img" === tag && "src" === lkey || "background" === lkey;
+                        !0 !== validAttrs[lkey] || !0 === uriAttrs[lkey] && !uriValidator(value, isImage) || (out(" "), 
+                        out(key), out('="'), out(encodeEntities(value)), out('"'));
+                    }), out(">"));
+                },
+                end: function(tag) {
+                    tag = lowercase(tag), ignoreCurrentElement || !0 !== validElements[tag] || !0 === voidElements[tag] || (out("</"), 
+                    out(tag), out(">")), tag == ignoreCurrentElement && (ignoreCurrentElement = !1);
+                },
+                chars: function(chars) {
+                    ignoreCurrentElement || out(encodeEntities(chars));
+                }
+            };
+        }, nodeContains = window.Node.prototype.contains || function(arg) {
+            return !!(16 & this.compareDocumentPosition(arg));
+        };
+        var SURROGATE_PAIR_REGEXP = /[\uD800-\uDBFF][\uDC00-\uDFFF]/g, NON_ALPHANUMERIC_REGEXP = /([^#-~ |!])/g, voidElements = stringToMap("area,br,col,hr,img,wbr"), optionalEndTagBlockElements = stringToMap("colgroup,dd,dt,li,p,tbody,td,tfoot,th,thead,tr"), optionalEndTagInlineElements = stringToMap("rp,rt"), optionalEndTagElements = extend({}, optionalEndTagInlineElements, optionalEndTagBlockElements), blockElements = extend({}, optionalEndTagBlockElements, stringToMap("address,article,aside,blockquote,caption,center,del,dir,div,dl,figure,figcaption,footer,h1,h2,h3,h4,h5,h6,header,hgroup,hr,ins,map,menu,nav,ol,pre,section,table,ul")), inlineElements = extend({}, optionalEndTagInlineElements, stringToMap("a,abbr,acronym,b,bdi,bdo,big,br,cite,code,del,dfn,em,font,i,img,ins,kbd,label,map,mark,q,ruby,rp,rt,s,samp,small,span,strike,strong,sub,sup,time,tt,u,var")), svgElements = stringToMap("circle,defs,desc,ellipse,font-face,font-face-name,font-face-src,g,glyph,hkern,image,linearGradient,line,marker,metadata,missing-glyph,mpath,path,polygon,polyline,radialGradient,rect,stop,svg,switch,text,title,tspan"), blockedElements = stringToMap("script,style"), validElements = extend({}, voidElements, blockElements, inlineElements, optionalEndTagElements), uriAttrs = stringToMap("background,cite,href,longdesc,src,xlink:href,xml:base"), htmlAttrs = stringToMap("abbr,align,alt,axis,bgcolor,border,cellpadding,cellspacing,class,clear,color,cols,colspan,compact,coords,dir,face,headers,height,hreflang,hspace,ismap,lang,language,nohref,nowrap,rel,rev,rows,rowspan,rules,scope,scrolling,shape,size,span,start,summary,tabindex,target,title,type,valign,value,vspace,width"), svgAttrs = stringToMap("accent-height,accumulate,additive,alphabetic,arabic-form,ascent,baseProfile,bbox,begin,by,calcMode,cap-height,class,color,color-rendering,content,cx,cy,d,dx,dy,descent,display,dur,end,fill,fill-rule,font-family,font-size,font-stretch,font-style,font-variant,font-weight,from,fx,fy,g1,g2,glyph-name,gradientUnits,hanging,height,horiz-adv-x,horiz-origin-x,ideographic,k,keyPoints,keySplines,keyTimes,lang,marker-end,marker-mid,marker-start,markerHeight,markerUnits,markerWidth,mathematical,max,min,offset,opacity,orient,origin,overline-position,overline-thickness,panose-1,path,pathLength,points,preserveAspectRatio,r,refX,refY,repeatCount,repeatDur,requiredExtensions,requiredFeatures,restart,rotate,rx,ry,slope,stemh,stemv,stop-color,stop-opacity,strikethrough-position,strikethrough-thickness,stroke,stroke-dasharray,stroke-dashoffset,stroke-linecap,stroke-linejoin,stroke-miterlimit,stroke-opacity,stroke-width,systemLanguage,target,text-anchor,to,transform,type,u1,u2,underline-position,underline-thickness,unicode,unicode-range,units-per-em,values,version,viewBox,visibility,width,widths,x,x-height,x1,x2,xlink:actuate,xlink:arcrole,xlink:role,xlink:show,xlink:title,xlink:type,xml:base,xml:lang,xml:space,xmlns,xmlns:xlink,y,y1,y2,zoomAndPan", !0), validAttrs = extend({}, uriAttrs, svgAttrs, htmlAttrs);
+        function stringToMap(str, lowercaseKeys) {
+            return arrayToMap(str.split(","), lowercaseKeys);
+        }
+        function arrayToMap(items, lowercaseKeys) {
+            var i, obj = {};
+            for (i = 0; i < items.length; i++) obj[lowercaseKeys ? lowercase(items[i]) : items[i]] = !0;
+            return obj;
+        }
+        function addElementsTo(elementsMap, newElements) {
+            newElements && newElements.length && extend(elementsMap, arrayToMap(newElements));
+        }
+        var getInertBodyElement = function(window, document) {
+            var inertDocument;
+            if (!document || !document.implementation) throw $sanitizeMinErr("noinert", "Can't create an inert html document");
+            var inertBodyElement = ((inertDocument = document.implementation.createHTMLDocument("inert")).documentElement || inertDocument.getDocumentElement()).querySelector("body");
+            return inertBodyElement.innerHTML = '<svg><g onload="this.parentNode.remove()"></g></svg>', 
+            inertBodyElement.querySelector("svg") ? (inertBodyElement.innerHTML = '<svg><p><style><img src="</style><img src=x onerror=alert(1)//">', 
+            inertBodyElement.querySelector("svg img") ? function(html) {
+                html = "<remove></remove>" + html;
+                try {
+                    var body = new window.DOMParser().parseFromString(html, "text/html").body;
+                    return body.firstChild.remove(), body;
+                } catch (e) {
+                    return;
+                }
+            } : function(html) {
+                inertBodyElement.innerHTML = html, document.documentMode && stripCustomNsAttrs(inertBodyElement);
+                return inertBodyElement;
+            }) : function(html) {
+                html = "<remove></remove>" + html;
+                try {
+                    html = encodeURI(html);
+                } catch (e) {
+                    return;
+                }
+                var xhr = new window.XMLHttpRequest();
+                xhr.responseType = "document", xhr.open("GET", "data:text/html;charset=utf-8," + html, !1), 
+                xhr.send(null);
+                var body = xhr.response.body;
+                return body.firstChild.remove(), body;
+            };
+        }(window, window.document);
+        function attrToMap(attrs) {
+            for (var map = {}, i = 0, ii = attrs.length; i < ii; i++) {
+                var attr = attrs[i];
+                map[attr.name] = attr.value;
+            }
+            return map;
+        }
+        function encodeEntities(value) {
+            return value.replace(/&/g, "&amp;").replace(SURROGATE_PAIR_REGEXP, function(value) {
+                return "&#" + (1024 * (value.charCodeAt(0) - 55296) + (value.charCodeAt(1) - 56320) + 65536) + ";";
+            }).replace(NON_ALPHANUMERIC_REGEXP, function(value) {
+                return "&#" + value.charCodeAt(0) + ";";
+            }).replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+        function stripCustomNsAttrs(node) {
+            for (;node; ) {
+                if (node.nodeType === window.Node.ELEMENT_NODE) for (var attrs = node.attributes, i = 0, l = attrs.length; i < l; i++) {
+                    var attrNode = attrs[i], attrName = attrNode.name.toLowerCase();
+                    "xmlns:ns1" !== attrName && 0 !== attrName.lastIndexOf("ns1:", 0) || (node.removeAttributeNode(attrNode), 
+                    i--, l--);
+                }
+                var nextNode = node.firstChild;
+                nextNode && stripCustomNsAttrs(nextNode), node = getNonDescendant("nextSibling", node);
+            }
+        }
+        function getNonDescendant(propName, node) {
+            var nextNode = node[propName];
+            if (nextNode && nodeContains.call(node, nextNode)) throw $sanitizeMinErr("elclob", "Failed to sanitize html because the element is clobbered: {0}", node.outerHTML || node.outerText);
+            return nextNode;
+        }
+    }).info({
+        angularVersion: "1.7.9"
     }), angular.module("ngSanitize").filter("linky", [ "$sanitize", function($sanitize) {
-        var LINKY_URL_REGEXP = /((ftp|https?):\/\/|(mailto:)?[A-Za-z0-9._%+-]+@)\S*[^\s.;,(){}<>"]/, MAILTO_REGEXP = /^mailto:/;
-        return function(text, target) {
-            if (!text) return text;
-            for (var match, url, i, raw = text, html = []; match = raw.match(LINKY_URL_REGEXP); ) url = match[0], 
-            match[2] == match[3] && (url = "mailto:" + url), i = match.index, addText(raw.substr(0, i)), 
-            addLink(url, match[0].replace(MAILTO_REGEXP, "")), raw = raw.substring(i + match[0].length);
+        var LINKY_URL_REGEXP = /((s?ftp|https?):\/\/|(www\.)|(mailto:)?[A-Za-z0-9._%+-]+@)\S*[^\s.;,(){}<>"\u201d\u2019]/i, MAILTO_REGEXP = /^mailto:/i, linkyMinErr = angular.$$minErr("linky"), isDefined = angular.isDefined, isFunction = angular.isFunction, isObject = angular.isObject, isString = angular.isString;
+        return function(text, target, attributes) {
+            if (null == text || "" === text) return text;
+            if (!isString(text)) throw linkyMinErr("notstring", "Expected string but received: {0}", text);
+            for (var match, url, i, attributesFn = isFunction(attributes) ? attributes : isObject(attributes) ? function() {
+                return attributes;
+            } : function() {
+                return {};
+            }, raw = text, html = []; match = raw.match(LINKY_URL_REGEXP); ) url = match[0], 
+            match[2] || match[4] || (url = (match[3] ? "http://" : "mailto:") + url), i = match.index, 
+            addText(raw.substr(0, i)), addLink(url, match[0].replace(MAILTO_REGEXP, "")), raw = raw.substring(i + match[0].length);
             return addText(raw), $sanitize(html.join(""));
             function addText(text) {
                 var chars, buf;
-                text && html.push((chars = text, htmlSanitizeWriter(buf = [], angular.noop).chars(chars), 
+                text && html.push((chars = text, htmlSanitizeWriter(buf = [], noop).chars(chars), 
                 buf.join("")));
             }
             function addLink(url, text) {
-                html.push("<a "), angular.isDefined(target) && (html.push('target="'), html.push(target), 
-                html.push('" ')), html.push('href="', url.replace('"', "&quot;"), '">'), addText(text), 
-                html.push("</a>");
+                var key, linkAttributes = attributesFn(url);
+                for (key in html.push("<a "), linkAttributes) html.push(key + '="' + linkAttributes[key] + '" ');
+                !isDefined(target) || "target" in linkAttributes || html.push('target="', target, '" '), 
+                html.push('href="', url.replace(/"/g, "&quot;"), '">'), addText(text), html.push("</a>");
             }
         };
     } ]);
-}((window, window.angular)), function(global, factory) {
+}(window, window.angular), function(global, factory) {
     "object" == typeof exports && "undefined" != typeof module ? module.exports = factory() : "function" == typeof define && define.amd ? define(factory) : global.moment = factory();
 }(this, function() {
     "use strict";
@@ -13680,16 +13743,16 @@ function(angular, undefined) {
             };
         } ];
     }).provider("$$animation", $$AnimationProvider).provider("$animateCss", $AnimateCssProvider).provider("$$animateCssDriver", $$AnimateCssDriverProvider).provider("$$animateJs", $$AnimateJsProvider).provider("$$animateJsDriver", $$AnimateJsDriverProvider);
-}(window, window.angular), function(angular, undefined) {
+}(window, window.angular), function(angular) {
     "use strict";
-    var $resourceMinErr = angular.$$minErr("$resource"), MEMBER_NAME_REGEX = /^(\.[a-zA-Z_$][0-9a-zA-Z_$]*)+$/;
+    var $resourceMinErr = angular.$$minErr("$resource"), MEMBER_NAME_REGEX = /^(\.[a-zA-Z_$@][0-9a-zA-Z_$@]*)+$/;
     function lookupDottedPath(obj, path) {
         if (!function(path) {
             return null != path && "" !== path && "hasOwnProperty" !== path && MEMBER_NAME_REGEX.test("." + path);
         }(path)) throw $resourceMinErr("badmember", 'Dotted member path "@{0}" is invalid.', path);
-        for (var keys = path.split("."), i = 0, ii = keys.length; i < ii && obj !== undefined; i++) {
+        for (var keys = path.split("."), i = 0, ii = keys.length; i < ii && angular.isDefined(obj); i++) {
             var key = keys[i];
-            obj = null !== obj ? obj[key] : undefined;
+            obj = null !== obj ? obj[key] : void 0;
         }
         return obj;
     }
@@ -13699,126 +13762,157 @@ function(angular, undefined) {
         }), src) !src.hasOwnProperty(key) || "$" === key.charAt(0) && "$" === key.charAt(1) || (dst[key] = src[key]);
         return dst;
     }
-    angular.module("ngResource", [ "ng" ]).factory("$resource", [ "$http", "$q", function($http, $q) {
-        var DEFAULT_ACTIONS = {
-            get: {
-                method: "GET"
-            },
-            save: {
-                method: "POST"
-            },
-            query: {
-                method: "GET",
-                isArray: !0
-            },
-            remove: {
-                method: "DELETE"
-            },
-            delete: {
-                method: "DELETE"
+    angular.module("ngResource", [ "ng" ]).info({
+        angularVersion: "1.7.9"
+    }).provider("$resource", function() {
+        var PROTOCOL_AND_IPV6_REGEX = /^https?:\/\/\[[^\]]*][^/]*/, provider = this;
+        this.defaults = {
+            stripTrailingSlashes: !0,
+            cancellable: !1,
+            actions: {
+                get: {
+                    method: "GET"
+                },
+                save: {
+                    method: "POST"
+                },
+                query: {
+                    method: "GET",
+                    isArray: !0
+                },
+                remove: {
+                    method: "DELETE"
+                },
+                delete: {
+                    method: "DELETE"
+                }
             }
-        }, noop = angular.noop, forEach = angular.forEach, extend = angular.extend, copy = angular.copy, isFunction = angular.isFunction;
-        function encodeUriSegment(val) {
-            return function(val, pctEncodeSpaces) {
-                return encodeURIComponent(val).replace(/%40/gi, "@").replace(/%3A/gi, ":").replace(/%24/g, "$").replace(/%2C/gi, ",").replace(/%20/g, pctEncodeSpaces ? "%20" : "+");
-            }(val, !0).replace(/%26/gi, "&").replace(/%3D/gi, "=").replace(/%2B/gi, "+");
-        }
-        function Route(template, defaults) {
-            this.template = template, this.defaults = defaults || {}, this.urlParams = {};
-        }
-        return Route.prototype = {
-            setUrlParams: function(config, params, actionUrl) {
-                var val, encodedVal, self = this, url = actionUrl || self.template, urlParams = self.urlParams = {};
-                forEach(url.split(/\W/), function(param) {
-                    if ("hasOwnProperty" === param) throw $resourceMinErr("badname", "hasOwnProperty is not a valid parameter name.");
-                    !new RegExp("^\\d+$").test(param) && param && new RegExp("(^|[^\\\\]):" + param + "(\\W|$)").test(url) && (urlParams[param] = !0);
-                }), url = url.replace(/\\:/g, ":"), params = params || {}, forEach(self.urlParams, function(_, urlParam) {
-                    val = params.hasOwnProperty(urlParam) ? params[urlParam] : self.defaults[urlParam], 
-                    url = angular.isDefined(val) && null !== val ? (encodedVal = encodeUriSegment(val), 
-                    url.replace(new RegExp(":" + urlParam + "(\\W|$)", "g"), function(match, p1) {
-                        return encodedVal + p1;
-                    })) : url.replace(new RegExp("(/?):" + urlParam + "(\\W|$)", "g"), function(match, leadingSlashes, tail) {
-                        return "/" == tail.charAt(0) ? tail : leadingSlashes + tail;
+        }, this.$get = [ "$http", "$log", "$q", "$timeout", function($http, $log, $q, $timeout) {
+            var noop = angular.noop, forEach = angular.forEach, extend = angular.extend, copy = angular.copy, isArray = angular.isArray, isDefined = angular.isDefined, isFunction = angular.isFunction, isNumber = angular.isNumber, encodeUriQuery = angular.$$encodeUriQuery, encodeUriSegment = angular.$$encodeUriSegment;
+            function Route(template, defaults) {
+                this.template = template, this.defaults = extend({}, provider.defaults, defaults), 
+                this.urlParams = {};
+            }
+            return Route.prototype = {
+                setUrlParams: function(config, params, actionUrl) {
+                    var val, encodedVal, self = this, url = actionUrl || self.template, protocolAndIpv6 = "", urlParams = self.urlParams = Object.create(null);
+                    forEach(url.split(/\W/), function(param) {
+                        if ("hasOwnProperty" === param) throw $resourceMinErr("badname", "hasOwnProperty is not a valid parameter name.");
+                        !new RegExp("^\\d+$").test(param) && param && new RegExp("(^|[^\\\\]):" + param + "(\\W|$)").test(url) && (urlParams[param] = {
+                            isQueryParamValue: new RegExp("\\?.*=:" + param + "(?:\\W|$)").test(url)
+                        });
+                    }), url = (url = url.replace(/\\:/g, ":")).replace(PROTOCOL_AND_IPV6_REGEX, function(match) {
+                        return protocolAndIpv6 = match, "";
+                    }), params = params || {}, forEach(self.urlParams, function(paramInfo, urlParam) {
+                        val = params.hasOwnProperty(urlParam) ? params[urlParam] : self.defaults[urlParam], 
+                        url = isDefined(val) && null !== val ? (encodedVal = paramInfo.isQueryParamValue ? encodeUriQuery(val, !0) : encodeUriSegment(val), 
+                        url.replace(new RegExp(":" + urlParam + "(\\W|$)", "g"), function(match, p1) {
+                            return encodedVal + p1;
+                        })) : url.replace(new RegExp("(/?):" + urlParam + "(\\W|$)", "g"), function(match, leadingSlashes, tail) {
+                            return "/" === tail.charAt(0) ? tail : leadingSlashes + tail;
+                        });
+                    }), self.defaults.stripTrailingSlashes && (url = url.replace(/\/+$/, "") || "/"), 
+                    url = url.replace(/\/\.(?=\w+($|\?))/, "."), config.url = protocolAndIpv6 + url.replace(/\/(\\|%5C)\./, "/."), 
+                    forEach(params, function(value, key) {
+                        self.urlParams[key] || (config.params = config.params || {}, config.params[key] = value);
                     });
-                }), url = (url = url.replace(/\/+$/, "") || "/").replace(/\/\.(?=\w+($|\?))/, "."), 
-                config.url = url.replace(/\/\\\./, "/."), forEach(params, function(value, key) {
-                    self.urlParams[key] || (config.params = config.params || {}, config.params[key] = value);
-                });
-            }
-        }, function resourceFactory(url, paramDefaults, actions) {
-            var route = new Route(url);
-            function defaultResponseInterceptor(response) {
-                return response.resource;
-            }
-            function Resource(value) {
-                shallowClearAndCopy(value || {}, this);
-            }
-            return actions = extend({}, DEFAULT_ACTIONS, actions), forEach(actions, function(action, name) {
-                var hasBody = /^(POST|PUT|PATCH)$/i.test(action.method);
-                Resource[name] = function(a1, a2, a3, a4) {
-                    var data, success, error, params = {};
-                    switch (arguments.length) {
-                      case 4:
-                        error = a4, success = a3;
+                }
+            }, function(url, paramDefaults, actions, options) {
+                var route = new Route(url, options);
+                function defaultResponseInterceptor(response) {
+                    return response.resource;
+                }
+                function Resource(value) {
+                    shallowClearAndCopy(value || {}, this);
+                }
+                return actions = extend({}, provider.defaults.actions, actions), Resource.prototype.toJSON = function() {
+                    var data = extend({}, this);
+                    return delete data.$promise, delete data.$resolved, delete data.$cancelRequest, 
+                    data;
+                }, forEach(actions, function(action, name) {
+                    var hasBody = !0 === action.hasBody || !1 !== action.hasBody && /^(POST|PUT|PATCH)$/i.test(action.method), numericTimeout = action.timeout, cancellable = isDefined(action.cancellable) ? action.cancellable : route.defaults.cancellable;
+                    numericTimeout && !isNumber(numericTimeout) && ($log.debug("ngResource:\n  Only numeric values are allowed as `timeout`.\n  Promises are not supported in $resource, because the same value would be used for multiple requests. If you are looking for a way to cancel requests, you should use the `cancellable` option."), 
+                    delete action.timeout, numericTimeout = null), Resource[name] = function(a1, a2, a3, a4) {
+                        var data, onSuccess, onError, params = {};
+                        switch (arguments.length) {
+                          case 4:
+                            onError = a4, onSuccess = a3;
 
-                      case 3:
-                      case 2:
-                        if (!isFunction(a2)) {
-                            params = a1, data = a2, success = a3;
+                          case 3:
+                          case 2:
+                            if (!isFunction(a2)) {
+                                params = a1, data = a2, onSuccess = a3;
+                                break;
+                            }
+                            if (isFunction(a1)) {
+                                onSuccess = a1, onError = a2;
+                                break;
+                            }
+                            onSuccess = a2, onError = a3;
+
+                          case 1:
+                            isFunction(a1) ? onSuccess = a1 : hasBody ? data = a1 : params = a1;
                             break;
-                        }
-                        if (isFunction(a1)) {
-                            success = a1, error = a2;
+
+                          case 0:
                             break;
+
+                          default:
+                            throw $resourceMinErr("badargs", "Expected up to 4 arguments [params, data, success, error], got {0} arguments", arguments.length);
                         }
-                        success = a2, error = a3;
+                        var timeoutDeferred, numericTimeoutPromise, response, isInstanceCall = this instanceof Resource, value = isInstanceCall ? data : action.isArray ? [] : new Resource(data), httpConfig = {}, requestInterceptor = action.interceptor && action.interceptor.request || void 0, requestErrorInterceptor = action.interceptor && action.interceptor.requestError || void 0, responseInterceptor = action.interceptor && action.interceptor.response || defaultResponseInterceptor, responseErrorInterceptor = action.interceptor && action.interceptor.responseError || $q.reject, successCallback = onSuccess ? function(val) {
+                            onSuccess(val, response.headers, response.status, response.statusText);
+                        } : void 0, errorCallback = onError || void 0;
+                        forEach(action, function(value, key) {
+                            switch (key) {
+                              default:
+                                httpConfig[key] = copy(value);
+                                break;
 
-                      case 1:
-                        isFunction(a1) ? success = a1 : hasBody ? data = a1 : params = a1;
-                        break;
-
-                      case 0:
-                        break;
-
-                      default:
-                        throw $resourceMinErr("badargs", "Expected up to 4 arguments [params, data, success, error], got {0} arguments", arguments.length);
-                    }
-                    var isInstanceCall = this instanceof Resource, value = isInstanceCall ? data : action.isArray ? [] : new Resource(data), httpConfig = {}, responseInterceptor = action.interceptor && action.interceptor.response || defaultResponseInterceptor, responseErrorInterceptor = action.interceptor && action.interceptor.responseError || undefined;
-                    forEach(action, function(value, key) {
-                        "params" != key && "isArray" != key && "interceptor" != key && (httpConfig[key] = copy(value));
-                    }), hasBody && (httpConfig.data = data), route.setUrlParams(httpConfig, extend({}, function(data, actionParams) {
-                        var ids = {};
-                        return actionParams = extend({}, paramDefaults, actionParams), forEach(actionParams, function(value, key) {
-                            isFunction(value) && (value = value()), ids[key] = value && value.charAt && "@" == value.charAt(0) ? lookupDottedPath(data, value.substr(1)) : value;
-                        }), ids;
-                    }(data, action.params || {}), params), action.url);
-                    var promise = $http(httpConfig).then(function(response) {
-                        var data = response.data, promise = value.$promise;
-                        if (data) {
-                            if (angular.isArray(data) !== !!action.isArray) throw $resourceMinErr("badcfg", "Error in resource configuration. Expected response to contain an {0} but got an {1}", action.isArray ? "array" : "object", angular.isArray(data) ? "array" : "object");
-                            action.isArray ? (value.length = 0, forEach(data, function(item) {
-                                "object" == typeof item ? value.push(new Resource(item)) : value.push(item);
-                            })) : (shallowClearAndCopy(data, value), value.$promise = promise);
-                        }
-                        return value.$resolved = !0, response.resource = value, response;
-                    }, function(response) {
-                        return value.$resolved = !0, (error || noop)(response), $q.reject(response);
-                    });
-                    return promise = promise.then(function(response) {
-                        var value = responseInterceptor(response);
-                        return (success || noop)(value, response.headers), value;
-                    }, responseErrorInterceptor), isInstanceCall ? promise : (value.$promise = promise, 
-                    value.$resolved = !1, value);
-                }, Resource.prototype["$" + name] = function(params, success, error) {
-                    isFunction(params) && (error = success, success = params, params = {});
-                    var result = Resource[name].call(this, params, this, success, error);
-                    return result.$promise || result;
-                };
-            }), Resource.bind = function(additionalParamDefaults) {
-                return resourceFactory(url, extend({}, paramDefaults, additionalParamDefaults), actions);
-            }, Resource;
-        };
-    } ]);
+                              case "params":
+                              case "isArray":
+                              case "interceptor":
+                              case "cancellable":
+                            }
+                        }), !isInstanceCall && cancellable && (timeoutDeferred = $q.defer(), httpConfig.timeout = timeoutDeferred.promise, 
+                        numericTimeout && (numericTimeoutPromise = $timeout(timeoutDeferred.resolve, numericTimeout))), 
+                        hasBody && (httpConfig.data = data), route.setUrlParams(httpConfig, extend({}, function(data, actionParams) {
+                            var ids = {};
+                            return actionParams = extend({}, paramDefaults, actionParams), forEach(actionParams, function(value, key) {
+                                isFunction(value) && (value = value(data)), ids[key] = value && value.charAt && "@" === value.charAt(0) ? lookupDottedPath(data, value.substr(1)) : value;
+                            }), ids;
+                        }(data, action.params || {}), params), action.url);
+                        var promise = $q.resolve(httpConfig).then(requestInterceptor).catch(requestErrorInterceptor).then($http);
+                        return (promise = (promise = promise.then(function(resp) {
+                            var data = resp.data;
+                            if (data) {
+                                if (isArray(data) !== !!action.isArray) throw $resourceMinErr("badcfg", "Error in resource configuration for action `{0}`. Expected response to contain an {1} but got an {2} (Request: {3} {4})", name, action.isArray ? "array" : "object", isArray(data) ? "array" : "object", httpConfig.method, httpConfig.url);
+                                if (action.isArray) value.length = 0, forEach(data, function(item) {
+                                    "object" == typeof item ? value.push(new Resource(item)) : value.push(item);
+                                }); else {
+                                    var promise = value.$promise;
+                                    shallowClearAndCopy(data, value), value.$promise = promise;
+                                }
+                            }
+                            return resp.resource = value, responseInterceptor(response = resp);
+                        }, function(rejectionOrResponse) {
+                            return rejectionOrResponse.resource = value, responseErrorInterceptor(response = rejectionOrResponse);
+                        })).finally(function() {
+                            value.$resolved = !0, !isInstanceCall && cancellable && (value.$cancelRequest = noop, 
+                            $timeout.cancel(numericTimeoutPromise), timeoutDeferred = numericTimeoutPromise = httpConfig.timeout = null);
+                        })).then(successCallback, errorCallback), isInstanceCall ? promise : (value.$promise = promise, 
+                        value.$resolved = !1, cancellable && (value.$cancelRequest = function(value) {
+                            promise.catch(noop), null !== timeoutDeferred && timeoutDeferred.resolve(value);
+                        }), value);
+                    }, Resource.prototype["$" + name] = function(params, success, error) {
+                        isFunction(params) && (error = success, success = params, params = {});
+                        var result = Resource[name].call(this, params, this, success, error);
+                        return result.$promise || result;
+                    };
+                }), Resource;
+            };
+        } ];
+    });
 }((window, window.angular)), angular.module("ui.bootstrap", [ "ui.bootstrap.tpls", "ui.bootstrap.transition", "ui.bootstrap.collapse", "ui.bootstrap.accordion", "ui.bootstrap.alert", "ui.bootstrap.bindHtml", "ui.bootstrap.buttons", "ui.bootstrap.carousel", "ui.bootstrap.position", "ui.bootstrap.datepicker", "ui.bootstrap.dropdownToggle", "ui.bootstrap.modal", "ui.bootstrap.pagination", "ui.bootstrap.tooltip", "ui.bootstrap.popover", "ui.bootstrap.progressbar", "ui.bootstrap.rating", "ui.bootstrap.tabs", "ui.bootstrap.timepicker", "ui.bootstrap.typeahead" ]), 
 angular.module("ui.bootstrap.tpls", [ "template/accordion/accordion-group.html", "template/accordion/accordion.html", "template/alert/alert.html", "template/carousel/carousel.html", "template/carousel/slide.html", "template/datepicker/datepicker.html", "template/datepicker/popup.html", "template/modal/backdrop.html", "template/modal/window.html", "template/pagination/pager.html", "template/pagination/pagination.html", "template/tooltip/tooltip-html-unsafe-popup.html", "template/tooltip/tooltip-popup.html", "template/popover/popover.html", "template/progressbar/bar.html", "template/progressbar/progress.html", "template/progressbar/progressbar.html", "template/rating/rating.html", "template/tabs/tab.html", "template/tabs/tabset.html", "template/timepicker/timepicker.html", "template/typeahead/typeahead-match.html", "template/typeahead/typeahead-popup.html" ]), 
 angular.module("ui.bootstrap.transition", []).factory("$transition", [ "$q", "$timeout", "$rootScope", function($q, $timeout, $rootScope) {
