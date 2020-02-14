@@ -10,7 +10,7 @@
     "@bower_components/ng-i18next": "i18next/ng-i18next#0.4.2",
     "@bower_components/ng-autofocus": "jljouannic/ng-autofocus#0.0.1",
     "angular": "1.7.9",
-    "angular-animate": "~1.2",
+    "angular-animate": "~1.7.9",
     "angular-cookie": "~4.0.9",
     "angular-cookies": "1.4.0",
     "angular-drag-and-drop-lists": "2.1.0",

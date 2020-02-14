@@ -135,10 +135,10 @@ amdefine@>=0.0.4:
   resolved "https://registry.yarnpkg.com/amdefine/-/amdefine-1.0.1.tgz#4a5282ac164729e93619bcfd3ad151f817ce91f5"
   integrity sha1-SlKCrBZHKek2Gbz9OtFR+BfOkfU=
 
-angular-animate@~1.2:
-  version "1.2.32"
-  resolved "https://registry.yarnpkg.com/angular-animate/-/angular-animate-1.2.32.tgz#743bce7fc2166aa95cca51fff0a8b7d64279567c"
-  integrity sha1-dDvOf8IWaqlcylH/8Ki31kJ5Vnw=
+angular-animate@~1.7.9:
+  version "1.7.9"
+  resolved "https://registry.yarnpkg.com/angular-animate/-/angular-animate-1.7.9.tgz#a397f82434c1e7ed5b7a298fa70fc3de989a6785"
+  integrity sha512-fV+AISy/HTzurQH2ngsJg+lLIvfu0ahc1h4AYKauaXVw97rZc2k4iUA1bMstiEyClsdayQX568kjQc1NK+oYhw==
 
 angular-cookie@~4.0.9:
   version "4.0.10"
