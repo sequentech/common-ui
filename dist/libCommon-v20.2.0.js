@@ -17322,6 +17322,16 @@ angular.module("ui.validate", []).directive("uiValidate", function() {
 }), angular.module("ui.utils", [ "ui.event", "ui.format", "ui.highlight", "ui.include", "ui.indeterminate", "ui.inflector", "ui.jq", "ui.keypress", "ui.mask", "ui.reset", "ui.route", "ui.scrollfix", "ui.scroll", "ui.scroll.jqlite", "ui.showhide", "ui.unique", "ui.validate" ]), 
 function(angular) {
     "use strict";
+    angular.module("ng-autofocus", []).directive("autofocus", function() {
+        return {
+            restrict: "A",
+            link: function($scope, element) {
+                element[0].focus();
+            }
+        };
+    });
+}(angular), function(angular) {
+    "use strict";
     angular.module("ngCookies", [ "ng" ]).factory("$cookies", [ "$rootScope", "$browser", function($rootScope, $browser) {
         var lastBrowserCookies, cookies = {}, lastCookies = {}, runEval = !1, copy = angular.copy, isUndefined = angular.isUndefined;
         return $browser.addPollFn(function() {
@@ -19686,23 +19696,6 @@ mod.directive("infiniteScroll", [ "$rootScope", "$window", "$interval", "THROTTL
     } ]);
     var ngFileUpload = angular.module("ngFileUpload", []);
     for (var key in angularFileUpload) ngFileUpload[key] = angularFileUpload[key];
-}(), function() {
-    "use strict";
-    function Autofocus($timeout) {
-        return {
-            restrict: "A",
-            link: function($scope, $element, $attrs) {
-                var dom = $element[0];
-                function focusIf(condition) {
-                    condition && $timeout(function() {
-                        dom.focus();
-                    }, $scope.$eval($attrs.autofocusDelay) || 0);
-                }
-                $attrs.autofocus ? $scope.$watch($attrs.autofocus, focusIf) : focusIf(!0);
-            }
-        };
-    }
-    Autofocus.$inject = [ "$timeout" ], angular.module("autofocus", []).directive("autofocus", Autofocus);
 }(), function() {
     this.ResizeSensor = function(element, callback) {
         function EventQueue() {

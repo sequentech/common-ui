@@ -8,6 +8,7 @@
     "@bower_components/ngInfiniteScroll": "sroze/ngInfiniteScroll#1.2.0",
     "@bower_components/i18next": "i18next/i18next#1.9.0",
     "@bower_components/ng-i18next": "i18next/ng-i18next#0.4.2",
+    "@bower_components/ng-autofocus": "jljouannic/ng-autofocus#0.0.1",
     "angular": "1.7.9",
     "angular-animate": "~1.2",
     "angular-cookie": "~4.0.9",

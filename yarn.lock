@@ -18,6 +18,10 @@
   version "1.9.0"
   resolved "https://codeload.github.com/i18next/i18next/tar.gz/427496cc062b9427648cf4ba9d84569e33e3bafd"
 
+"@bower_components/ng-autofocus@jljouannic/ng-autofocus#0.0.1":
+  version "0.0.1"
+  resolved "https://codeload.github.com/jljouannic/ng-autofocus/tar.gz/df1529e90754dfd8563573bb2db25351b8d27250"
+
 "@bower_components/ng-i18next@i18next/ng-i18next#0.4.2":
   version "0.4.2"
   resolved "https://codeload.github.com/i18next/ng-i18next/tar.gz/c04f1dbf532be4790db8205848059504d6a9334d"
