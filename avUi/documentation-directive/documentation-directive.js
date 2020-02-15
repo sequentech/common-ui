@@ -29,9 +29,9 @@ angular.module('avUi').controller('DocumentationUiController',
     $scope.election_id = $stateParams.id + '';
 
     Authmethod.viewEvent($stateParams.id)
-      .success(function(data) {
-        if (data.status === "ok") {
-          $scope.authEvent = data.events;
+      .then(function(response) {
+        if (response.data.status === "ok") {
+          $scope.authEvent = response.data.events;
         }
       });
   }

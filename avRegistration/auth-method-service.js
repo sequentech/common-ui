@@ -62,10 +62,9 @@ angular.module('avRegistration')
         authmethod.getUserInfoExtra = function() {
             if (!authmethod.isLoggedIn()) {
               var data = {
-                success: function () { return data; },
-                error: function (func) {
+                then: function (onSuccess, onError) {
                   setTimeout(function() {
-                    func({message:"not-logged-in"});
+                    onError({data: {message:"not-logged-in"}});
                   }, 0);
                   return data;
                 }
@@ -206,10 +205,9 @@ angular.module('avRegistration')
         authmethod.updateUserExtra = function (extra) {
             if (!authmethod.isLoggedIn()) {
               var data = {
-                success: function () { return data; },
-                error: function (func) {
+                then: function (onSuccess, onError) {
                   setTimeout(function() {
-                    func({message:"not-logged-in"});
+                    onError({data: {message:"not-logged-in"}});
                   }, 0);
                   return data;
                 }
@@ -222,10 +220,9 @@ angular.module('avRegistration')
         authmethod.getUserInfo = function(userid) {
             if (!authmethod.isLoggedIn()) {
               var data = {
-                success: function () { return data; },
-                error: function (func) {
+                then: function (onSuccess, onError) {
                   setTimeout(function() {
-                    func({message:"not-logged-in"});
+                    onError({data: {message:"not-logged-in"}});
                   }, 0);
                   return data;
                 }
@@ -242,10 +239,9 @@ angular.module('avRegistration')
         authmethod.ping = function() {
             if (!authmethod.isLoggedIn()) {
               var data = {
-                success: function () { return data; },
-                error: function (func) {
+                then: function (onSuccess, onError) {
                   setTimeout(function() {
-                    func({message:"not-logged-in"});
+                    onError({data: {message:"not-logged-in"}});
                   }, 0);
                   return data;
                 }
@@ -448,11 +444,11 @@ angular.module('avRegistration')
         authmethod.newCaptcha = function(message) {
             authmethod.captcha_status = message;
             return $http.get(backendUrl + 'captcha/new/', {})
-              .success(function (data) {
-                console.log(data);
-                if (data.captcha_code !== null) {
-                    authmethod.captcha_code = data.captcha_code;
-                    authmethod.captcha_image_url = data.image_url;
+              .then(function (response) {
+                console.log(response.data);
+                if (response.data.captcha_code !== null) {
+                    authmethod.captcha_code = response.data.captcha_code;
+                    authmethod.captcha_image_url = response.data.image_url;
                 } else {
                     authmethod.captcha_status = 'Not found';
                 }
@@ -537,8 +533,8 @@ angular.module('avRegistration')
             return;
           }
           authmethod.ping()
-            .success(function(data) {
-                $cookies["auth" + postfix] = data['auth-token'];
+            .then(function(response) {
+                $cookies["auth" + postfix] = response.data['auth-token'];
                 authmethod.setAuth($cookies["auth" + postfix], $cookies["isAdmin" + postfix], autheventid);
             });
         };
@@ -546,10 +542,9 @@ angular.module('avRegistration')
         authmethod.getUserDraft = function () {
             if (!authmethod.isLoggedIn()) {
               var data = {
-                success: function () { return data; },
-                error: function (func) {
+                then: function (onSuccess, onError) {
                   setTimeout(function() {
-                    func({message:"not-logged-in"});
+                    onError({data: {message:"not-logged-in"}});
                   }, 0);
                   return data;
                 }
@@ -562,10 +557,9 @@ angular.module('avRegistration')
         authmethod.uploadUserDraft = function (draft) {
             if (!authmethod.isLoggedIn()) {
               var data = {
-                success: function () { return data; },
-                error: function (func) {
+                then: function (onSuccess, onError) {
                   setTimeout(function() {
-                    func({message:"not-logged-in"});
+                    onError({data: {message:"not-logged-in"}});
                   }, 0);
                   return data;
                 }

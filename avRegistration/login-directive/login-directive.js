@@ -126,21 +126,23 @@ angular.module('avRegistration')
 
           scope.sendingData = true;
           Authmethod.resendAuthCode(data, autheventid)
-            .success(function(rcvData) {
-              if (_.contains(["sms", "sms-otp"], scope.method)) {
-                scope.telField.disabled = true;
+            .then(
+              function(response) {
+                if (_.contains(["sms", "sms-otp"], scope.method)) {
+                  scope.telField.disabled = true;
 
-              // email or email-otp
-              }  else {
-                scope.login_fields[scope.emailIndex].disabled = true;
+                // email or email-otp
+                }  else {
+                  scope.login_fields[scope.emailIndex].disabled = true;
+                }
+                scope.currentFormStep = 1;
+                $timeout(scope.sendingDataTimeout, 3000);
+              },
+              function onError(response) {
+                $timeout(scope.sendingDataTimeout, 3000);
+                scope.error = $i18next('avRegistration.errorSendingAuthCode');
               }
-              scope.currentFormStep = 1;
-              $timeout(scope.sendingDataTimeout, 3000);
-            })
-            .error(function(error) {
-              $timeout(scope.sendingDataTimeout, 3000);
-              scope.error = $i18next('avRegistration.errorSendingAuthCode');
-            });
+            );
         };
 
         scope.sendingDataTimeout = function () {
@@ -166,15 +168,17 @@ angular.module('avRegistration')
 
             scope.sendingData = true;
             Authmethod.censusQuery(data, autheventid)
-                .success(function(rcvData) {
+                .then(
+                  function onSuccess(response) {
                     scope.sendingData = false;
-                    scope.censusQueryData = rcvData;
+                    scope.censusQueryData = response.data;
                     scope.censusQuery = "success";
-                })
-                .error(function(error) {
+                  },
+                  function onError(response) {
                     scope.sendingData = false;
                     scope.censusQuery = "fail";
-                });
+                  }
+                );
         };
 
         scope.loginUser = function(valid) {
@@ -204,35 +208,40 @@ angular.module('avRegistration')
 
             scope.sendingData = true;
             Authmethod.login(data, autheventid)
-                .success(function(rcvData) {
-                    if (rcvData.status === "ok") {
-                        scope.khmac = rcvData.khmac;
+                .then(
+                  function onSuccess(response) {
+                    if (response.data.status === "ok") {
+                        scope.khmac = response.data.khmac;
                         var postfix = "_authevent_" + autheventid;
                         $cookies["authevent_" + autheventid] = autheventid;
-                        $cookies["userid" + postfix] = rcvData.username;
+                        $cookies["userid" + postfix] = response.data.username;
                         $cookies["user" + postfix] = scope.email;
-                        $cookies["auth" + postfix] = rcvData['auth-token'];
+                        $cookies["auth" + postfix] = response.data['auth-token'];
                         $cookies["isAdmin" + postfix] = scope.isAdmin;
                         Authmethod.setAuth($cookies["auth" + postfix], scope.isAdmin, autheventid);
                         if (scope.isAdmin)
                         {
-                            Authmethod.getUserInfo().success(function(d) {
-                                $cookies["user" + postfix] = d.email;
-                                $window.location.href = '/admin/elections';
-                            }).error(function(error) {
-                                $window.location.href = '/admin/elections';
-                            });
+                            Authmethod.getUserInfo()
+                              .then(
+                                function onSuccess(response) {
+                                  $cookies["user" + postfix] = response.data.email;
+                                  $window.location.href = '/admin/elections';
+                                },
+                                function onError(response) {
+                                  $window.location.href = '/admin/elections';
+                                }
+                              );
                         }
-                        else if (angular.isDefined(rcvData['redirect-to-url']))
+                        else if (angular.isDefined(response.data['redirect-to-url']))
                         {
-                            $window.location.href = rcvData['redirect-to-url'];
+                            $window.location.href = response.data['redirect-to-url'];
                         }
                         else
                         {
                             // redirecting to vote link
                             Authmethod.getPerm("vote", "AuthEvent", autheventid)
-                                .success(function(rcvData2) {
-                                    var khmac = rcvData2['permission-token'];
+                                .then(function onSuccess(response) {
+                                    var khmac = response.data['permission-token'];
                                     var path = khmac.split(";")[1];
                                     var hash = path.split("/")[0];
                                     var msg = path.split("/")[1];
@@ -336,18 +345,20 @@ angular.module('avRegistration')
 
         scope.view = function(id) {
             Authmethod.viewEvent(id)
-                .success(function(data) {
-                    if (data.status === "ok") {
-                        scope.apply(data.events);
+                .then(
+                  function onSuccess(response) {
+                    if (response.data.status === "ok") {
+                        scope.apply(response.data.events);
                     } else {
                         scope.status = 'Not found';
                         document.querySelector(".input-error").style.display = "block";
                     }
-                })
-                .error(function(error) {
-                    scope.status = 'Scan error: ' + error.message;
+                  },
+                  function onError(response) {
+                    scope.status = 'Scan error: ' + response.data.message;
                     document.querySelector(".input-error").style.display = "block";
-                });
+                  }
+                );
         };
         scope.view(autheventid);
 

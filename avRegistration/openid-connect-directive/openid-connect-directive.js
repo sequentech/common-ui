@@ -101,10 +101,10 @@ angular.module('avRegistration')
           }
 
           Authmethod.viewEvent(eventId)
-            .success(
-              function(data)
+            .then(
+              function onSuccess(response)
               {
-                if (data.status !== "ok" || !data.events || data.events.auth_method !== 'openid-connect' || !getLogoutUri())
+                if (response.data.status !== "ok" || !response.data.events || response.data.events.auth_method !== 'openid-connect' || !getLogoutUri())
                 {
                   simpleRedirectToLogin();
                   return;
@@ -114,10 +114,8 @@ angular.module('avRegistration')
                 var uri = getLogoutUri();
                 delete $cookies["id_token_" + postfix];
                 $window.location.href = uri;
-              }
-            )
-            .error(
-              function(error)
+              },
+              function onError(response)
               {
                 simpleRedirectToLogin();
               }
@@ -212,30 +210,31 @@ angular.module('avRegistration')
 
             // Send the authentication request to our server
             Authmethod.login(data, scope.csrf.eventId)
-                .success(function(rcvData)
-                {
-                    if (rcvData.status === "ok")
+                .then(
+                  function onSuccess(response)
+                  {
+                    if (response.data.status === "ok")
                     {
-                        scope.khmac = rcvData.khmac;
+                        scope.khmac = response.data.khmac;
                         var postfix = "_authevent_" + scope.csrf.eventId;
                         $cookies["authevent_" + scope.csrf.eventId] = scope.csrf.eventId;
-                        $cookies["userid" + postfix] = rcvData.username;
-                        $cookies["user" + postfix] = rcvData.username;
-                        $cookies["auth" + postfix] = rcvData['auth-token'];
+                        $cookies["userid" + postfix] = response.data.username;
+                        $cookies["user" + postfix] = response.data.username;
+                        $cookies["auth" + postfix] = response.data['auth-token'];
                         $cookies["isAdmin" + postfix] = false;
                         Authmethod.setAuth($cookies["auth" + postfix], scope.isAdmin, scope.csrf.eventId);
 
-                        if (angular.isDefined(rcvData['redirect-to-url']))
+                        if (angular.isDefined(response.data['redirect-to-url']))
                         {
-                            $window.location.href = rcvData['redirect-to-url'];
+                            $window.location.href = response.data['redirect-to-url'];
                         }
                         else
                         {
                             // redirecting to vote link
                             Authmethod.getPerm("vote", "AuthEvent", scope.csrf.eventId)
-                                .success(function(rcvData2)
+                                .then(function onSuccess(response2)
                                 {
-                                    var khmac = rcvData2['permission-token'];
+                                    var khmac = response2.data['permission-token'];
                                     var path = khmac.split(";")[1];
                                     var hash = path.split("/")[0];
                                     var msg = path.split("/")[1];
@@ -248,13 +247,14 @@ angular.module('avRegistration')
                         redirectToLogin();
                         return;
                     }
-                })
-                .error(function(error)
-                {
+                  },
+                  function onError(response)
+                  {
                     // TODO: show error
                     redirectToLogin();
                     return;
-                });
+                  }
+                );
         }
 
         processOpenIdAuthCallback();

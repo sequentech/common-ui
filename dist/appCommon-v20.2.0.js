@@ -24,13 +24,12 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         getUserInfoExtra: function() {
             if (authmethod.isLoggedIn()) return $http.get(backendUrl + "user/extra/", {});
             var data = {
-                success: function() {
-                    return data;
-                },
-                error: function(func) {
+                then: function(onSuccess, onError) {
                     return setTimeout(function() {
-                        func({
-                            message: "not-logged-in"
+                        onError({
+                            data: {
+                                message: "not-logged-in"
+                            }
                         });
                     }, 0), data;
                 }
@@ -80,13 +79,12 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         updateUserExtra: function(extra) {
             if (authmethod.isLoggedIn()) return $http.post(backendUrl + "user/extra/", extra);
             var data = {
-                success: function() {
-                    return data;
-                },
-                error: function(func) {
+                then: function(onSuccess, onError) {
                     return setTimeout(function() {
-                        func({
-                            message: "not-logged-in"
+                        onError({
+                            data: {
+                                message: "not-logged-in"
+                            }
                         });
                     }, 0), data;
                 }
@@ -96,13 +94,12 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         getUserInfo: function(userid) {
             if (authmethod.isLoggedIn()) return void 0 === userid ? $http.get(backendUrl + "user/", {}) : $http.get(backendUrl + "user/%d" % userid, {});
             var data = {
-                success: function() {
-                    return data;
-                },
-                error: function(func) {
+                then: function(onSuccess, onError) {
                     return setTimeout(function() {
-                        func({
-                            message: "not-logged-in"
+                        onError({
+                            data: {
+                                message: "not-logged-in"
+                            }
                         });
                     }, 0), data;
                 }
@@ -112,13 +109,12 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         ping: function() {
             if (authmethod.isLoggedIn()) return $http.get(backendUrl + "auth-event/" + authId + "/ping/");
             var data = {
-                success: function() {
-                    return data;
-                },
-                error: function(func) {
+                then: function(onSuccess, onError) {
                     return setTimeout(function() {
-                        func({
-                            message: "not-logged-in"
+                        onError({
+                            data: {
+                                message: "not-logged-in"
+                            }
                         });
                     }, 0), data;
                 }
@@ -249,9 +245,9 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             return fields;
         },
         newCaptcha: function(message) {
-            return authmethod.captcha_status = message, $http.get(backendUrl + "captcha/new/", {}).success(function(data) {
-                console.log(data), null !== data.captcha_code ? (authmethod.captcha_code = data.captcha_code, 
-                authmethod.captcha_image_url = data.image_url) : authmethod.captcha_status = "Not found";
+            return authmethod.captcha_status = message, $http.get(backendUrl + "captcha/new/", {}).then(function(response) {
+                console.log(response.data), null !== response.data.captcha_code ? (authmethod.captcha_code = response.data.captcha_code, 
+                authmethod.captcha_image_url = response.data.image_url) : authmethod.captcha_status = "Not found";
             });
         },
         test: function() {
@@ -299,20 +295,19 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         },
         launchPingDaemon: function(autheventid) {
             var postfix = "_authevent_" + autheventid;
-            $cookies["isAdmin" + postfix] && authmethod.ping().success(function(data) {
-                $cookies["auth" + postfix] = data["auth-token"], authmethod.setAuth($cookies["auth" + postfix], $cookies["isAdmin" + postfix], autheventid);
+            $cookies["isAdmin" + postfix] && authmethod.ping().then(function(response) {
+                $cookies["auth" + postfix] = response.data["auth-token"], authmethod.setAuth($cookies["auth" + postfix], $cookies["isAdmin" + postfix], autheventid);
             });
         },
         getUserDraft: function() {
             if (authmethod.isLoggedIn()) return $http.get(backendUrl + "user/draft/", {});
             var data = {
-                success: function() {
-                    return data;
-                },
-                error: function(func) {
+                then: function(onSuccess, onError) {
                     return setTimeout(function() {
-                        func({
-                            message: "not-logged-in"
+                        onError({
+                            data: {
+                                message: "not-logged-in"
+                            }
                         });
                     }, 0), data;
                 }
@@ -322,13 +317,12 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         uploadUserDraft: function(draft) {
             if (!authmethod.isLoggedIn()) {
                 var data = {
-                    success: function() {
-                        return data;
-                    },
-                    error: function(func) {
+                    then: function(onSuccess, onError) {
                         return setTimeout(function() {
-                            func({
-                                message: "not-logged-in"
+                            onError({
+                                data: {
+                                    message: "not-logged-in"
+                                }
                             });
                         }, 0), data;
                     }
@@ -378,10 +372,10 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                         }(email)) return;
                         data.email = email;
                     }
-                    field && (field.value = ""), scope.sendingData = !0, Authmethod.resendAuthCode(data, autheventid).success(function(rcvData) {
+                    field && (field.value = ""), scope.sendingData = !0, Authmethod.resendAuthCode(data, autheventid).then(function(response) {
                         _.contains([ "sms", "sms-otp" ], scope.method) ? scope.telField.disabled = !0 : scope.login_fields[scope.emailIndex].disabled = !0, 
                         scope.currentFormStep = 1, $timeout(scope.sendingDataTimeout, 3e3);
-                    }).error(function(error) {
+                    }, function() {
                         $timeout(scope.sendingDataTimeout, 3e3), scope.error = $i18next("avRegistration.errorSendingAuthCode");
                     });
                 }
@@ -395,9 +389,9 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                     };
                     _.each(scope.login_fields, function(field) {
                         data[field.name] = field.value;
-                    }), scope.sendingData = !0, Authmethod.censusQuery(data, autheventid).success(function(rcvData) {
-                        scope.sendingData = !1, scope.censusQueryData = rcvData, scope.censusQuery = "success";
-                    }).error(function(error) {
+                    }), scope.sendingData = !0, Authmethod.censusQuery(data, autheventid).then(function(response) {
+                        scope.sendingData = !1, scope.censusQueryData = response.data, scope.censusQuery = "success";
+                    }, function() {
                         scope.sendingData = !1, scope.censusQuery = "fail";
                     });
                 }
@@ -409,19 +403,19 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                     _.each(scope.login_fields, function(field) {
                         "email" === field.name ? scope.email = field.value : "code" === field.name && (field.value = field.value.trim().replace(/ |\n|\t|-|_/g, "").toUpperCase()), 
                         data[field.name] = field.value;
-                    }), scope.sendingData = !0, Authmethod.login(data, autheventid).success(function(rcvData) {
-                        if ("ok" === rcvData.status) {
-                            scope.khmac = rcvData.khmac;
+                    }), scope.sendingData = !0, Authmethod.login(data, autheventid).then(function(response) {
+                        if ("ok" === response.data.status) {
+                            scope.khmac = response.data.khmac;
                             var postfix = "_authevent_" + autheventid;
-                            $cookies["authevent_" + autheventid] = autheventid, $cookies["userid" + postfix] = rcvData.username, 
-                            $cookies["user" + postfix] = scope.email, $cookies["auth" + postfix] = rcvData["auth-token"], 
+                            $cookies["authevent_" + autheventid] = autheventid, $cookies["userid" + postfix] = response.data.username, 
+                            $cookies["user" + postfix] = scope.email, $cookies["auth" + postfix] = response.data["auth-token"], 
                             $cookies["isAdmin" + postfix] = scope.isAdmin, Authmethod.setAuth($cookies["auth" + postfix], scope.isAdmin, autheventid), 
-                            scope.isAdmin ? Authmethod.getUserInfo().success(function(d) {
-                                $cookies["user" + postfix] = d.email, $window.location.href = "/admin/elections";
-                            }).error(function(error) {
+                            scope.isAdmin ? Authmethod.getUserInfo().then(function(response) {
+                                $cookies["user" + postfix] = response.data.email, $window.location.href = "/admin/elections";
+                            }, function() {
                                 $window.location.href = "/admin/elections";
-                            }) : angular.isDefined(rcvData["redirect-to-url"]) ? $window.location.href = rcvData["redirect-to-url"] : Authmethod.getPerm("vote", "AuthEvent", autheventid).success(function(rcvData2) {
-                                var path = rcvData2["permission-token"].split(";")[1], hash = path.split("/")[0], msg = path.split("/")[1];
+                            }) : angular.isDefined(response.data["redirect-to-url"]) ? $window.location.href = response.data["redirect-to-url"] : Authmethod.getPerm("vote", "AuthEvent", autheventid).then(function(response) {
+                                var path = response.data["permission-token"].split(";")[1], hash = path.split("/")[0], msg = path.split("/")[1];
                                 $window.location.href = "/booth/" + autheventid + "/vote/" + hash + "/" + msg;
                             });
                         } else scope.sendingData = !1, scope.status = "Not found", scope.error = $i18next("avRegistration.invalidCredentials", {
@@ -455,10 +449,11 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                     return null !== el.value;
                 }).length === scope.login_fields.length && "openid-connect" !== scope.method && scope.loginUser(!0);
             }, scope.view = function(id) {
-                Authmethod.viewEvent(id).success(function(data) {
-                    "ok" === data.status ? scope.apply(data.events) : (scope.status = "Not found", document.querySelector(".input-error").style.display = "block");
-                }).error(function(error) {
-                    scope.status = "Scan error: " + error.message, document.querySelector(".input-error").style.display = "block";
+                Authmethod.viewEvent(id).then(function(response) {
+                    "ok" === response.data.status ? scope.apply(response.data.events) : (scope.status = "Not found", 
+                    document.querySelector(".input-error").style.display = "block");
+                }, function(response) {
+                    scope.status = "Scan error: " + response.data.message, document.querySelector(".input-error").style.display = "block";
                 });
             }, scope.view(autheventid), scope.goSignup = function() {
                 $state.go("registration.register", {
@@ -505,12 +500,12 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                 if (!scope.redirectingToUri) {
                     scope.redirectingToUri = !0;
                     var eventId = null;
-                    scope.csrf ? (eventId = scope.csrf.eventId, Authmethod.viewEvent(eventId).success(function(data) {
-                        if ("ok" === data.status && data.events && "openid-connect" === data.events.auth_method && getLogoutUri()) {
+                    scope.csrf ? (eventId = scope.csrf.eventId, Authmethod.viewEvent(eventId).then(function(response) {
+                        if ("ok" === response.data.status && response.data.events && "openid-connect" === response.data.events.auth_method && getLogoutUri()) {
                             var postfix = "_authevent_" + eventId, uri = getLogoutUri();
                             delete $cookies["id_token_" + postfix], $window.location.href = uri;
                         } else simpleRedirectToLogin();
-                    }).error(function(error) {
+                    }, function() {
                         simpleRedirectToLogin();
                     })) : $window.location.href = "/";
                 }
@@ -532,19 +527,19 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                     provider: scope.csrf.providerId,
                     nonce: scope.csrf.randomNonce
                 }, postfix = "_authevent_" + scope.csrf.eventId;
-                $cookies["id_token_" + postfix] = data.id_token, Authmethod.login(data, scope.csrf.eventId).success(function(rcvData) {
-                    if ("ok" === rcvData.status) {
-                        scope.khmac = rcvData.khmac;
+                $cookies["id_token_" + postfix] = data.id_token, Authmethod.login(data, scope.csrf.eventId).then(function(response) {
+                    if ("ok" === response.data.status) {
+                        scope.khmac = response.data.khmac;
                         var postfix = "_authevent_" + scope.csrf.eventId;
-                        $cookies["authevent_" + scope.csrf.eventId] = scope.csrf.eventId, $cookies["userid" + postfix] = rcvData.username, 
-                        $cookies["user" + postfix] = rcvData.username, $cookies["auth" + postfix] = rcvData["auth-token"], 
+                        $cookies["authevent_" + scope.csrf.eventId] = scope.csrf.eventId, $cookies["userid" + postfix] = response.data.username, 
+                        $cookies["user" + postfix] = response.data.username, $cookies["auth" + postfix] = response.data["auth-token"], 
                         $cookies["isAdmin" + postfix] = !1, Authmethod.setAuth($cookies["auth" + postfix], scope.isAdmin, scope.csrf.eventId), 
-                        angular.isDefined(rcvData["redirect-to-url"]) ? $window.location.href = rcvData["redirect-to-url"] : Authmethod.getPerm("vote", "AuthEvent", scope.csrf.eventId).success(function(rcvData2) {
-                            var path = rcvData2["permission-token"].split(";")[1], hash = path.split("/")[0], msg = path.split("/")[1];
+                        angular.isDefined(response.data["redirect-to-url"]) ? $window.location.href = response.data["redirect-to-url"] : Authmethod.getPerm("vote", "AuthEvent", scope.csrf.eventId).then(function(response2) {
+                            var path = response2.data["permission-token"].split(";")[1], hash = path.split("/")[0], msg = path.split("/")[1];
                             $window.location.href = "/booth/" + scope.csrf.eventId + "/vote/" + hash + "/" + msg;
                         });
                     } else redirectToLogin();
-                }).error(function(error) {
+                }, function() {
                     redirectToLogin();
                 });
             }();
@@ -589,17 +584,17 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                     };
                     _.each(scope.register_fields, function(field) {
                         data[field.name] = field.value, ("email" === field.name && _.contains([ "email", "email-otp" ], scope.method) || "tlf" === field.name && _.contains([ "sms", "sms-otp" ], scope.method)) && (scope.email = field.value);
-                    }), Authmethod.signup(data, autheventid).success(function(rcvData) {
-                        details = scope.getLoginDetails(autheventid), "ok" === rcvData.status ? (scope.user = rcvData.user, 
+                    }), Authmethod.signup(data, autheventid).then(function(response) {
+                        details = scope.getLoginDetails(autheventid), "ok" === response.data.status ? (scope.user = response.data.user, 
                         StateDataService.go(details.path, details.data, data)) : (scope.sendingData = !1, 
-                        scope.status = "Not found"), scope.error = rcvData.msg || $sce.trustAsHtml($i18next("avRegistration.invalidRegisterData", {
+                        scope.status = "Not found"), scope.error = response.data.msg || $sce.trustAsHtml($i18next("avRegistration.invalidRegisterData", {
                             url: $state.href(details.path, details.data)
                         }));
-                    }).error(function(error) {
-                        details = scope.getLoginDetails(autheventid), scope.sendingData = !1, scope.status = "Registration error: " + error.message, 
-                        error.error_codename && "invalid-dni" === error.error_codename ? scope.error = $sce.trustAsHtml($i18next("avRegistration.invalidRegisterDNI")) : (scope.error = error.msg || $sce.trustAsHtml($i18next("avRegistration.invalidRegisterData", {
+                    }, function(response) {
+                        details = scope.getLoginDetails(autheventid), scope.sendingData = !1, scope.status = "Registration error: " + response.data.message, 
+                        response.data.error_codename && "invalid-dni" === response.data.error_codename ? scope.error = $sce.trustAsHtml($i18next("avRegistration.invalidRegisterDNI")) : (scope.error = response.data.msg || $sce.trustAsHtml($i18next("avRegistration.invalidRegisterData", {
                             url: $state.href(details.path, details.data)
-                        })), "Invalid captcha" === error.msg && Authmethod.newCaptcha());
+                        })), "Invalid captcha" === response.data.msg && Authmethod.newCaptcha());
                     });
                 }
             }, scope.goLogin = function(event) {
@@ -616,10 +611,11 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                     el.disabled = !0), el;
                 });
             }, scope.view = function(id) {
-                Authmethod.viewEvent(id).success(function(data) {
-                    "ok" === data.status ? scope.apply(data.events) : (scope.status = "Not found", document.querySelector(".input-error").style.display = "block");
-                }).error(function(error) {
-                    scope.status = "Scan error: " + error.message, document.querySelector(".input-error").style.display = "block";
+                Authmethod.viewEvent(id).then(function(response) {
+                    "ok" === response.data.status ? scope.apply(response.data.events) : (scope.status = "Not found", 
+                    document.querySelector(".input-error").style.display = "block");
+                }, function(response) {
+                    scope.status = "Scan error: " + response.data.message, document.querySelector(".input-error").style.display = "block";
                 });
             }, scope.view(autheventid);
         },
@@ -1308,8 +1304,8 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
     $scope.inside_iframe = InsideIframeService(), $scope.documentation = ConfigService.documentation, 
     $scope.documentation.security_contact = ConfigService.legal.security_contact, $scope.documentation_html_include = $sce.trustAsHtml(ConfigService.documentation_html_include), 
     $scope.auths_url = "/election/" + $stateParams.id + "/public/authorities", $scope.election_id = $stateParams.id + "", 
-    Authmethod.viewEvent($stateParams.id).success(function(data) {
-        "ok" === data.status && ($scope.authEvent = data.events);
+    Authmethod.viewEvent($stateParams.id).then(function(response) {
+        "ok" === response.data.status && ($scope.authEvent = response.data.events);
     });
 } ]), angular.module("avUi").directive("documentationDirective", function() {
     return {
