@@ -137,20 +137,20 @@ amdefine@>=0.0.4:
   resolved "https://registry.yarnpkg.com/amdefine/-/amdefine-1.0.1.tgz#4a5282ac164729e93619bcfd3ad151f817ce91f5"
   integrity sha1-SlKCrBZHKek2Gbz9OtFR+BfOkfU=
 
-angular-animate@~1.7.9:
-  version "1.7.9"
-  resolved "https://registry.yarnpkg.com/angular-animate/-/angular-animate-1.7.9.tgz#a397f82434c1e7ed5b7a298fa70fc3de989a6785"
-  integrity sha512-fV+AISy/HTzurQH2ngsJg+lLIvfu0ahc1h4AYKauaXVw97rZc2k4iUA1bMstiEyClsdayQX568kjQc1NK+oYhw==
+angular-animate@1.2.27:
+  version "1.2.27"
+  resolved "https://registry.yarnpkg.com/angular-animate/-/angular-animate-1.2.27.tgz#5cba21454aa9c95d482d624a4fd2363e136b6dbd"
+  integrity sha1-XLohRUqpyV1ILWJKT9I2PhNrbb0=
 
 angular-cookie@~4.0.9:
   version "4.0.10"
   resolved "https://registry.yarnpkg.com/angular-cookie/-/angular-cookie-4.0.10.tgz#8e4388da0fde5650114e43226ba3ac22dde523aa"
   integrity sha1-jkOI2g/eVlARTkMia6OsIt3lI6o=
 
-angular-cookies@1.4.0:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/angular-cookies/-/angular-cookies-1.4.0.tgz#c520d6c9cc46d7c76f68c3b6b8aea5d561e90937"
-  integrity sha1-xSDWycxG18dvaMO2uK6l1WHpCTc=
+angular-cookies@1.2.27:
+  version "1.2.27"
+  resolved "https://registry.yarnpkg.com/angular-cookies/-/angular-cookies-1.2.27.tgz#cb048affcd58eebea894ca96aae199cab99dc635"
+  integrity sha1-ywSK/81Y7r6olMqWquGZyrmdxjU=
 
 angular-drag-and-drop-lists@2.1.0:
   version "2.1.0"
@@ -174,20 +174,20 @@ angular-moment@1.3.0:
   dependencies:
     moment ">=2.8.0 <3.0.0"
 
-angular-resource@1.7.9:
-  version "1.7.9"
-  resolved "https://registry.yarnpkg.com/angular-resource/-/angular-resource-1.7.9.tgz#fa53623fae2c60debe2410d692447dcb0ba02396"
-  integrity sha512-rXXhCE2qT31Pn4Sl+2XL+ntv4zxnA2OzY+clCl8/pOp/s/gIzxpQlEtXipo3QK8Qur3glbIkeF/bJw+gjVAdUw==
+angular-resource@1.2.28:
+  version "1.2.28"
+  resolved "https://registry.yarnpkg.com/angular-resource/-/angular-resource-1.2.28.tgz#85302d84dd3e2e68212c270f668f5b29c1a2f78c"
+  integrity sha1-hTAthN0+LmghLCcPZo9bKcGi94w=
 
-angular-sanitize@1.7.9:
-  version "1.7.9"
-  resolved "https://registry.yarnpkg.com/angular-sanitize/-/angular-sanitize-1.7.9.tgz#6b4d5e826abdabd352b13a7c65c8c74daf6a7b15"
-  integrity sha512-nB/xe7JQWF9nLvhHommAICQ3eWrfRETo0EVGFESi952CDzDa+GAJ/2BFBNw44QqQPxj1Xua/uYKrbLsOGWZdbQ==
+angular-sanitize@1.2.32:
+  version "1.2.32"
+  resolved "https://registry.yarnpkg.com/angular-sanitize/-/angular-sanitize-1.2.32.tgz#534184fefc112c0d6f30964f2c2b092a02e87821"
+  integrity sha1-U0GE/vwRLA1vMJZPLCsJKgLoeCE=
 
-angular@1.7.9:
-  version "1.7.9"
-  resolved "https://registry.yarnpkg.com/angular/-/angular-1.7.9.tgz#e52616e8701c17724c3c238cfe4f9446fd570bc4"
-  integrity sha512-5se7ZpcOtu0MBFlzGv5dsM1quQDoDeUTwZrWjGtTNA7O88cD8TEk5IEKCTDa3uECV9XnvKREVUr7du1ACiWGFQ==
+angular@1.2.27:
+  version "1.2.27"
+  resolved "https://registry.yarnpkg.com/angular/-/angular-1.2.27.tgz#0cfc5c4b9eafb335b7df9a0095a04200faf2d328"
+  integrity sha1-DPxcS56vszW335oAlaBCAPry0yg=
 
 angular@^1.0.8, angular@~1.2:
   version "1.2.32"
