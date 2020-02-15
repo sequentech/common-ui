@@ -11355,7 +11355,7 @@ function(window, angular) {
 }(), "undefined" != typeof module && "undefined" != typeof exports && module.exports === exports && (module.exports = "ui.router"), 
 function(angular, undefined) {
     "use strict";
-    var $$UMFP, isDefined = angular.isDefined, isFunction = angular.isFunction, isString = angular.isString, isObject = angular.isObject, isArray = angular.isArray, forEach = angular.forEach, extend = angular.extend, copy = angular.copy;
+    var $$UMFP, isDefined = angular.isDefined, isFunction = angular.isFunction, isString = angular.isString, isObject = angular.isObject, isArray = angular.isArray, forEach = angular.forEach, extend = angular.extend, copy = angular.copy, toJson = angular.toJson;
     function inherit(parent, extra) {
         return extend(new (extend(function() {}, {
             prototype: parent
@@ -11371,7 +11371,7 @@ function(angular, undefined) {
     function objectKeys(object) {
         if (Object.keys) return Object.keys(object);
         var result = [];
-        return angular.forEach(object, function(val, key) {
+        return forEach(object, function(val, key) {
             result.push(key);
         }), result;
     }
@@ -11390,7 +11390,7 @@ function(angular, undefined) {
             }
             return path;
         }($current, $to), inherited = {}, inheritList = [];
-        for (var i in parents) if (parents[i].params && (parentParams = objectKeys(parents[i].params)).length) for (var j in parentParams) 0 <= indexOf(inheritList, parentParams[j]) || (inheritList.push(parentParams[j]), 
+        for (var i in parents) if (parents[i] && parents[i].params && (parentParams = objectKeys(parents[i].params)).length) for (var j in parentParams) 0 <= indexOf(inheritList, parentParams[j]) || (inheritList.push(parentParams[j]), 
         inherited[parentParams[j]] = currentParams[parentParams[j]]);
         return extend({}, inherited, newParams);
     }
@@ -11408,6 +11408,12 @@ function(angular, undefined) {
             filtered[name] = values[name];
         }), filtered;
     }
+    function pick(obj) {
+        var copy = {}, keys = Array.prototype.concat.apply(Array.prototype, Array.prototype.slice.call(arguments, 1));
+        return forEach(keys, function(key) {
+            key in obj && (copy[key] = obj[key]);
+        }), copy;
+    }
     function omit(obj) {
         var copy = {}, keys = Array.prototype.concat.apply(Array.prototype, Array.prototype.slice.call(arguments, 1));
         for (var key in obj) -1 == indexOf(keys, key) && (copy[key] = obj[key]);
@@ -11424,6 +11430,9 @@ function(angular, undefined) {
         return forEach(collection, function(val, i) {
             result[i] = callback(val, i);
         }), result;
+    }
+    function silenceUncaughtInPromise(promise) {
+        return promise.then(undefined, function() {}) && promise;
     }
     function $Resolve($q, $injector) {
         var NOTHING = {}, NO_DEPENDENCIES = [], NO_LOCALS = NOTHING, NO_PARENT = extend($q.when(NOTHING), {
@@ -11522,23 +11531,23 @@ function(angular, undefined) {
         config = extend({
             params: {}
         }, isObject(config) ? config : {});
-        var m, p, param, segment, placeholder = /([:*])([\w\[\]]+)|\{([\w\[\]]+)(?:\:((?:[^{}\\]+|\\.|\{(?:[^{}\\]+|\\.)*\})+))?\}/g, searchPlaceholder = /([:]?)([\w\[\]-]+)|\{([\w\[\]-]+)(?:\:((?:[^{}\\]+|\\.|\{(?:[^{}\\]+|\\.)*\})+))?\}/g, compiled = "^", last = 0, segments = this.segments = [], parentParams = parentMatcher ? parentMatcher.params : {}, params = this.params = parentMatcher ? parentMatcher.params.$$new() : new $$UMFP.ParamSet(), paramNames = [];
+        var m, p, param, segment, placeholder = /([:*])([\w\[\]]+)|\{([\w\[\]]+)(?:\:\s*((?:[^{}\\]+|\\.|\{(?:[^{}\\]+|\\.)*\})+))?\}/g, searchPlaceholder = /([:]?)([\w\[\].-]+)|\{([\w\[\].-]+)(?:\:\s*((?:[^{}\\]+|\\.|\{(?:[^{}\\]+|\\.)*\})+))?\}/g, compiled = "^", last = 0, segments = this.segments = [], parentParams = parentMatcher ? parentMatcher.params : {}, params = this.params = parentMatcher ? parentMatcher.params.$$new() : new $$UMFP.ParamSet(), paramNames = [];
         function addParameter(id, type, config, location) {
             if (paramNames.push(id), parentParams[id]) return parentParams[id];
-            if (!/^\w+(-+\w+)*(?:\[\])?$/.test(id)) throw new Error("Invalid parameter name '" + id + "' in pattern '" + pattern + "'");
+            if (!/^\w+([-.]+\w+)*(?:\[\])?$/.test(id)) throw new Error("Invalid parameter name '" + id + "' in pattern '" + pattern + "'");
             if (params[id]) throw new Error("Duplicate parameter name '" + id + "' in pattern '" + pattern + "'");
             return params[id] = new $$UMFP.Param(id, type, config, location), params[id];
         }
-        function quoteRegExp(string, pattern, squash) {
+        function quoteRegExp(string, pattern, squash, optional) {
             var surroundPattern = [ "", "" ], result = string.replace(/[\\\[\]\^$*+?.()|{}]/g, "\\$&");
             if (!pattern) return result;
             switch (squash) {
               case !1:
-                surroundPattern = [ "(", ")" ];
+                surroundPattern = [ "(", ")" + (optional ? "?" : "") ];
                 break;
 
               case !0:
-                surroundPattern = [ "?(", ")?" ];
+                result = result.replace(/\/$/, ""), surroundPattern = [ "(?:/(", ")|/)?" ];
                 break;
 
               default:
@@ -11547,21 +11556,21 @@ function(angular, undefined) {
             return result + surroundPattern[0] + pattern + surroundPattern[1];
         }
         function matchDetails(m, isSearch) {
-            var id, regexp, segment, cfg;
+            var id, regexp, segment, type, cfg;
             return id = m[2] || m[3], cfg = config.params[id], segment = pattern.substring(last, m.index), 
-            {
+            (regexp = isSearch ? m[4] : m[4] || ("*" == m[1] ? ".*" : null)) && (type = $$UMFP.type(regexp) || inherit($$UMFP.type("string"), {
+                pattern: new RegExp(regexp, config.caseInsensitive ? "i" : undefined)
+            })), {
                 id: id,
-                regexp: regexp = isSearch ? m[4] : m[4] || ("*" == m[1] ? ".*" : null),
+                regexp: regexp,
                 segment: segment,
-                type: $$UMFP.type(regexp || "string") || inherit($$UMFP.type("string"), {
-                    pattern: new RegExp(regexp)
-                }),
+                type: type,
                 cfg: cfg
             };
         }
         for (this.source = pattern; (m = placeholder.exec(pattern)) && !(0 <= (p = matchDetails(m, !1)).segment.indexOf("?")); ) param = addParameter(p.id, p.type, p.cfg, "path"), 
-        compiled += quoteRegExp(p.segment, param.type.pattern.source, param.squash), segments.push(p.segment), 
-        last = placeholder.lastIndex;
+        compiled += quoteRegExp(p.segment, param.type.pattern.source, param.squash, param.isOptional), 
+        segments.push(p.segment), last = placeholder.lastIndex;
         var i = (segment = pattern.substring(last)).indexOf("?");
         if (0 <= i) {
             var search = this.sourceSearch = segment.substring(i);
@@ -11585,12 +11594,12 @@ function(angular, undefined) {
             });
             return !isDefined(result) || result;
         }
-        function $get($location, $rootScope, $injector, $browser) {
+        function $get($location, $rootScope, $injector, $browser, $sniffer) {
             var lastPushedUrl, baseHref = $browser.baseHref(), location = $location.url();
             function update(evt) {
                 if (!evt || !evt.defaultPrevented) {
-                    var ignoreUpdate = lastPushedUrl && $location.url() === lastPushedUrl;
-                    if (lastPushedUrl = undefined, ignoreUpdate) return !0;
+                    lastPushedUrl && $location.url();
+                    lastPushedUrl = undefined;
                     var i, n = rules.length;
                     for (i = 0; i < n; i++) if (check(rules[i])) return;
                     otherwise && check(otherwise);
@@ -11615,16 +11624,18 @@ function(angular, undefined) {
                     $location.replace());
                 },
                 push: function(urlMatcher, params, options) {
-                    $location.url(urlMatcher.format(params || {})), lastPushedUrl = options && options.$$avoidResync ? $location.url() : undefined, 
+                    var url = urlMatcher.format(params || {});
+                    null !== url && params && params["#"] && (url += "#" + params["#"]), $location.url(url), 
+                    lastPushedUrl = options && options.$$avoidResync ? $location.url() : undefined, 
                     options && options.replace && $location.replace();
                 },
                 href: function(urlMatcher, params, options) {
                     if (!urlMatcher.validates(params)) return null;
                     var isHtml5 = $locationProvider.html5Mode();
-                    angular.isObject(isHtml5) && (isHtml5 = isHtml5.enabled);
+                    angular.isObject(isHtml5) && (isHtml5 = isHtml5.enabled), isHtml5 = isHtml5 && $sniffer.history;
                     var url = urlMatcher.format(params);
                     if (options = options || {}, isHtml5 || null === url || (url = "#" + $locationProvider.hashPrefix() + url), 
-                    url = function(url, isHtml5, absolute) {
+                    null !== url && params && params["#"] && (url += "#" + params["#"]), url = function(url, isHtml5, absolute) {
                         return "/" === baseHref ? url : isHtml5 ? baseHref.slice(0, -1) + url : absolute ? baseHref.slice(1) + url : url;
                     }(url, isHtml5, options.absolute), !options.absolute || !url) return url;
                     var slash = !isHtml5 && url ? "/" : "", port = $location.port();
@@ -11678,7 +11689,7 @@ function(angular, undefined) {
             throw new Error("invalid 'what' in when()");
         }, this.deferIntercept = function(defer) {
             defer === undefined && (defer = !0), interceptDeferred = defer;
-        }, (this.$get = $get).$inject = [ "$location", "$rootScope", "$injector", "$browser" ];
+        }, (this.$get = $get).$inject = [ "$location", "$rootScope", "$injector", "$browser", "$sniffer" ];
     }
     function $StateProvider($urlRouterProvider, $urlMatcherFactory) {
         var root, $state, states = {}, queue = {}, abstractKey = "abstract", stateBuilder = {
@@ -11688,7 +11699,7 @@ function(angular, undefined) {
                 return compositeName ? findState(compositeName[1]) : root;
             },
             data: function(state) {
-                return state.parent && state.parent.data && (state.data = state.self.data = extend({}, state.parent.data, state.data)), 
+                return state.parent && state.parent.data && (state.data = state.self.data = inherit(state.parent.data, state.data)), 
                 state.data;
             },
             url: function(state) {
@@ -11709,14 +11720,16 @@ function(angular, undefined) {
                 }), params;
             },
             params: function(state) {
-                return state.parent && state.parent.params ? extend(state.parent.params.$$new(), state.ownParams) : new $$UMFP.ParamSet();
+                var ownParams = pick(state.ownParams, state.ownParams.$$keys());
+                return state.parent && state.parent.params ? extend(state.parent.params.$$new(), ownParams) : new $$UMFP.ParamSet();
             },
             views: function(state) {
                 var views = {};
                 return forEach(isDefined(state.views) ? state.views : {
                     "": state
                 }, function(view, name) {
-                    name.indexOf("@") < 0 && (name += "@" + state.parent.name), views[name] = view;
+                    name.indexOf("@") < 0 && (name += "@" + state.parent.name), view.resolveAs = view.resolveAs || state.resolveAs || "$resolve", 
+                    views[name] = view;
                 }), views;
             },
             path: function(state) {
@@ -11753,7 +11766,7 @@ function(angular, undefined) {
                 }
             })).name;
             if (!isString(name) || 0 <= name.indexOf("@")) throw new Error("State must have a valid name");
-            if (states.hasOwnProperty(name)) throw new Error("State '" + name + "'' is already defined");
+            if (states.hasOwnProperty(name)) throw new Error("State '" + name + "' is already defined");
             var parentName = -1 !== name.indexOf(".") ? name.substring(0, name.lastIndexOf(".")) : isString(state.parent) ? state.parent : isObject(state.parent) && isString(state.parent.name) ? state.parent.name : "";
             if (parentName && !states[parentName]) return function(parentName, state) {
                 queue[parentName] || (queue[parentName] = []), queue[parentName].push(state);
@@ -11769,7 +11782,7 @@ function(angular, undefined) {
             }(name), state;
         }
         function $get($rootScope, $q, $view, $injector, $resolve, $stateParams, $urlRouter, $location, $urlMatcherFactory) {
-            var TransitionSuperseded = $q.reject(new Error("transition superseded")), TransitionPrevented = $q.reject(new Error("transition prevented")), TransitionAborted = $q.reject(new Error("transition aborted")), TransitionFailed = $q.reject(new Error("transition failed"));
+            var TransitionSupersededError = new Error("transition superseded"), TransitionSuperseded = silenceUncaughtInPromise($q.reject(TransitionSupersededError)), TransitionPrevented = silenceUncaughtInPromise($q.reject(new Error("transition prevented"))), TransitionAborted = silenceUncaughtInPromise($q.reject(new Error("transition aborted"))), TransitionFailed = silenceUncaughtInPromise($q.reject(new Error("transition failed")));
             function resolveState(state, params, paramsAreFiltered, inherited, dst, options) {
                 var $stateParams = paramsAreFiltered ? params : filterByKeys(state.params.$$keys(), params), locals = {
                     $stateParams: $stateParams
@@ -11778,23 +11791,29 @@ function(angular, undefined) {
                 var promises = [ dst.resolve.then(function(globals) {
                     dst.globals = globals;
                 }) ];
-                return inherited && promises.push(inherited), forEach(state.views, function(view, name) {
-                    var injectables = view.resolve && view.resolve !== state.resolve ? view.resolve : {};
-                    injectables.$template = [ function() {
-                        return $view.load(name, {
-                            view: view,
-                            locals: locals,
-                            params: $stateParams,
-                            notify: options.notify
-                        }) || "";
-                    } ], promises.push($resolve.resolve(injectables, locals, dst.resolve, state).then(function(result) {
-                        if (isFunction(view.controllerProvider) || isArray(view.controllerProvider)) {
-                            var injectLocals = angular.extend({}, injectables, locals);
-                            result.$$controller = $injector.invoke(view.controllerProvider, null, injectLocals);
-                        } else result.$$controller = view.controller;
-                        result.$$state = state, result.$$controllerAs = view.controllerAs, dst[name] = result;
-                    }));
-                }), $q.all(promises).then(function(values) {
+                return inherited && promises.push(inherited), $q.all(promises).then(function() {
+                    var viewsPromises = [];
+                    return forEach(state.views, function(view, name) {
+                        var injectables = view.resolve && view.resolve !== state.resolve ? view.resolve : {};
+                        injectables.$template = [ function() {
+                            return $view.load(name, {
+                                view: view,
+                                locals: dst.globals,
+                                params: $stateParams,
+                                notify: options.notify
+                            }) || "";
+                        } ], viewsPromises.push($resolve.resolve(injectables, dst.globals, dst.resolve, state).then(function(result) {
+                            if (isFunction(view.controllerProvider) || isArray(view.controllerProvider)) {
+                                var injectLocals = angular.extend({}, injectables, dst.globals);
+                                result.$$controller = $injector.invoke(view.controllerProvider, null, injectLocals);
+                            } else result.$$controller = view.controller;
+                            result.$$state = state, result.$$controllerAs = view.controllerAs, result.$$resolveAs = view.resolveAs, 
+                            dst[name] = result;
+                        }));
+                    }), $q.all(viewsPromises).then(function() {
+                        return dst.globals;
+                    });
+                }).then(function(values) {
                     return dst;
                 });
             }
@@ -11808,9 +11827,9 @@ function(angular, undefined) {
                 current: root.self,
                 $current: root,
                 transition: null,
-                reload: function() {
+                reload: function(state) {
                     return $state.transitionTo($state.current, $stateParams, {
-                        reload: !0,
+                        reload: state || !0,
                         inherit: !1,
                         notify: !0
                     });
@@ -11830,7 +11849,7 @@ function(angular, undefined) {
                     reload: !1,
                     $retry: !1
                 }, options || {});
-                var from = $state.$current, fromParams = $state.params, fromPath = from.path, toState = findState(to, options.relative);
+                var from = $state.$current, fromParams = $state.params, fromPath = from.path, toState = findState(to, options.relative), hash = toParams["#"];
                 if (!isDefined(toState)) {
                     var redirect = {
                         to: to,
@@ -11843,8 +11862,8 @@ function(angular, undefined) {
                         if (options.$retry) return $urlRouter.update(), TransitionFailed;
                         var retryTransition = $state.transition = $q.when(evt.retry);
                         return retryTransition.then(function() {
-                            return retryTransition !== $state.transition ? TransitionSuperseded : (redirect.options.$retry = !0, 
-                            $state.transitionTo(redirect.to, redirect.toParams, redirect.options));
+                            return retryTransition !== $state.transition ? ($rootScope.$broadcast("$stateChangeCancel", redirect.to, redirect.toParams, state, params), 
+                            TransitionSuperseded) : (redirect.options.$retry = !0, $state.transitionTo(redirect.to, redirect.toParams, redirect.options));
                         }, function() {
                             return TransitionAborted;
                         }), $urlRouter.update(), retryTransition;
@@ -11861,33 +11880,52 @@ function(angular, undefined) {
                 !toState.params.$$validates(toParams)) return TransitionFailed;
                 toParams = toState.params.$$values(toParams);
                 var toPath = (to = toState).path, keep = 0, state = toPath[keep], locals = root.locals, toLocals = [];
-                if (!options.reload) for (;state && state === fromPath[keep] && state.ownParams.$$equals(toParams, fromParams); ) locals = toLocals[keep] = state.locals, 
+                if (options.reload) {
+                    if (isString(options.reload) || isObject(options.reload)) {
+                        if (isObject(options.reload) && !options.reload.name) throw new Error("Invalid reload state object");
+                        var reloadState = !0 === options.reload ? fromPath[0] : findState(options.reload);
+                        if (options.reload && !reloadState) throw new Error("No such reload state '" + (isString(options.reload) ? options.reload : options.reload.name) + "'");
+                        for (;state && state === fromPath[keep] && state !== reloadState; ) locals = toLocals[keep] = state.locals, 
+                        state = toPath[++keep];
+                    }
+                } else for (;state && state === fromPath[keep] && state.ownParams.$$equals(toParams, fromParams); ) locals = toLocals[keep] = state.locals, 
                 state = toPath[++keep];
-                if (function(to, from, locals, options) {
-                    if (to === from && (locals === from.locals && !options.reload || !1 === to.self.reloadOnSearch)) return 1;
-                }(to, from, locals, options)) return !1 !== to.self.reloadOnSearch && $urlRouter.update(), 
-                $state.transition = null, $q.when($state.current);
-                if (toParams = filterByKeys(to.params.$$keys(), toParams || {}), options.notify && $rootScope.$broadcast("$stateChangeStart", to.self, toParams, from.self, fromParams).defaultPrevented) return $urlRouter.update(), 
-                TransitionPrevented;
+                if (function(to, toParams, from, fromParams, locals, options) {
+                    if (!options.reload && to === from && (locals === from.locals || !1 === to.self.reloadOnSearch && function(fromAndToState, fromParams, toParams) {
+                        var nonQueryParamKeys = fromAndToState.params.$$keys().filter(function(key) {
+                            return "search" != fromAndToState.params[key].location;
+                        }), nonQueryParams = pick.apply({}, [ fromAndToState.params ].concat(nonQueryParamKeys));
+                        return new $$UMFP.ParamSet(nonQueryParams).$$equals(fromParams, toParams);
+                    }(from, fromParams, toParams))) return 1;
+                }(to, toParams, from, fromParams, locals, options)) return hash && (toParams["#"] = hash), 
+                $state.params = toParams, copy($state.params, $stateParams), copy(filterByKeys(to.params.$$keys(), $stateParams), to.locals.globals.$stateParams), 
+                options.location && to.navigable && to.navigable.url && ($urlRouter.push(to.navigable.url, toParams, {
+                    $$avoidResync: !0,
+                    replace: "replace" === options.location
+                }), $urlRouter.update(!0)), $state.transition = null, $q.when($state.current);
+                if (toParams = filterByKeys(to.params.$$keys(), toParams || {}), hash && (toParams["#"] = hash), 
+                options.notify && $rootScope.$broadcast("$stateChangeStart", to.self, toParams, from.self, fromParams, options).defaultPrevented) return $rootScope.$broadcast("$stateChangeCancel", to.self, toParams, from.self, fromParams), 
+                null == $state.transition && $urlRouter.update(), TransitionPrevented;
                 for (var resolved = $q.when(locals), l = keep; l < toPath.length; state = toPath[++l]) locals = toLocals[l] = inherit(locals), 
                 resolved = resolveState(state, toParams, state === to, resolved, locals, options);
                 var transition = $state.transition = resolved.then(function() {
                     var l, entering, exiting;
-                    if ($state.transition !== transition) return TransitionSuperseded;
+                    if ($state.transition !== transition) return $rootScope.$broadcast("$stateChangeCancel", to.self, toParams, from.self, fromParams), 
+                    TransitionSuperseded;
                     for (l = fromPath.length - 1; keep <= l; l--) (exiting = fromPath[l]).self.onExit && $injector.invoke(exiting.self.onExit, exiting.self, exiting.locals.globals), 
                     exiting.locals = null;
                     for (l = keep; l < toPath.length; l++) (entering = toPath[l]).locals = toLocals[l], 
                     entering.self.onEnter && $injector.invoke(entering.self.onEnter, entering.self, entering.locals.globals);
-                    return $state.transition !== transition ? TransitionSuperseded : ($state.$current = to, 
-                    $state.current = to.self, $state.params = toParams, copy($state.params, $stateParams), 
-                    $state.transition = null, options.location && to.navigable && $urlRouter.push(to.navigable.url, to.navigable.locals.globals.$stateParams, {
+                    return $state.transition !== transition ? ($rootScope.$broadcast("$stateChangeCancel", to.self, toParams, from.self, fromParams), 
+                    TransitionSuperseded) : ($state.$current = to, $state.current = to.self, $state.params = toParams, 
+                    copy($state.params, $stateParams), $state.transition = null, options.location && to.navigable && $urlRouter.push(to.navigable.url, to.navigable.locals.globals.$stateParams, {
                         $$avoidResync: !0,
                         replace: "replace" === options.location
                     }), options.notify && $rootScope.$broadcast("$stateChangeSuccess", to.self, toParams, from.self, fromParams), 
                     $urlRouter.update(!0), $state.current);
-                }, function(error) {
-                    return $state.transition !== transition ? TransitionSuperseded : ($state.transition = null, 
-                    $rootScope.$broadcast("$stateChangeError", to.self, toParams, from.self, fromParams, error).defaultPrevented || $urlRouter.update(), 
+                }).then(null, function(error) {
+                    return error === TransitionSupersededError ? TransitionSuperseded : $state.transition !== transition ? ($rootScope.$broadcast("$stateChangeCancel", to.self, toParams, from.self, fromParams), 
+                    TransitionSuperseded) : ($state.transition = null, $rootScope.$broadcast("$stateChangeError", to.self, toParams, from.self, fromParams, error).defaultPrevented || $urlRouter.update(), 
                     $q.reject(error));
                 });
                 return transition;
@@ -11901,18 +11939,22 @@ function(angular, undefined) {
                     relative: $state.$current
                 }, options || {}), isString(stateOrName) && -1 < stateOrName.indexOf("*")) {
                     if (!function(glob) {
-                        var globSegments = glob.split("."), segments = $state.$current.name.split(".");
-                        if ("**" === globSegments[0] && (segments = segments.slice(indexOf(segments, globSegments[1]))).unshift("**"), 
+                        for (var globSegments = glob.split("."), segments = $state.$current.name.split("."), i = 0, l = globSegments.length; i < l; i++) "*" === globSegments[i] && (segments[i] = "*");
+                        return "**" === globSegments[0] && (segments = segments.slice(indexOf(segments, globSegments[1]))).unshift("**"), 
                         "**" === globSegments[globSegments.length - 1] && (segments.splice(indexOf(segments, globSegments[globSegments.length - 2]) + 1, Number.MAX_VALUE), 
-                        segments.push("**")), globSegments.length == segments.length) {
-                            for (var i = 0, l = globSegments.length; i < l; i++) "*" === globSegments[i] && (segments[i] = "*");
-                            return segments.join("") === globSegments.join("");
-                        }
+                        segments.push("**")), globSegments.length == segments.length && segments.join("") === globSegments.join("");
                     }(stateOrName)) return !1;
                     stateOrName = $state.$current.name;
                 }
                 var state = findState(stateOrName, options.relative);
-                return isDefined(state) ? !!isDefined($state.$current.includes[state.name]) && (!params || equalForKeys(state.params.$$values(params), $stateParams, objectKeys(params))) : undefined;
+                if (!isDefined(state)) return undefined;
+                if (!isDefined($state.$current.includes[state.name])) return !1;
+                if (!params) return !0;
+                for (var keys = objectKeys(params), i = 0; i < keys.length; i++) {
+                    var key = keys[i], paramDef = state.params[key];
+                    if (paramDef && !paramDef.type.equals($stateParams[key], params[key])) return !1;
+                }
+                return !0;
             }, $state.href = function(stateOrName, params, options) {
                 var state = findState(stateOrName, (options = extend({
                     lossy: !0,
@@ -11923,7 +11965,7 @@ function(angular, undefined) {
                 if (!isDefined(state)) return null;
                 options.inherit && (params = inheritParams($stateParams, params || {}, $state.$current, state));
                 var nav = state && options.lossy ? state.navigable : state;
-                return nav && nav.url !== undefined && null !== nav.url ? $urlRouter.href(nav.url, filterByKeys(state.params.$$keys(), params || {}), {
+                return nav && nav.url !== undefined && null !== nav.url ? $urlRouter.href(nav.url, filterByKeys(state.params.$$keys().concat("#"), params || {}), {
                     absolute: options.absolute
                 }) : null;
             }, $state.get = function(stateOrName, context) {
@@ -11963,14 +12005,13 @@ function(angular, undefined) {
                         async: !0,
                         params: {}
                     }, options)).view && (result = $templateFactory.fromConfig(options.view, options.params, options.locals)), 
-                    result && options.notify && $rootScope.$broadcast("$viewContentLoading", options), 
                     result;
                 }
             };
         }
         (this.$get = $get).$inject = [ "$rootScope", "$templateFactory" ];
     }
-    function $ViewDirective($state, $injector, $uiViewScroll, $interpolate) {
+    function $ViewDirective($state, $injector, $uiViewScroll, $interpolate, $q) {
         var service = $injector.has ? function(service) {
             return $injector.has(service) ? $injector.get(service) : null;
         } : function(service) {
@@ -11990,12 +12031,10 @@ function(angular, undefined) {
                     var previousEl, currentEl, currentScope, latestLocals, onloadExp = attrs.onload || "", autoScrollExp = attrs.autoscroll, renderer = function(attrs, scope) {
                         if ($animate) return {
                             enter: function(element, target, cb) {
-                                var promise = $animate.enter(element, null, target, cb);
-                                promise && promise.then && promise.then(cb);
+                                2 < angular.version.minor ? $animate.enter(element, null, target).then(cb) : $animate.enter(element, null, target, cb);
                             },
                             leave: function(element, cb) {
-                                var promise = $animate.leave(element, cb);
-                                promise && promise.then && promise.then(cb);
+                                2 < angular.version.minor ? $animate.leave(element).then(cb) : $animate.leave(element, cb);
                             }
                         };
                         if ($animator) {
@@ -12018,21 +12057,31 @@ function(angular, undefined) {
                             }
                         };
                     }(attrs, scope);
+                    $element.inheritedData("$uiView");
                     function updateView(firstTime) {
                         var newScope, name = getUiViewName(scope, attrs, $element, $interpolate), previousLocals = name && $state.$current && $state.$current.locals[name];
                         !firstTime && previousLocals === latestLocals || (newScope = scope.$new(), latestLocals = $state.$current.locals[name], 
-                        currentEl = $transclude(newScope, function(clone) {
-                            renderer.enter(clone, $element, function() {
-                                currentScope && currentScope.$emit("$viewContentAnimationEnded"), (angular.isDefined(autoScrollExp) && !autoScrollExp || scope.$eval(autoScrollExp)) && $uiViewScroll(clone);
-                            }), previousEl && (previousEl.remove(), previousEl = null), currentScope && (currentScope.$destroy(), 
-                            currentScope = null), currentEl && (renderer.leave(currentEl, function() {
-                                previousEl = null;
-                            }), previousEl = currentEl, currentEl = null);
-                        }), (currentScope = newScope).$emit("$viewContentLoaded"), currentScope.$eval(onloadExp));
+                        newScope.$emit("$viewContentLoading", name), currentEl = $transclude(newScope, function(clone) {
+                            var animEnter = $q.defer(), animLeave = $q.defer(), viewAnimData = {
+                                $animEnter: animEnter.promise,
+                                $animLeave: animLeave.promise,
+                                $$animLeave: animLeave
+                            };
+                            clone.data("$uiViewAnim", viewAnimData), renderer.enter(clone, $element, function() {
+                                animEnter.resolve(), currentScope && currentScope.$emit("$viewContentAnimationEnded"), 
+                                (angular.isDefined(autoScrollExp) && !autoScrollExp || scope.$eval(autoScrollExp)) && $uiViewScroll(clone);
+                            }), function() {
+                                if (previousEl && (previousEl.remove(), previousEl = null), currentScope && (currentScope.$destroy(), 
+                                currentScope = null), currentEl) {
+                                    var $uiViewData = currentEl.data("$uiViewAnim");
+                                    renderer.leave(currentEl, function() {
+                                        $uiViewData.$$animLeave.resolve(), previousEl = null;
+                                    }), previousEl = currentEl, currentEl = null;
+                                }
+                            }();
+                        }), (currentScope = newScope).$emit("$viewContentLoaded", name), currentScope.$eval(onloadExp));
                     }
                     scope.$on("$stateChangeSuccess", function() {
-                        updateView(!1);
-                    }), scope.$on("$viewContentLoading", function() {
                         updateView(!1);
                     }), updateView(!0);
                 };
@@ -12052,11 +12101,14 @@ function(angular, undefined) {
                             name: name,
                             state: locals.$$state
                         }), $element.html(locals.$template ? locals.$template : initial);
+                        var resolveData = angular.extend({}, locals);
+                        scope[locals.$$resolveAs] = resolveData;
                         var link = $compile($element.contents());
                         if (locals.$$controller) {
-                            locals.$scope = scope;
+                            locals.$scope = scope, locals.$element = $element;
                             var controller = $controller(locals.$$controller, locals);
-                            locals.$$controllerAs && (scope[locals.$$controllerAs] = controller), $element.data("$ngControllerController", controller), 
+                            locals.$$controllerAs && (scope[locals.$$controllerAs] = controller, scope[locals.$$controllerAs][locals.$$resolveAs] = resolveData), 
+                            isFunction(controller.$onInit) && controller.$onInit(), $element.data("$ngControllerController", controller), 
                             $element.children().data("$ngControllerController", controller);
                         }
                         link(scope);
@@ -12066,82 +12118,169 @@ function(angular, undefined) {
         };
     }
     function getUiViewName(scope, attrs, element, $interpolate) {
-        var name = $interpolate(attrs.uiView || attrs.name || "")(scope), inherited = element.inheritedData("$uiView");
-        return 0 <= name.indexOf("@") ? name : name + "@" + (inherited ? inherited.state.name : "");
+        var name = $interpolate(attrs.uiView || attrs.name || "")(scope), uiViewCreatedBy = element.inheritedData("$uiView");
+        return 0 <= name.indexOf("@") ? name : name + "@" + (uiViewCreatedBy ? uiViewCreatedBy.state.name : "");
+    }
+    function parseStateRef(ref, current) {
+        var parsed, preparsed = ref.match(/^\s*({[^}]*})\s*$/);
+        if (preparsed && (ref = current + "(" + preparsed[1] + ")"), !(parsed = ref.replace(/\n/g, " ").match(/^([^(]+?)\s*(\((.*)\))?$/)) || 4 !== parsed.length) throw new Error("Invalid state ref '" + ref + "'");
+        return {
+            state: parsed[1],
+            paramExpr: parsed[3] || null
+        };
     }
     function stateContext(el) {
         var stateData = el.parent().inheritedData("$uiView");
         if (stateData && stateData.state && stateData.state.name) return stateData.state;
     }
+    function getTypeInfo(el) {
+        var isSvg = "[object SVGAnimatedString]" === Object.prototype.toString.call(el.prop("href")), isForm = "FORM" === el[0].nodeName;
+        return {
+            attr: isForm ? "action" : isSvg ? "xlink:href" : "href",
+            isAnchor: "A" === el.prop("tagName").toUpperCase(),
+            clickable: !isForm
+        };
+    }
+    function clickHook(el, $state, $timeout, type, current) {
+        return function(e) {
+            var button = e.which || e.button, target = current();
+            if (!(1 < button || e.ctrlKey || e.metaKey || e.shiftKey || el.attr("target"))) {
+                var transition = $timeout(function() {
+                    $state.go(target.state, target.params, target.options);
+                });
+                e.preventDefault();
+                var ignorePreventDefaultCount = type.isAnchor && !target.href ? 1 : 0;
+                e.preventDefault = function() {
+                    ignorePreventDefaultCount-- <= 0 && $timeout.cancel(transition);
+                };
+            }
+        };
+    }
     function $StateRefDirective($state, $timeout) {
-        var allowedOptions = [ "location", "inherit", "reload" ];
         return {
             restrict: "A",
             require: [ "?^uiSrefActive", "?^uiSrefActiveEq" ],
             link: function(scope, element, attrs, uiSrefActive) {
-                var ref = function(ref, current) {
-                    var parsed, preparsed = ref.match(/^\s*({[^}]*})\s*$/);
-                    if (preparsed && (ref = current + "(" + preparsed[1] + ")"), !(parsed = ref.replace(/\n/g, " ").match(/^([^(]+?)\s*(\((.*)\))?$/)) || 4 !== parsed.length) throw new Error("Invalid state ref '" + ref + "'");
+                var hookFn, ref = parseStateRef(attrs.uiSref, $state.current.name), def = {
+                    state: ref.state,
+                    href: null,
+                    params: null
+                }, type = getTypeInfo(element), active = uiSrefActive[1] || uiSrefActive[0], unlinkInfoFn = null;
+                def.options = extend(function(el, $state) {
                     return {
-                        state: parsed[1],
-                        paramExpr: parsed[3] || null
+                        relative: stateContext(el) || $state.$current,
+                        inherit: !0
                     };
-                }(attrs.uiSref, $state.current.name), params = null, base = stateContext(element) || $state.$current, newHref = null, isAnchor = "A" === element.prop("tagName"), isForm = "FORM" === element[0].nodeName, attr = isForm ? "action" : "href", nav = !0, options = {
-                    relative: base,
-                    inherit: !0
-                }, optionsOverride = scope.$eval(attrs.uiSrefOpts) || {};
-                angular.forEach(allowedOptions, function(option) {
-                    option in optionsOverride && (options[option] = optionsOverride[option]);
-                });
-                function update(newVal) {
-                    if (newVal && (params = angular.copy(newVal)), nav) {
-                        newHref = $state.href(ref.state, params, options);
-                        var activeDirective = uiSrefActive[1] || uiSrefActive[0];
-                        if (activeDirective && activeDirective.$$setStateInfo(ref.state, params), null === newHref) return nav = !1;
-                        attrs.$set(attr, newHref);
-                    }
+                }(element, $state), attrs.uiSrefOpts ? scope.$eval(attrs.uiSrefOpts) : {});
+                function update(val) {
+                    val && (def.params = angular.copy(val)), def.href = $state.href(ref.state, def.params, def.options), 
+                    unlinkInfoFn && unlinkInfoFn(), active && (unlinkInfoFn = active.$$addStateInfo(ref.state, def.params)), 
+                    null !== def.href && attrs.$set(type.attr, def.href);
                 }
-                ref.paramExpr && (scope.$watch(ref.paramExpr, function(newVal, oldVal) {
-                    newVal !== params && update(newVal);
-                }, !0), params = angular.copy(scope.$eval(ref.paramExpr))), update(), isForm || element.bind("click", function(e) {
-                    if (!(1 < (e.which || e.button) || e.ctrlKey || e.metaKey || e.shiftKey || element.attr("target"))) {
-                        var transition = $timeout(function() {
-                            $state.go(ref.state, params, options);
-                        });
-                        e.preventDefault();
-                        var ignorePreventDefaultCount = isAnchor && !newHref ? 1 : 0;
-                        e.preventDefault = function() {
-                            ignorePreventDefaultCount-- <= 0 && $timeout.cancel(transition);
-                        };
-                    }
-                });
+                ref.paramExpr && (scope.$watch(ref.paramExpr, function(val) {
+                    val !== def.params && update(val);
+                }, !0), def.params = angular.copy(scope.$eval(ref.paramExpr))), update(), type.clickable && (hookFn = clickHook(element, $state, $timeout, type, function() {
+                    return def;
+                }), element[element.on ? "on" : "bind"]("click", hookFn), scope.$on("$destroy", function() {
+                    element[element.off ? "off" : "unbind"]("click", hookFn);
+                }));
+            }
+        };
+    }
+    function $StateRefDynamicDirective($state, $timeout) {
+        return {
+            restrict: "A",
+            require: [ "?^uiSrefActive", "?^uiSrefActiveEq" ],
+            link: function(scope, element, attrs, uiSrefActive) {
+                var hookFn, type = getTypeInfo(element), active = uiSrefActive[1] || uiSrefActive[0], watch = "[" + [ attrs.uiState, attrs.uiStateParams || null, attrs.uiStateOpts || null ].map(function(val) {
+                    return val || "null";
+                }).join(", ") + "]", def = {
+                    state: null,
+                    params: null,
+                    options: null,
+                    href: null
+                }, unlinkInfoFn = null;
+                function runStateRefLink(group) {
+                    def.state = group[0], def.params = group[1], def.options = group[2], def.href = $state.href(def.state, def.params, def.options), 
+                    unlinkInfoFn && unlinkInfoFn(), active && (unlinkInfoFn = active.$$addStateInfo(def.state, def.params)), 
+                    def.href && attrs.$set(type.attr, def.href);
+                }
+                scope.$watch(watch, runStateRefLink, !0), runStateRefLink(scope.$eval(watch)), type.clickable && (hookFn = clickHook(element, $state, $timeout, type, function() {
+                    return def;
+                }), element[element.on ? "on" : "bind"]("click", hookFn), scope.$on("$destroy", function() {
+                    element[element.off ? "off" : "unbind"]("click", hookFn);
+                }));
             }
         };
     }
     function $StateRefActiveDirective($state, $stateParams, $interpolate) {
         return {
             restrict: "A",
-            controller: [ "$scope", "$element", "$attrs", function($scope, $element, $attrs) {
-                var state, params, activeClass;
-                function update() {
-                    (void 0 !== $attrs.uiSrefActiveEq ? state && $state.is(state.name, params) : state && $state.includes(state.name, params)) ? $element.addClass(activeClass) : $element.removeClass(activeClass);
+            controller: [ "$scope", "$element", "$attrs", "$timeout", function($scope, $element, $attrs, $timeout) {
+                var activeEqClass, uiSrefActive, states = [], activeClasses = {};
+                activeEqClass = $interpolate($attrs.uiSrefActiveEq || "", !1)($scope);
+                try {
+                    uiSrefActive = $scope.$eval($attrs.uiSrefActive);
+                } catch (e) {}
+                function addState(stateName, stateParams, activeClass) {
+                    var state = $state.get(stateName, stateContext($element)), stateHash = function(state, params) {
+                        if (!isString(state)) throw new Error("state should be a string");
+                        if (isObject(params)) return state + toJson(params);
+                        if (params = $scope.$eval(params), isObject(params)) return state + toJson(params);
+                        return state;
+                    }(stateName, stateParams), stateInfo = {
+                        state: state || {
+                            name: stateName
+                        },
+                        params: stateParams,
+                        hash: stateHash
+                    };
+                    return states.push(stateInfo), activeClasses[stateHash] = activeClass, function() {
+                        var idx = states.indexOf(stateInfo);
+                        -1 !== idx && states.splice(idx, 1);
+                    };
                 }
-                activeClass = $interpolate($attrs.uiSrefActiveEq || $attrs.uiSrefActive || "", !1)($scope), 
-                this.$$setStateInfo = function(newState, newParams) {
-                    state = $state.get(newState, stateContext($element)), params = newParams, update();
-                }, $scope.$on("$stateChangeSuccess", update);
+                function update() {
+                    for (var i = 0; i < states.length; i++) state = states[i].state, params = states[i].params, 
+                    ($state.includes(state.name, params) ? addClass : removeClass)($element, activeClasses[states[i].hash]), 
+                    (exactMatch(states[i].state, states[i].params) ? addClass : removeClass)($element, activeEqClass);
+                    var state, params;
+                }
+                function addClass(el, className) {
+                    $timeout(function() {
+                        el.addClass(className);
+                    });
+                }
+                function removeClass(el, className) {
+                    el.removeClass(className);
+                }
+                function exactMatch(state, params) {
+                    return $state.is(state.name, params);
+                }
+                uiSrefActive = uiSrefActive || $interpolate($attrs.uiSrefActive || "", !1)($scope), 
+                isObject(uiSrefActive) && forEach(uiSrefActive, function(stateOrName, activeClass) {
+                    if (isString(stateOrName)) {
+                        var ref = parseStateRef(stateOrName, $state.current.name);
+                        addState(ref.state, $scope.$eval(ref.paramExpr), activeClass);
+                    }
+                }), this.$$addStateInfo = function(newState, newParams) {
+                    if (!(isObject(uiSrefActive) && 0 < states.length)) {
+                        var deregister = addState(newState, newParams, uiSrefActive);
+                        return update(), deregister;
+                    }
+                }, $scope.$on("$stateChangeSuccess", update), update();
             } ]
         };
     }
     function $IsStateFilter($state) {
-        function isFilter(state) {
-            return $state.is(state);
+        function isFilter(state, params) {
+            return $state.is(state, params);
         }
         return isFilter.$stateful = !0, isFilter;
     }
     function $IncludedByStateFilter($state) {
-        function includesFilter(state) {
-            return $state.includes(state);
+        function includesFilter(state, params, options) {
+            return $state.includes(state, params, options);
         }
         return includesFilter.$stateful = !0, includesFilter;
     }
@@ -12163,7 +12302,7 @@ function(angular, undefined) {
         var m = this.regexp.exec(path);
         if (!m) return null;
         searchParams = searchParams || {};
-        var i, j, paramName, paramNames = this.parameters(), nTotal = paramNames.length, nPath = this.segments.length - 1, values = {};
+        var i, j, paramName, param, paramVal, paramNames = this.parameters(), nTotal = paramNames.length, nPath = this.segments.length - 1, values = {};
         if (nPath != m.length - 1) throw new Error("Unbalanced capture group in route '" + this.source + "'");
         function decodePathArray(string) {
             function reverseString(str) {
@@ -12171,16 +12310,20 @@ function(angular, undefined) {
             }
             var allReversed = map(reverseString(string).split(/-(?!\\)/), reverseString);
             return map(allReversed, function(str) {
-                return str.replace(/\\-/, "-");
+                return str.replace(/\\-/g, "-");
             }).reverse();
         }
         for (i = 0; i < nPath; i++) {
-            paramName = paramNames[i];
-            var param = this.params[paramName], paramVal = m[i + 1];
-            for (j = 0; j < param.replace; j++) param.replace[j].from === paramVal && (paramVal = param.replace[j].to);
-            paramVal && !0 === param.array && (paramVal = decodePathArray(paramVal)), values[paramName] = param.value(paramVal);
+            for (paramName = paramNames[i], param = this.params[paramName], paramVal = m[i + 1], 
+            j = 0; j < param.replace.length; j++) param.replace[j].from === paramVal && (paramVal = param.replace[j].to);
+            paramVal && !0 === param.array && (paramVal = decodePathArray(paramVal)), isDefined(paramVal) && (paramVal = param.type.decode(paramVal)), 
+            values[paramName] = param.value(paramVal);
         }
-        for (;i < nTotal; i++) values[paramName = paramNames[i]] = this.params[paramName].value(searchParams[paramName]);
+        for (;i < nTotal; i++) {
+            for (values[paramName = paramNames[i]] = this.params[paramName].value(searchParams[paramName]), 
+            param = this.params[paramName], paramVal = searchParams[paramName], j = 0; j < param.replace.length; j++) param.replace[j].from === paramVal && (paramVal = param.replace[j].to);
+            isDefined(paramVal) && (paramVal = param.type.decode(paramVal)), values[paramName] = param.value(paramVal);
+        }
         return values;
     }, UrlMatcher.prototype.parameters = function(param) {
         return isDefined(param) ? this.params[param] || null : this.$$paramNames;
@@ -12199,15 +12342,17 @@ function(angular, undefined) {
         for (i = 0; i < nTotal; i++) {
             var isPathParam = i < nPath, name = params[i], param = paramset[name], value = param.value(values[name]), isDefaultValue = param.isOptional && param.type.equals(param.value(), value), squash = !!isDefaultValue && param.squash, encoded = param.type.encode(value);
             if (isPathParam) {
-                var nextSegment = segments[i + 1];
+                var nextSegment = segments[i + 1], isFinalPathParam = i + 1 === nPath;
                 if (!1 === squash) null != encoded && (isArray(encoded) ? result += map(encoded, encodeDashes).join("-") : result += encodeURIComponent(encoded)), 
                 result += nextSegment; else if (!0 === squash) {
                     var capture = result.match(/\/$/) ? /\/?(.*)/ : /(.*)/;
                     result += nextSegment.match(capture)[1];
                 } else isString(squash) && (result += squash + nextSegment);
+                isFinalPathParam && !0 === param.squash && "/" === result.slice(-1) && (result = result.slice(0, -1));
             } else {
                 if (null == encoded || isDefaultValue && !1 !== squash) continue;
-                isArray(encoded) || (encoded = [ encoded ]), result += (search ? "&" : "?") + name + "=" + (encoded = map(encoded, encodeURIComponent).join("&" + name + "=")), 
+                if (isArray(encoded) || (encoded = [ encoded ]), 0 === encoded.length) continue;
+                result += (search ? "&" : "?") + name + "=" + (encoded = map(encoded, encodeURIComponent).join("&" + name + "=")), 
                 search = !0;
             }
         }
@@ -12225,6 +12370,8 @@ function(angular, undefined) {
         return sub.substr(1, sub.length - 2);
     }, Type.prototype.pattern = /.*/, Type.prototype.toString = function() {
         return "{Type:" + this.name + "}";
+    }, Type.prototype.$normalize = function(val) {
+        return this.is(val) ? val : this.decode(val);
     }, Type.prototype.$asArray = function(mode, isSearch) {
         if (!mode) return this;
         if ("auto" === mode && !isSearch) throw new Error("'auto' array mode is for query parameters only");
@@ -12242,6 +12389,7 @@ function(angular, undefined) {
             }
             function arrayHandler(callback, allTruthyMode) {
                 return function(val) {
+                    if (isArray(val) && 0 === val.length) return val;
                     var result = map(val = arrayWrap(val), callback);
                     return !0 === allTruthyMode ? 0 === filter(result, falsey).length : function(val) {
                         switch (val.length) {
@@ -12257,30 +12405,41 @@ function(angular, undefined) {
                     }(result);
                 };
             }
+            var callback;
             this.encode = arrayHandler(bindTo(type, "encode")), this.decode = arrayHandler(bindTo(type, "decode")), 
-            this.is = arrayHandler(bindTo(type, "is"), !0), this.equals = function(callback) {
-                return function(val1, val2) {
-                    var left = arrayWrap(val1), right = arrayWrap(val2);
-                    if (left.length !== right.length) return !1;
-                    for (var i = 0; i < left.length; i++) if (!callback(left[i], right[i])) return !1;
-                    return !0;
-                };
-            }(bindTo(type, "equals")), this.pattern = type.pattern, this.$arrayMode = mode;
+            this.is = arrayHandler(bindTo(type, "is"), !0), this.equals = (callback = bindTo(type, "equals"), 
+            function(val1, val2) {
+                var left = arrayWrap(val1), right = arrayWrap(val2);
+                if (left.length !== right.length) return !1;
+                for (var i = 0; i < left.length; i++) if (!callback(left[i], right[i])) return !1;
+                return !0;
+            }), this.pattern = type.pattern, this.$normalize = arrayHandler(bindTo(type, "$normalize")), 
+            this.name = type.name, this.$arrayMode = mode;
         }(this, mode);
     }, angular.module("ui.router.util").provider("$urlMatcherFactory", function $UrlMatcherFactory() {
         $$UMFP = this;
         var isCaseInsensitive = !1, isStrictMode = !0, defaultSquashPolicy = !1;
         function valToString(val) {
-            return null != val ? val.toString().replace(/\//g, "%2F") : val;
+            return null != val ? val.toString().replace(/(~|\/)/g, function(m) {
+                return {
+                    "~": "~~",
+                    "/": "~2F"
+                }[m];
+            }) : val;
         }
         var injector, $types = {}, enqueue = !0, typeQueue = [], defaultTypes = {
             string: {
                 encode: valToString,
                 decode: function(val) {
-                    return null != val ? val.toString().replace(/%2F/g, "/") : val;
+                    return null != val ? val.toString().replace(/(~~|~2F)/g, function(m) {
+                        return {
+                            "~~": "~",
+                            "~2F": "/"
+                        }[m];
+                    }) : val;
                 },
                 is: function(val) {
-                    return this.pattern.test(val);
+                    return null == val || !isDefined(val) || "string" == typeof val;
                 },
                 pattern: /[^/]*/
             },
@@ -12334,7 +12493,6 @@ function(angular, undefined) {
             any: {
                 encode: angular.identity,
                 decode: angular.identity,
-                is: angular.identity,
                 equals: angular.equals,
                 pattern: /.*/
             }
@@ -12403,7 +12561,7 @@ function(angular, undefined) {
                 }, config;
             }(config), type = function(config, urlType, location) {
                 if (config.type && urlType) throw new Error("Param '" + id + "' has two type configurations.");
-                return urlType || (config.type ? config.type instanceof Type ? config.type : new Type(config.type) : "config" === location ? $types.any : $types.string);
+                return urlType || (config.type ? angular.isString(config.type) ? $types[config.type] : config.type instanceof Type ? config.type : new Type(config.type) : "config" === location ? $types.any : $types.string);
             }(config, type, location);
             var arrayDefaults, arrayParamNomenclature, arrayMode = (arrayDefaults = {
                 array: "search" === location && "auto"
@@ -12450,9 +12608,11 @@ function(angular, undefined) {
                             return obj.to;
                         });
                         return replacement.length ? replacement[0] : value;
-                    }(value), isDefined(value) ? self.type.decode(value) : function() {
+                    }(value), isDefined(value) ? self.type.$normalize(value) : function() {
                         if (!injector) throw new Error("Injectable functions cannot be called at configuration time");
-                        return injector.invoke(config.$$fn);
+                        var defaultValue = injector.invoke(config.$$fn);
+                        if (null !== defaultValue && defaultValue !== undefined && !self.type.is(defaultValue)) throw new Error("Default value (" + defaultValue + ") for parameter '" + self.id + "' is not an instance of Type (" + self.type.name + ")");
+                        return defaultValue;
                     }();
                 },
                 dynamic: undefined,
@@ -12490,35 +12650,42 @@ function(angular, undefined) {
                 }), equal;
             },
             $$validates: function(paramValues) {
-                var isOptional, val, param, result = !0, self = this;
-                return forEach(this.$$keys(), function(key) {
-                    param = self[key], val = paramValues[key], isOptional = !val && param.isOptional, 
-                    result = result && (isOptional || !!param.type.is(val));
-                }), result;
+                var i, param, rawVal, normalized, encoded, keys = this.$$keys();
+                for (i = 0; i < keys.length && (param = this[keys[i]], (rawVal = paramValues[keys[i]]) !== undefined && null !== rawVal || !param.isOptional); i++) {
+                    if (normalized = param.type.$normalize(rawVal), !param.type.is(normalized)) return !1;
+                    if (encoded = param.type.encode(normalized), angular.isString(encoded) && !param.type.pattern.exec(encoded)) return !1;
+                }
+                return !0;
             },
             $$parent: undefined
         }, this.ParamSet = ParamSet;
     }), angular.module("ui.router.util").run([ "$urlMatcherFactory", function($urlMatcherFactory) {} ]), 
     $UrlRouterProvider.$inject = [ "$locationProvider", "$urlMatcherFactoryProvider" ], 
     angular.module("ui.router.router").provider("$urlRouter", $UrlRouterProvider), $StateProvider.$inject = [ "$urlRouterProvider", "$urlMatcherFactoryProvider" ], 
-    angular.module("ui.router.state").value("$stateParams", {}).provider("$state", $StateProvider), 
-    $ViewProvider.$inject = [], angular.module("ui.router.state").provider("$view", $ViewProvider), 
+    angular.module("ui.router.state").factory("$stateParams", function() {
+        return {};
+    }).constant("$state.runtime", {
+        autoinject: !0
+    }).provider("$state", $StateProvider).run([ "$injector", function($injector) {
+        $injector.get("$state.runtime").autoinject && $injector.get("$state");
+    } ]), $ViewProvider.$inject = [], angular.module("ui.router.state").provider("$view", $ViewProvider), 
     angular.module("ui.router.state").provider("$uiViewScroll", function() {
         var useAnchorScroll = !1;
         this.useAnchorScroll = function() {
             useAnchorScroll = !0;
         }, this.$get = [ "$anchorScroll", "$timeout", function($anchorScroll, $timeout) {
             return useAnchorScroll ? $anchorScroll : function($element) {
-                $timeout(function() {
+                return $timeout(function() {
                     $element[0].scrollIntoView();
                 }, 0, !1);
             };
         } ];
-    }), $ViewDirective.$inject = [ "$state", "$injector", "$uiViewScroll", "$interpolate" ], 
+    }), $ViewDirective.$inject = [ "$state", "$injector", "$uiViewScroll", "$interpolate", "$q" ], 
     $ViewDirectiveFill.$inject = [ "$compile", "$controller", "$state", "$interpolate" ], 
     angular.module("ui.router.state").directive("uiView", $ViewDirective), angular.module("ui.router.state").directive("uiView", $ViewDirectiveFill), 
-    $StateRefDirective.$inject = [ "$state", "$timeout" ], $StateRefActiveDirective.$inject = [ "$state", "$stateParams", "$interpolate" ], 
-    angular.module("ui.router.state").directive("uiSref", $StateRefDirective).directive("uiSrefActive", $StateRefActiveDirective).directive("uiSrefActiveEq", $StateRefActiveDirective), 
+    $StateRefDirective.$inject = [ "$state", "$timeout" ], $StateRefDynamicDirective.$inject = [ "$state", "$timeout" ], 
+    $StateRefActiveDirective.$inject = [ "$state", "$stateParams", "$interpolate" ], 
+    angular.module("ui.router.state").directive("uiSref", $StateRefDirective).directive("uiSrefActive", $StateRefActiveDirective).directive("uiSrefActiveEq", $StateRefActiveDirective).directive("uiState", $StateRefDynamicDirective), 
     $IsStateFilter.$inject = [ "$state" ], $IncludedByStateFilter.$inject = [ "$state" ], 
     angular.module("ui.router.state").filter("isState", $IsStateFilter).filter("includedByState", $IncludedByStateFilter);
 }((window, window.angular)), function(window, angular) {
