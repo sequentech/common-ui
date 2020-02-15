@@ -421,8 +421,9 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                         } else scope.sendingData = !1, scope.status = "Not found", scope.error = $i18next("avRegistration.invalidCredentials", {
                             support: ConfigService.contact.email
                         });
-                    }).error(function(error) {
-                        scope.sendingData = !1, scope.status = "Registration error: " + error.message, scope.error = $i18next("avRegistration.invalidCredentials", {
+                    }, function(response) {
+                        scope.sendingData = !1, scope.status = "Registration error: " + response.data.message, 
+                        scope.error = $i18next("avRegistration.invalidCredentials", {
                             support: ConfigService.contact.email
                         });
                     });

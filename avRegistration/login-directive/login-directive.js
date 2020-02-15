@@ -207,58 +207,60 @@ angular.module('avRegistration')
             });
 
             scope.sendingData = true;
-            Authmethod.login(data, autheventid)
-                .then(
-                  function onSuccess(response) {
-                    if (response.data.status === "ok") {
-                        scope.khmac = response.data.khmac;
-                        var postfix = "_authevent_" + autheventid;
-                        $cookies["authevent_" + autheventid] = autheventid;
-                        $cookies["userid" + postfix] = response.data.username;
-                        $cookies["user" + postfix] = scope.email;
-                        $cookies["auth" + postfix] = response.data['auth-token'];
-                        $cookies["isAdmin" + postfix] = scope.isAdmin;
-                        Authmethod.setAuth($cookies["auth" + postfix], scope.isAdmin, autheventid);
-                        if (scope.isAdmin)
-                        {
-                            Authmethod.getUserInfo()
-                              .then(
-                                function onSuccess(response) {
-                                  $cookies["user" + postfix] = response.data.email;
-                                  $window.location.href = '/admin/elections';
-                                },
-                                function onError(response) {
-                                  $window.location.href = '/admin/elections';
-                                }
-                              );
-                        }
-                        else if (angular.isDefined(response.data['redirect-to-url']))
-                        {
-                            $window.location.href = response.data['redirect-to-url'];
-                        }
-                        else
-                        {
-                            // redirecting to vote link
-                            Authmethod.getPerm("vote", "AuthEvent", autheventid)
-                                .then(function onSuccess(response) {
-                                    var khmac = response.data['permission-token'];
-                                    var path = khmac.split(";")[1];
-                                    var hash = path.split("/")[0];
-                                    var msg = path.split("/")[1];
-                                    $window.location.href = '/booth/' + autheventid + '/vote/' + hash + '/' + msg;
-                                });
-                        }
-                    } else {
-                        scope.sendingData = false;
-                        scope.status = 'Not found';
-                        scope.error = $i18next('avRegistration.invalidCredentials', { support: ConfigService.contact.email });
-                    }
-                })
-                .error(function(error) {
-                    scope.sendingData = false;
-                    scope.status = 'Registration error: ' + error.message;
-                    scope.error = $i18next('avRegistration.invalidCredentials', { support: ConfigService.contact.email });
-                });
+            Authmethod
+              .login(data, autheventid)
+              .then(
+                function onSuccess(response) {
+                  if (response.data.status === "ok") {
+                      scope.khmac = response.data.khmac;
+                      var postfix = "_authevent_" + autheventid;
+                      $cookies["authevent_" + autheventid] = autheventid;
+                      $cookies["userid" + postfix] = response.data.username;
+                      $cookies["user" + postfix] = scope.email;
+                      $cookies["auth" + postfix] = response.data['auth-token'];
+                      $cookies["isAdmin" + postfix] = scope.isAdmin;
+                      Authmethod.setAuth($cookies["auth" + postfix], scope.isAdmin, autheventid);
+                      if (scope.isAdmin)
+                      {
+                          Authmethod.getUserInfo()
+                            .then(
+                              function onSuccess(response) {
+                                $cookies["user" + postfix] = response.data.email;
+                                $window.location.href = '/admin/elections';
+                              },
+                              function onError(response) {
+                                $window.location.href = '/admin/elections';
+                              }
+                            );
+                      }
+                      else if (angular.isDefined(response.data['redirect-to-url']))
+                      {
+                          $window.location.href = response.data['redirect-to-url'];
+                      }
+                      else
+                      {
+                          // redirecting to vote link
+                          Authmethod.getPerm("vote", "AuthEvent", autheventid)
+                              .then(function onSuccess(response) {
+                                  var khmac = response.data['permission-token'];
+                                  var path = khmac.split(";")[1];
+                                  var hash = path.split("/")[0];
+                                  var msg = path.split("/")[1];
+                                  $window.location.href = '/booth/' + autheventid + '/vote/' + hash + '/' + msg;
+                              });
+                      }
+                  } else {
+                      scope.sendingData = false;
+                      scope.status = 'Not found';
+                      scope.error = $i18next('avRegistration.invalidCredentials', { support: ConfigService.contact.email });
+                  }
+              },
+              function onError(response) {
+                  scope.sendingData = false;
+                  scope.status = 'Registration error: ' + response.data.message;
+                  scope.error = $i18next('avRegistration.invalidCredentials', { support: ConfigService.contact.email });
+              }
+            );
         };
 
         scope.apply = function(authevent) {
