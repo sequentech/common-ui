@@ -17,17 +17,15 @@
             link.parentNode.insertBefore(iframe, link), link.parentNode.removeChild(link);
         }
     }
-    function requestAuthorization(e) {
-        function callback(khmac) {
-            e.source.postMessage("avPostAuthorization:" + khmac, "*");
-        }
+    window.addEventListener("message", function(e) {
         var reqAuth = "avRequestAuthorization:";
         if (e.data.substr(0, reqAuth.length) === reqAuth) {
-            var args = [ JSON.parse(e.data.substr(reqAuth.length, e.data.length)), callback ];
+            var args = [ JSON.parse(e.data.substr(reqAuth.length, e.data.length)), function(khmac) {
+                e.source.postMessage("avPostAuthorization:" + khmac, "*");
+            } ];
             window[window.avRequestAuthorizationFuncName].apply(window, args);
         }
-    }
-    window.addEventListener("message", requestAuthorization, !1), processLinks("agoravoting-voting-booth", function(link) {
+    }, !1), processLinks("agoravoting-voting-booth", function(link) {
         var funcName = link.getAttribute("data-authorization-funcname");
         window.avRequestAuthorizationFuncName = funcName;
     }), processLinks("agoravoting-ballot-locator"), processLinks("agoravoting-results");

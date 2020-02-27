@@ -19,16 +19,16 @@
 'use strict';
 
 var pkg = require('./package.json');
-var AV_CONFIG_VERSION = '17.04';
+var AV_CONFIG_VERSION = '20.2.0';
 
 //Using exclusion patterns slows down Grunt significantly
 //instead of creating a set of patterns like '**/*.js' and '!**/node_modules/**'
 //this method is used to create a set of inclusive patterns for all subdirectories
-//skipping node_modules, bower_components, dist, and any .dirs
+//skipping node_modules, dist, and any .dirs
 //This enables users to create any directory structure they desire.
 var createFolderGlobs = function(fileTypePatterns) {
   fileTypePatterns = Array.isArray(fileTypePatterns) ? fileTypePatterns : [fileTypePatterns];
-  var ignore = ['node_modules','bower_components','dist','temp'];
+  var ignore = ['node_modules','dist','temp'];
   var fs = require('fs');
   return fs.readdirSync(process.cwd())
           .map(function(file){
@@ -118,12 +118,13 @@ module.exports = function (grunt) {
     less: {
       production: {
         options: {
+          strictImports: true
         },
         files: [{
           expand: true,
           src: ['themes/**/app.less'],
           dest: 'temp/',
-          ext: '.css',
+          ext: '.css'
         }]
       }
     },
@@ -145,37 +146,6 @@ module.exports = function (grunt) {
         dest: 'temp/templates.js'
       }
     },
-    copy: {
-      main: {
-        files: [
-          {src: ['img/**'], dest: 'dist/'},
-          {src: ['temp_data/**'], dest: 'dist/'},
-          {src: ['avUi/**/*.less'], dest: 'dist/less/'},
-          {src: ['themes/**'], dest: 'dist/'},
-          {
-            expand: true,
-            cwd: 'bower_components/bootstrap/fonts/',
-            src: ['**'],
-            dest: 'dist/themes/fonts/'
-          },
-          {
-            expand: true,
-            cwd: 'bower_components/bootstrap/fonts/',
-            src: ['**'],
-            dest: 'dist/themes/fonts/'
-          },
-          {
-            expand: true,
-            cwd: 'bower_components/font-awesome/fonts/',
-            src: ['**'],
-            dest: 'dist/fonts/'
-          }
-          //{src: ['bower_components/angular-ui-utils/ui-utils-ieshiv.min.js'], dest: 'dist/'},
-          //{src: ['bower_components/select2/*.png','bower_components/select2/*.gif'], dest:'dist/css/',flatten:true,expand:true},
-          //{src: ['bower_components/angular-mocks/angular-mocks.js'], dest: 'dist/'}
-        ]
-      }
-    },
     dom_munger:{
       read: {
         options: {
@@ -192,10 +162,10 @@ module.exports = function (grunt) {
         options: {
           remove: ['script[data-remove!="false"]','link[data-remove!="false"]'],
           append: [
-            {selector:'body',html:'<!--[if lte IE 8]><script src="/libcompat-v17.04.js"></script><![endif]--><!--[if gte IE 9]><script src="/libnocompat-v17.04.js"></script><![endif]--><!--[if !IE]><!--><script src="/libnocompat-v17.04.js"></script><!--<![endif]-->'},
+            {selector:'body',html:'<!--[if lte IE 8]><script src="/libcompat-v20.2.0.js"></script><![endif]--><!--[if gte IE 9]><script src="/libnocompat-v20.2.0.js"></script><![endif]--><!--[if !IE]><!--><script src="/libnocompat-v20.2.0.js"></script><!--<![endif]-->'},
             {selector:'body',html:'<!--All the source code of this program under copyright. Take a look at the license details at https://github.com/agoravoting/agora-core-view/blob/master/README.md -->'},
-            {selector:'body',html:'<script src="/appCommon-v17.04.js"></script>'},
-            {selector:'body',html:'<script src="/avPlugins-v17.04.js"></script>'},
+            {selector:'body',html:'<script src="/appCommon-v20.2.0.js"></script>'},
+            {selector:'body',html:'<script src="/avPlugins-v20.2.0.js"></script>'},
             {selector:'head',html:'<link rel="stylesheet" id="theme" href="/themes/default/app.min.css">'}
           ]
         },
@@ -225,9 +195,9 @@ module.exports = function (grunt) {
           'temp/libnocompat.js': ['<%= dom_munger.data.libnocompatjs %>'],
           'temp/lib.js': ['<%= dom_munger.data.libjs %>'],
           'temp/app.js': ['<%= dom_munger.data.appjs %>','<%= ngtemplates.main.dest %>'],
-          'dist/avConfig-v17.04.js': ['avConfig.js'],
-          'dist/avThemes-v17.04.js': ['avThemes.js'],
-          'dist/avPlugins-v17.04.js': ['plugins/**/*.js']
+          'dist/avConfig-v20.2.0.js': ['avConfig.js'],
+          'dist/avThemes-v20.2.0.js': ['avThemes.js'],
+          'dist/avPlugins-v20.2.0.js': ['plugins/**/*.js']
         }
       }
     },
@@ -237,6 +207,8 @@ module.exports = function (grunt) {
             "dist/locales/en.json": ["locales/en.json", "plugins/**/locales/en.json"],
             "dist/locales/es.json": ["locales/es.json", "plugins/**/locales/es.json"],
             "dist/locales/gl.json": ["locales/gl.json", "plugins/**/locales/gl.json"],
+            "dist/locales/sv.json": ["locales/sv.json", "plugins/**/locales/sv.json"],
+            "dist/locales/fi.json": ["locales/fi.json", "plugins/**/locales/fi.json"],
             "dist/locales/ca.json": ["locales/ca.json", "plugins/**/locales/ca.json"]
         }
       }
@@ -259,16 +231,67 @@ module.exports = function (grunt) {
           beautify: true
         },
         files: {
-          'dist/appCommon-v17.04.js': 'temp/app.js',
-          'dist/libCommon-v17.04.js': 'temp/lib.js',
-          'dist/libnocompat-v17.04.js': 'temp/libnocompat.js',
-          'dist/libcompat-v17.04.js': 'temp/libcompat.js',
+          'dist/appCommon-v20.2.0.js': 'temp/app.js',
+          'dist/libCommon-v20.2.0.js': 'temp/lib.js',
+          'dist/libnocompat-v20.2.0.js': 'temp/libnocompat.js',
+          'dist/libcompat-v20.2.0.js': 'temp/libcompat.js',
           'dist/avWidgets.js': 'avWidgets.js',
 
-          "dist/locales/moment/es.js": "bower_components/moment/lang/es.js",
-          "dist/locales/moment/gl.js": "bower_components/moment/lang/gl.js",
-          "dist/locales/moment/ca.js": "bower_components/moment/lang/ca.js"
+          "dist/locales/moment/es.js": "node_modules/moment/locale/es.js",
+          "dist/locales/moment/gl.js": "node_modules/moment/locale/gl.js",
+          "dist/locales/moment/ca.js": "node_modules/moment/locale/ca.js"
         }
+      }
+    },
+    copy: {
+      temp: {
+        files: [
+          {
+            expand: true,
+            cwd: 'node_modules/nanoscroller/bin/css/', 
+            src: ['*'],
+            dest: 'temp/'
+          },
+          {
+            expand: true,
+            cwd: 'node_modules/intl-tel-input/build/css/', 
+            src: ['*'],
+            dest: 'temp/'
+          }
+        ]
+      },
+      main: {
+        files: [
+          {src: ['img/**'], dest: 'dist/'},
+          {src: ['node_modules/intl-tel-input/build/img/flags.png'], dest: 'dist/img/flags.png'},
+          {src: ['node_modules/intl-tel-input/build/js/utils.js'], dest: 'dist/utils.js'},
+          {src: ['node_modules/intl-tel-input/build/css/intlTelInput.css'], dest: 'dist/intlTelInput.css'},
+          {src: ['node_modules/nanoscroller/bin/css/*.css'], dest: 'temp/'},
+          {src: ['temp_data/**'], dest: 'dist/'},
+          {src: ['avUi/**/*.less'], dest: 'dist/less/'},
+          {src: ['themes/**'], dest: 'dist/'},
+          {
+            expand: true,
+            cwd: 'node_modules/bootstrap/fonts/',
+            src: ['**'],
+            dest: 'dist/themes/fonts/'
+          },
+          {
+            expand: true,
+            cwd: 'node_modules/bootstrap/fonts/',
+            src: ['**'],
+            dest: 'dist/themes/fonts/'
+          },
+          {
+            expand: true,
+            cwd: 'node_modules/font-awesome/fonts/',
+            src: ['**'],
+            dest: 'dist/fonts/'
+          }
+          //{src: ['node_modules/angular-ui-utils/ui-utils-ieshiv.min.js'], dest: 'dist/'},
+          //{src: ['node_modules/select2/*.png','node_modules/select2/*.gif'], dest:'dist/css/',flatten:true,expand:true},
+          //{src: ['node_modules/angular-mocks/angular-mocks.js'], dest: 'dist/'}
+        ]
       }
     },
     htmlmin: {
@@ -307,7 +330,7 @@ module.exports = function (grunt) {
           'avWidgets.js',
           '<%= dom_munger.data.appjs %>',
           '<%= ngtemplates.main.dest %>',
-          'bower_components/angular-mocks/angular-mocks.js',
+          'node_modules/angular-mocks/angular-mocks.js',
           createFolderGlobs('*-spec.js')
         ],
         logLevel:'ERROR',
@@ -329,20 +352,40 @@ module.exports = function (grunt) {
         noColor: false, // If true, protractor will not use colors in its output.
         args: {
         // Arguments passed to the command
-      }
-    },
-    //your_target: {   // Grunt requires at least one target to run so you can simply put 'all: {}' here too.
-      all: {
-      options: {
-        configFile: "e2e.conf.js", // Target-specific config file
-        args: {} // Target-specific arguments
-      }
-    },
-  },
-
+        }
+      },
+      //your_target: {   // Grunt requires at least one target to run so you can simply put 'all: {}' here too.
+        all: {
+        options: {
+          configFile: "e2e.conf.js", // Target-specific config file
+          args: {} // Target-specific arguments
+        }
+      },
+    }
   });
 
-  grunt.registerTask('build',['check_config', 'jshint','clean:before','less','autoprefixer','dom_munger','ngtemplates','cssmin','concat','merge-json','ngAnnotate','uglify','copy','htmlmin','imagemin','clean:after']);
+  grunt.registerTask(
+    'build',
+    [
+      'check_config', 
+      'jshint',
+      'clean:before',
+      'copy:temp',
+      'less',
+      'autoprefixer',
+      'dom_munger',
+      'ngtemplates',
+      'cssmin',
+      'concat',
+      'merge-json',
+      'ngAnnotate',
+      'uglify',
+      'copy:main',
+      'htmlmin',
+      'imagemin',
+      'clean:after'
+    ]
+  );
   grunt.registerTask('serve', ['dom_munger:read','jshint','connect', 'watch']);
   grunt.registerTask('test',['dom_munger:read','karma:all_tests']);
 
@@ -368,7 +411,7 @@ module.exports = function (grunt) {
       if (grunt.file.exists(spec)) {
         var files = [].concat(grunt.config('dom_munger.data.libnocompatjs'));
         files.concat(grunt.config('dom_munger.data.libjs'));
-        files.push('bower_components/angular-mocks/angular-mocks.js');
+        files.push('node_modules/angular-mocks/angular-mocks.js');
         files.push('avConfig.js');
         files.push('avThemes.js');
         files.push('avWidgets.js');

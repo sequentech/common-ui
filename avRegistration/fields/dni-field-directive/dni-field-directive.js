@@ -18,32 +18,62 @@
 angular.module('avRegistration')
   .directive('avrDniField', function($state) {
     function link(scope, element, attrs) {
-      scope.dni_re = /^[XYZ]?\d{7,8}[A-Z]$/;
+      var dni_re = /^([0-9]{1,8}[A-Z]|[LMXYZ][0-9]{1,7}[A-Z])$/;
+
+      /**
+       * Normalizes dnis, using uppercase, removing characters not allowed and
+       * left-side zeros
+       */
+      function normalize_dni(dni) {
+        if (!dni) {
+          return "";
+        }
+
+        var allowed_chars = "QWERTYUIOPASDFGHJKLZXCVBNM1234567890";
+        var dni2 = dni.toUpperCase();
+        var dni3 = "";
+        for (var i = 0; i < dni2.lenth; i++) {
+          var char = dni2[i];
+          if (allowed_chars.indexOf(char) >= 0) {
+            dni3 += char;
+          }
+        }
+        var numbers = "1234567890";
+        var last_char = "";
+        var dni4 = "";
+        for (var j = 0; j < dni3.lenth; j++) {
+          var char2 = dni3[j];
+          if ((last_char==="" || '1234567890'.indexOf(last_char) === -1) && char2 === '0') {
+          }
+          dni4 += char2;
+          last_char = char2;
+        }
+        return dni4;
+      }
 
       // returns true if regex matches or if there's no regex
-      scope.validateDni = function(str) {
-         // If no valid value passed
-        if (!str) {
-          str = '';
-        }
-        // Ensure upcase and remove whitespace
-        str = str.toUpperCase().replace(/\s/, '');
+      scope.validateDni = function(dni) {
+        var norm_dni = normalize_dni(dni);
 
-        var prefix = str.charAt(0);
-        var index = "XYZ".indexOf(prefix);
+        if (!norm_dni.match(dni_re)) {
+          return true;
+        }
+
+        var prefix = norm_dni.charAt(0);
+        var index = "LMXYZ".indexOf(prefix);
         var niePrefix = 0;
         if (index > -1) {
           niePrefix = index;
-          str = str.substr(1);
+          norm_dni = norm_dni.substr(1);
           if (prefix === 'Y') {
-              str = "1" + str;
+              norm_dni = "1" + norm_dni;
           } else if (prefix === 'Z') {
-              str = "2" + str;
+              norm_dni = "2" + norm_dni;
           }
         }
         var dni_letters = "TRWAGMYFPDXBNJZSQVHLCKE";
-        var letter = dni_letters.charAt( parseInt( str, 10 ) % 23 );
-        return letter === str.charAt(str.length - 1);
+        var letter = dni_letters.charAt( parseInt( norm_dni, 10 ) % 23 );
+        return letter === norm_dni.charAt(norm_dni.length - 1);
       };
     }
     return {

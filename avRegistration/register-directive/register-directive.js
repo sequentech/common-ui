@@ -36,9 +36,12 @@ angular.module('avRegistration')
 
         scope.getLoginDetails = function (eventId) {
           if (!scope.admin) {
-              return {path: 'election.public.show.login', data: {id: eventId}};
+              return {
+                path: 'election.public.show.login_email',
+                data: {id: eventId, email: scope.email}
+              };
           } else {
-              return {path: 'admin.login', data:{}};
+              return {path: 'admin.login_email', data:{email: scope.email}};
           }
         };
 
@@ -52,45 +55,52 @@ angular.module('avRegistration')
             };
             _.each(scope.register_fields, function (field) {
               data[field.name] = field.value;
-              if (field.name === 'email') {
+              if (field.name === 'email' && _.contains(['email', 'email-otp'], scope.method))
+              {
+                scope.email = field.value;
+              }
+              else if (field.name === 'tlf' &&
+                _.contains(['sms', 'sms-otp'], scope.method))
+              {
                 scope.email = field.value;
               }
             });
             var details;
             Authmethod.signup(data, autheventid)
-                .success(function(rcvData) {
+                .then(
+                  function onSuccess(response) {
                     details = scope.getLoginDetails(autheventid);
-                    if (rcvData.status === "ok") {
-                        scope.user = rcvData.user;
+                    if (response.data.status === "ok") {
+                        scope.user = response.data.user;
                         StateDataService.go(details.path, details.data, data);
-                        // TEST
-                        scope.error = rcvData.msg || $sce.trustAsHtml($i18next('avRegistration.invalidRegisterData', {
+                        scope.error = response.data.msg || $sce.trustAsHtml($i18next('avRegistration.invalidRegisterData', {
                           url: $state.href(details.path, details.data)
                         }));
                     } else {
                         scope.sendingData = false;
                         scope.status = 'Not found';
-                        scope.error = rcvData.msg || $sce.trustAsHtml($i18next('avRegistration.invalidRegisterData', {
+                        scope.error = response.data.msg || $sce.trustAsHtml($i18next('avRegistration.invalidRegisterData', {
                           url: $state.href(details.path, details.data)
                         }));
                     }
-                })
-                .error(function(error) {
+                  },
+                  function onError(response) {
                     details = scope.getLoginDetails(autheventid);
                     scope.sendingData = false;
-                    scope.status = 'Registration error: ' + error.message;
+                    scope.status = 'Registration error: ' + response.data.message;
 
-                    if (!!error.error_codename && error.error_codename === 'invalid-dni') {
+                    if (!!response.data.error_codename && response.data.error_codename === 'invalid-dni') {
                       scope.error = $sce.trustAsHtml($i18next('avRegistration.invalidRegisterDNI'));
                     } else {
-                        scope.error = error.msg || $sce.trustAsHtml($i18next('avRegistration.invalidRegisterData', {
+                        scope.error = response.data.msg || $sce.trustAsHtml($i18next('avRegistration.invalidRegisterData', {
                           url: $state.href(details.path, details.data)
                         }));
-                        if (error.msg === 'Invalid captcha') {
+                        if (response.data.msg === 'Invalid captcha') {
                             Authmethod.newCaptcha();
                         }
                     }
-                });
+                  }
+                );
         };
 
         scope.goLogin = function(event) {
@@ -117,7 +127,7 @@ angular.module('avRegistration')
             scope.authevent = authevent;
 
             // if registration is closed, redirect to login
-            if (authevent['census'] !== 'open') {
+            if (authevent['census'] !== 'open' || scope.method === 'openid-connect') {
               if (authevent['id'] === ConfigService.freeAuthId) {
                   $state.go("admin.login");
               } else {
@@ -140,18 +150,20 @@ angular.module('avRegistration')
 
         scope.view = function(id) {
             Authmethod.viewEvent(id)
-                .success(function(data) {
-                    if (data.status === "ok") {
-                        scope.apply(data.events);
+                .then(
+                  function onSuccess(response) {
+                    if (response.data.status === "ok") {
+                        scope.apply(response.data.events);
                     } else {
                         scope.status = 'Not found';
                         document.querySelector(".input-error").style.display = "block";
                     }
-                })
-                .error(function(error) {
-                    scope.status = 'Scan error: ' + error.message;
+                  },
+                  function onError(response) {
+                    scope.status = 'Scan error: ' + response.data.message;
                     document.querySelector(".input-error").style.display = "block";
-                });
+                  }
+                );
         };
 
         scope.view(autheventid);

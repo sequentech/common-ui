@@ -14,34 +14,34 @@
   <!-- IE8 bind workaround (needed for less) -->
   <script src="/ie8-bind-workaround.js"></script>
   
-  <!-- JS from Bower Components -->
-  <script src="bower_components/less.js/dist/less-1.6.2.js"></script>
-  <script src="bower_components/jquery/jquery.js" class="libnocompat"></script>
-  <script src="bower_components/bootstrap/dist/js/bootstrap.js" class="lib"></script>
-  <script src="bower_components/underscore/underscore.js" class="lib"></script>
-  <script src="bower_components/angular/angular.js" class="lib"></script>
-  <script src="bower_components/angular-sanitize/angular-sanitize.js" class="lib"></script>
-  <script src="bower_components/moment/moment.js" class="lib"></script>
-  <script src="bower_components/angular-moment/angular-moment.js" class="lib"></script>
-  <script src="bower_components/angular-ui-router/release/angular-ui-router.js" class="lib"></script>
-  <script src="bower_components/angular-animate/angular-animate.js" class="lib"></script>
-  <script src="bower_components/angular-resource/angular-resource.js" class="lib"></script>
-  <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js" class="lib"></script>
-  <script src="bower_components/angular-bootstrap/dropdown.js" class="lib"></script>
-  <script src="bower_components/angular-ui-utils/ui-utils.js" class="lib"></script>
-  <script src="bower_components/angular-cookies/angular-cookies.js" class="lib"></script>
-  <script src="bower_components/angular-cookie/angular-cookie.js" class="lib"></script>
-  <script src="bower_components/angular-load/angular-load.js" class="lib"></script>
-  <script src="bower_components/i18next/i18next.js" class="lib"></script>
-  <script src="bower_components/ng-i18next/dist/ng-i18next.js" class="lib"></script>
-  <script src="bower_components/angular-drag-and-drop-lists/angular-drag-and-drop-lists.js" class="lib"></script>
-  <script src="bower_components/ngInfiniteScroll/build/ng-infinite-scroll.min.js" class="lib"></script>
-  <script src="bower_components/papaparse/papaparse.min.js" class="lib"></script>
-  <script src="bower_components/file-saver/FileSaver.min.js" class="lib"></script>
-  <script src="bower_components/ng-file-upload/angular-file-upload.js" class="lib"></script>
-  <script src="bower_components/ng-autofocus/dist/ng-autofocus.js" class="lib"></script>
-  <script src="bower_components/css-element-queries/src/ResizeSensor.js" class="lib"></script>
-  <script src="bower_components/rng-js/rng.js" class="lib"></script>
+  <!-- JS from node modules -->
+  <script src="node_modules/less/dist/less.js"></script>
+  <script src="node_modules/jquery/dist/jquery.js" class="libnocompat"></script>
+  <script src="node_modules/bootstrap/dist/js/bootstrap.js" class="lib"></script>
+  <script src="node_modules/underscore/underscore.js" class="lib"></script>
+  <script src="node_modules/angular/angular.js" class="lib"></script>
+  <script src="node_modules/angular-sanitize/angular-sanitize.js" class="lib"></script>
+  <script src="node_modules/moment/moment.js" class="lib"></script>
+  <script src="node_modules/angular-moment/angular-moment.js" class="lib"></script>
+  <script src="node_modules/@bower_components/angular-ui-router/release/angular-ui-router.js" class="lib"></script>
+  <script src="node_modules/angular-animate/angular-animate.js" class="lib"></script>
+  <script src="node_modules/angular-resource/angular-resource.js" class="lib"></script>
+  <script src="node_modules/@bower_components/angular-bootstrap/ui-bootstrap-tpls.js" class="lib"></script>
+  <script src="node_modules/@bower_components/angular-ui-utils/ui-utils.js" class="lib"></script>
+  <script src="node_modules/@bower_components/ng-autofocus/dist/ng-autofocus.js" class="lib"></script>
+  <script src="node_modules/angular-cookies/angular-cookies.js" class="lib"></script>
+  <script src="node_modules/angular-cookie/angular-cookie.js" class="lib"></script>
+  <script src="node_modules/angular-load/angular-load.js" class="lib"></script>
+  <script src="node_modules/@bower_components/i18next/i18next.js" class="lib"></script>
+  <script src="node_modules/@bower_components/ng-i18next/dist/ng-i18next.js" class="lib"></script>
+  <script src="node_modules/angular-drag-and-drop-lists/angular-drag-and-drop-lists.js" class="lib"></script>
+  <script src="node_modules/@bower_components/ngInfiniteScroll/build/ng-infinite-scroll.js" class="lib"></script>
+  <script src="node_modules/papaparse/papaparse.js" class="lib"></script>
+  <script src="node_modules/file-saver/dist/FileSaver.js" class="lib"></script>
+  <script src="node_modules/ng-file-upload/dist/angular-file-upload.js" class="lib"></script>
+  <script src="node_modules/css-element-queries/src/ResizeSensor.js" class="lib"></script>
+  <script src="node_modules/rng-js/rng.js" class="lib"></script>
+  <script src="node_modules/intl-tel-input/build/js/intlTelInput.js" class="lib"></script>
   <!-- Add New Bower Component JS Above -->
 
   <!-- JS from Vendor Components -->
@@ -65,6 +65,7 @@
   <script src="avRegistration/auth-method-service.js" class="app"></script>
   <script src="avRegistration/login-controller/login-controller.js" class="app"></script>
   <script src="avRegistration/login-directive/login-directive.js" class="app"></script>
+  <script src="avRegistration/openid-connect-directive/openid-connect-directive.js" class="app"></script>
   <script src="avRegistration/logout-controller/logout-controller.js" class="app"></script>
   <script src="avRegistration/register-controller/register-controller.js" class="app"></script>
   <script src="avRegistration/register-directive/register-directive.js" class="app"></script>
@@ -73,6 +74,7 @@
   <script src="avRegistration/patterns-service.js" class="app"></script>
   <script src="avRegistration/field-directive/field-directive.js" class="app"></script>
   <script src="avRegistration/fields/email-field-directive/email-field-directive.js" class="app"></script>
+  <script src="avRegistration/fields/date-field-directive/date-field-directive.js" class="app"></script>
   <script src="avRegistration/fields/password-field-directive/password-field-directive.js" class="app"></script>
   <script src="avRegistration/fields/text-field-directive/text-field-directive.js" class="app"></script>
   <script src="avRegistration/fields/dni-field-directive/dni-field-directive.js" class="app"></script>
@@ -109,7 +111,7 @@
   <script src="avUi/custom-delegates.js" class="app"></script>
   <script src="avUi/documentation-directive/documentation-directive.js" class="app"></script>
   <script src="avUi/foot-directive/foot-directive.js" class="app"></script>
-  
+
   <script src="app.js" class="app"></script>
 
   <script src="test/test.js" class="app"></script>
@@ -121,7 +123,7 @@
 
   <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
   <script src="/ie10-viewport-bug-workaround.js"></script>
-  
+
   <!-- IE9 console workaround -->
   <script src="/ie9-console-workaround.js"></script>
   <!-- Add New Component JS Above -->

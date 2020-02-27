@@ -1,18 +1,29 @@
-!function(factory) {
-    "function" == typeof define && define.amd ? define([ "moment" ], factory) : "object" == typeof exports ? module.exports = factory(require("../moment")) : factory(window.moment);
-}(function(moment) {
-    return moment.lang("ca", {
-        months: "gener_febrer_març_abril_maig_juny_juliol_agost_setembre_octubre_novembre_desembre".split("_"),
-        monthsShort: "gen._febr._mar._abr._mai._jun._jul._ag._set._oct._nov._des.".split("_"),
+!function(global, factory) {
+    "object" == typeof exports && "undefined" != typeof module && "function" == typeof require ? factory(require("../moment")) : "function" == typeof define && define.amd ? define([ "../moment" ], factory) : factory(global.moment);
+}(this, function(moment) {
+    "use strict";
+    return moment.defineLocale("ca", {
+        months: {
+            standalone: "gener_febrer_març_abril_maig_juny_juliol_agost_setembre_octubre_novembre_desembre".split("_"),
+            format: "de gener_de febrer_de març_d'abril_de maig_de juny_de juliol_d'agost_de setembre_d'octubre_de novembre_de desembre".split("_"),
+            isFormat: /D[oD]?(\s)+MMMM/
+        },
+        monthsShort: "gen._febr._març_abr._maig_juny_jul._ag._set._oct._nov._des.".split("_"),
+        monthsParseExact: !0,
         weekdays: "diumenge_dilluns_dimarts_dimecres_dijous_divendres_dissabte".split("_"),
         weekdaysShort: "dg._dl._dt._dc._dj._dv._ds.".split("_"),
-        weekdaysMin: "Dg_Dl_Dt_Dc_Dj_Dv_Ds".split("_"),
+        weekdaysMin: "dg_dl_dt_dc_dj_dv_ds".split("_"),
+        weekdaysParseExact: !0,
         longDateFormat: {
             LT: "H:mm",
+            LTS: "H:mm:ss",
             L: "DD/MM/YYYY",
-            LL: "D MMMM YYYY",
-            LLL: "D MMMM YYYY LT",
-            LLLL: "dddd D MMMM YYYY LT"
+            LL: "D MMMM [de] YYYY",
+            ll: "D MMM YYYY",
+            LLL: "D MMMM [de] YYYY [a les] H:mm",
+            lll: "D MMM YYYY, H:mm",
+            LLLL: "dddd D MMMM [de] YYYY [a les] H:mm",
+            llll: "ddd D MMM YYYY, H:mm"
         },
         calendar: {
             sameDay: function() {
@@ -33,7 +44,7 @@
             sameElse: "L"
         },
         relativeTime: {
-            future: "en %s",
+            future: "d'aquí %s",
             past: "fa %s",
             s: "uns segons",
             m: "un minut",
@@ -47,7 +58,11 @@
             y: "un any",
             yy: "%d anys"
         },
-        ordinal: "%dº",
+        dayOfMonthOrdinalParse: /\d{1,2}(r|n|t|è|a)/,
+        ordinal: function(number, period) {
+            var output = 1 === number ? "r" : 2 === number ? "n" : 3 === number ? "r" : 4 === number ? "t" : "è";
+            return "w" !== period && "W" !== period || (output = "a"), number + output;
+        },
         week: {
             dow: 1,
             doy: 4
