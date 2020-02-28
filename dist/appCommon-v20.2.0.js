@@ -260,8 +260,11 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                 authmethod.launchPingDaemon(autheventid);
             }, 500 * ConfigService.timeoutSeconds)), !1;
         },
-        electionsIds: function(page) {
-            return page = page || 1, $http.get(backendUrl + "acl/mine/?object_type=AuthEvent&perm=edit|view&order=-pk&page=" + page);
+        electionsIds: function(page, listType) {
+            page = page || 1;
+            var perms = "edit|view";
+            return "archived" === (listType = listType || "all") && (perms = "unarchive|view-archived"), 
+            $http.get(backendUrl + "acl/mine/?object_type=AuthEvent&perm=" + perms + "&order=-pk&page=" + page);
         },
         sendAuthCodes: function(eid, election, user_ids, auth_method, extra) {
             var url = backendUrl + "auth-event/" + eid + "/census/send_auth/", data = {};
