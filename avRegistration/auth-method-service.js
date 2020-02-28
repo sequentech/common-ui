@@ -474,11 +474,27 @@ angular.module('avRegistration')
             return false;
         };
 
-        authmethod.electionsIds = function(page) {
+        authmethod.electionsIds = function(page, listType) {
             if (!page) {
                 page = 1;
             }
-            return $http.get(backendUrl + 'acl/mine/?object_type=AuthEvent&perm=edit|view&order=-pk&page='+page);
+            if (!listType) {
+              listType = 'all';
+            }
+            
+            // default perms to request
+            var perms = 'edit|view';
+            if (listType === 'archived') {
+              perms = 'unarchive|view-archived';
+            }
+
+            return $http.get(
+              backendUrl + 
+              'acl/mine/?object_type=AuthEvent&perm=' +
+              perms +
+              '&order=-pk&page=' +
+              page
+            );
         };
 
         authmethod.sendAuthCodes = function(eid, election, user_ids, auth_method, extra) {
