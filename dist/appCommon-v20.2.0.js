@@ -296,6 +296,14 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             var url = backendUrl + "auth-event/" + eid + "/" + st + "/";
             return $http.post(url, {});
         },
+        archive: function(eid) {
+            var url = backendUrl + "auth-event/" + eid + "/archive/";
+            return $http.post(url, {});
+        },
+        unarchive: function(eid) {
+            var url = backendUrl + "auth-event/" + eid + "/unarchive/";
+            return $http.post(url, {});
+        },
         launchPingDaemon: function(autheventid) {
             var postfix = "_authevent_" + autheventid;
             $cookies["isAdmin" + postfix] && authmethod.ping().then(function(response) {
