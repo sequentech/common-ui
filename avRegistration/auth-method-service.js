@@ -549,7 +549,7 @@ angular.module('avRegistration')
         };
 
         authmethod.unarchive = function(eid) {
-            var url = backendUrl + 'auth-event/'+eid+'/archive/';
+            var url = backendUrl + 'auth-event/'+eid+'/unarchive/';
             var data = {};
             return $http.post(url, data);
         };

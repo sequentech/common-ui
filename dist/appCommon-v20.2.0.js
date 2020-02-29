@@ -301,7 +301,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             return $http.post(url, {});
         },
         unarchive: function(eid) {
-            var url = backendUrl + "auth-event/" + eid + "/archive/";
+            var url = backendUrl + "auth-event/" + eid + "/unarchive/";
             return $http.post(url, {});
         },
         launchPingDaemon: function(autheventid) {
