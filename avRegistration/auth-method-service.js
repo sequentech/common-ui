@@ -542,6 +542,18 @@ angular.module('avRegistration')
             return $http.post(url, data);
         };
 
+        authmethod.archive = function(eid) {
+            var url = backendUrl + 'auth-event/'+eid+'/archive/';
+            var data = {};
+            return $http.post(url, data);
+        };
+
+        authmethod.unarchive = function(eid) {
+            var url = backendUrl + 'auth-event/'+eid+'/archive/';
+            var data = {};
+            return $http.post(url, data);
+        };
+
         authmethod.launchPingDaemon = function(autheventid) {
           var postfix = "_authevent_" + autheventid;
           // only needed if it's an admin and daemon has not been launched
