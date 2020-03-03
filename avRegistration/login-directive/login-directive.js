@@ -124,7 +124,7 @@ angular.module('avRegistration')
               function (element, index) {
                 element.index = index;
                 return (
-                  element.steps == undefined || 
+                  element.steps === undefined || 
                   element.steps.indexOf(0) !== -1
                 );
               }
@@ -143,7 +143,7 @@ angular.module('avRegistration')
                 ) {
                   stop = true;
                 }
-                return [element.name, element.value]
+                return [element.name, element.value];
               }
             ).object();
           
@@ -167,7 +167,7 @@ angular.module('avRegistration')
                   scope.login_fields, 
                   function (element) {
                     if (
-                      element.steps == undefined || 
+                      element.steps === undefined || 
                       element.steps.indexOf(0) !== -1
                     ) {
                       element.disabled = true;
