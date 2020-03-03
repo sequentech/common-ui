@@ -118,8 +118,8 @@ angular.module('avRegistration')
           // new auth codes by filtering and validating login fields 
           // with steps == undefined or included in step 0
           var stop = false;
-          var data = _
-            .filter(
+          var data = _.object(
+            _.filter(
               scope.login_fields, 
               function (element, index) {
                 element.index = index;
@@ -145,7 +145,8 @@ angular.module('avRegistration')
                 }
                 return [element.name, element.value];
               }
-            ).object();
+            )
+          );
           
           // if any issue found, do not proceed
           if (stop) {

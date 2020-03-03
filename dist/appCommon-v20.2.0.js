@@ -369,7 +369,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             scope.email = null, attrs.email && 0 < attrs.email.length && (scope.email = attrs.email), 
             scope.isAdmin = !1, autheventid === adminId && (scope.isAdmin = !0), scope.resendAuthCode = function(field) {
                 if (!scope.sendingData && _.contains([ "email", "email-otp", "sms", "sms-otp" ], scope.method) && !(_.contains([ "sms", "sms-otp" ], scope.method) && -1 === scope.telIndex && !scope.hide_default_login_lookup_field || _.contains([ "email", "email-otp" ], scope.method) && -1 === scope.emailIndex && !scope.hide_default_login_lookup_field)) {
-                    var stop = !1, data = _.filter(scope.login_fields, function(element, index) {
+                    var stop = !1, data = _.object(_.filter(scope.login_fields, function(element, index) {
                         return element.index = index, void 0 === element.steps || -1 !== element.steps.indexOf(0);
                     }).map(function(element) {
                         var email, pattern, inputName;
@@ -377,7 +377,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                         !document.getElementById(inputName) || !angular.element(document.getElementById(inputName)).intlTelInput("isValidNumber")) || _.contains([ "email", "email-otp" ], scope.method) && element.index === scope.emailIndex && (email = element.value, 
                         pattern = Patterns.get("email"), null === email.match(pattern))) && (stop = !0), 
                         [ element.name, element.value ];
-                    }).object();
+                    }));
                     stop || (field && (field.value = ""), scope.sendingData = !0, Authmethod.resendAuthCode(data, autheventid).then(function(response) {
                         _.each(scope.login_fields, function(element) {
                             void 0 !== element.steps && -1 === element.steps.indexOf(0) || (element.disabled = !0);
