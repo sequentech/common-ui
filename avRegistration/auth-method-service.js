@@ -317,7 +317,7 @@ angular.module('avRegistration')
             {params:params});
         };
 
-        authmethod.getRegisterFields = function (viewEventData) {
+        authmethod.getRegisterFields = function (viewEventData, hide_default_login_lookup_field) {
           var fields = _.filter(
             angular.copy(viewEventData.extra_fields),
             function (item) {
@@ -340,14 +340,14 @@ angular.module('avRegistration')
             }
           });
 
-          if ((viewEventData.auth_method === "sms" || viewEventData.auth_method === "sms-otp") && !found) {
+          if ((viewEventData.auth_method === "sms" || viewEventData.auth_method === "sms-otp") && !found && !hide_default_login_lookup_field) {
             fields.push({
               "name": "tlf",
               "type": "tlf",
               "required": true,
               "required_on_authentication": true
             });
-          } else if (_.contains(["email", 'email-otp'], viewEventData.auth_method) && !found) {
+          } else if (_.contains(["email", 'email-otp'], viewEventData.auth_method) && !found && !hide_default_login_lookup_field) {
             fields.push({
               "name": "email",
               "type": "email",
@@ -355,12 +355,14 @@ angular.module('avRegistration')
               "required_on_authentication": true
             });
           } else if (viewEventData.auth_method === "user-and-password") {
-            fields.push({
-              "name": "username",
-              "type": "text",
-              "required": true,
-              "required_on_authentication": true
-            });
+            if (!hide_default_login_lookup_field) {
+              fields.push({
+                "name": "username",
+                "type": "text",
+                "required": true,
+                "required_on_authentication": true
+              });
+            }
             fields.push({
               "name": "password",
               "type": "password",
@@ -368,12 +370,14 @@ angular.module('avRegistration')
               "required_on_authentication": true
             });
           } else if (viewEventData.auth_method === "email-and-password") {
-            fields.push({
-              "name": "email",
-              "type": "email",
-              "required": true,
-              "required_on_authentication": true
-            });
+            if (!hide_default_login_lookup_field) {
+              fields.push({
+                "name": "email",
+                "type": "email",
+                "required": true,
+                "required_on_authentication": true
+              });
+            }
             fields.push({
               "name": "password",
               "type": "password",
@@ -408,7 +412,10 @@ angular.module('avRegistration')
         };
 
         authmethod.getLoginFields = function (viewEventData) {
-            var fields = authmethod.getRegisterFields(viewEventData);
+            var fields = authmethod.getRegisterFields(
+              viewEventData,
+              viewEventData.hide_default_login_lookup_field
+            );
             if (_.contains(["sms", "email"], viewEventData.auth_method))
             {
               fields.push({
