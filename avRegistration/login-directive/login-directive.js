@@ -116,14 +116,17 @@ angular.module('avRegistration')
 
           // obtain the data to be sent to the authapi to request
           // new auth codes by filtering and validating login fields 
-          // with required_on_authentication=true
+          // with steps == undefined or included in step 0
           var stop = false;
           var data = _
             .filter(
               scope.login_fields, 
               function (element, index) {
                 element.index = index;
-                return element.required_on_authentication
+                return (
+                  element.steps == undefined || 
+                  element.steps.indexOf(0) !== -1
+                );
               }
             ).map(
               function (element) {
@@ -159,11 +162,14 @@ angular.module('avRegistration')
           Authmethod.resendAuthCode(data, autheventid)
             .then(
               function(response) {
-                // disabling login that are required fields on authentication
+                // disabling login that are from previous step
                 _.each(
                   scope.login_fields, 
                   function (element) {
-                    if (element.required_on_authentication) {
+                    if (
+                      element.steps == undefined || 
+                      element.steps.indexOf(0) !== -1
+                    ) {
                       element.disabled = true;
                     }
                   }
