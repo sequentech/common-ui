@@ -35,6 +35,9 @@ angular.module('avRegistration')
       function link(scope, element, attrs)
       {
         scope.isCensusQuery = attrs.isCensusQuery;
+
+        // by default
+        scope.hide_default_login_lookup_field = false;
         var adminId = ConfigService.freeAuthId + '';
         var autheventid = scope.eventId = attrs.eventId;
         scope.orgName = ConfigService.organization.orgName;
@@ -84,40 +87,72 @@ angular.module('avRegistration')
           return null !== email.match(pattern);
         }
 
+        /**
+         * Send auth codes now to the voter
+         */
         scope.resendAuthCode = function(field) {
-          if (scope.sendingData || !_.contains(["email", "email-otp", "sms", "sms-otp"], scope.method)) {
+          // if invalid method or already sending data, do not proceed
+          if (
+            scope.sendingData || 
+            !_.contains(["email", "email-otp", "sms", "sms-otp"], scope.method)
+          ) {
               return;
           }
-          var data = {};
 
-          // sms or sms-otp
-          if (_.contains(["sms", "sms-otp"], scope.method)) {
-
-            if (scope.telIndex === -1) {
-              return;
-            }
-
-            if (!isValidTel("input" + scope.telIndex)) {
-              return;
-            }
-
-            data['tlf'] = scope.telField.value;
-
-          // email or email-otp
-          } else if (_.contains(["email", "email-otp"], scope.method)) {
-            if (-1 === scope.emailIndex) {
-              return;
-            }
-            var email = scope.email;
-            if (null === email) {
-              email = scope.login_fields[scope.emailIndex].value;
-            }
-            if (!isValidEmail(email)) {
-              return;
-            }
-
-            data['email'] = email;
+          // if telIndex or emailIndex not set when needed, do not proceed
+          if (
+             (
+              _.contains(["sms", "sms-otp"], scope.method) &&
+              scope.telIndex === -1 &&
+              !scope.hide_default_login_lookup_field
+            ) || (
+              _.contains(["email", "email-otp"], scope.method) &&
+              scope.emailIndex === -1 &&
+              !scope.hide_default_login_lookup_field
+            )
+          ) {
+            return;
           }
+
+          // obtain the data to be sent to the authapi to request
+          // new auth codes by filtering and validating login fields 
+          // with steps == undefined or included in step 0
+          var stop = false;
+          var data = _.object(
+            _.filter(
+              scope.login_fields, 
+              function (element, index) {
+                element.index = index;
+                return (
+                  element.steps === undefined || 
+                  element.steps.indexOf(0) !== -1
+                );
+              }
+            ).map(
+              function (element) {
+                if (
+                  (
+                    _.contains(["sms", "sms-otp"], scope.method) &&
+                    element.index === scope.telIndex &&
+                    !isValidTel("input" + scope.telIndex)
+                  ) || (
+                    _.contains(["email", "email-otp"], scope.method) &&
+                    element.index === scope.emailIndex &&
+                    !isValidEmail(element.value)
+                  )
+                ) {
+                  stop = true;
+                }
+                return [element.name, element.value];
+              }
+            )
+          );
+          
+          // if any issue found, do not proceed
+          if (stop) {
+            return;
+          }
+
 
           // reset code field, as we are going to send a new one
           if (!!field) {
@@ -128,13 +163,18 @@ angular.module('avRegistration')
           Authmethod.resendAuthCode(data, autheventid)
             .then(
               function(response) {
-                if (_.contains(["sms", "sms-otp"], scope.method)) {
-                  scope.telField.disabled = true;
-
-                // email or email-otp
-                }  else {
-                  scope.login_fields[scope.emailIndex].disabled = true;
-                }
+                // disabling login that are from previous step
+                _.each(
+                  scope.login_fields, 
+                  function (element) {
+                    if (
+                      element.steps === undefined || 
+                      element.steps.indexOf(0) !== -1
+                    ) {
+                      element.disabled = true;
+                    }
+                  }
+                );
                 scope.currentFormStep = 1;
                 $timeout(scope.sendingDataTimeout, 3000);
               },
@@ -272,6 +312,7 @@ angular.module('avRegistration')
             } else {
               scope.login_fields = Authmethod.getCensusQueryFields(authevent);
             }
+            scope.hide_default_login_lookup_field = authevent.hide_default_login_lookup_field;
             scope.telIndex = -1;
             scope.emailIndex = -1;
             scope.telField = null;

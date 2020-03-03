@@ -168,7 +168,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                 params: params
             }) : $http.get(backendUrl + "auth-event/" + id + "/census/");
         },
-        getRegisterFields: function(viewEventData) {
+        getRegisterFields: function(viewEventData, hide_default_login_lookup_field) {
             var fields = _.filter(angular.copy(viewEventData.extra_fields), function(item) {
                 return !0 !== item.required_when_registered;
             });
@@ -177,12 +177,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             _.each(fields, function(field) {
                 "sms" === viewEventData.auth_method && "tlf" === field.name ? ("text" === field.type && (field.type = "tlf"), 
                 found = !0) : "email" === viewEventData.auth_method && "email" === field.name && (found = !0);
-            }), "sms" !== viewEventData.auth_method && "sms-otp" !== viewEventData.auth_method || found ? _.contains([ "email", "email-otp" ], viewEventData.auth_method) && !found ? fields.push({
-                name: "email",
-                type: "email",
-                required: !0,
-                required_on_authentication: !0
-            }) : "user-and-password" === viewEventData.auth_method ? (fields.push({
+            }), "sms" !== viewEventData.auth_method && "sms-otp" !== viewEventData.auth_method || found || hide_default_login_lookup_field ? !_.contains([ "email", "email-otp" ], viewEventData.auth_method) || found || hide_default_login_lookup_field ? "user-and-password" === viewEventData.auth_method ? (hide_default_login_lookup_field || fields.push({
                 name: "username",
                 type: "text",
                 required: !0,
@@ -192,7 +187,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                 type: "password",
                 required: !0,
                 required_on_authentication: !0
-            })) : "email-and-password" === viewEventData.auth_method && (fields.push({
+            })) : "email-and-password" === viewEventData.auth_method && (hide_default_login_lookup_field || fields.push({
                 name: "email",
                 type: "email",
                 required: !0,
@@ -203,6 +198,11 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                 required: !0,
                 required_on_authentication: !0
             })) : fields.push({
+                name: "email",
+                type: "email",
+                required: !0,
+                required_on_authentication: !0
+            }) : fields.push({
                 name: "tlf",
                 type: "tlf",
                 required: !0,
@@ -222,7 +222,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             });
         },
         getLoginFields: function(viewEventData) {
-            var fields = authmethod.getRegisterFields(viewEventData);
+            var fields = authmethod.getRegisterFields(viewEventData, viewEventData.hide_default_login_lookup_field);
             _.contains([ "sms", "email" ], viewEventData.auth_method) ? fields.push({
                 name: "code",
                 type: "code",
@@ -355,7 +355,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         restrict: "AE",
         scope: !0,
         link: function(scope, element, attrs) {
-            scope.isCensusQuery = attrs.isCensusQuery;
+            scope.isCensusQuery = attrs.isCensusQuery, scope.hide_default_login_lookup_field = !1;
             var adminId = ConfigService.freeAuthId + "", autheventid = scope.eventId = attrs.eventId;
             function randomStr() {
                 var random = sjcl.random.randomWords(64, 0);
@@ -368,27 +368,23 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             scope.code = null, attrs.code && 0 < attrs.code.length && (scope.code = attrs.code), 
             scope.email = null, attrs.email && 0 < attrs.email.length && (scope.email = attrs.email), 
             scope.isAdmin = !1, autheventid === adminId && (scope.isAdmin = !0), scope.resendAuthCode = function(field) {
-                if (!scope.sendingData && _.contains([ "email", "email-otp", "sms", "sms-otp" ], scope.method)) {
-                    var inputName, data = {};
-                    if (_.contains([ "sms", "sms-otp" ], scope.method)) {
-                        if (-1 === scope.telIndex) return;
-                        if (inputName = "input" + scope.telIndex, !document.getElementById(inputName) || !angular.element(document.getElementById(inputName)).intlTelInput("isValidNumber")) return;
-                        data.tlf = scope.telField.value;
-                    } else if (_.contains([ "email", "email-otp" ], scope.method)) {
-                        if (-1 === scope.emailIndex) return;
-                        var email = scope.email;
-                        if (null === email && (email = scope.login_fields[scope.emailIndex].value), !function(email) {
-                            var pattern = Patterns.get("email");
-                            return null !== email.match(pattern);
-                        }(email)) return;
-                        data.email = email;
-                    }
-                    field && (field.value = ""), scope.sendingData = !0, Authmethod.resendAuthCode(data, autheventid).then(function(response) {
-                        _.contains([ "sms", "sms-otp" ], scope.method) ? scope.telField.disabled = !0 : scope.login_fields[scope.emailIndex].disabled = !0, 
-                        scope.currentFormStep = 1, $timeout(scope.sendingDataTimeout, 3e3);
+                if (!scope.sendingData && _.contains([ "email", "email-otp", "sms", "sms-otp" ], scope.method) && !(_.contains([ "sms", "sms-otp" ], scope.method) && -1 === scope.telIndex && !scope.hide_default_login_lookup_field || _.contains([ "email", "email-otp" ], scope.method) && -1 === scope.emailIndex && !scope.hide_default_login_lookup_field)) {
+                    var stop = !1, data = _.object(_.filter(scope.login_fields, function(element, index) {
+                        return element.index = index, void 0 === element.steps || -1 !== element.steps.indexOf(0);
+                    }).map(function(element) {
+                        var email, pattern, inputName;
+                        return (_.contains([ "sms", "sms-otp" ], scope.method) && element.index === scope.telIndex && (inputName = "input" + scope.telIndex, 
+                        !document.getElementById(inputName) || !angular.element(document.getElementById(inputName)).intlTelInput("isValidNumber")) || _.contains([ "email", "email-otp" ], scope.method) && element.index === scope.emailIndex && (email = element.value, 
+                        pattern = Patterns.get("email"), null === email.match(pattern))) && (stop = !0), 
+                        [ element.name, element.value ];
+                    }));
+                    stop || (field && (field.value = ""), scope.sendingData = !0, Authmethod.resendAuthCode(data, autheventid).then(function(response) {
+                        _.each(scope.login_fields, function(element) {
+                            void 0 !== element.steps && -1 === element.steps.indexOf(0) || (element.disabled = !0);
+                        }), scope.currentFormStep = 1, $timeout(scope.sendingDataTimeout, 3e3);
                     }, function() {
                         $timeout(scope.sendingDataTimeout, 3e3), scope.error = $i18next("avRegistration.errorSendingAuthCode");
-                    });
+                    }));
                 }
             }, scope.sendingDataTimeout = function() {
                 scope.sendingData = !1;
@@ -443,6 +439,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                 var ret, href, adminMatch, electionsMatch;
                 scope.method = authevent.auth_method, scope.name = authevent.name, scope.registrationAllowed = "open" === authevent.census, 
                 scope.isCensusQuery ? scope.login_fields = Authmethod.getCensusQueryFields(authevent) : scope.login_fields = Authmethod.getLoginFields(authevent), 
+                scope.hide_default_login_lookup_field = authevent.hide_default_login_lookup_field, 
                 scope.telIndex = -1, scope.emailIndex = -1, scope.telField = null, scope.allowUserResend = (ret = !1, 
                 href = $location.path(), adminMatch = href.match(/^\/admin\//), electionsMatch = href.match(/^\/(elections|election)\/([0-9]+)\//), 
                 _.isArray(adminMatch) ? ret = !0 : _.isArray(electionsMatch) && 3 === electionsMatch.length && (ret = _.isObject(authevent.auth_method_config) && _.isObject(authevent.auth_method_config.config) && !0 === authevent.auth_method_config.config.allow_user_resend), 
