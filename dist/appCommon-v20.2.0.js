@@ -424,7 +424,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                             }); else if (angular.isDefined(response.data["redirect-to-url"])) $window.location.href = response.data["redirect-to-url"]; else if (angular.isDefined(response.data["vote-permission-token"])) {
                                 var path = response.data["vote-permission-token"].split(";")[1], hash = path.split("/")[0], msg = path.split("/")[1];
                                 $window.location.href = "/booth/" + autheventid + "/vote/" + hash + "/" + msg;
-                            } else angular.isDefined(response.data["vote-permission-token"]);
+                            } else angular.isDefined(response.data["vote-children-info"]) && console.log("TODO");
                         } else scope.sendingData = !1, scope.status = "Not found", scope.error = $i18next("avRegistration.invalidCredentials", {
                             support: ConfigService.contact.email
                         });

@@ -288,9 +288,10 @@ angular.module('avRegistration')
                           $window.location.href = '/booth/' + autheventid + '/vote/' + hash + '/' + msg;
                       }
                       // if it's an election with children elections then show access to them
-                      else if (angular.isDefined(response.data['vote-permission-token']))
+                      else if (angular.isDefined(response.data['vote-children-info']))
                       {
                           // TODO
+                          console.log('TODO');
                       }
                   } else {
                       scope.sendingData = false;
