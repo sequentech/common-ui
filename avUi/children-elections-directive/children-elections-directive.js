@@ -51,7 +51,7 @@ angular.module('avUi')
         scope: {
         },
         link: link,
-        templateUrl: 'avUi/foot-directive/foot-directive.html'
+        templateUrl: 'avUi/children-elections-directive/children-elections-directive.html'
       };
     }
   );
