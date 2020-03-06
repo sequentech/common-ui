@@ -135,6 +135,9 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         resendAuthCode: function(data, eid) {
             return $http.post(backendUrl + "auth-event/" + eid + "/resend_auth_code/", data);
         },
+        editChildrenParent: function(data, eid) {
+            return $http.post(backendUrl + "auth-event/" + eid + "/edit-children-parent/", data);
+        },
         getPerm: function(perm, object_type, object_id) {
             var data = {
                 permission: perm,

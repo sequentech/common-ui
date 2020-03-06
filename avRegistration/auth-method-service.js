@@ -271,6 +271,10 @@ angular.module('avRegistration')
             return $http.post(backendUrl + 'auth-event/'+eid+'/resend_auth_code/', data);
         };
 
+        authmethod.editChildrenParent = function(data, eid) {
+            return $http.post(backendUrl + 'auth-event/'+eid+'/edit-children-parent/', data);
+        };
+
         authmethod.getPerm = function(perm, object_type, object_id) {
             var data = {
                 permission: perm,
