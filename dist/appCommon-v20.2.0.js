@@ -414,17 +414,17 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                         if ("ok" === response.data.status) {
                             scope.khmac = response.data.khmac;
                             var postfix = "_authevent_" + autheventid;
-                            $cookies["authevent_" + autheventid] = autheventid, $cookies["userid" + postfix] = response.data.username, 
+                            if ($cookies["authevent_" + autheventid] = autheventid, $cookies["userid" + postfix] = response.data.username, 
                             $cookies["user" + postfix] = scope.email, $cookies["auth" + postfix] = response.data["auth-token"], 
                             $cookies["isAdmin" + postfix] = scope.isAdmin, Authmethod.setAuth($cookies["auth" + postfix], scope.isAdmin, autheventid), 
-                            scope.isAdmin ? Authmethod.getUserInfo().then(function(response) {
+                            scope.isAdmin) Authmethod.getUserInfo().then(function(response) {
                                 $cookies["user" + postfix] = response.data.email, $window.location.href = "/admin/elections";
                             }, function() {
                                 $window.location.href = "/admin/elections";
-                            }) : angular.isDefined(response.data["redirect-to-url"]) ? $window.location.href = response.data["redirect-to-url"] : Authmethod.getPerm("vote", "AuthEvent", autheventid).then(function(response) {
-                                var path = response.data["permission-token"].split(";")[1], hash = path.split("/")[0], msg = path.split("/")[1];
+                            }); else if (angular.isDefined(response.data["redirect-to-url"])) $window.location.href = response.data["redirect-to-url"]; else if (angular.isDefined(response.data["vote-permission-token"])) {
+                                var path = response.data["vote-permission-token"].split(";")[1], hash = path.split("/")[0], msg = path.split("/")[1];
                                 $window.location.href = "/booth/" + autheventid + "/vote/" + hash + "/" + msg;
-                            });
+                            } else angular.isDefined(response.data["vote-permission-token"]);
                         } else scope.sendingData = !1, scope.status = "Not found", scope.error = $i18next("avRegistration.invalidCredentials", {
                             support: ConfigService.contact.email
                         });

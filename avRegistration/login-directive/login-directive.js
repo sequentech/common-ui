@@ -277,17 +277,20 @@ angular.module('avRegistration')
                       {
                           $window.location.href = response.data['redirect-to-url'];
                       }
-                      else
+                      // if it's an election with no children elections
+                      else if (angular.isDefined(response.data['vote-permission-token']))
                       {
                           // redirecting to vote link
-                          Authmethod.getPerm("vote", "AuthEvent", autheventid)
-                              .then(function onSuccess(response) {
-                                  var khmac = response.data['permission-token'];
-                                  var path = khmac.split(";")[1];
-                                  var hash = path.split("/")[0];
-                                  var msg = path.split("/")[1];
-                                  $window.location.href = '/booth/' + autheventid + '/vote/' + hash + '/' + msg;
-                              });
+                          var khmac = response.data['vote-permission-token'];
+                          var path = khmac.split(";")[1];
+                          var hash = path.split("/")[0];
+                          var msg = path.split("/")[1];
+                          $window.location.href = '/booth/' + autheventid + '/vote/' + hash + '/' + msg;
+                      }
+                      // if it's an election with children elections then show access to them
+                      else if (angular.isDefined(response.data['vote-permission-token']))
+                      {
+                          // TODO
                       }
                   } else {
                       scope.sendingData = false;
