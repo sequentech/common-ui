@@ -899,7 +899,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                 console.log("election_id = " + election_id);
             };
         },
-        templateUrl: "avUi/foot-directive/foot-directive.html"
+        templateUrl: "avUi/children-elections-directive/children-elections-directive.html"
     };
 } ]), angular.module("avUi").directive("avSimpleError", [ "$resource", "$window", function($resource, $window) {
     return {
