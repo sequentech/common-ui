@@ -23,7 +23,7 @@ angular.module('avUi')
       // we use it as something similar to a controller here
       function link(scope, element, attrs) {
         scope.mode = attrs.mode;
-        scope.children_election_info = attrs.childrenElectionInfo;
+        scope.children_election_info = JSON.parse(attrs.childrenElectionInfo);
 
         // process each election
         _.each(

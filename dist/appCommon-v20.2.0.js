@@ -890,7 +890,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         restrict: "AE",
         scope: {},
         link: function(scope, element, attrs) {
-            scope.mode = attrs.mode, scope.children_election_info = attrs.childrenElectionInfo, 
+            scope.mode = attrs.mode, scope.children_election_info = JSON.parse(attrs.childrenElectionInfo), 
             _.each(scope.children_election_info.presentation.categories, function(category) {
                 _.each(category.events, function(election) {
                     "checkbox" === scope.mode && (election.data = !1);
