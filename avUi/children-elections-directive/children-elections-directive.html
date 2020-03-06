@@ -1,0 +1,12 @@
+<div 
+    ng-repeat="category in children_election_info.presentation.categories"
+    class="row"
+>
+    <h2>{{category.title}}</h2>
+    <div 
+        ng-repeat="election in category.events" 
+        class="btn btn-block"
+        data-election-id="{{election.id}}"
+        ng-click="processElection(election.id)"
+    >{{election.title}}</div>
+</div>
