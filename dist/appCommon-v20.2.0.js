@@ -888,10 +888,9 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
 }, angular.module("avUi").directive("avChildrenElections", [ "ConfigService", function(ConfigService) {
     return {
         restrict: "AE",
-        scope: {},
+        scope: !0,
         link: function(scope, element, attrs) {
-            scope.mode = attrs.mode, scope.children_election_info = JSON.parse(attrs.childrenElectionInfo), 
-            _.each(scope.children_election_info.presentation.categories, function(category) {
+            scope.mode = attrs.mode, _.each(scope.children_election_info.presentation.categories, function(category) {
                 _.each(category.events, function(election) {
                     "checkbox" === scope.mode && (election.data = !1, election.disabled = !1);
                 });

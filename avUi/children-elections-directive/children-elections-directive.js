@@ -23,7 +23,6 @@ angular.module('avUi')
       // we use it as something similar to a controller here
       function link(scope, element, attrs) {
         scope.mode = attrs.mode;
-        scope.children_election_info = JSON.parse(attrs.childrenElectionInfo);
 
         // process each election
         _.each(
@@ -52,8 +51,7 @@ angular.module('avUi')
 
       return {
         restrict: 'AE',
-        scope: {
-        },
+        scope:  true,
         link: link,
         templateUrl: 'avUi/children-elections-directive/children-elections-directive.html'
       };
