@@ -6,14 +6,16 @@
         <h4>{{category.title}}</h4>
         <div 
             ng-repeat="election in category.events" 
-            class="label label-default btn-election"
+            class="btn btn-success btn-election"
             ng-disabled="election.disabled"
             data-election-id="{{election.event_id}}"
+            ng-click="click(election)"
         >
-            <input 
-                type="checkbox"
-                ng-model="election.data"
-            />
+            <i
+                class="fa-fw fa" 
+                ng-class="{'fa-square-o': !election.data, 'fa-check-square-o': election.data}"
+                aria-hidden="true">
+            </i>
             {{election.title}}
         </div>
     </div>
