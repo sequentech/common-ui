@@ -45,7 +45,7 @@ angular.module('avUi')
         scope.click = function (election) {
           console.log("click to election.event_id = " + election.event_id);
           if (scope.mode === 'checkbox') {
-            election.data = !election.data;
+            console.log("do nothing, ng-model should take care of it");
           }
         };
       }
