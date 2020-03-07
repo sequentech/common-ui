@@ -34,6 +34,7 @@ angular.module('avUi')
               function (election) {
                 if (scope.mode === 'checkbox') {
                   election.data = false;
+                  election.disabled = false;
                 }
               }
             );
@@ -41,8 +42,11 @@ angular.module('avUi')
         );
 
         // add a processElection function
-        scope.processElection = function (election_id) {
-          console.log("election_id = " + election_id);
+        scope.click = function (election) {
+          console.log("click to election.event_id = " + election.event_id);
+          if (scope.mode === 'checkbox') {
+            election.data = !election.data;
+          }
         };
       }
 
