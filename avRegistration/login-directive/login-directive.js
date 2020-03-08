@@ -289,8 +289,6 @@ angular.module('avRegistration')
                   else if (angular.isDefined(response.data['vote-children-info']))
                   {
                     // assumes the authapi response has the same children 
-                    // and in the same order in 
-                    // election.children_election_info.natural_order
                     var tokens = _
                       .chain(response.data['vote-children-info'])
                       .filter(function (child) {

@@ -63,6 +63,10 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             var url = backendUrl + "auth-event/" + eid + "/ballot-box/" + ballot_box_id + "/tally-sheet/";
             return $http.post(url, data);
         },
+        voteStats: function(eid) {
+            var url = backendUrl + "auth-event/" + eid + "/vote-stats/";
+            return $http.get(url);
+        },
         getTallySheet: function(eid, ballot_box_id, tally_sheet_id) {
             var url = null;
             return url = tally_sheet_id ? backendUrl + "auth-event/" + eid + "/ballot-box/" + ballot_box_id + "/tally-sheet/" + tally_sheet_id + "/" : backendUrl + "auth-event/" + eid + "/ballot-box/" + ballot_box_id + "/tally-sheet/", 

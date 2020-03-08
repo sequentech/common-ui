@@ -166,6 +166,16 @@ angular.module('avRegistration')
             return $http.post(url, data);
         };
 
+        /**
+         * @returns the http request
+         */
+        authmethod.voteStats = function(eid)
+        {
+            var url = backendUrl + 'auth-event/' + eid + '/vote-stats/';
+
+            return $http.get(url);
+        };
+
 
         /**
          * @returns the http request
