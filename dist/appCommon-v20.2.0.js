@@ -415,7 +415,6 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                         data[field.name] = field.value;
                     }), scope.sendingData = !0, Authmethod.login(data, autheventid).then(function(response) {
                         if ("ok" === response.data.status) {
-                            scope.khmac = response.data.khmac;
                             var postfix = "_authevent_" + autheventid;
                             if ($cookies["authevent_" + autheventid] = autheventid, $cookies["userid" + postfix] = response.data.username, 
                             $cookies["user" + postfix] = scope.email, $cookies["auth" + postfix] = response.data["auth-token"], 
@@ -427,7 +426,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                             }); else if (angular.isDefined(response.data["redirect-to-url"])) $window.location.href = response.data["redirect-to-url"]; else if (angular.isDefined(response.data["vote-permission-token"])) $cookies.vote_permission_tokens = JSON.stringify([ {
                                 electionId: autheventid,
                                 token: response.data["vote-permission-token"]
-                            } ]), $window.location.href = "/booth/" + autheventid + "/vote/"; else if (angular.isDefined(response.data["vote-children-info"])) {
+                            } ]), $window.location.href = "/booth/" + autheventid + "/vote"; else if (angular.isDefined(response.data["vote-children-info"])) {
                                 var tokens = _.chain(response.data["vote-children-info"]).filter(function(child) {
                                     return child["num-successful-logins"] >= child["num-successful-logins-allowed"];
                                 }).map(function(child) {

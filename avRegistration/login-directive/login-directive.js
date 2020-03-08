@@ -252,7 +252,6 @@ angular.module('avRegistration')
             .then(
               function onSuccess(response) {
                 if (response.data.status === "ok") {
-                  scope.khmac = response.data.khmac;
                   var postfix = "_authevent_" + autheventid;
                   $cookies["authevent_" + autheventid] = autheventid;
                   $cookies["userid" + postfix] = response.data.username;
@@ -284,7 +283,7 @@ angular.module('avRegistration')
                       electionId: autheventid,
                       token: response.data['vote-permission-token']
                     }]);
-                    $window.location.href = '/booth/' + autheventid + '/vote/';
+                    $window.location.href = '/booth/' + autheventid + '/vote';
                   }
                   // if it's an election with children elections then show access to them
                   else if (angular.isDefined(response.data['vote-children-info']))
