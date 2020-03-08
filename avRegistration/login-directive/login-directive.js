@@ -303,10 +303,10 @@ angular.module('avRegistration')
                         };
                       })
                       .value();
-                    $cookies["vote_permission_tokens"] = JSON.stringify([tokens]);
+                    $cookies["vote_permission_tokens"] = JSON.stringify(tokens);
 
                     if (tokens.length > 0) {
-                      $window.location.href = '/booth/' + tokens[0].electionId + '/vote/';
+                      $window.location.href = '/booth/' + tokens[0].electionId + '/vote';
                     } else {
                       scope.error = $i18next(
                         'avRegistration.invalidCredentials', 
