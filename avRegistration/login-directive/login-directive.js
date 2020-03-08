@@ -71,7 +71,7 @@ angular.module('avRegistration')
 
         scope.isAdmin = false;
         if (autheventid === adminId) {
-            scope.isAdmin = true;
+          scope.isAdmin = true;
         }
 
         function isValidTel(inputName) {
@@ -190,121 +190,154 @@ angular.module('avRegistration')
         };
 
         scope.checkCensus = function(valid) {
-            if (!valid) {
-                return;
-            }
+          if (!valid) {
+            return;
+          }
 
-            if (scope.sendingData) {
-                return;
-            }
-            scope.censusQuery = "querying";
+          if (scope.sendingData) {
+            return;
+          }
+          scope.censusQuery = "querying";
 
-            var data = {
-                'captcha_code': Authmethod.captcha_code,
-            };
-            _.each(scope.login_fields, function (field) {
-              data[field.name] = field.value;
-            });
+          var data = {
+            'captcha_code': Authmethod.captcha_code,
+          };
+          _.each(scope.login_fields, function (field) {
+            data[field.name] = field.value;
+          });
 
-            scope.sendingData = true;
-            Authmethod.censusQuery(data, autheventid)
-                .then(
-                  function onSuccess(response) {
-                    scope.sendingData = false;
-                    scope.censusQueryData = response.data;
-                    scope.censusQuery = "success";
-                  },
-                  function onError(response) {
-                    scope.sendingData = false;
-                    scope.censusQuery = "fail";
-                  }
-                );
+          scope.sendingData = true;
+          Authmethod.censusQuery(data, autheventid)
+            .then(
+              function onSuccess(response) {
+                scope.sendingData = false;
+                scope.censusQueryData = response.data;
+                scope.censusQuery = "success";
+              },
+              function onError(response) {
+                scope.sendingData = false;
+                scope.censusQuery = "fail";
+              }
+            );
         };
 
         scope.loginUser = function(valid) {
-            if (!valid) {
-                return;
-            }
-            if (scope.sendingData) {
-                return;
-            }
+          if (!valid) {
+            return;
+          }
+          if (scope.sendingData) {
+            return;
+          }
 
-            // loginUser
-            if (_.contains(['sms-otp', 'email-otp'], scope.method) && scope.currentFormStep === 0) {
-                scope.resendAuthCode();
-                return;
+          // loginUser
+          if (_.contains(['sms-otp', 'email-otp'], scope.method) && scope.currentFormStep === 0) {
+            scope.resendAuthCode();
+            return;
+          }
+          var data = {
+            'captcha_code': Authmethod.captcha_code,
+          };
+          _.each(scope.login_fields, function (field) {
+            if (field.name === 'email') {
+              scope.email = field.value;
+            } else if ('code' === field.name) {
+              field.value = field.value.trim().replace(/ |\n|\t|-|_/g,'').toUpperCase();
             }
-            var data = {
-                'captcha_code': Authmethod.captcha_code,
-            };
-            _.each(scope.login_fields, function (field) {
-              if (field.name === 'email') {
-                scope.email = field.value;
-              } else if ('code' === field.name) {
-                field.value = field.value.trim().replace(/ |\n|\t|-|_/g,'').toUpperCase();
-              }
-              data[field.name] = field.value;
-            });
+            data[field.name] = field.value;
+          });
 
-            scope.sendingData = true;
-            Authmethod
-              .login(data, autheventid)
-              .then(
-                function onSuccess(response) {
-                  if (response.data.status === "ok") {
-                      scope.khmac = response.data.khmac;
-                      var postfix = "_authevent_" + autheventid;
-                      $cookies["authevent_" + autheventid] = autheventid;
-                      $cookies["userid" + postfix] = response.data.username;
-                      $cookies["user" + postfix] = scope.email;
-                      $cookies["auth" + postfix] = response.data['auth-token'];
-                      $cookies["isAdmin" + postfix] = scope.isAdmin;
-                      Authmethod.setAuth($cookies["auth" + postfix], scope.isAdmin, autheventid);
-                      if (scope.isAdmin)
-                      {
-                          Authmethod.getUserInfo()
-                            .then(
-                              function onSuccess(response) {
-                                $cookies["user" + postfix] = response.data.email;
-                                $window.location.href = '/admin/elections';
-                              },
-                              function onError(response) {
-                                $window.location.href = '/admin/elections';
-                              }
-                            );
-                      }
-                      else if (angular.isDefined(response.data['redirect-to-url']))
-                      {
-                          $window.location.href = response.data['redirect-to-url'];
-                      }
-                      // if it's an election with no children elections
-                      else if (angular.isDefined(response.data['vote-permission-token']))
-                      {
-                          // redirecting to vote link
-                          var khmac = response.data['vote-permission-token'];
-                          var path = khmac.split(";")[1];
-                          var hash = path.split("/")[0];
-                          var msg = path.split("/")[1];
-                          $window.location.href = '/booth/' + autheventid + '/vote/' + hash + '/' + msg;
-                      }
-                      // if it's an election with children elections then show access to them
-                      else if (angular.isDefined(response.data['vote-children-info']))
-                      {
-                          // TODO
-                          console.log('TODO');
-                      }
-                  } else {
-                      scope.sendingData = false;
-                      scope.status = 'Not found';
-                      scope.error = $i18next('avRegistration.invalidCredentials', { support: ConfigService.contact.email });
+          scope.sendingData = true;
+          Authmethod
+            .login(data, autheventid)
+            .then(
+              function onSuccess(response) {
+                if (response.data.status === "ok") {
+                  scope.khmac = response.data.khmac;
+                  var postfix = "_authevent_" + autheventid;
+                  $cookies["authevent_" + autheventid] = autheventid;
+                  $cookies["userid" + postfix] = response.data.username;
+                  $cookies["user" + postfix] = scope.email;
+                  $cookies["auth" + postfix] = response.data['auth-token'];
+                  $cookies["isAdmin" + postfix] = scope.isAdmin;
+                  Authmethod.setAuth($cookies["auth" + postfix], scope.isAdmin, autheventid);
+                  if (scope.isAdmin)
+                  {
+                    Authmethod.getUserInfo()
+                      .then(
+                        function onSuccess(response) {
+                          $cookies["user" + postfix] = response.data.email;
+                          $window.location.href = '/admin/elections';
+                        },
+                        function onError(response) {
+                          $window.location.href = '/admin/elections';
+                        }
+                      );
                   }
-              },
-              function onError(response) {
+                  else if (angular.isDefined(response.data['redirect-to-url']))
+                  {
+                    $window.location.href = response.data['redirect-to-url'];
+                  }
+                  // if it's an election with no children elections
+                  else if (angular.isDefined(response.data['vote-permission-token']))
+                  {
+                    $cookies["vote_permission_tokens" + postfix] = JSON.stringify([{
+                      electionId: autheventid,
+                      token: response.data['vote-permission-token']
+                    }]);
+                    $window.location.href = '/booth/' + autheventid + '/vote/';
+                  }
+                  // if it's an election with children elections then show access to them
+                  else if (angular.isDefined(response.data['vote-children-info']))
+                  {
+                    // assumes the authapi response has the same children 
+                    // and in the same order in 
+                    // election.children_election_info.natural_order
+                    var tokens = _
+                      .chain(response.data['vote-children-info'])
+                      .filter(function (child) {
+                        return child['num-successful-logins'] >= child['num-successful-logins-allowed'];
+                      })
+                      .map(function (child) {
+                        return {
+                          electionId: child['auth-event-id'],
+                          token: child['vote-permission-token']
+                        };
+                      })
+                      .value();
+                    $cookies["vote_permission_tokens" + postfix] = JSON.stringify([tokens]);
+                    
+                    if (tokens.length > 0) {
+                      $window.location.href = '/booth/' + tokens[0].electionId + '/vote/';
+                    } else {
+                      scope.error = $i18next(
+                        'avRegistration.invalidCredentials', 
+                        {support: ConfigService.contact.email}
+                      );
+                    }
+                  } else {
+                    scope.error = $i18next(
+                      'avRegistration.invalidCredentials', 
+                      {support: ConfigService.contact.email}
+                    );
+                  }
+                } else {
                   scope.sendingData = false;
-                  scope.status = 'Registration error: ' + response.data.message;
-                  scope.error = $i18next('avRegistration.invalidCredentials', { support: ConfigService.contact.email });
-              }
-            );
+                  scope.status = 'Not found';
+                  scope.error = $i18next(
+                    'avRegistration.invalidCredentials', 
+                    {support: ConfigService.contact.email}
+                  );
+                }
+            },
+            function onError(response) {
+              scope.sendingData = false;
+              scope.status = 'Registration error: ' + response.data.message;
+              scope.error = $i18next(
+                'avRegistration.invalidCredentials', 
+                {support: ConfigService.contact.email}
+              );
+            }
+          );
         };
 
         scope.apply = function(authevent) {

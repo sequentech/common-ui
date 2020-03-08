@@ -424,10 +424,24 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                                 $cookies["user" + postfix] = response.data.email, $window.location.href = "/admin/elections";
                             }, function() {
                                 $window.location.href = "/admin/elections";
-                            }); else if (angular.isDefined(response.data["redirect-to-url"])) $window.location.href = response.data["redirect-to-url"]; else if (angular.isDefined(response.data["vote-permission-token"])) {
-                                var path = response.data["vote-permission-token"].split(";")[1], hash = path.split("/")[0], msg = path.split("/")[1];
-                                $window.location.href = "/booth/" + autheventid + "/vote/" + hash + "/" + msg;
-                            } else angular.isDefined(response.data["vote-children-info"]) && console.log("TODO");
+                            }); else if (angular.isDefined(response.data["redirect-to-url"])) $window.location.href = response.data["redirect-to-url"]; else if (angular.isDefined(response.data["vote-permission-token"])) $cookies["vote_permission_tokens" + postfix] = JSON.stringify([ {
+                                electionId: autheventid,
+                                token: response.data["vote-permission-token"]
+                            } ]), $window.location.href = "/booth/" + autheventid + "/vote/"; else if (angular.isDefined(response.data["vote-children-info"])) {
+                                var tokens = _.chain(response.data["vote-children-info"]).filter(function(child) {
+                                    return child["num-successful-logins"] >= child["num-successful-logins-allowed"];
+                                }).map(function(child) {
+                                    return {
+                                        electionId: child["auth-event-id"],
+                                        token: child["vote-permission-token"]
+                                    };
+                                }).value();
+                                $cookies["vote_permission_tokens" + postfix] = JSON.stringify([ tokens ]), 0 < tokens.length ? $window.location.href = "/booth/" + tokens[0].electionId + "/vote/" : scope.error = $i18next("avRegistration.invalidCredentials", {
+                                    support: ConfigService.contact.email
+                                });
+                            } else scope.error = $i18next("avRegistration.invalidCredentials", {
+                                support: ConfigService.contact.email
+                            });
                         } else scope.sendingData = !1, scope.status = "Not found", scope.error = $i18next("avRegistration.invalidCredentials", {
                             support: ConfigService.contact.email
                         });
