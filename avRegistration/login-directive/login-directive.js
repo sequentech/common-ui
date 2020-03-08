@@ -280,7 +280,7 @@ angular.module('avRegistration')
                   // if it's an election with no children elections
                   else if (angular.isDefined(response.data['vote-permission-token']))
                   {
-                    $cookies["vote_permission_tokens" + postfix] = JSON.stringify([{
+                    $cookies["vote_permission_tokens"] = JSON.stringify([{
                       electionId: autheventid,
                       token: response.data['vote-permission-token']
                     }]);
@@ -304,8 +304,8 @@ angular.module('avRegistration')
                         };
                       })
                       .value();
-                    $cookies["vote_permission_tokens" + postfix] = JSON.stringify([tokens]);
-                    
+                    $cookies["vote_permission_tokens"] = JSON.stringify([tokens]);
+
                     if (tokens.length > 0) {
                       $window.location.href = '/booth/' + tokens[0].electionId + '/vote/';
                     } else {
