@@ -435,7 +435,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                                         token: child["vote-permission-token"]
                                     };
                                 }).value();
-                                $cookies.vote_permission_tokens = JSON.stringify([ tokens ]), 0 < tokens.length ? $window.location.href = "/booth/" + tokens[0].electionId + "/vote/" : scope.error = $i18next("avRegistration.invalidCredentials", {
+                                $cookies.vote_permission_tokens = JSON.stringify(tokens), 0 < tokens.length ? $window.location.href = "/booth/" + tokens[0].electionId + "/vote" : scope.error = $i18next("avRegistration.invalidCredentials", {
                                     support: ConfigService.contact.email
                                 });
                             } else scope.error = $i18next("avRegistration.invalidCredentials", {
