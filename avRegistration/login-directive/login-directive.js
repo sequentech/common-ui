@@ -292,7 +292,7 @@ angular.module('avRegistration')
                     var tokens = _
                       .chain(response.data['vote-children-info'])
                       .filter(function (child) {
-                        return child['num-successful-logins'] >= child['num-successful-logins-allowed'] || !child['vote-permission-token'];
+                        return child['num-successful-logins'] >= child['num-successful-logins-allowed'] && !!child['vote-permission-token'];
                       })
                       .map(function (child) {
                         return {
