@@ -267,11 +267,12 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                 authmethod.launchPingDaemon(autheventid);
             }, 500 * ConfigService.timeoutSeconds)), !1;
         },
-        electionsIds: function(page, listType) {
+        electionsIds: function(page, listType, ids) {
             page = page || 1;
             var perms = "edit|view";
-            return "archived" === (listType = listType || "all") && (perms = "unarchive|view-archived"), 
-            $http.get(backendUrl + "auth-event/?only_parent_elections=true&has_perms=" + perms + "&order=-pk&page=" + page);
+            "archived" === (listType = listType || "all") && (perms = "unarchive|view-archived");
+            var queryIds = "";
+            return ids && (queryIds = "&ids=" + ids.join("|")), $http.get(backendUrl + "auth-event/?only_parent_elections=true&has_perms=" + perms + queryIds + "&order=-pk&page=" + page);
         },
         sendAuthCodes: function(eid, election, user_ids, auth_method, extra) {
             var url = backendUrl + "auth-event/" + eid + "/census/send_auth/", data = {};

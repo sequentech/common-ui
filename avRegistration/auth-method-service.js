@@ -495,7 +495,7 @@ angular.module('avRegistration')
             return false;
         };
 
-        authmethod.electionsIds = function(page, listType) {
+        authmethod.electionsIds = function(page, listType, ids) {
             if (!page) {
                 page = 1;
             }
@@ -508,11 +508,17 @@ angular.module('avRegistration')
             if (listType === 'archived') {
               perms = 'unarchive|view-archived';
             }
+            // only if needed
+            var queryIds = '';
+            if (!!ids) {
+              queryIds = '&ids=' + ids.join('|');
+            }
 
             return $http.get(
               backendUrl + 
               'auth-event/?only_parent_elections=true&has_perms=' +
               perms +
+              queryIds +
               '&order=-pk&page=' +
               page
             );
