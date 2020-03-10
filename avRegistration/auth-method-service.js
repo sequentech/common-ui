@@ -512,11 +512,13 @@ angular.module('avRegistration')
             var queryIds = '';
             if (!!ids) {
               queryIds = '&ids=' + ids.join('|');
+            } else {
+              queryIds = 'only_parent_elections=true&';
             }
 
             return $http.get(
               backendUrl + 
-              'auth-event/?only_parent_elections=true&has_perms=' +
+              'auth-event/?has_perms=' +
               perms +
               queryIds +
               '&order=-pk&page=' +

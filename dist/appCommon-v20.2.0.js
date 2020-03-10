@@ -272,7 +272,8 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             var perms = "edit|view";
             "archived" === (listType = listType || "all") && (perms = "unarchive|view-archived");
             var queryIds = "";
-            return ids && (queryIds = "&ids=" + ids.join("|")), $http.get(backendUrl + "auth-event/?only_parent_elections=true&has_perms=" + perms + queryIds + "&order=-pk&page=" + page);
+            return queryIds = ids ? "&ids=" + ids.join("|") : "only_parent_elections=true&", 
+            $http.get(backendUrl + "auth-event/?has_perms=" + perms + queryIds + "&order=-pk&page=" + page);
         },
         sendAuthCodes: function(eid, election, user_ids, auth_method, extra) {
             var url = backendUrl + "auth-event/" + eid + "/census/send_auth/", data = {};
