@@ -511,7 +511,7 @@ angular.module('avRegistration')
 
             return $http.get(
               backendUrl + 
-              'acl/mine/?object_type=AuthEvent&perm=' +
+              'auth-event/?only_parent_elections=true&has_perms=' +
               perms +
               '&order=-pk&page=' +
               page
