@@ -272,7 +272,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             var perms = "edit|view";
             "archived" === (listType = listType || "all") && (perms = "unarchive|view-archived");
             var queryIds = "";
-            return queryIds = ids ? "&ids=" + ids.join("|") : "only_parent_elections=true&", 
+            return queryIds = ids ? "&ids=" + ids.join("|") : "&only_parent_elections=true", 
             $http.get(backendUrl + "auth-event/?has_perms=" + perms + queryIds + "&order=-pk&page=" + page);
         },
         sendAuthCodes: function(eid, election, user_ids, auth_method, extra) {

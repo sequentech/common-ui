@@ -513,7 +513,7 @@ angular.module('avRegistration')
             if (!!ids) {
               queryIds = '&ids=' + ids.join('|');
             } else {
-              queryIds = 'only_parent_elections=true&';
+              queryIds = '&only_parent_elections=true';
             }
 
             return $http.get(
