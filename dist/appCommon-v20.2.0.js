@@ -313,6 +313,13 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             var url = backendUrl + "auth-event/" + eid + "/unarchive/";
             return $http.post(url, {});
         },
+        launchTally: function(electionId, tallyElectionIds, forceTally) {
+            var url = backendUrl + "auth-event/" + electionId + "/tally-status/", data = {
+                children_election_ids: tallyElectionIds,
+                force_tally: forceTally
+            };
+            return $http.post(url, data);
+        },
         launchPingDaemon: function(autheventid) {
             var postfix = "_authevent_" + autheventid;
             $cookies["isAdmin" + postfix] && authmethod.ping().then(function(response) {
@@ -911,7 +918,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         link: function(scope, element, attrs) {
             scope.mode = attrs.mode, _.each(scope.children_election_info.presentation.categories, function(category) {
                 _.each(category.events, function(election) {
-                    "checkbox" === scope.mode && (election.data = !1, election.disabled = !1);
+                    "checkbox" === scope.mode && (election.data = election.data || !1, election.disabled = election.disabled || !1);
                 });
             }), scope.click = function(election) {
                 console.log("click to election.event_id = " + election.event_id), "checkbox" === scope.mode && (election.data = !election.data);

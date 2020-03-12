@@ -583,6 +583,19 @@ angular.module('avRegistration')
             return $http.post(url, data);
         };
 
+        authmethod.launchTally = function(
+          electionId,
+          tallyElectionIds,
+          forceTally
+        ) {
+            var url = backendUrl + 'auth-event/' + electionId + '/tally-status/';
+            var data = {
+              children_election_ids: tallyElectionIds,
+              force_tally: forceTally
+            };
+            return $http.post(url, data);
+        };
+
         authmethod.launchPingDaemon = function(autheventid) {
           var postfix = "_authevent_" + autheventid;
           // only needed if it's an admin and daemon has not been launched

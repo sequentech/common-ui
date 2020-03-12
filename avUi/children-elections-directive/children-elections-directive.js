@@ -32,8 +32,8 @@ angular.module('avUi')
               category.events,
               function (election) {
                 if (scope.mode === 'checkbox') {
-                  election.data = false;
-                  election.disabled = false;
+                  election.data = election.data || false;
+                  election.disabled = election.disabled || false;
                 }
               }
             );
