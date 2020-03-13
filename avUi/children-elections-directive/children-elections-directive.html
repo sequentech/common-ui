@@ -13,7 +13,7 @@
         >
             <i
                 class="fa-fw fa" 
-                ng-class="{'fa-square-o': !election.data, 'fa-check-square-o': election.data}"
+                ng-class="{'fa-square-o': !election.data, 'fa-check-square-o': !!election.data}"
                 aria-hidden="true">
             </i>
             {{election.title}}
