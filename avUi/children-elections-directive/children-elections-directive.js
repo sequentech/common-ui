@@ -36,7 +36,10 @@ angular.module('avUi')
               category.events,
               function (election) 
               {
-                if (scope.mode === 'checkbox') 
+                if (
+                  scope.mode === 'checkbox' ||
+                  scope.mode === 'toggle-and-callback'
+                ) 
                 {
                   election.data = election.data || false;
                   election.disabled = election.disabled || false;

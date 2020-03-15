@@ -924,7 +924,8 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             scope.electionsById = {}, scope.selectedElectionId = scope.parentElectionId, scope.childrenElectionInfo = JSON.parse(scope.childrenElectionInfo), 
             _.each(scope.childrenElectionInfo.presentation.categories, function(category) {
                 _.each(category.events, function(election) {
-                    "checkbox" === scope.mode && (election.data = election.data || !1, election.disabled = election.disabled || !1);
+                    "checkbox" !== scope.mode && "toggle-and-callback" !== scope.mode || (election.data = election.data || !1, 
+                    election.disabled = election.disabled || !1);
                 });
             }), scope.click = function(election) {
                 console.log("click to election.event_id = " + election.event_id), "checkbox" === scope.mode ? election.data = !election.data : "toggle-and-callback" === scope.mode && (scope.selectedElectionId = election.event_id, 
