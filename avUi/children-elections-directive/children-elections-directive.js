@@ -21,17 +21,22 @@ angular.module('avUi')
     function(ConfigService) 
     {
       // we use it as something similar to a controller here
-      function link(scope, element, attrs) {
-        scope.mode = attrs.mode;
+      function link(scope, element, attrs) 
+      {
+        scope.electionsById = {};
+        scope.selectedElectionId = scope.parentElectionId;
 
         // process each election
         _.each(
-          scope.children_election_info.presentation.categories,
-          function (category) {
+          scope.childrenElectionInfo.presentation.categories,
+          function (category) 
+          {
             _.each (
               category.events,
-              function (election) {
-                if (scope.mode === 'checkbox') {
+              function (election) 
+              {
+                if (scope.mode === 'checkbox') 
+                {
                   election.data = election.data || false;
                   election.disabled = election.disabled || false;
                 }
@@ -41,17 +46,29 @@ angular.module('avUi')
         );
 
         // add a processElection function
-        scope.click = function (election) {
+        scope.click = function (election) 
+        {
           console.log("click to election.event_id = " + election.event_id);
-          if (scope.mode === 'checkbox') {
+          if (scope.mode === 'checkbox') 
+          {
             election.data = !election.data;
+          } 
+          else if (scope.mode === 'toggle-and-callback')
+          {
+            scope.selectedElectionId = election.event_id;
+            scope.callback(election.event_id);
           }
         };
       }
 
       return {
         restrict: 'AE',
-        scope:  true,
+        scope:  {
+          mode: '@',
+          callback: '&',
+          parentElectionId: '@',
+          childrenElectionInfo: '@'
+        },
         link: link,
         templateUrl: 'avUi/children-elections-directive/children-elections-directive.html'
       };

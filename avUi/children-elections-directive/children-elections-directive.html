@@ -1,5 +1,22 @@
 <div 
-    ng-repeat="category in children_election_info.presentation.categories"
+    class="row"
+    ng-if="scope.mode === 'toggle-and-callback'"
+>
+    <div class="col-xs-12"> 
+        <div 
+            class="btn btn-success btn-election"
+            ng-class="{'selected': selectedElectionId === parentElectionId}"
+            ng-click="click(parentElectionId)"
+        >
+            <span ng-i18next>
+                avUi.childrenElections.main
+            </span>
+        </div>
+    </div>
+</div>
+
+<div 
+    ng-repeat="category in childrenElectionInfo.presentation.categories"
     class="row"
 >
     <div class="col-xs-12">
@@ -8,10 +25,12 @@
             ng-repeat="election in category.events" 
             class="btn btn-success btn-election"
             ng-disabled="election.disabled"
+            ng-class="{'selected': selectedElectionId === election.event_id}"
             data-election-id="{{election.event_id}}"
             ng-click="click(election)"
         >
             <i
+                ng-if="scope.mode === 'checkbox'"
                 class="fa-fw fa" 
                 ng-class="{'fa-square-o': !election.data, 'fa-check-square-o': !!election.data}"
                 aria-hidden="true">
