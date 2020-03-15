@@ -9,14 +9,14 @@
             ng-click="click(parentElectionId)"
         >
             <span ng-i18next>
-                avUi.childrenElections.main
+                avAdmin.childrenElections.main
             </span>
         </div>
     </div>
 </div>
 
 <div 
-    ng-repeat="category in childrenElectionInfo.presentation.categories"
+    ng-repeat="category in childrenElectionInfoParsed.presentation.categories"
     class="row"
 >
     <div class="col-xs-12">
