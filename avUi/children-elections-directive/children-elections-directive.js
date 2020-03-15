@@ -25,13 +25,14 @@ angular.module('avUi')
       {
         scope.electionsById = {};
         scope.selectedElectionId = scope.parentElectionId;
+        scope.childrenElectionInfo = JSON.parse(scope.childrenElectionInfo);
 
         // process each election
         _.each(
           scope.childrenElectionInfo.presentation.categories,
           function (category) 
           {
-            _.each (
+            _.each(
               category.events,
               function (election) 
               {

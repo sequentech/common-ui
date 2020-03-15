@@ -921,7 +921,8 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             childrenElectionInfo: "@"
         },
         link: function(scope, element, attrs) {
-            scope.electionsById = {}, scope.selectedElectionId = scope.parentElectionId, _.each(scope.childrenElectionInfo.presentation.categories, function(category) {
+            scope.electionsById = {}, scope.selectedElectionId = scope.parentElectionId, scope.childrenElectionInfo = JSON.parse(scope.childrenElectionInfo), 
+            _.each(scope.childrenElectionInfo.presentation.categories, function(category) {
                 _.each(category.events, function(election) {
                     "checkbox" === scope.mode && (election.data = election.data || !1, election.disabled = election.disabled || !1);
                 });
