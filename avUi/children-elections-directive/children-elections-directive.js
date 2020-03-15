@@ -60,7 +60,7 @@ angular.module('avUi')
           else if (scope.mode === 'toggle-and-callback')
           {
             scope.selectedElectionId = election.event_id;
-            scope.callback(election.event_id);
+            scope.callback({electionId: election.event_id});
           }
         };
       }
@@ -69,8 +69,8 @@ angular.module('avUi')
         restrict: 'AE',
         scope:  {
           mode: '@',
-          callback: '&',
-          parentElectionId: '@',
+          callback: '&?',
+          parentElectionId: '@?',
           childrenElectionInfo: '@'
         },
         link: link,

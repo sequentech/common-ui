@@ -916,8 +916,8 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         restrict: "AE",
         scope: {
             mode: "@",
-            callback: "&",
-            parentElectionId: "@",
+            callback: "&?",
+            parentElectionId: "@?",
             childrenElectionInfo: "@"
         },
         link: function(scope, element, attrs) {
@@ -929,7 +929,9 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                 });
             }), scope.click = function(election) {
                 console.log("click to election.event_id = " + election.event_id), "checkbox" === scope.mode ? election.data = !election.data : "toggle-and-callback" === scope.mode && (scope.selectedElectionId = election.event_id, 
-                scope.callback(election.event_id));
+                scope.callback({
+                    electionId: election.event_id
+                }));
             };
         },
         templateUrl: "avUi/children-elections-directive/children-elections-directive.html"
