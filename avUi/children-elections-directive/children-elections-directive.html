@@ -1,6 +1,6 @@
 <div 
     class="row"
-    ng-if="scope.mode === 'toggle-and-callback'"
+    ng-if="mode === 'toggle-and-callback'"
 >
     <div class="col-xs-12"> 
         <div 
@@ -30,7 +30,7 @@
             ng-click="click(election)"
         >
             <i
-                ng-if="scope.mode === 'checkbox'"
+                ng-if="mode === 'checkbox'"
                 class="fa-fw fa" 
                 ng-class="{'fa-square-o': !election.data, 'fa-check-square-o': !!election.data}"
                 aria-hidden="true">
