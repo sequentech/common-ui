@@ -6,7 +6,7 @@
         <div 
             class="btn btn-success btn-election"
             ng-class="{'selected': selectedElectionId === parentElectionId}"
-            ng-click="click(parentElectionId)"
+            ng-click="click({event_id: parentElectionId})"
         >
             <span ng-i18next>
                 avAdmin.childrenElections.main
