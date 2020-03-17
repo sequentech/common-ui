@@ -565,9 +565,11 @@ angular.module('avRegistration')
             return $http.post(url, data);
         };
 
-        authmethod.changeAuthEvent = function(eid, st) {
+        authmethod.changeAuthEvent = function(eid, st, data) {
             var url = backendUrl + 'auth-event/'+eid+'/'+st+'/';
-            var data = {};
+            if (data === undefined) {
+              data = {};
+            }
             return $http.post(url, data);
         };
 

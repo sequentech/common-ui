@@ -301,9 +301,9 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             };
             return $http.post(url, data);
         },
-        changeAuthEvent: function(eid, st) {
+        changeAuthEvent: function(eid, st, data) {
             var url = backendUrl + "auth-event/" + eid + "/" + st + "/";
-            return $http.post(url, {});
+            return void 0 === data && (data = {}), $http.post(url, data);
         },
         archive: function(eid) {
             var url = backendUrl + "auth-event/" + eid + "/archive/";
