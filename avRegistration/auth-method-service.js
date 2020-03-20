@@ -573,6 +573,18 @@ angular.module('avRegistration')
             return $http.post(url, data);
         };
 
+        authmethod.allowtally = function(eid) {
+            var url = backendUrl + 'auth-event/'+eid+'/allow-tally/';
+            var data = {};
+            return $http.post(url, data);
+        };
+
+        authmethod.unpublishResults = function(eid) {
+            var url = backendUrl + 'auth-event/'+eid+'/unpublish-results/';
+            var data = {};
+            return $http.post(url, data);
+        };
+
         authmethod.archive = function(eid) {
             var url = backendUrl + 'auth-event/'+eid+'/archive/';
             var data = {};
