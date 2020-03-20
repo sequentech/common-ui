@@ -573,7 +573,7 @@ angular.module('avRegistration')
             return $http.post(url, data);
         };
 
-        authmethod.allowtally = function(eid) {
+        authmethod.allowTally = function(eid) {
             var url = backendUrl + 'auth-event/'+eid+'/allow-tally/';
             var data = {};
             return $http.post(url, data);

@@ -305,7 +305,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             var url = backendUrl + "auth-event/" + eid + "/" + st + "/";
             return void 0 === data && (data = {}), $http.post(url, data);
         },
-        allowtally: function(eid) {
+        allowTally: function(eid) {
             var url = backendUrl + "auth-event/" + eid + "/allow-tally/";
             return $http.post(url, {});
         },
