@@ -495,7 +495,7 @@ angular.module('avRegistration')
             return false;
         };
 
-        authmethod.electionsIds = function(page, listType, ids) {
+        authmethod.electionsIds = function(page, listType, ids, page_size) {
             if (!page) {
                 page = 1;
             }
@@ -514,6 +514,9 @@ angular.module('avRegistration')
               queryIds = '&ids=' + ids.join('|');
             } else {
               queryIds = '&only_parent_elections=true';
+            }
+            if (!!page_size) {
+              queryIds = '&n=' + page_size;
             }
 
             return $http.get(
