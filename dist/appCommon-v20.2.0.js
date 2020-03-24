@@ -449,7 +449,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                                 token: response.data["vote-permission-token"]
                             } ]), $window.location.href = "/booth/" + autheventid + "/vote"; else if (angular.isDefined(response.data["vote-children-info"])) {
                                 var tokens = _.chain(response.data["vote-children-info"]).filter(function(child) {
-                                    return child["num-successful-logins"] < child["num-successful-logins-allowed"] && !!child["vote-permission-token"];
+                                    return (0 === child["num-successful-logins-allowed"] || child["num-successful-logins"] < child["num-successful-logins-allowed"]) && !!child["vote-permission-token"];
                                 }).map(function(child) {
                                     return {
                                         electionId: child["auth-event-id"],
