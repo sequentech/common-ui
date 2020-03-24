@@ -516,7 +516,7 @@ angular.module('avRegistration')
               queryIds = '&only_parent_elections=true';
             }
             if (!!page_size) {
-              queryIds = '&n=' + page_size;
+              queryIds += '&n=' + page_size;
             }
 
             return $http.get(
