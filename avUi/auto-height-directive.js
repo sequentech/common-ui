@@ -47,7 +47,7 @@ angular.module('avUi')
             }
             height = sibling().height();
             element.css('max-height', (height + additionalHeight) + "px");
-          }, 1000);
+          }, 300);
         };
 
         scope.$watch(

@@ -997,7 +997,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                         el.removeClass("hidden"), affix ? (el.addClass("affix-bottom"), $(el).parent().css("margin-bottom", elHeight + "px")) : (el.removeClass("affix-bottom"), 
                         $(el).parent().css("margin-bottom", instance.defaultBottomMargin)));
                     }(scope, instance, iElement);
-                }, 1e3);
+                }, 300);
             }
             0 < iAttrs.avAffixBottom.length && (instance.getIsAffix = $parse(iAttrs.avAffixBottom), 
             instance.setIsAffix = instance.getIsAffix.assign), callCheckPos(), angular.element($window).on("resize", callCheckPos), 
@@ -1016,7 +1016,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                     var height, additionalHeight = 0;
                     attrs.additionalHeight && (additionalHeight = parseInt(attrs.additionalHeight, 10)), 
                     height = sibling().height(), element.css("max-height", height + additionalHeight + "px");
-                }, 1e3);
+                }, 300);
             }, scope.$watch(function() {
                 return sibling().height();
             }, function(newValue, oldValue) {
@@ -1052,7 +1052,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                 instance.scrollAffix = null, $timeout(function() {
                     instance.baseOffset = iElement.offset(), instance.baseWidth = iElement.width(), 
                     callCheckPos();
-                }, 1e3);
+                }, 300);
             });
         }
     };
@@ -1068,11 +1068,11 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             function updateMarginTimeout() {
                 timeout = $timeout(function() {
                     $timeout.cancel(timeout), updateMargin(iElement, iAttrs);
-                }, 1e3);
+                }, 300);
             }
             updateMargin(iElement, iAttrs), void 0 === iAttrs.minHeight && (iAttrs.minHeight = "20"), 
-            angular.element(iElement).bind("resize", updateMarginTimeout), angular.element($window).bind("resize", updateMarginTimeout), 
-            $(iAttrs.avAffixTop).change(updateMarginTimeout);
+            updateMarginTimeout(), angular.element(iElement).bind("resize", updateMarginTimeout), 
+            angular.element($window).bind("resize", updateMarginTimeout), $(iAttrs.avAffixTop).change(updateMarginTimeout);
         }
     };
 } ]), angular.module("avUi").directive("avCollapsing", [ "$window", "$timeout", function($window, $timeout) {
@@ -1104,7 +1104,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                             instance.isCollapsed = !1, collapseEl(instance, el).removeClass("collapsed"), select(instance, el, instance.toggleSelector).addClass("hidden");
                         } else console.log("invalid non-pixels max-height for " + instance.maxHeightSelector);
                     }(instance, iElement);
-                }, 100);
+                }, 500);
             }
             callCheck(), angular.element($window).bind("resize", callCheck), angular.element(iElement).bind("resize", callCheck), 
             angular.element(instance.toggleSelector).bind("click", function() {

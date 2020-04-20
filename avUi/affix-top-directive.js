@@ -43,15 +43,16 @@ angular.module('avUi')
         }
 
         // timeout is used with callCheckPos so that we do not create too many
-        // calls to checkPosition, at most one per 1000ms
+        // calls to checkPosition, at most one per 300ms
         var timeout;
 
         function updateMarginTimeout() {
           timeout = $timeout(function() {
             $timeout.cancel(timeout);
             updateMargin(iElement, iAttrs);
-          }, 1000);
+          }, 300);
         }
+        updateMarginTimeout();
 
         // watch for window resizes and element resizes too
         angular.element(iElement).bind('resize', updateMarginTimeout);

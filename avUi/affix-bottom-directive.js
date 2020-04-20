@@ -80,14 +80,14 @@ angular.module('avUi')
         }
 
         // timeout is used with callCheckPos so that we do not create too many
-        // calls to checkPosition, at most one per 100ms
+        // calls to checkPosition, at most one per 300ms
         var timeout;
 
         function callCheckPos() {
           timeout = $timeout(function() {
             $timeout.cancel(timeout);
             checkPosition(scope, instance, iElement, iAttrs);
-          }, 1000);
+          }, 300);
         }
         callCheckPos();
 

@@ -124,7 +124,7 @@ angular.module('avUi')
           timeout = $timeout(function() {
             $timeout.cancel(timeout);
             checkCollapse(instance, iElement, iAttrs);
-          }, 100);
+          }, 500);
         }
         callCheck();
 
