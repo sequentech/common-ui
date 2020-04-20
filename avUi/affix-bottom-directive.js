@@ -87,7 +87,7 @@ angular.module('avUi')
           timeout = $timeout(function() {
             $timeout.cancel(timeout);
             checkPosition(scope, instance, iElement, iAttrs);
-          }, 100);
+          }, 1000);
         }
         callCheckPos();
 
