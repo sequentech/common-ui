@@ -1095,8 +1095,9 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             function callCheck() {
                 timeout = $timeout(function() {
                     $timeout.cancel(timeout), function(instance, el) {
-                        var maxHeight = select(instance, el, instance.maxHeightSelector).css("max-height"), height = angular.element(el)[0].scrollHeight;
-                        if (-1 !== maxHeight.indexOf("px")) if ((maxHeight = parseInt(maxHeight.replace("px", ""))) < height) {
+                        var maxHeight = select(instance, el, instance.maxHeightSelector).css("max-height"), height = angular.element(el)[0].scrollHeight, paddingTop = angular.element(el).css("padding-top");
+                        if (-1 !== maxHeight.indexOf("px")) if (paddingTop = paddingTop && -1 !== paddingTop.indexOf("px") ? parseInt(paddingTop.replace("px", "")) : 0, 
+                        (maxHeight = parseInt(maxHeight.replace("px", ""))) < height - paddingTop) {
                             if (instance.isCollapsed) return;
                             instance.isCollapsed = !0, collapseEl(instance, el).addClass("collapsed"), select(instance, el, instance.toggleSelector).removeClass("hidden in");
                         } else {
