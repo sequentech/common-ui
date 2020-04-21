@@ -474,7 +474,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                 }
             }, scope.apply = function(authevent) {
                 var ret, href, adminMatch, electionsMatch;
-                scope.method = authevent.auth_method, scope.name = authevent.name, scope.registrationAllowed = "open" === authevent.census, 
+                scope.method = authevent.auth_method, scope.name = authevent.name, scope.registrationAllowed = "open" === authevent.census && (autheventid !== adminId || ConfigService.allowAdminRegistration), 
                 scope.isCensusQuery ? scope.login_fields = Authmethod.getCensusQueryFields(authevent) : scope.login_fields = Authmethod.getLoginFields(authevent), 
                 scope.hide_default_login_lookup_field = authevent.hide_default_login_lookup_field, 
                 scope.telIndex = -1, scope.emailIndex = -1, scope.telField = null, scope.allowUserResend = (ret = !1, 

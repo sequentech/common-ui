@@ -343,7 +343,10 @@ angular.module('avRegistration')
         scope.apply = function(authevent) {
             scope.method = authevent['auth_method'];
             scope.name = authevent['name'];
-            scope.registrationAllowed = (authevent['census'] === 'open');
+            scope.registrationAllowed = (
+              (authevent['census'] === 'open') &&
+              (autheventid !== adminId || ConfigService.allowAdminRegistration)
+            );
             if (!scope.isCensusQuery) {
               scope.login_fields = Authmethod.getLoginFields(authevent);
             } else {
