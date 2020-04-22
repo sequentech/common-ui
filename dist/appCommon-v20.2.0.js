@@ -146,7 +146,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             var data = {
                 permission: perm,
                 object_type: object_type,
-                object_id: object_id + ""
+                object_id: null === object_id ? object_id : object_id + ""
             };
             return $http.post(backendUrl + "get-perms/", data);
         },

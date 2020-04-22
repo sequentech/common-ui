@@ -289,7 +289,7 @@ angular.module('avRegistration')
             var data = {
                 permission: perm,
                 object_type: object_type,
-                object_id: object_id + "" // to convert to string
+                object_id: (object_id === null) ? object_id : object_id + "" // to convert to string
             };
             return $http.post(backendUrl + 'get-perms/', data);
         };
