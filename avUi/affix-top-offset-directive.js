@@ -87,7 +87,7 @@ angular.module('avUi')
             instance.baseOffset = iElement.offset();
             instance.baseWidth = iElement.width();
             callCheckPos();
-          }, 100);
+          }, 300);
         }
 
         // watch for window scrolling

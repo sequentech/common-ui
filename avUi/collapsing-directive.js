@@ -60,15 +60,24 @@ angular.module('avUi')
       var maxHeight = select(instance, el, instance.maxHeightSelector).css("max-height");
       var height = angular.element(el)[0].scrollHeight;
 
+      // we want to remove padding-top in the calculation
+      var paddingTop = angular.element(el).css('padding-top');
+
       if (maxHeight.indexOf("px") === -1) {
         console.log("invalid non-pixels max-height for " + instance.maxHeightSelector);
         return;
       }
 
+      if (!paddingTop || paddingTop.indexOf("px") === -1) {
+        paddingTop = 0;
+      } else {
+        paddingTop = parseInt(paddingTop.replace("px", ""));
+      }
+
       maxHeight = parseInt(maxHeight.replace("px", ""));
 
       // make sure it's collapsed if it should
-      if (height > maxHeight) {
+      if (height - paddingTop > maxHeight) {
         // already collapsed
         if (instance.isCollapsed) {
           return;
@@ -124,7 +133,7 @@ angular.module('avUi')
           timeout = $timeout(function() {
             $timeout.cancel(timeout);
             checkCollapse(instance, iElement, iAttrs);
-          }, 100);
+          }, 500);
         }
         callCheck();
 

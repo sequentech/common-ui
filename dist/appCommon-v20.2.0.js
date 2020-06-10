@@ -63,6 +63,10 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             var url = backendUrl + "auth-event/" + eid + "/ballot-box/" + ballot_box_id + "/tally-sheet/";
             return $http.post(url, data);
         },
+        voteStats: function(eid) {
+            var url = backendUrl + "auth-event/" + eid + "/vote-stats/";
+            return $http.get(url);
+        },
         getTallySheet: function(eid, ballot_box_id, tally_sheet_id) {
             var url = null;
             return url = tally_sheet_id ? backendUrl + "auth-event/" + eid + "/ballot-box/" + ballot_box_id + "/tally-sheet/" + tally_sheet_id + "/" : backendUrl + "auth-event/" + eid + "/ballot-box/" + ballot_box_id + "/tally-sheet/", 
@@ -135,11 +139,14 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         resendAuthCode: function(data, eid) {
             return $http.post(backendUrl + "auth-event/" + eid + "/resend_auth_code/", data);
         },
+        editChildrenParent: function(data, eid) {
+            return $http.post(backendUrl + "auth-event/" + eid + "/edit-children-parent/", data);
+        },
         getPerm: function(perm, object_type, object_id) {
             var data = {
                 permission: perm,
                 object_type: object_type,
-                object_id: object_id + ""
+                object_id: null === object_id ? object_id : object_id + ""
             };
             return $http.post(backendUrl + "get-perms/", data);
         },
@@ -260,11 +267,13 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                 authmethod.launchPingDaemon(autheventid);
             }, 500 * ConfigService.timeoutSeconds)), !1;
         },
-        electionsIds: function(page, listType) {
+        electionsIds: function(page, listType, ids, page_size) {
             page = page || 1;
             var perms = "edit|view";
-            return "archived" === (listType = listType || "all") && (perms = "unarchive|view-archived"), 
-            $http.get(backendUrl + "acl/mine/?object_type=AuthEvent&perm=" + perms + "&order=-pk&page=" + page);
+            "archived" === (listType = listType || "all") && (perms = "unarchive|view-archived");
+            var queryIds = "";
+            return queryIds = ids ? "&ids=" + ids.join("|") : "&only_parent_elections=true", 
+            page_size && (queryIds += "&n=" + page_size), $http.get(backendUrl + "auth-event/?has_perms=" + perms + queryIds + "&order=-pk&page=" + page);
         },
         sendAuthCodes: function(eid, election, user_ids, auth_method, extra) {
             var url = backendUrl + "auth-event/" + eid + "/census/send_auth/", data = {};
@@ -292,8 +301,16 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             };
             return $http.post(url, data);
         },
-        changeAuthEvent: function(eid, st) {
+        changeAuthEvent: function(eid, st, data) {
             var url = backendUrl + "auth-event/" + eid + "/" + st + "/";
+            return void 0 === data && (data = {}), $http.post(url, data);
+        },
+        allowTally: function(eid) {
+            var url = backendUrl + "auth-event/" + eid + "/allow-tally/";
+            return $http.post(url, {});
+        },
+        unpublishResults: function(eid) {
+            var url = backendUrl + "auth-event/" + eid + "/unpublish-results/";
             return $http.post(url, {});
         },
         archive: function(eid) {
@@ -303,6 +320,13 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         unarchive: function(eid) {
             var url = backendUrl + "auth-event/" + eid + "/unarchive/";
             return $http.post(url, {});
+        },
+        launchTally: function(electionId, tallyElectionIds, forceTally) {
+            var url = backendUrl + "auth-event/" + electionId + "/tally-status/", data = {
+                children_election_ids: tallyElectionIds,
+                force_tally: forceTally
+            };
+            return $http.post(url, data);
         },
         launchPingDaemon: function(autheventid) {
             var postfix = "_authevent_" + autheventid;
@@ -412,18 +436,31 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                         data[field.name] = field.value;
                     }), scope.sendingData = !0, Authmethod.login(data, autheventid).then(function(response) {
                         if ("ok" === response.data.status) {
-                            scope.khmac = response.data.khmac;
                             var postfix = "_authevent_" + autheventid;
-                            $cookies["authevent_" + autheventid] = autheventid, $cookies["userid" + postfix] = response.data.username, 
+                            if ($cookies["authevent_" + autheventid] = autheventid, $cookies["userid" + postfix] = response.data.username, 
                             $cookies["user" + postfix] = scope.email, $cookies["auth" + postfix] = response.data["auth-token"], 
                             $cookies["isAdmin" + postfix] = scope.isAdmin, Authmethod.setAuth($cookies["auth" + postfix], scope.isAdmin, autheventid), 
-                            scope.isAdmin ? Authmethod.getUserInfo().then(function(response) {
+                            scope.isAdmin) Authmethod.getUserInfo().then(function(response) {
                                 $cookies["user" + postfix] = response.data.email, $window.location.href = "/admin/elections";
                             }, function() {
                                 $window.location.href = "/admin/elections";
-                            }) : angular.isDefined(response.data["redirect-to-url"]) ? $window.location.href = response.data["redirect-to-url"] : Authmethod.getPerm("vote", "AuthEvent", autheventid).then(function(response) {
-                                var path = response.data["permission-token"].split(";")[1], hash = path.split("/")[0], msg = path.split("/")[1];
-                                $window.location.href = "/booth/" + autheventid + "/vote/" + hash + "/" + msg;
+                            }); else if (angular.isDefined(response.data["redirect-to-url"])) $window.location.href = response.data["redirect-to-url"]; else if (angular.isDefined(response.data["vote-permission-token"])) $cookies.vote_permission_tokens = JSON.stringify([ {
+                                electionId: autheventid,
+                                token: response.data["vote-permission-token"]
+                            } ]), $window.location.href = "/booth/" + autheventid + "/vote"; else if (angular.isDefined(response.data["vote-children-info"])) {
+                                var tokens = _.chain(response.data["vote-children-info"]).filter(function(child) {
+                                    return (0 === child["num-successful-logins-allowed"] || child["num-successful-logins"] < child["num-successful-logins-allowed"]) && !!child["vote-permission-token"];
+                                }).map(function(child) {
+                                    return {
+                                        electionId: child["auth-event-id"],
+                                        token: child["vote-permission-token"]
+                                    };
+                                }).value();
+                                $cookies.vote_permission_tokens = JSON.stringify(tokens), 0 < tokens.length ? $window.location.href = "/booth/" + tokens[0].electionId + "/vote" : scope.error = $i18next("avRegistration.invalidCredentials", {
+                                    support: ConfigService.contact.email
+                                });
+                            } else scope.error = $i18next("avRegistration.invalidCredentials", {
+                                support: ConfigService.contact.email
                             });
                         } else scope.sendingData = !1, scope.status = "Not found", scope.error = $i18next("avRegistration.invalidCredentials", {
                             support: ConfigService.contact.email
@@ -437,7 +474,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                 }
             }, scope.apply = function(authevent) {
                 var ret, href, adminMatch, electionsMatch;
-                scope.method = authevent.auth_method, scope.name = authevent.name, scope.registrationAllowed = "open" === authevent.census, 
+                scope.method = authevent.auth_method, scope.name = authevent.name, scope.registrationAllowed = "open" === authevent.census && (autheventid !== adminId || ConfigService.allowAdminRegistration), 
                 scope.isCensusQuery ? scope.login_fields = Authmethod.getCensusQueryFields(authevent) : scope.login_fields = Authmethod.getLoginFields(authevent), 
                 scope.hide_default_login_lookup_field = authevent.hide_default_login_lookup_field, 
                 scope.telIndex = -1, scope.emailIndex = -1, scope.telField = null, scope.allowUserResend = (ret = !1, 
@@ -882,7 +919,31 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
     }).delay(duration).queue(function() {
         selector.removeClass("flashing flashing-out").dequeue(), selector.attr("is-flashing", "false");
     }));
-}, angular.module("avUi").directive("avSimpleError", [ "$resource", "$window", function($resource, $window) {
+}, angular.module("avUi").directive("avChildrenElections", [ "ConfigService", function(ConfigService) {
+    return {
+        restrict: "AE",
+        scope: {
+            mode: "@",
+            callback: "&?",
+            parentElectionId: "@?",
+            childrenElectionInfo: "="
+        },
+        link: function(scope, element, attrs) {
+            scope.electionsById = {}, scope.selectedElectionId = scope.parentElectionId, _.each(scope.childrenElectionInfo.presentation.categories, function(category) {
+                _.each(category.events, function(election) {
+                    "checkbox" !== scope.mode && "toggle-and-callback" !== scope.mode || (election.data = election.data || !1, 
+                    election.disabled = election.disabled || !1);
+                });
+            }), scope.click = function(election) {
+                console.log("click to election.event_id = " + election.event_id), "checkbox" === scope.mode ? election.data = !election.data : "toggle-and-callback" === scope.mode && (scope.selectedElectionId = election.event_id, 
+                scope.callback({
+                    electionId: election.event_id
+                }));
+            };
+        },
+        templateUrl: "avUi/children-elections-directive/children-elections-directive.html"
+    };
+} ]), angular.module("avUi").directive("avSimpleError", [ "$resource", "$window", function($resource, $window) {
     return {
         restrict: "AE",
         scope: {},
@@ -936,7 +997,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                         el.removeClass("hidden"), affix ? (el.addClass("affix-bottom"), $(el).parent().css("margin-bottom", elHeight + "px")) : (el.removeClass("affix-bottom"), 
                         $(el).parent().css("margin-bottom", instance.defaultBottomMargin)));
                     }(scope, instance, iElement);
-                }, 100);
+                }, 300);
             }
             0 < iAttrs.avAffixBottom.length && (instance.getIsAffix = $parse(iAttrs.avAffixBottom), 
             instance.setIsAffix = instance.getIsAffix.assign), callCheckPos(), angular.element($window).on("resize", callCheckPos), 
@@ -955,7 +1016,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                     var height, additionalHeight = 0;
                     attrs.additionalHeight && (additionalHeight = parseInt(attrs.additionalHeight, 10)), 
                     height = sibling().height(), element.css("max-height", height + additionalHeight + "px");
-                }, 100);
+                }, 300);
             }, scope.$watch(function() {
                 return sibling().height();
             }, function(newValue, oldValue) {
@@ -991,7 +1052,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                 instance.scrollAffix = null, $timeout(function() {
                     instance.baseOffset = iElement.offset(), instance.baseWidth = iElement.width(), 
                     callCheckPos();
-                }, 100);
+                }, 300);
             });
         }
     };
@@ -1007,11 +1068,11 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             function updateMarginTimeout() {
                 timeout = $timeout(function() {
                     $timeout.cancel(timeout), updateMargin(iElement, iAttrs);
-                }, 100);
+                }, 300);
             }
             updateMargin(iElement, iAttrs), void 0 === iAttrs.minHeight && (iAttrs.minHeight = "20"), 
-            angular.element(iElement).bind("resize", updateMarginTimeout), angular.element($window).bind("resize", updateMarginTimeout), 
-            $(iAttrs.avAffixTop).change(updateMarginTimeout);
+            updateMarginTimeout(), angular.element(iElement).bind("resize", updateMarginTimeout), 
+            angular.element($window).bind("resize", updateMarginTimeout), $(iAttrs.avAffixTop).change(updateMarginTimeout);
         }
     };
 } ]), angular.module("avUi").directive("avCollapsing", [ "$window", "$timeout", function($window, $timeout) {
@@ -1034,8 +1095,9 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             function callCheck() {
                 timeout = $timeout(function() {
                     $timeout.cancel(timeout), function(instance, el) {
-                        var maxHeight = select(instance, el, instance.maxHeightSelector).css("max-height"), height = angular.element(el)[0].scrollHeight;
-                        if (-1 !== maxHeight.indexOf("px")) if ((maxHeight = parseInt(maxHeight.replace("px", ""))) < height) {
+                        var maxHeight = select(instance, el, instance.maxHeightSelector).css("max-height"), height = angular.element(el)[0].scrollHeight, paddingTop = angular.element(el).css("padding-top");
+                        if (-1 !== maxHeight.indexOf("px")) if (paddingTop = paddingTop && -1 !== paddingTop.indexOf("px") ? parseInt(paddingTop.replace("px", "")) : 0, 
+                        (maxHeight = parseInt(maxHeight.replace("px", ""))) < height - paddingTop) {
                             if (instance.isCollapsed) return;
                             instance.isCollapsed = !0, collapseEl(instance, el).addClass("collapsed"), select(instance, el, instance.toggleSelector).removeClass("hidden in");
                         } else {
@@ -1043,7 +1105,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                             instance.isCollapsed = !1, collapseEl(instance, el).removeClass("collapsed"), select(instance, el, instance.toggleSelector).addClass("hidden");
                         } else console.log("invalid non-pixels max-height for " + instance.maxHeightSelector);
                     }(instance, iElement);
-                }, 100);
+                }, 500);
             }
             callCheck(), angular.element($window).bind("resize", callCheck), angular.element(iElement).bind("resize", callCheck), 
             angular.element(instance.toggleSelector).bind("click", function() {
@@ -1406,6 +1468,7 @@ angular.module("jm.i18next").config([ "$i18nextProvider", "ConfigServiceProvider
     $templateCache.put("avRegistration/register-directive/register-directive.html", '<div class="container"><div class="row"><div class="col-sm-12"><h2 ng-if="!admin" class="registerheader" ng-i18next="avRegistration.registerHeader"></h2><h2 ng-if="admin" class="registerheader" ng-i18next="avRegistration.registerAdminHeader"></h2></div></div><div class="row"><div class="col-sm-6"><div ng-if="method == \'dnie\'"><a type="submit" class="btn btn-block btn-success" ng-i18next="avRegistration.registerButton" ng-href="{{ dnieurl }}/"></a></div><form ng-if="method != \'dnie\'" name="form" id="registerForm" role="form" class="form-horizontal"><div ng-repeat="field in register_fields" avr-field index="{{$index+1}}"></div><div class="col-sm-offset-4 col-sm-8 button-group"><div class="input-error"><div class="error text-danger" ng-if="error" ng-bind-html="error"></div></div><div class="input-warn"><span class="text-warning" ng-if="!form.$valid || sendingData" ng-i18next>avRegistration.fillValidFormText</span></div><button type="submit" class="btn btn-block btn-success" ng-i18next="avRegistration.registerButton" ng-click="signUp(form.$valid)" tabindex="{{register_fields.length+1}}" ng-disabled="!form.$valid || sendingData"></button></div></form></div><div class="col-sm-5 col-sm-offset-1 help-sidebar hidden-xs"><span><h3 class="help-h3" ng-i18next="avRegistration.registerAdminFormHelpTitle"></h3><p ng-i18next>avRegistration.helpAdminRegisterForm</p></span><span><p ng-if="!admin" ng-i18next>avRegistration.helpRegisterForm</p><h3 class="help-h3" ng-i18next="avRegistration.alreadyRegistered"></h3><p ng-i18next>[html]avRegistration.helpAlreadyRegisteredForm</p><a href="" ng-click="goLogin($event)" ng-i18next="avRegistration.loginHere"></a><br></span></div></div></div>'), 
     $templateCache.put("avRegistration/success.html", '<div av-success><p ng-i18next="avRegistration.successRegistration"></p></div>'), 
     $templateCache.put("avUi/change-lang-directive/change-lang-directive.html", '<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{ deflang }} <span class="caret"></span></a><ul class="dropdown-menu" role="menu"><li ng-repeat="lang in langs"><a ng-click="changeLang(lang)" ng-space-click tabindex="0">{{lang}}</a></li></ul>'), 
+    $templateCache.put("avUi/children-elections-directive/children-elections-directive.html", '<div class="row" ng-if="mode === \'toggle-and-callback\'"><div class="col-xs-12"><div class="btn btn-success btn-election" ng-class="{\'selected\': selectedElectionId === parentElectionId}" ng-click="click({event_id: parentElectionId})"><span ng-i18next>avAdmin.childrenElections.main</span></div></div></div><div ng-repeat="category in childrenElectionInfo.presentation.categories" class="row"><div class="col-xs-12"><h4>{{category.title}}</h4><div ng-repeat="election in category.events" class="btn btn-success btn-election" ng-disabled="election.disabled" ng-class="{\'selected\': selectedElectionId === election.event_id}" data-election-id="{{election.event_id}}" ng-click="click(election)"><i ng-if="mode === \'checkbox\'" class="fa-fw fa" ng-class="{\'fa-square-o\': !election.data, \'fa-check-square-o\': !!election.data}" aria-hidden="true"></i> {{election.title}}</div></div></div>'), 
     $templateCache.put("avUi/documentation-directive/documentation-directive.html", '<div><h2 class="text-center text-av-secondary" ng-i18next="avDocumentation.documentation.title"></h2><p ng-i18next="avDocumentation.documentation.first_line"></p><ul class="docu-ul"><li ng-if="!!documentation.faq"><a href="{{documentation.faq}}" target="_blank" ng-i18next="avDocumentation.documentation.faq"></a></li><li ng-if="!!documentation.overview"><a href="{{documentation.overview}}" target="_blank" ng-i18next="avDocumentation.documentation.overview"></a></li><li><a href="{{auths_url}}" target="_blank" ng-i18next="avDocumentation.documentation.authorities"></a></li><li ng-if="!!documentation.technical"><a href="{{documentation.technical}}" target="_blank" ng-i18next="avDocumentation.documentation.technical"></a></li><li ng-if="!!documentation.security_contact"><a href="{{documentation.security_contact}}" target="_blank" ng-i18next="avDocumentation.documentation.security_contact"></a></li></ul><div class="documentation-html-include" av-plugin-html ng-bind-html="documentation_html_include"></div></div>'), 
     $templateCache.put("avUi/foot-directive/foot-directive.html", '<div class="commonfoot"><div class="social" style="text-align: center;"><span class="powered-by pull-left" ng-i18next="[html:i18next]({url: organization.orgUrl, name: organization.orgName})avCommon.poweredBy"></span> <a href="{{social.facebook}}" target="_blank" ng-if="!!social.facebook" aria-label="Facebook"><i class="fa fa-fw fa-lg fa-facebook"></i></a> <a href="{{social.twitter}}" target="_blank" ng-if="!!social.twitter" aria-label="Twitter"><i class="fa fa-fw fa-lg fa-twitter"></i></a> <a href="{{social.googleplus}}" target="_blank" ng-if="!!social.googleplus" aria-label="Google Plus"><i class="fa fa-fw fa-lg fa-google-plus"></i></a> <a href="{{social.youtube}}" target="_blank" ng-if="!!social.youtube" aria-label="Youtube"><i class="fa fa-fw fa-lg fa-youtube-play"></i></a> <a href="{{social.github}}" target="_blank" ng-if="!!social.github" aria-label="Github"><i class="fa fa-fw fa-lg fa-github"></i></a></div></div>'), 
     $templateCache.put("avUi/simple-error-directive/simple-error-directive.html", '<div class="av-simple-error-title" ng-transclude></div>'), 

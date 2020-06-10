@@ -166,6 +166,16 @@ angular.module('avRegistration')
             return $http.post(url, data);
         };
 
+        /**
+         * @returns the http request
+         */
+        authmethod.voteStats = function(eid)
+        {
+            var url = backendUrl + 'auth-event/' + eid + '/vote-stats/';
+
+            return $http.get(url);
+        };
+
 
         /**
          * @returns the http request
@@ -271,11 +281,15 @@ angular.module('avRegistration')
             return $http.post(backendUrl + 'auth-event/'+eid+'/resend_auth_code/', data);
         };
 
+        authmethod.editChildrenParent = function(data, eid) {
+            return $http.post(backendUrl + 'auth-event/'+eid+'/edit-children-parent/', data);
+        };
+
         authmethod.getPerm = function(perm, object_type, object_id) {
             var data = {
                 permission: perm,
                 object_type: object_type,
-                object_id: object_id + "" // to convert to string
+                object_id: (object_id === null) ? object_id : object_id + "" // to convert to string
             };
             return $http.post(backendUrl + 'get-perms/', data);
         };
@@ -481,7 +495,7 @@ angular.module('avRegistration')
             return false;
         };
 
-        authmethod.electionsIds = function(page, listType) {
+        authmethod.electionsIds = function(page, listType, ids, page_size) {
             if (!page) {
                 page = 1;
             }
@@ -494,11 +508,22 @@ angular.module('avRegistration')
             if (listType === 'archived') {
               perms = 'unarchive|view-archived';
             }
+            // only if needed
+            var queryIds = '';
+            if (!!ids) {
+              queryIds = '&ids=' + ids.join('|');
+            } else {
+              queryIds = '&only_parent_elections=true';
+            }
+            if (!!page_size) {
+              queryIds += '&n=' + page_size;
+            }
 
             return $http.get(
               backendUrl + 
-              'acl/mine/?object_type=AuthEvent&perm=' +
+              'auth-event/?has_perms=' +
               perms +
+              queryIds +
               '&order=-pk&page=' +
               page
             );
@@ -543,8 +568,22 @@ angular.module('avRegistration')
             return $http.post(url, data);
         };
 
-        authmethod.changeAuthEvent = function(eid, st) {
+        authmethod.changeAuthEvent = function(eid, st, data) {
             var url = backendUrl + 'auth-event/'+eid+'/'+st+'/';
+            if (data === undefined) {
+              data = {};
+            }
+            return $http.post(url, data);
+        };
+
+        authmethod.allowTally = function(eid) {
+            var url = backendUrl + 'auth-event/'+eid+'/allow-tally/';
+            var data = {};
+            return $http.post(url, data);
+        };
+
+        authmethod.unpublishResults = function(eid) {
+            var url = backendUrl + 'auth-event/'+eid+'/unpublish-results/';
             var data = {};
             return $http.post(url, data);
         };
@@ -558,6 +597,19 @@ angular.module('avRegistration')
         authmethod.unarchive = function(eid) {
             var url = backendUrl + 'auth-event/'+eid+'/unarchive/';
             var data = {};
+            return $http.post(url, data);
+        };
+
+        authmethod.launchTally = function(
+          electionId,
+          tallyElectionIds,
+          forceTally
+        ) {
+            var url = backendUrl + 'auth-event/' + electionId + '/tally-status/';
+            var data = {
+              children_election_ids: tallyElectionIds,
+              force_tally: forceTally
+            };
             return $http.post(url, data);
         };
 
