@@ -184,10 +184,10 @@ angular-sanitize@1.2.32:
   resolved "https://registry.yarnpkg.com/angular-sanitize/-/angular-sanitize-1.2.32.tgz#534184fefc112c0d6f30964f2c2b092a02e87821"
   integrity sha1-U0GE/vwRLA1vMJZPLCsJKgLoeCE=
 
-angular@1.2.27:
-  version "1.2.27"
-  resolved "https://registry.yarnpkg.com/angular/-/angular-1.2.27.tgz#0cfc5c4b9eafb335b7df9a0095a04200faf2d328"
-  integrity sha1-DPxcS56vszW335oAlaBCAPry0yg=
+angular@1.7.9:
+  version "1.7.9"
+  resolved "https://registry.yarnpkg.com/angular/-/angular-1.7.9.tgz#e52616e8701c17724c3c238cfe4f9446fd570bc4"
+  integrity sha512-5se7ZpcOtu0MBFlzGv5dsM1quQDoDeUTwZrWjGtTNA7O88cD8TEk5IEKCTDa3uECV9XnvKREVUr7du1ACiWGFQ==
 
 angular@^1.0.8, angular@~1.2:
   version "1.2.32"
