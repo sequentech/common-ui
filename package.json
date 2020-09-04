@@ -41,7 +41,7 @@
     "nanoscroller": "^0.8.7",
     "ng-autofocus": "~0.0.1",
     "ng-file-upload": "3.0.7",
-    "papaparse": "~4.1.0",
+    "papaparse": "~5.2.0",
     "rng-js": "~1.0.1",
     "underscore": "1.8.2",
     "angular-mocks": "~1.2",
