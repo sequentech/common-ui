@@ -19,7 +19,7 @@
 		"name": "Agora Voting"
 	},
 	"avRegistration": {
-		"loginHeader": "Login to your __name__ account",
+		"loginHeader": "Login to vote",
 		"censusQueryHeader": "Check if you are in the census",
 		"checkCensusButton": "Check census",
 		"censusQuerying": "Please wait, checking census..",

@@ -18,7 +18,7 @@
     "name": "Agora Voting"
   },
   "avRegistration": {
-    "loginHeader": "Entrar na túa conta de __name__",
+    "loginHeader": "Entrar",
     "helpRegisterForm": "Para poder votar, tes que rexistrarte primeiro mediante este formulario. Algúns dos campos son obrigatorios: le ben a información de axuda",
     "helpAdminRegisterForm": "Para poder crear votacións tes que rexistrarche primeiro mediante este formulario. Le ben a información de axuda",
     "registerFormHelpTitle": "Rexistrándote para votar",

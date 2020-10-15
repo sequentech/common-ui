@@ -20,7 +20,7 @@
     "name": "Agora Voting"
   },
   "avRegistration": {
-    "loginHeader": "Logga in __name__",
+    "loginHeader": "Logga",
     "censusQueryHeader": "Kontrollera om du har rösträtt",
     "checkCensusButton": "Kontrollera registret över röstberättigade",
     "censusQuerying": "Vänta, registret över röstberättigade kontrolleras...",

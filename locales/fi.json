@@ -20,7 +20,6 @@
     "name": "Agora Voting"
   },
   "avRegistration": {
-    "loginHeader": "Kirjaudu sisään __name__",
     "censusQueryHeader": "Tarkista onko sinulla äänioikeus",
     "checkCensusButton": "Tarkista äänioikeusrekisteri",
     "censusQuerying": "Odota, äänioikeusrekisteriä tarkistetaan..",
