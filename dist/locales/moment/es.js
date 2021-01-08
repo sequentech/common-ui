@@ -6,7 +6,7 @@
     return moment.defineLocale("es", {
         months: "enero_febrero_marzo_abril_mayo_junio_julio_agosto_septiembre_octubre_noviembre_diciembre".split("_"),
         monthsShort: function(m, format) {
-            return m ? /-MMM-/.test(format) ? monthsShort[m.month()] : monthsShortDot[m.month()] : monthsShortDot;
+            return m ? (/-MMM-/.test(format) ? monthsShort : monthsShortDot)[m.month()] : monthsShortDot;
         },
         monthsRegex: monthsRegex,
         monthsShortRegex: monthsRegex,

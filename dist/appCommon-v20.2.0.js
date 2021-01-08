@@ -6,7 +6,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         captcha_status: "",
         admin: !1,
         getAuthevent: function() {
-            var adminId = ConfigService.freeAuthId + "", href = $location.path(), authevent = "", adminMatch = href.match(/^\/admin\//), boothMatch = href.match(/^\/booth\/([0-9]+)\//), electionsMatch = href.match(/^\/(elections|election)\/([0-9]+)\//);
+            var adminId = ConfigService.freeAuthId + "", electionsMatch = $location.path(), authevent = "", adminMatch = electionsMatch.match(/^\/admin\//), boothMatch = electionsMatch.match(/^\/booth\/([0-9]+)\//), electionsMatch = electionsMatch.match(/^\/(elections|election)\/([0-9]+)\//);
             return _.isArray(adminMatch) ? authevent = adminId : _.isArray(boothMatch) && 2 === boothMatch.length ? authevent = boothMatch[1] : _.isArray(electionsMatch) && 3 === electionsMatch.length && (authevent = electionsMatch[2]), 
             authevent;
         },
@@ -17,8 +17,8 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             var auth = $http.defaults.headers.common.Authorization;
             return auth && 0 < auth.length;
         },
-        signup: function(data, authevent) {
-            var eid = authevent || authId;
+        signup: function(data, eid) {
+            eid = eid || authId;
             return $http.post(backendUrl + "auth-event/" + eid + "/register/", data);
         },
         getUserInfoExtra: function() {
@@ -36,8 +36,8 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             };
             return data;
         },
-        getActivity: function(eid, page, size, filterOptions, filterStr, receiver_id) {
-            var params = {}, url = backendUrl + "auth-event/" + eid + "/activity/";
+        getActivity: function(url, page, size, filterOptions, filterStr, receiver_id) {
+            var params = {}, url = backendUrl + "auth-event/" + url + "/activity/";
             return "max" === size ? params.size = 500 : angular.isNumber(size) && 0 < size && size < 500 ? params.size = parseInt(size) : params.size = 10, 
             angular.isNumber(page) ? params.page = parseInt(page) : params.page = 1, angular.isNumber(receiver_id) && (params.receiver_id = receiver_id), 
             _.extend(params, filterOptions), filterStr && 0 < filterStr.length && (params.filter = filterStr), 
@@ -45,39 +45,38 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                 params: params
             });
         },
-        getBallotBoxes: function(eid, page, size, filterOptions, filterStr) {
-            var params = {}, url = backendUrl + "auth-event/" + eid + "/ballot-box/";
+        getBallotBoxes: function(url, page, size, filterOptions, filterStr) {
+            var params = {}, url = backendUrl + "auth-event/" + url + "/ballot-box/";
             return "max" === size ? params.size = 500 : angular.isNumber(size) && 0 < size && size < 500 ? params.size = parseInt(size) : params.size = 10, 
             angular.isNumber(page) ? params.page = parseInt(page) : params.page = 1, _.extend(params, filterOptions), 
             filterStr && 0 < filterStr.length && (params.filter = filterStr), $http.get(url, {
                 params: params
             });
         },
-        createBallotBox: function(eid, name) {
-            var params = {
-                name: name
-            }, url = backendUrl + "auth-event/" + eid + "/ballot-box/";
+        createBallotBox: function(url, params) {
+            params = {
+                name: params
+            }, url = backendUrl + "auth-event/" + url + "/ballot-box/";
             return $http.post(url, params);
         },
-        postTallySheet: function(eid, ballot_box_id, data) {
-            var url = backendUrl + "auth-event/" + eid + "/ballot-box/" + ballot_box_id + "/tally-sheet/";
+        postTallySheet: function(eid, url, data) {
+            url = backendUrl + "auth-event/" + eid + "/ballot-box/" + url + "/tally-sheet/";
             return $http.post(url, data);
         },
-        voteStats: function(eid) {
-            var url = backendUrl + "auth-event/" + eid + "/vote-stats/";
+        voteStats: function(url) {
+            url = backendUrl + "auth-event/" + url + "/vote-stats/";
             return $http.get(url);
         },
         getTallySheet: function(eid, ballot_box_id, tally_sheet_id) {
-            var url = null;
-            return url = tally_sheet_id ? backendUrl + "auth-event/" + eid + "/ballot-box/" + ballot_box_id + "/tally-sheet/" + tally_sheet_id + "/" : backendUrl + "auth-event/" + eid + "/ballot-box/" + ballot_box_id + "/tally-sheet/", 
-            $http.get(url);
+            var url = null, url = tally_sheet_id ? backendUrl + "auth-event/" + eid + "/ballot-box/" + ballot_box_id + "/tally-sheet/" + tally_sheet_id + "/" : backendUrl + "auth-event/" + eid + "/ballot-box/" + ballot_box_id + "/tally-sheet/";
+            return $http.get(url);
         },
-        deleteTallySheet: function(eid, ballot_box_id, tally_sheet_id) {
-            var url = backendUrl + "auth-event/" + eid + "/ballot-box/" + ballot_box_id + "/tally-sheet/" + tally_sheet_id + "/";
+        deleteTallySheet: function(eid, ballot_box_id, url) {
+            url = backendUrl + "auth-event/" + eid + "/ballot-box/" + ballot_box_id + "/tally-sheet/" + url + "/";
             return $http.delete(url, {});
         },
-        deleteBallotBox: function(eid, ballot_box_id) {
-            var url = backendUrl + "auth-event/" + eid + "/ballot-box/" + ballot_box_id + "/delete/";
+        deleteBallotBox: function(eid, url) {
+            url = backendUrl + "auth-event/" + eid + "/ballot-box/" + url + "/delete/";
             return $http.delete(url, {});
         },
         updateUserExtra: function(extra) {
@@ -128,12 +127,12 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         getImage: function(ev, uid) {
             return $http.get(backendUrl + "auth-event/" + ev + "/census/img/" + uid + "/");
         },
-        login: function(data, authevent) {
-            var eid = authevent || authId;
+        login: function(data, eid) {
+            eid = eid || authId;
             return delete data.authevent, $http.post(backendUrl + "auth-event/" + eid + "/authenticate/", data);
         },
-        censusQuery: function(data, authevent) {
-            var eid = authevent || authId;
+        censusQuery: function(data, eid) {
+            eid = eid || authId;
             return delete data.authevent, $http.post(backendUrl + "auth-event/" + eid + "/census/public-query/", data);
         },
         resendAuthCode: function(data, eid) {
@@ -142,11 +141,11 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         editChildrenParent: function(data, eid) {
             return $http.post(backendUrl + "auth-event/" + eid + "/edit-children-parent/", data);
         },
-        getPerm: function(perm, object_type, object_id) {
-            var data = {
+        getPerm: function(perm, object_type, data) {
+            data = {
                 permission: perm,
                 object_type: object_type,
-                object_id: null === object_id ? object_id : object_id + ""
+                object_id: null === data ? data : data + ""
             };
             return $http.post(backendUrl + "get-perms/", data);
         },
@@ -162,11 +161,11 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         editEvent: function(id, data) {
             return $http.post(backendUrl + "auth-event/" + id + "/", data);
         },
-        addCensus: function(id, data, validation) {
+        addCensus: function(id, d, validation) {
             angular.isDefined(validation) || (validation = "enabled");
-            var d = {
+            d = {
                 "field-validation": validation,
-                census: data
+                census: d
             };
             return $http.post(backendUrl + "auth-event/" + id + "/census/", d);
         },
@@ -176,11 +175,9 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             }) : $http.get(backendUrl + "auth-event/" + id + "/census/");
         },
         getRegisterFields: function(viewEventData, hide_default_login_lookup_field) {
-            var fields = _.filter(angular.copy(viewEventData.extra_fields), function(item) {
+            var fields = (fields = _.filter(angular.copy(viewEventData.extra_fields), function(item) {
                 return !0 !== item.required_when_registered;
-            });
-            fields = fields || [];
-            var found = !1;
+            })) || [], found = !1;
             _.each(fields, function(field) {
                 "sms" === viewEventData.auth_method && "tlf" === field.name ? ("text" === field.type && (field.type = "tlf"), 
                 found = !0) : "email" === viewEventData.auth_method && "email" === field.name && (found = !0);
@@ -222,8 +219,8 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             }
             return fields;
         },
-        getCensusQueryFields: function(viewEventData) {
-            var fields = angular.copy(viewEventData.extra_fields);
+        getCensusQueryFields: function(fields) {
+            fields = angular.copy(fields.extra_fields);
             return fields = _.filter(fields, function(field) {
                 return field.required_on_authentication;
             });
@@ -267,64 +264,63 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                 authmethod.launchPingDaemon(autheventid);
             }, 500 * ConfigService.timeoutSeconds)), !1;
         },
-        electionsIds: function(page, listType, ids, page_size) {
+        electionsIds: function(page, queryIds, ids, page_size) {
             page = page || 1;
             var perms = "edit|view";
-            "archived" === (listType = listType || "all") && (perms = "unarchive|view-archived");
-            var queryIds = "";
-            return queryIds = ids ? "&ids=" + ids.join("|") : "&only_parent_elections=true", 
-            page_size && (queryIds += "&n=" + page_size), $http.get(backendUrl + "auth-event/?has_perms=" + perms + queryIds + "&order=-pk&page=" + page);
+            "archived" === (queryIds = queryIds || "all") && (perms = "unarchive|view-archived");
+            queryIds = "", queryIds = ids ? "&ids=" + ids.join("|") : "&only_parent_elections=true";
+            return page_size && (queryIds += "&n=" + page_size), $http.get(backendUrl + "auth-event/?has_perms=" + perms + queryIds + "&order=-pk&page=" + page);
         },
-        sendAuthCodes: function(eid, election, user_ids, auth_method, extra) {
-            var url = backendUrl + "auth-event/" + eid + "/census/send_auth/", data = {};
+        sendAuthCodes: function(data, election, user_ids, auth_method, extra) {
+            var url = backendUrl + "auth-event/" + data + "/census/send_auth/", data = {};
             return angular.isDefined(election) && (data.msg = election.census.config.msg, "email" === auth_method && (data.subject = election.census.config.subject)), 
             angular.isDefined(user_ids) && (data["user-ids"] = user_ids), angular.isDefined(auth_method) && (data["auth-method"] = auth_method), 
             extra && (data.extra = extra), $http.post(url, data);
         },
-        removeUsersIds: function(eid, election, user_ids) {
-            var url = backendUrl + "auth-event/" + eid + "/census/delete/", data = {
-                "user-ids": user_ids
+        removeUsersIds: function(url, election, data) {
+            url = backendUrl + "auth-event/" + url + "/census/delete/", data = {
+                "user-ids": data
             };
             return $http.post(url, data);
         },
-        activateUsersIds: function(eid, election, user_ids, comment) {
-            var url = backendUrl + "auth-event/" + eid + "/census/activate/", data = {
+        activateUsersIds: function(url, election, user_ids, data) {
+            url = backendUrl + "auth-event/" + url + "/census/activate/", data = {
                 "user-ids": user_ids,
-                comment: comment
+                comment: data
             };
             return $http.post(url, data);
         },
-        deactivateUsersIds: function(eid, election, user_ids, comment) {
-            var url = backendUrl + "auth-event/" + eid + "/census/deactivate/", data = {
+        deactivateUsersIds: function(url, election, user_ids, data) {
+            url = backendUrl + "auth-event/" + url + "/census/deactivate/", data = {
                 "user-ids": user_ids,
-                comment: comment
+                comment: data
             };
             return $http.post(url, data);
         },
-        changeAuthEvent: function(eid, st, data) {
-            var url = backendUrl + "auth-event/" + eid + "/" + st + "/";
+        changeAuthEvent: function(eid, url, data) {
+            url = backendUrl + "auth-event/" + eid + "/" + url + "/";
             return void 0 === data && (data = {}), $http.post(url, data);
         },
-        allowTally: function(eid) {
-            var url = backendUrl + "auth-event/" + eid + "/allow-tally/";
+        allowTally: function(url) {
+            url = backendUrl + "auth-event/" + url + "/allow-tally/";
             return $http.post(url, {});
         },
-        unpublishResults: function(eid) {
-            var url = backendUrl + "auth-event/" + eid + "/unpublish-results/";
+        unpublishResults: function(url) {
+            url = backendUrl + "auth-event/" + url + "/unpublish-results/";
             return $http.post(url, {});
         },
-        archive: function(eid) {
-            var url = backendUrl + "auth-event/" + eid + "/archive/";
+        archive: function(url) {
+            url = backendUrl + "auth-event/" + url + "/archive/";
             return $http.post(url, {});
         },
-        unarchive: function(eid) {
-            var url = backendUrl + "auth-event/" + eid + "/unarchive/";
+        unarchive: function(url) {
+            url = backendUrl + "auth-event/" + url + "/unarchive/";
             return $http.post(url, {});
         },
-        launchTally: function(electionId, tallyElectionIds, forceTally) {
-            var url = backendUrl + "auth-event/" + electionId + "/tally-status/", data = {
+        launchTally: function(url, tallyElectionIds, data) {
+            url = backendUrl + "auth-event/" + url + "/tally-status/", data = {
                 children_election_ids: tallyElectionIds,
-                force_tally: forceTally
+                force_tally: data
             };
             return $http.post(url, data);
         },
@@ -349,7 +345,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             };
             return data;
         },
-        uploadUserDraft: function(draft) {
+        uploadUserDraft: function(draft_data) {
             if (!authmethod.isLoggedIn()) {
                 var data = {
                     then: function(onSuccess, onError) {
@@ -364,8 +360,8 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                 };
                 return data;
             }
-            var draft_data = {
-                draft_election: draft
+            draft_data = {
+                draft_election: draft_data
             };
             return $http.post(backendUrl + "user/draft/", draft_data);
         }
@@ -392,95 +388,84 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             scope.code = null, attrs.code && 0 < attrs.code.length && (scope.code = attrs.code), 
             scope.email = null, attrs.email && 0 < attrs.email.length && (scope.email = attrs.email), 
             scope.isAdmin = !1, autheventid === adminId && (scope.isAdmin = !0), scope.resendAuthCode = function(field) {
-                if (!scope.sendingData && _.contains([ "email", "email-otp", "sms", "sms-otp" ], scope.method) && !(_.contains([ "sms", "sms-otp" ], scope.method) && -1 === scope.telIndex && !scope.hide_default_login_lookup_field || _.contains([ "email", "email-otp" ], scope.method) && -1 === scope.emailIndex && !scope.hide_default_login_lookup_field)) {
-                    var stop = !1, data = _.object(_.filter(scope.login_fields, function(element, index) {
-                        return element.index = index, void 0 === element.steps || -1 !== element.steps.indexOf(0);
-                    }).map(function(element) {
-                        var email, pattern, inputName;
-                        return (_.contains([ "sms", "sms-otp" ], scope.method) && element.index === scope.telIndex && (inputName = "input" + scope.telIndex, 
-                        !document.getElementById(inputName) || !angular.element(document.getElementById(inputName)).intlTelInput("isValidNumber")) || _.contains([ "email", "email-otp" ], scope.method) && element.index === scope.emailIndex && (email = element.value, 
-                        pattern = Patterns.get("email"), null === email.match(pattern))) && (stop = !0), 
-                        [ element.name, element.value ];
-                    }));
-                    stop || (field && (field.value = ""), scope.sendingData = !0, Authmethod.resendAuthCode(data, autheventid).then(function(response) {
-                        _.each(scope.login_fields, function(element) {
-                            void 0 !== element.steps && -1 === element.steps.indexOf(0) || (element.disabled = !0);
-                        }), scope.currentFormStep = 1, $timeout(scope.sendingDataTimeout, 3e3);
-                    }, function() {
-                        $timeout(scope.sendingDataTimeout, 3e3), scope.error = $i18next("avRegistration.errorSendingAuthCode");
-                    }));
-                }
+                var stop, data;
+                !scope.sendingData && _.contains([ "email", "email-otp", "sms", "sms-otp" ], scope.method) && (_.contains([ "sms", "sms-otp" ], scope.method) && -1 === scope.telIndex && !scope.hide_default_login_lookup_field || _.contains([ "email", "email-otp" ], scope.method) && -1 === scope.emailIndex && !scope.hide_default_login_lookup_field || (stop = !1, 
+                data = _.object(_.filter(scope.login_fields, function(element, index) {
+                    return element.index = index, void 0 === element.steps || -1 !== element.steps.indexOf(0);
+                }).map(function(element) {
+                    var email, pattern;
+                    return (_.contains([ "sms", "sms-otp" ], scope.method) && element.index === scope.telIndex && (pattern = "input" + scope.telIndex, 
+                    !document.getElementById(pattern) || !angular.element(document.getElementById(pattern)).intlTelInput("isValidNumber")) || _.contains([ "email", "email-otp" ], scope.method) && element.index === scope.emailIndex && (email = element.value, 
+                    pattern = Patterns.get("email"), null === email.match(pattern))) && (stop = !0), 
+                    [ element.name, element.value ];
+                })), stop || (field && (field.value = ""), scope.sendingData = !0, Authmethod.resendAuthCode(data, autheventid).then(function(response) {
+                    _.each(scope.login_fields, function(element) {
+                        void 0 !== element.steps && -1 === element.steps.indexOf(0) || (element.disabled = !0);
+                    }), scope.currentFormStep = 1, $timeout(scope.sendingDataTimeout, 3e3);
+                }, function(response) {
+                    $timeout(scope.sendingDataTimeout, 3e3), scope.error = $i18next("avRegistration.errorSendingAuthCode");
+                }))));
             }, scope.sendingDataTimeout = function() {
                 scope.sendingData = !1;
             }, scope.checkCensus = function(valid) {
-                if (valid && !scope.sendingData) {
-                    scope.censusQuery = "querying";
-                    var data = {
-                        captcha_code: Authmethod.captcha_code
-                    };
-                    _.each(scope.login_fields, function(field) {
-                        data[field.name] = field.value;
-                    }), scope.sendingData = !0, Authmethod.censusQuery(data, autheventid).then(function(response) {
-                        scope.sendingData = !1, scope.censusQueryData = response.data, scope.censusQuery = "success";
-                    }, function() {
-                        scope.sendingData = !1, scope.censusQuery = "fail";
-                    });
-                }
+                var data;
+                valid && (scope.sendingData || (scope.censusQuery = "querying", data = {
+                    captcha_code: Authmethod.captcha_code
+                }, _.each(scope.login_fields, function(field) {
+                    data[field.name] = field.value;
+                }), scope.sendingData = !0, Authmethod.censusQuery(data, autheventid).then(function(response) {
+                    scope.sendingData = !1, scope.censusQueryData = response.data, scope.censusQuery = "success";
+                }, function(response) {
+                    scope.sendingData = !1, scope.censusQuery = "fail";
+                })));
             }, scope.loginUser = function(valid) {
-                if (valid && !scope.sendingData) if (_.contains([ "sms-otp", "email-otp" ], scope.method) && 0 === scope.currentFormStep) scope.resendAuthCode(); else {
-                    var data = {
-                        captcha_code: Authmethod.captcha_code
-                    };
-                    _.each(scope.login_fields, function(field) {
-                        "email" === field.name ? scope.email = field.value : "code" === field.name && (field.value = field.value.trim().replace(/ |\n|\t|-|_/g, "").toUpperCase()), 
-                        data[field.name] = field.value;
-                    }), scope.sendingData = !0, Authmethod.login(data, autheventid).then(function(response) {
-                        if ("ok" === response.data.status) {
-                            var postfix = "_authevent_" + autheventid;
-                            if ($cookies["authevent_" + autheventid] = autheventid, $cookies["userid" + postfix] = response.data.username, 
-                            $cookies["user" + postfix] = scope.email, $cookies["auth" + postfix] = response.data["auth-token"], 
-                            $cookies["isAdmin" + postfix] = scope.isAdmin, Authmethod.setAuth($cookies["auth" + postfix], scope.isAdmin, autheventid), 
-                            scope.isAdmin) Authmethod.getUserInfo().then(function(response) {
-                                $cookies["user" + postfix] = response.data.email, $window.location.href = "/admin/elections";
-                            }, function() {
-                                $window.location.href = "/admin/elections";
-                            }); else if (angular.isDefined(response.data["redirect-to-url"])) $window.location.href = response.data["redirect-to-url"]; else if (angular.isDefined(response.data["vote-permission-token"])) $cookies.vote_permission_tokens = JSON.stringify([ {
-                                electionId: autheventid,
-                                token: response.data["vote-permission-token"]
-                            } ]), $window.location.href = "/booth/" + autheventid + "/vote"; else if (angular.isDefined(response.data["vote-children-info"])) {
-                                var tokens = _.chain(response.data["vote-children-info"]).filter(function(child) {
-                                    return (0 === child["num-successful-logins-allowed"] || child["num-successful-logins"] < child["num-successful-logins-allowed"]) && !!child["vote-permission-token"];
-                                }).map(function(child) {
-                                    return {
-                                        electionId: child["auth-event-id"],
-                                        token: child["vote-permission-token"]
-                                    };
-                                }).value();
-                                $cookies.vote_permission_tokens = JSON.stringify(tokens), 0 < tokens.length ? $window.location.href = "/booth/" + tokens[0].electionId + "/vote" : scope.error = $i18next("avRegistration.invalidCredentials", {
-                                    support: ConfigService.contact.email
-                                });
-                            } else scope.error = $i18next("avRegistration.invalidCredentials", {
-                                support: ConfigService.contact.email
-                            });
-                        } else scope.sendingData = !1, scope.status = "Not found", scope.error = $i18next("avRegistration.invalidCredentials", {
-                            support: ConfigService.contact.email
-                        });
+                var data;
+                valid && (scope.sendingData || (_.contains([ "sms-otp", "email-otp" ], scope.method) && 0 === scope.currentFormStep ? scope.resendAuthCode() : (data = {
+                    captcha_code: Authmethod.captcha_code
+                }, _.each(scope.login_fields, function(field) {
+                    "email" === field.name ? scope.email = field.value : "code" === field.name && (field.value = field.value.trim().replace(/ |\n|\t|-|_/g, "").toUpperCase()), 
+                    data[field.name] = field.value;
+                }), scope.sendingData = !0, Authmethod.login(data, autheventid).then(function(tokens) {
+                    var postfix;
+                    "ok" === tokens.data.status ? (postfix = "_authevent_" + autheventid, $cookies["authevent_" + autheventid] = autheventid, 
+                    $cookies["userid" + postfix] = tokens.data.username, $cookies["user" + postfix] = scope.email, 
+                    $cookies["auth" + postfix] = tokens.data["auth-token"], $cookies["isAdmin" + postfix] = scope.isAdmin, 
+                    Authmethod.setAuth($cookies["auth" + postfix], scope.isAdmin, autheventid), scope.isAdmin ? Authmethod.getUserInfo().then(function(response) {
+                        $cookies["user" + postfix] = response.data.email, $window.location.href = "/admin/elections";
                     }, function(response) {
-                        scope.sendingData = !1, scope.status = "Registration error: " + response.data.message, 
-                        scope.error = $i18next("avRegistration.invalidCredentials", {
-                            support: ConfigService.contact.email
-                        });
+                        $window.location.href = "/admin/elections";
+                    }) : angular.isDefined(tokens.data["redirect-to-url"]) ? $window.location.href = tokens.data["redirect-to-url"] : angular.isDefined(tokens.data["vote-permission-token"]) ? ($cookies.vote_permission_tokens = JSON.stringify([ {
+                        electionId: autheventid,
+                        token: tokens.data["vote-permission-token"]
+                    } ]), $window.location.href = "/booth/" + autheventid + "/vote") : angular.isDefined(tokens.data["vote-children-info"]) ? (tokens = _.chain(tokens.data["vote-children-info"]).filter(function(child) {
+                        return (0 === child["num-successful-logins-allowed"] || child["num-successful-logins"] < child["num-successful-logins-allowed"]) && !!child["vote-permission-token"];
+                    }).map(function(child) {
+                        return {
+                            electionId: child["auth-event-id"],
+                            token: child["vote-permission-token"]
+                        };
+                    }).value(), $cookies.vote_permission_tokens = JSON.stringify(tokens), 0 < tokens.length ? $window.location.href = "/booth/" + tokens[0].electionId + "/vote" : scope.error = $i18next("avRegistration.invalidCredentials", {
+                        support: ConfigService.contact.email
+                    })) : scope.error = $i18next("avRegistration.invalidCredentials", {
+                        support: ConfigService.contact.email
+                    })) : (scope.sendingData = !1, scope.status = "Not found", scope.error = $i18next("avRegistration.invalidCredentials", {
+                        support: ConfigService.contact.email
+                    }));
+                }, function(response) {
+                    scope.sendingData = !1, scope.status = "Registration error: " + response.data.message, 
+                    scope.error = $i18next("avRegistration.invalidCredentials", {
+                        support: ConfigService.contact.email
                     });
-                }
+                }))));
             }, scope.apply = function(authevent) {
-                var ret, href, adminMatch, electionsMatch;
+                var electionsMatch, adminMatch;
                 scope.method = authevent.auth_method, scope.name = authevent.name, scope.registrationAllowed = "open" === authevent.census && (autheventid !== adminId || ConfigService.allowAdminRegistration), 
                 scope.isCensusQuery ? scope.login_fields = Authmethod.getCensusQueryFields(authevent) : scope.login_fields = Authmethod.getLoginFields(authevent), 
                 scope.hide_default_login_lookup_field = authevent.hide_default_login_lookup_field, 
-                scope.telIndex = -1, scope.emailIndex = -1, scope.telField = null, scope.allowUserResend = (ret = !1, 
-                href = $location.path(), adminMatch = href.match(/^\/admin\//), electionsMatch = href.match(/^\/(elections|election)\/([0-9]+)\//), 
-                _.isArray(adminMatch) ? ret = !0 : _.isArray(electionsMatch) && 3 === electionsMatch.length && (ret = _.isObject(authevent.auth_method_config) && _.isObject(authevent.auth_method_config.config) && !0 === authevent.auth_method_config.config.allow_user_resend), 
-                ret);
+                scope.telIndex = -1, scope.emailIndex = -1, scope.telField = null, scope.allowUserResend = (fields = !1, 
+                electionsMatch = $location.path(), adminMatch = electionsMatch.match(/^\/admin\//), 
+                electionsMatch = electionsMatch.match(/^\/(elections|election)\/([0-9]+)\//), _.isArray(adminMatch) ? fields = !0 : _.isArray(electionsMatch) && 3 === electionsMatch.length && (fields = _.isObject(authevent.auth_method_config) && _.isObject(authevent.auth_method_config.config) && !0 === authevent.auth_method_config.config.allow_user_resend), 
+                fields);
                 var fields = _.map(scope.login_fields, function(el, index) {
                     return scope.stateData[el.name] ? (el.value = scope.stateData[el.name], el.disabled = !0) : (el.value = null, 
                     el.disabled = !1), "email" === el.type ? (null !== scope.email && (el.value = scope.email, 
@@ -508,17 +493,15 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             }, scope.forgotPassword = function() {
                 console.log("forgotPassword");
             }, scope.openidConnectAuth = function(provider) {
-                var randomState = randomStr(), randomNonce = randomStr();
-                if ($cookies["openid-connect-csrf"] = angular.toJson({
+                var randomState = randomStr(), authURI = randomStr();
+                $cookies["openid-connect-csrf"] = angular.toJson({
                     randomState: randomState,
-                    randomNonce: randomNonce,
+                    randomNonce: authURI,
                     created: Date.now(),
                     eventId: scope.eventId,
                     providerId: provider.id
-                }), provider) {
-                    var authURI = provider.authorization_endpoint + "?response_type=id_token&client_id=" + encodeURIComponent(provider.client_id) + "&scope=" + encodeURIComponent("openid") + "&redirect_uri=" + encodeURIComponent($window.location.origin + "/election/login-openid-connect-redirect") + "&state=" + randomState + "&nonce=" + randomNonce;
-                    $window.location.href = authURI;
-                } else scope.error = $i18next("avRegistration.openidError");
+                }), provider ? (authURI = provider.authorization_endpoint + "?response_type=id_token&client_id=" + encodeURIComponent(provider.client_id) + "&scope=" + encodeURIComponent("openid") + "&redirect_uri=" + encodeURIComponent($window.location.origin + "/election/login-openid-connect-redirect") + "&state=" + randomState + "&nonce=" + authURI, 
+                $window.location.href = authURI) : scope.error = $i18next("avRegistration.openidError");
             };
         },
         templateUrl: "avRegistration/login-directive/login-directive.html"
@@ -536,28 +519,23 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                 if (0 === ConfigService.openIDConnectProviders.length || !ConfigService.openIDConnectProviders[0].logout_uri) return !1;
                 var eventId = null;
                 scope.csrf && (eventId = scope.csrf.eventId);
-                var uri = ConfigService.openIDConnectProviders[0].logout_uri;
-                uri = uri.replace("__EVENT_ID__", "" + eventId);
-                var postfix = "_authevent_" + eventId;
+                var uri = (uri = ConfigService.openIDConnectProviders[0].logout_uri).replace("__EVENT_ID__", "" + eventId), postfix = "_authevent_" + eventId;
                 return $cookies["id_token_" + postfix] ? uri = uri.replace("__ID_TOKEN__", $cookies["id_token_" + postfix]) : -1 < uri.indexOf("__ID_TOKEN__") && (uri = "/election/" + eventId + "/public/login"), 
                 uri;
             }
             function redirectToLogin() {
-                if (!scope.redirectingToUri) {
-                    scope.redirectingToUri = !0;
-                    var eventId = null;
-                    scope.csrf ? (eventId = scope.csrf.eventId, Authmethod.viewEvent(eventId).then(function(response) {
-                        if ("ok" === response.data.status && response.data.events && "openid-connect" === response.data.events.auth_method && getLogoutUri()) {
-                            var postfix = "_authevent_" + eventId, uri = getLogoutUri();
-                            delete $cookies["id_token_" + postfix], $window.location.href = uri;
-                        } else simpleRedirectToLogin();
-                    }, function() {
-                        simpleRedirectToLogin();
-                    })) : $window.location.href = "/";
-                }
+                var eventId;
+                scope.redirectingToUri || (scope.redirectingToUri = !0, eventId = null, scope.csrf ? (eventId = scope.csrf.eventId, 
+                Authmethod.viewEvent(eventId).then(function(uri) {
+                    var postfix;
+                    "ok" === uri.data.status && uri.data.events && "openid-connect" === uri.data.events.auth_method && getLogoutUri() ? (postfix = "_authevent_" + eventId, 
+                    uri = getLogoutUri(), delete $cookies["id_token_" + postfix], $window.location.href = uri) : simpleRedirectToLogin();
+                }, function(response) {
+                    simpleRedirectToLogin();
+                })) : $window.location.href = "/");
             }
-            function getURIParameter(paramName, uri) {
-                var paramName2 = paramName.replace(/[\[\]]/g, "\\$&"), params = new RegExp("[?&]" + paramName2 + "(=([^&#]*)|&|#|$)").exec(uri);
+            function getURIParameter(paramName2, params) {
+                paramName2 = paramName2.replace(/[\[\]]/g, "\\$&"), params = new RegExp("[?&]" + paramName2 + "(=([^&#]*)|&|#|$)").exec(params);
                 return params ? params[2] ? decodeURIComponent(params[2].replace(/\+/g, " ")) : "" : null;
             }
             scope.csrf = null, scope.redirectingToUri = !1, function() {
@@ -574,27 +552,25 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                     nonce: scope.csrf.randomNonce
                 }, postfix = "_authevent_" + scope.csrf.eventId;
                 $cookies["id_token_" + postfix] = data.id_token, Authmethod.login(data, scope.csrf.eventId).then(function(response) {
-                    if ("ok" === response.data.status) {
-                        scope.khmac = response.data.khmac;
-                        var postfix = "_authevent_" + scope.csrf.eventId;
-                        $cookies["authevent_" + scope.csrf.eventId] = scope.csrf.eventId, $cookies["userid" + postfix] = response.data.username, 
-                        $cookies["user" + postfix] = response.data.username, $cookies["auth" + postfix] = response.data["auth-token"], 
-                        $cookies["isAdmin" + postfix] = !1, Authmethod.setAuth($cookies["auth" + postfix], scope.isAdmin, scope.csrf.eventId), 
-                        angular.isDefined(response.data["redirect-to-url"]) ? $window.location.href = response.data["redirect-to-url"] : Authmethod.getPerm("vote", "AuthEvent", scope.csrf.eventId).then(function(response2) {
-                            var path = response2.data["permission-token"].split(";")[1], hash = path.split("/")[0], msg = path.split("/")[1];
-                            $window.location.href = "/booth/" + scope.csrf.eventId + "/vote/" + hash + "/" + msg;
-                        });
-                    } else redirectToLogin();
-                }, function() {
+                    var postfix;
+                    "ok" === response.data.status ? (scope.khmac = response.data.khmac, postfix = "_authevent_" + scope.csrf.eventId, 
+                    $cookies["authevent_" + scope.csrf.eventId] = scope.csrf.eventId, $cookies["userid" + postfix] = response.data.username, 
+                    $cookies["user" + postfix] = response.data.username, $cookies["auth" + postfix] = response.data["auth-token"], 
+                    $cookies["isAdmin" + postfix] = !1, Authmethod.setAuth($cookies["auth" + postfix], scope.isAdmin, scope.csrf.eventId), 
+                    angular.isDefined(response.data["redirect-to-url"]) ? $window.location.href = response.data["redirect-to-url"] : Authmethod.getPerm("vote", "AuthEvent", scope.csrf.eventId).then(function(hash) {
+                        var msg = hash.data["permission-token"].split(";")[1], hash = msg.split("/")[0], msg = msg.split("/")[1];
+                        $window.location.href = "/booth/" + scope.csrf.eventId + "/vote/" + hash + "/" + msg;
+                    })) : redirectToLogin();
+                }, function(response) {
                     redirectToLogin();
                 });
             }();
         },
         templateUrl: "avRegistration/openid-connect-directive/openid-connect-directive.html"
     };
-} ]), angular.module("avRegistration").controller("LogoutController", [ "$scope", "$stateParams", "$filter", "ConfigService", "$i18next", "$state", "$cookies", "Authmethod", function($scope, $stateParams, $filter, ConfigService, $i18next, $state, $cookies, Authmethod) {
+} ]), angular.module("avRegistration").controller("LogoutController", [ "$scope", "$stateParams", "$filter", "ConfigService", "$i18next", "$state", "$cookies", "Authmethod", function($scope, $stateParams, $filter, ConfigService, $i18next, $state, $cookies, postfix) {
     ConfigService.freeAuthId;
-    var authevent = Authmethod.getAuthevent(), postfix = "_authevent_" + authevent;
+    var authevent = postfix.getAuthevent(), postfix = "_authevent_" + authevent;
     $cookies["user" + postfix] = "", $cookies["auth" + postfix] = "", $cookies["authevent_" + authevent] = "", 
     $cookies["userid" + postfix] = "", $cookies["isAdmin" + postfix] = !1, authevent !== ConfigService.freeAuthId + "" && authevent ? $state.go("registration.login", {
         id: $cookies["authevent_" + authevent]
@@ -623,26 +599,23 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                     }
                 };
             }, scope.signUp = function(valid) {
-                if (valid) {
-                    scope.sendingData = !0;
-                    var details, data = {
-                        captcha_code: Authmethod.captcha_code
-                    };
-                    _.each(scope.register_fields, function(field) {
-                        data[field.name] = field.value, ("email" === field.name && _.contains([ "email", "email-otp" ], scope.method) || "tlf" === field.name && _.contains([ "sms", "sms-otp" ], scope.method)) && (scope.email = field.value);
-                    }), Authmethod.signup(data, autheventid).then(function(response) {
-                        details = scope.getLoginDetails(autheventid), "ok" === response.data.status ? (scope.user = response.data.user, 
-                        StateDataService.go(details.path, details.data, data)) : (scope.sendingData = !1, 
-                        scope.status = "Not found"), scope.error = response.data.msg || $sce.trustAsHtml($i18next("avRegistration.invalidRegisterData", {
-                            url: $state.href(details.path, details.data)
-                        }));
-                    }, function(response) {
-                        details = scope.getLoginDetails(autheventid), scope.sendingData = !1, scope.status = "Registration error: " + response.data.message, 
-                        response.data.error_codename && "invalid-dni" === response.data.error_codename ? scope.error = $sce.trustAsHtml($i18next("avRegistration.invalidRegisterDNI")) : (scope.error = response.data.msg || $sce.trustAsHtml($i18next("avRegistration.invalidRegisterData", {
-                            url: $state.href(details.path, details.data)
-                        })), "Invalid captcha" === response.data.msg && Authmethod.newCaptcha());
-                    });
-                }
+                var data, details;
+                valid && (scope.sendingData = !0, data = {
+                    captcha_code: Authmethod.captcha_code
+                }, _.each(scope.register_fields, function(field) {
+                    data[field.name] = field.value, ("email" === field.name && _.contains([ "email", "email-otp" ], scope.method) || "tlf" === field.name && _.contains([ "sms", "sms-otp" ], scope.method)) && (scope.email = field.value);
+                }), Authmethod.signup(data, autheventid).then(function(response) {
+                    details = scope.getLoginDetails(autheventid), "ok" === response.data.status ? (scope.user = response.data.user, 
+                    StateDataService.go(details.path, details.data, data)) : (scope.sendingData = !1, 
+                    scope.status = "Not found"), scope.error = response.data.msg || $sce.trustAsHtml($i18next("avRegistration.invalidRegisterData", {
+                        url: $state.href(details.path, details.data)
+                    }));
+                }, function(response) {
+                    details = scope.getLoginDetails(autheventid), scope.sendingData = !1, scope.status = "Registration error: " + response.data.message, 
+                    response.data.error_codename && "invalid-dni" === response.data.error_codename ? scope.error = $sce.trustAsHtml($i18next("avRegistration.invalidRegisterDNI")) : (scope.error = response.data.msg || $sce.trustAsHtml($i18next("avRegistration.invalidRegisterData", {
+                        url: $state.href(details.path, details.data)
+                    })), "Invalid captcha" === response.data.msg && Authmethod.newCaptcha());
+                }));
             }, scope.goLogin = function(event) {
                 console.log("goLogin"), event && (event.preventDefault(), event.stopPropagation()), 
                 scope.authevent && (scope.authevent.id === ConfigService.freeAuthId ? $state.go("admin.login") : $state.go("election.public.show.login", {
@@ -705,8 +678,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                 month: now.getMonth() + 1,
                 day: now.getDate()
             };
-            var initY = new Date().getFullYear(), i = 0;
-            for (i = initY; initY - 130 <= i; i--) scope.years.push(i);
+            for (var initY = new Date().getFullYear(), i = 0, i = initY; initY - 130 <= i; i--) scope.years.push(i);
             for (i = 1; i <= 12; i++) scope.months.push(i);
             scope.getDays = function() {
                 var days = [], ndays = new Date(scope.date.year, scope.date.month, 0).getDate();
@@ -745,7 +717,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         restrict: "AE",
         link: function(scope, element, attrs) {
             var dni_re = /^([0-9]{1,8}[A-Z]|[LMXYZ][0-9]{1,7}[A-Z])$/;
-            scope.validateDni = function(dni) {
+            scope.validateDni = function(index) {
                 var norm_dni = function(dni) {
                     if (!dni) return "";
                     for (var dni2 = dni.toUpperCase(), dni3 = "", i = 0; i < dni2.lenth; i++) {
@@ -757,7 +729,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                         "" === last_char || "1234567890".indexOf(last_char), dni4 += char2, last_char = char2;
                     }
                     return dni4;
-                }(dni);
+                }(index);
                 if (!norm_dni.match(dni_re)) return !0;
                 var prefix = norm_dni.charAt(0), index = "LMXYZ".indexOf(prefix);
                 -1 < index && (norm_dni = norm_dni.substr(1), "Y" === prefix ? norm_dni = "1" + norm_dni : "Z" === prefix && (norm_dni = "2" + norm_dni));
@@ -773,18 +745,16 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         scope: !0,
         link: function(scope, element, attrs) {
             scope.codePattern = /[abcdefghjklmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789-]{8,9}/;
-            var rand_code = "" + _.random(1e12);
-            if (scope.code_id = "input" + scope.index + rand_code, scope.showResendAuthCode = function() {
+            var telInput, rand_code = "" + _.random(1e12);
+            scope.code_id = "input" + scope.index + rand_code, scope.showResendAuthCode = function() {
                 var data = {
                     showUserSendAuthCode: !0
                 };
                 return Plugins.hook("hide-user-send-auth-code", data), data.showUserSendAuthCode;
-            }, _.contains([ "sms", "sms-otp" ], scope.method)) {
-                var telInput = angular.element(document.getElementById("input" + scope.telIndex));
-                scope.isValidTel = telInput.intlTelInput("isValidNumber"), scope.$watch("telField.value", function(newValue, oldValue) {
-                    scope.isValidTel = telInput.intlTelInput("isValidNumber");
-                }, !0);
-            }
+            }, _.contains([ "sms", "sms-otp" ], scope.method) && (telInput = angular.element(document.getElementById("input" + scope.telIndex)), 
+            scope.isValidTel = telInput.intlTelInput("isValidNumber"), scope.$watch("telField.value", function(newValue, oldValue) {
+                scope.isValidTel = telInput.intlTelInput("isValidNumber");
+            }, !0));
         },
         templateUrl: "avRegistration/fields/code-field-directive/code-field-directive.html"
     };
@@ -865,14 +835,10 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         link: function(scope, element, attrs) {
             $timeout(function() {
                 $("#image-field").change(function() {
-                    !function(input) {
-                        if (input.files && input.files[0]) {
-                            var FR = new FileReader();
-                            FR.onload = function(e) {
-                                scope.field.value = e.target.result;
-                            }, FR.readAsDataURL(input.files[0]);
-                        }
-                    }(this);
+                    var input, FR;
+                    (input = this).files && input.files[0] && ((FR = new FileReader()).onload = function(e) {
+                        scope.field.value = e.target.result;
+                    }, FR.readAsDataURL(input.files[0]));
                 });
             }, 0);
         },
@@ -897,9 +863,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
     }, plugins.emit = function(signalName, data) {
         plugins.signals.fire(signalName, data);
     }, plugins.hook = function(hookname, data) {
-        for (var i = 0; i < plugins.hooks.length; i++) {
-            if (!(0, plugins.hooks[i])(hookname, data)) return !1;
-        }
+        for (var i = 0; i < plugins.hooks.length; i++) if (!(0, plugins.hooks[i])(hookname, data)) return !1;
         return !0;
     }, plugins;
 }), angular.module("avRegistration").directive("avPluginHtml", [ "$compile", "$sce", "$parse", function($compile, $sce, $parse) {
@@ -1008,8 +972,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
 } ]), angular.module("avUi").directive("avAutoHeight", [ "$window", "$timeout", function($window, $timeout) {
     return {
         link: function(scope, element, attrs) {
-            var sibling, recalculate, promise = null;
-            sibling = function() {
+            var promise = null, sibling = function() {
                 return element.closest(attrs.parentSelector).find(attrs.siblingSelector);
             }, recalculate = function() {
                 promise && $timeout.cancel(promise), promise = $timeout(function() {
@@ -1017,7 +980,8 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                     attrs.additionalHeight && (additionalHeight = parseInt(attrs.additionalHeight, 10)), 
                     height = sibling().height(), element.css("max-height", height + additionalHeight + "px");
                 }, 300);
-            }, scope.$watch(function() {
+            };
+            scope.$watch(function() {
                 return sibling().height();
             }, function(newValue, oldValue) {
                 recalculate();
@@ -1058,7 +1022,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
     };
 } ]), angular.module("avUi").directive("avAffixTop", [ "$window", "$timeout", function($window, $timeout) {
     function updateMargin(el, options) {
-        var minHeight = parseInt(options.minHeight), height = Math.max($(el).height(), angular.isNumber(minHeight) && !isNaN(minHeight) ? minHeight : 0);
+        var height = parseInt(options.minHeight), height = Math.max($(el).height(), angular.isNumber(height) && !isNaN(height) ? height : 0);
         $(options.avAffixTop).css("padding-top", height + "px");
     }
     return {
@@ -1076,8 +1040,9 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         }
     };
 } ]), angular.module("avUi").directive("avCollapsing", [ "$window", "$timeout", function($window, $timeout) {
-    function select(instance, el, selector) {
-        return instance.parentSelector ? el.closest(instance.parentSelector).find(selector) : angular.element(selector);
+    function select(instance, el, val) {
+        val = instance.parentSelector ? el.closest(instance.parentSelector).find(val) : angular.element(val);
+        return val;
     }
     function collapseEl(instance, el) {
         return instance.collapseSelector ? select(instance, el, instance.collapseSelector) : angular.element(el);
@@ -1096,14 +1061,10 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                 timeout = $timeout(function() {
                     $timeout.cancel(timeout), function(instance, el) {
                         var maxHeight = select(instance, el, instance.maxHeightSelector).css("max-height"), height = angular.element(el)[0].scrollHeight, paddingTop = angular.element(el).css("padding-top");
-                        if (-1 !== maxHeight.indexOf("px")) if (paddingTop = paddingTop && -1 !== paddingTop.indexOf("px") ? parseInt(paddingTop.replace("px", "")) : 0, 
-                        (maxHeight = parseInt(maxHeight.replace("px", ""))) < height - paddingTop) {
-                            if (instance.isCollapsed) return;
-                            instance.isCollapsed = !0, collapseEl(instance, el).addClass("collapsed"), select(instance, el, instance.toggleSelector).removeClass("hidden in");
-                        } else {
-                            if (!instance.isCollapsed) return;
-                            instance.isCollapsed = !1, collapseEl(instance, el).removeClass("collapsed"), select(instance, el, instance.toggleSelector).addClass("hidden");
-                        } else console.log("invalid non-pixels max-height for " + instance.maxHeightSelector);
+                        -1 !== maxHeight.indexOf("px") ? (paddingTop = paddingTop && -1 !== paddingTop.indexOf("px") ? parseInt(paddingTop.replace("px", "")) : 0, 
+                        (maxHeight = parseInt(maxHeight.replace("px", ""))) < height - paddingTop ? instance.isCollapsed || (instance.isCollapsed = !0, 
+                        collapseEl(instance, el).addClass("collapsed"), select(instance, el, instance.toggleSelector).removeClass("hidden in")) : instance.isCollapsed && (instance.isCollapsed = !1, 
+                        collapseEl(instance, el).removeClass("collapsed"), select(instance, el, instance.toggleSelector).addClass("hidden"))) : console.log("invalid non-pixels max-height for " + instance.maxHeightSelector);
                     }(instance, iElement);
                 }, 500);
             }
@@ -1126,12 +1087,10 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             }(el);
             return function(scope, $el, attrs) {
                 var stopWatching = scope.$parent.$watch(attrs.avRecompile, function(_new, _old) {
-                    var useBoolean = attrs.hasOwnProperty("useBoolean");
-                    if ((!useBoolean || _new && "false" !== _new) && (useBoolean || _new && _new !== _old)) {
-                        useBoolean && $parse(attrs.kcdRecompile).assign(scope.$parent, !1);
-                        var newEl = $compile(template)(scope.$parent);
-                        $el.replaceWith(newEl), stopWatching(), scope.$destroy();
-                    }
+                    var newEl = attrs.hasOwnProperty("useBoolean");
+                    (!newEl || _new && "false" !== _new) && (newEl || _new && _new !== _old) && (newEl && $parse(attrs.kcdRecompile).assign(scope.$parent, !1), 
+                    newEl = $compile(template)(scope.$parent), $el.replaceWith(newEl), stopWatching(), 
+                    scope.$destroy());
                 });
             };
         }
@@ -1189,53 +1148,45 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         }
         angular.isUndefined(d.errorData) && (d.errorData = {});
         var ret = _.every(d.checks, function(item) {
-            var itemMin, itemMax, max, min, pass = !0;
-            if ("is-int" === item.check) (pass = angular.isNumber(d.data[item.key], item.postfix)) || error(item.check, {
+            var errorData, min, max, itemMin, itemMax, data, extra, prefix, pass = !0;
+            return "is-int" === item.check ? (pass = angular.isNumber(d.data[item.key], item.postfix)) || error(item.check, {
                 key: item.key
-            }, item.postfix); else if ("is-array" === item.check) (pass = angular.isArray(d.data[item.key], item.postfix)) || error(item.check, {
+            }, item.postfix) : "is-array" === item.check ? (pass = angular.isArray(d.data[item.key], item.postfix)) || error(item.check, {
                 key: item.key
-            }, item.postfix); else if ("lambda" === item.check) {
-                if (!item.validator(d.data[item.key])) {
-                    var errorData = {
-                        key: item.key
-                    };
-                    angular.isUndefined(item.appendOnErrorLambda) || (errorData = item.appendOnErrorLambda(d.data[item.key])), 
-                    _.isObject(item.append) && _.isString(item.append.key) && !_.isUndefined(item.append.value) && (errorData[item.append.key] = evalValue(item.append.value, item)), 
-                    error(item.check, errorData, item.postfix);
-                }
-            } else if ("is-string-if-defined" === item.check) (pass = angular.isUndefined(d.data[item.key]) || angular.isString(d.data[item.key], item.postfix)) || error(item.check, {
+            }, item.postfix) : "lambda" === item.check ? item.validator(d.data[item.key]) || (errorData = {
                 key: item.key
-            }, item.postfix); else if ("array-length-if-defined" === item.check) {
-                if (angular.isDefined(d.data[item.key])) if (itemMin = evalValue(item.min, d.data), 
-                itemMax = evalValue(item.max, d.data), angular.isArray(d.data[item.key]) || angular.isString(d.data[item.key])) if (min = angular.isUndefined(item.min) || d.data[item.key].length >= itemMin, 
-                max = angular.isUndefined(item.max) || d.data[item.key].length <= itemMax, pass = min && max, 
-                min || error("array-length-min", {
-                    key: item.key,
-                    min: itemMin,
-                    num: d.data[item.key].length
-                }, item.postfix), !max) error("array-length-max", {
-                    key: item.key,
-                    max: itemMax,
-                    num: d.data[item.key].length
-                }, item.postfix);
-            } else if ("is-string" === item.check) (pass = angular.isString(d.data[item.key], item.postfix)) || error(item.check, {
+            }, angular.isUndefined(item.appendOnErrorLambda) || (errorData = item.appendOnErrorLambda(d.data[item.key])), 
+            _.isObject(item.append) && _.isString(item.append.key) && !_.isUndefined(item.append.value) && (errorData[item.append.key] = evalValue(item.append.value, item)), 
+            error(item.check, errorData, item.postfix)) : "is-string-if-defined" === item.check ? (pass = angular.isUndefined(d.data[item.key]) || angular.isString(d.data[item.key], item.postfix)) || error(item.check, {
                 key: item.key
-            }, item.postfix); else if ("array-length" === item.check) {
-                if (itemMin = evalValue(item.min, d.data), itemMax = evalValue(item.max, d.data), 
-                angular.isArray(d.data[item.key]) || angular.isString(d.data[item.key])) if (min = angular.isUndefined(item.min) || d.data[item.key].length >= itemMin, 
-                max = angular.isUndefined(item.max) || d.data[item.key].length <= itemMax, pass = min && max, 
-                min || error("array-length-min", {
-                    key: item.key,
-                    min: itemMin,
-                    num: d.data[item.key].length
-                }, item.postfix), !max) error("array-length-max", {
-                    key: item.key,
-                    max: itemMax,
-                    num: d.data[item.key].length
-                }, item.postfix);
-            } else if ("int-size" === item.check) itemMin = evalValue(item.min, d.data), itemMax = evalValue(item.max, d.data), 
-            min = angular.isUndefined(item.min) || d.data[item.key] >= itemMin, max = angular.isUndefined(item.max) || d.data[item.key] <= itemMax, 
-            pass = min && max, min || error("int-size-min", {
+            }, item.postfix) : "array-length-if-defined" === item.check ? angular.isDefined(d.data[item.key]) && (itemMin = evalValue(item.min, d.data), 
+            itemMax = evalValue(item.max, d.data), (angular.isArray(d.data[item.key]) || angular.isString(d.data[item.key])) && (min = angular.isUndefined(item.min) || d.data[item.key].length >= itemMin, 
+            max = angular.isUndefined(item.max) || d.data[item.key].length <= itemMax, pass = min && max, 
+            min || error("array-length-min", {
+                key: item.key,
+                min: itemMin,
+                num: d.data[item.key].length
+            }, item.postfix), max || error("array-length-max", {
+                key: item.key,
+                max: itemMax,
+                num: d.data[item.key].length
+            }, item.postfix))) : "is-string" === item.check ? (pass = angular.isString(d.data[item.key], item.postfix)) || error(item.check, {
+                key: item.key
+            }, item.postfix) : "array-length" === item.check ? (itemMin = evalValue(item.min, d.data), 
+            itemMax = evalValue(item.max, d.data), (angular.isArray(d.data[item.key]) || angular.isString(d.data[item.key])) && (min = angular.isUndefined(item.min) || d.data[item.key].length >= itemMin, 
+            max = angular.isUndefined(item.max) || d.data[item.key].length <= itemMax, pass = min && max, 
+            min || error("array-length-min", {
+                key: item.key,
+                min: itemMin,
+                num: d.data[item.key].length
+            }, item.postfix), max || error("array-length-max", {
+                key: item.key,
+                max: itemMax,
+                num: d.data[item.key].length
+            }, item.postfix))) : "int-size" === item.check ? (itemMin = evalValue(item.min, d.data), 
+            itemMax = evalValue(item.max, d.data), min = angular.isUndefined(item.min) || d.data[item.key] >= itemMin, 
+            max = angular.isUndefined(item.max) || d.data[item.key] <= itemMax, pass = min && max, 
+            min || error("int-size-min", {
                 key: item.key,
                 min: itemMin,
                 value: d.data[item.key]
@@ -1243,7 +1194,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                 key: item.key,
                 max: itemMax,
                 value: d.data[item.key]
-            }, item.postfix); else if ("group-chain" === item.check) pass = _.all(_.map(item.checks, function(check) {
+            }, item.postfix)) : "group-chain" === item.check ? pass = _.all(_.map(item.checks, function(check) {
                 return checker({
                     data: d.data,
                     errorData: d.errorData,
@@ -1251,7 +1202,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                     checks: [ check ],
                     prefix: sumStrs(d.prefix, item.prefix)
                 });
-            })); else if ("array-key-group-chain" === item.check) pass = _.every(d.data[item.key], function(data, index) {
+            })) : "array-key-group-chain" === item.check ? pass = _.every(d.data[item.key], function(data, index) {
                 var extra = {}, prefix = "";
                 return angular.isString(d.prefix) && (prefix = d.prefix), angular.isString(item.prefix) && (prefix += item.prefix), 
                 extra.prefix = prefix, extra[item.append.key] = evalValue(item.append.value, data), 
@@ -1262,7 +1213,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                     checks: item.checks,
                     prefix: sumStrs(d.prefix, item.prefix)
                 });
-            }); else if ("array-group-chain" === item.check) pass = _.every(d.data, function(data, index) {
+            }) : "array-group-chain" === item.check ? pass = _.every(d.data, function(data, index) {
                 var extra = {};
                 return extra[item.append.key] = evalValue(item.append.value, data), checker({
                     data: data,
@@ -1271,7 +1222,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                     checks: item.checks,
                     prefix: sumStrs(d.prefix, item.prefix)
                 });
-            }); else if ("array-group" === item.check) pass = _.contains(_.map(d.data, function(data, index) {
+            }) : "array-group" === item.check ? pass = _.contains(_.map(d.data, function(data, index) {
                 var extra = {};
                 return extra[item.append.key] = evalValue(item.append.value, data), checker({
                     data: data,
@@ -1280,22 +1231,18 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                     checks: item.checks,
                     prefix: sumStrs(d.prefix, item.prefix)
                 });
-            }), !0); else if ("object-key-chain" === item.check && (pass = _.isString(item.key) && _.isObject(d.data[item.key]))) {
-                var data = d.data[item.key], extra = {};
-                extra[item.append.key] = evalValue(item.append.value, data);
-                var prefix = "";
-                angular.isString(d.prefix) && (prefix += d.prefix), angular.isString(item.prefix) && (prefix += item.prefix), 
-                pass = _.every(item.checks, function(check, index) {
-                    return checker({
-                        data: data,
-                        errorData: angular.extend({}, d.errorData, extra),
-                        onError: d.onError,
-                        checks: [ check ],
-                        prefix: prefix
-                    });
+            }), !0) : "object-key-chain" === item.check && (pass = _.isString(item.key) && _.isObject(d.data[item.key])) && (data = d.data[item.key], 
+            (extra = {})[item.append.key] = evalValue(item.append.value, data), prefix = "", 
+            angular.isString(d.prefix) && (prefix += d.prefix), angular.isString(item.prefix) && (prefix += item.prefix), 
+            pass = _.every(item.checks, function(check, index) {
+                return checker({
+                    data: data,
+                    errorData: angular.extend({}, d.errorData, extra),
+                    onError: d.onError,
+                    checks: [ check ],
+                    prefix: prefix
                 });
-            }
-            return !(!pass && "chain" === d.data.groupType);
+            })), !(!pass && "chain" === d.data.groupType);
         });
         return ret;
     }
@@ -1330,7 +1277,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
 } ]), angular.module("avUi").directive("avScrollToBottom", [ "$timeout", function($timeout) {
     return {
         restrict: "A",
-        link: function(scope, element) {
+        link: function(scope, element, attrs) {
             scope.$watch(function() {
                 return element.children().length;
             }, function() {
@@ -1341,8 +1288,8 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         }
     };
 } ]), angular.module("avUi").filter("addTargetBlank", function() {
-    return function(x) {
-        var tree = angular.element("<div>" + x + "</div>");
+    return function(tree) {
+        tree = angular.element("<div>" + tree + "</div>");
         return tree.find("a").attr("target", "_blank"), angular.element("<div>").append(tree).html();
     };
 }), angular.module("avUi").filter("htmlToText", function() {
