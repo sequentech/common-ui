@@ -36,7 +36,7 @@
     "grunt-contrib-cssmin": "3.0.0",
     "grunt-contrib-htmlmin": "~0.1",
     "grunt-contrib-imagemin": "^3.1.0",
-    "grunt-contrib-jshint": "^2.1.0",
+    "grunt-contrib-jshint": "^3.0.0",
     "grunt-contrib-less": "^2.0.0",
     "grunt-contrib-uglify": "^4.0.1",
     "grunt-contrib-watch": "^1.1.0",
@@ -72,6 +72,8 @@
     "**/ws": "7.2.1",
     "**/lodash": "^4.17.19",
     "**/minimist": "1.2.5",
-    "**/yargs-parser": "13.1.2"
+    "**/yargs-parser": "13.1.2",
+    "**/cheerio": "0.12.3",
+    "**/cheerio-select": "0.0.3"
   }
 }
