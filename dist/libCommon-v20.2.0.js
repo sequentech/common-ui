@@ -16172,29 +16172,30 @@ function(angular) {
 } ]), function() {
     "use strict";
     angular.module("angularLoad", []).service("angularLoad", [ "$document", "$q", "$timeout", function($document, $q, $timeout) {
-        this.loadScript = function(src) {
-            var deferred = $q.defer(), script = $document[0].createElement("script");
-            return script.onload = script.onreadystatechange = function(e) {
-                $timeout(function() {
-                    deferred.resolve(e);
-                });
-            }, script.onerror = function(e) {
-                $timeout(function() {
-                    deferred.reject(e);
-                });
-            }, script.src = src, $document[0].body.appendChild(script), deferred.promise;
-        }, this.loadCSS = function(href) {
-            var deferred = $q.defer(), style = $document[0].createElement("link");
-            return style.rel = "stylesheet", style.type = "text/css", style.href = href, style.onload = style.onreadystatechange = function(e) {
-                $timeout(function() {
-                    deferred.resolve(e);
-                });
-            }, style.onerror = function(e) {
-                $timeout(function() {
-                    deferred.reject(e);
-                });
-            }, $document[0].head.appendChild(style), deferred.promise;
-        };
+        var document = $document[0];
+        function loader(createElement) {
+            var promises = {};
+            return function(url) {
+                var deferred, element;
+                return void 0 === promises[url] && (deferred = $q.defer(), (element = createElement(url)).onload = element.onreadystatechange = function(e) {
+                    element.readyState && "complete" !== element.readyState && "loaded" !== element.readyState || $timeout(function() {
+                        deferred.resolve(e);
+                    });
+                }, element.onerror = function(e) {
+                    $timeout(function() {
+                        deferred.reject(e);
+                    });
+                }, promises[url] = deferred.promise), promises[url];
+            };
+        }
+        this.loadScript = loader(function(src) {
+            var script = document.createElement("script");
+            return script.src = src, document.body.appendChild(script), script;
+        }), this.loadCSS = loader(function(href) {
+            var style = document.createElement("link");
+            return style.rel = "stylesheet", style.type = "text/css", style.href = href, document.head.appendChild(style), 
+            style;
+        });
     } ]);
 }(), function(addPostProcessor) {
     Array.prototype.indexOf || (Array.prototype.indexOf = function(searchElement) {
