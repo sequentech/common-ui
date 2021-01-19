@@ -326,8 +326,8 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         },
         launchPingDaemon: function(autheventid) {
             var postfix = "_authevent_" + autheventid;
-            $cookies["isAdmin" + postfix] && authmethod.ping().then(function(response) {
-                $cookies["auth" + postfix] = response.data["auth-token"], authmethod.setAuth($cookies["auth" + postfix], $cookies["isAdmin" + postfix], autheventid);
+            $cookies.get("isAdmin" + postfix) && authmethod.ping().then(function(response) {
+                $cookies.put("auth" + postfix, response.data["auth-token"]), authmethod.setAuth($cookies.get("auth" + postfix), $cookies.get("isAdmin" + postfix), autheventid);
             });
         },
         getUserDraft: function() {
@@ -377,12 +377,13 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         link: function(scope, element, attrs) {
             scope.isCensusQuery = attrs.isCensusQuery, scope.hide_default_login_lookup_field = !1;
             var adminId = ConfigService.freeAuthId + "", autheventid = scope.eventId = attrs.eventId;
+            scope.orgName = ConfigService.organization.orgName, scope.openIDConnectProviders = ConfigService.openIDConnectProviders;
+            var autheventCookie = $cookies.get("authevent_" + adminId), authCookie = $cookies.get("auth_authevent_" + adminId);
             function randomStr() {
                 var random = sjcl.random.randomWords(64, 0);
                 return sjcl.codec.hex.fromBits(random);
             }
-            scope.orgName = ConfigService.organization.orgName, scope.openIDConnectProviders = ConfigService.openIDConnectProviders, 
-            $cookies["authevent_" + adminId] && $cookies["authevent_" + adminId] === adminId && autheventid === adminId && $cookies["auth_authevent_" + adminId] && ($window.location.href = "/admin/elections"), 
+            autheventCookie && autheventCookie === adminId && autheventid === adminId && authCookie && ($window.location.href = "/admin/elections"), 
             scope.sendingData = !1, scope.currentFormStep = 0, scope.stateData = StateDataService.getData(), 
             scope.signupLink = ConfigService.signupLink, scope.allowUserResend = !1, scope.censusQuery = "not-sent", 
             scope.code = null, attrs.code && 0 < attrs.code.length && (scope.code = attrs.code), 
@@ -427,24 +428,25 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                     data[field.name] = field.value;
                 }), scope.sendingData = !0, Authmethod.login(data, autheventid).then(function(tokens) {
                     var postfix;
-                    "ok" === tokens.data.status ? (postfix = "_authevent_" + autheventid, $cookies["authevent_" + autheventid] = autheventid, 
-                    $cookies["userid" + postfix] = tokens.data.username, $cookies["user" + postfix] = scope.email, 
-                    $cookies["auth" + postfix] = tokens.data["auth-token"], $cookies["isAdmin" + postfix] = scope.isAdmin, 
-                    Authmethod.setAuth($cookies["auth" + postfix], scope.isAdmin, autheventid), scope.isAdmin ? Authmethod.getUserInfo().then(function(response) {
-                        $cookies["user" + postfix] = response.data.email, $window.location.href = "/admin/elections";
+                    "ok" === tokens.data.status ? (postfix = "_authevent_" + autheventid, $cookies.put("authevent_" + autheventid, autheventid), 
+                    $cookies.put("userid" + postfix, tokens.data.username), $cookies.put("user" + postfix, scope.email), 
+                    $cookies.put("auth" + postfix, tokens.data["auth-token"]), $cookies.put("isAdmin" + postfix, scope.isAdmin), 
+                    Authmethod.setAuth($cookies.get("auth" + postfix), scope.isAdmin, autheventid), 
+                    scope.isAdmin ? Authmethod.getUserInfo().then(function(response) {
+                        $cookies.put("user" + postfix, response.data.email), $window.location.href = "/admin/elections";
                     }, function(response) {
                         $window.location.href = "/admin/elections";
-                    }) : angular.isDefined(tokens.data["redirect-to-url"]) ? $window.location.href = tokens.data["redirect-to-url"] : angular.isDefined(tokens.data["vote-permission-token"]) ? ($cookies.vote_permission_tokens = JSON.stringify([ {
+                    }) : angular.isDefined(tokens.data["redirect-to-url"]) ? $window.location.href = tokens.data["redirect-to-url"] : angular.isDefined(tokens.data["vote-permission-token"]) ? ($cookies.put("vote_permission_tokens", JSON.stringify([ {
                         electionId: autheventid,
                         token: tokens.data["vote-permission-token"]
-                    } ]), $window.location.href = "/booth/" + autheventid + "/vote") : angular.isDefined(tokens.data["vote-children-info"]) ? (tokens = _.chain(tokens.data["vote-children-info"]).filter(function(child) {
+                    } ])), $window.location.href = "/booth/" + autheventid + "/vote") : angular.isDefined(tokens.data["vote-children-info"]) ? (tokens = _.chain(tokens.data["vote-children-info"]).filter(function(child) {
                         return (0 === child["num-successful-logins-allowed"] || child["num-successful-logins"] < child["num-successful-logins-allowed"]) && !!child["vote-permission-token"];
                     }).map(function(child) {
                         return {
                             electionId: child["auth-event-id"],
                             token: child["vote-permission-token"]
                         };
-                    }).value(), $cookies.vote_permission_tokens = JSON.stringify(tokens), 0 < tokens.length ? $window.location.href = "/booth/" + tokens[0].electionId + "/vote" : scope.error = $i18next("avRegistration.invalidCredentials", {
+                    }).value(), $cookies.put("vote_permission_tokens", JSON.stringify(tokens)), 0 < tokens.length ? $window.location.href = "/booth/" + tokens[0].electionId + "/vote" : scope.error = $i18next("avRegistration.invalidCredentials", {
                         support: ConfigService.contact.email
                     })) : scope.error = $i18next("avRegistration.invalidCredentials", {
                         support: ConfigService.contact.email
@@ -520,7 +522,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                 var eventId = null;
                 scope.csrf && (eventId = scope.csrf.eventId);
                 var uri = (uri = ConfigService.openIDConnectProviders[0].logout_uri).replace("__EVENT_ID__", "" + eventId), postfix = "_authevent_" + eventId;
-                return $cookies["id_token_" + postfix] ? uri = uri.replace("__ID_TOKEN__", $cookies["id_token_" + postfix]) : -1 < uri.indexOf("__ID_TOKEN__") && (uri = "/election/" + eventId + "/public/login"), 
+                return $cookies.get("id_token_" + postfix) ? uri = uri.replace("__ID_TOKEN__", $cookies.get("id_token_" + postfix)) : -1 < uri.indexOf("__ID_TOKEN__") && (uri = "/election/" + eventId + "/public/login"), 
                 uri;
             }
             function redirectToLogin() {
@@ -529,7 +531,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                 Authmethod.viewEvent(eventId).then(function(uri) {
                     var postfix;
                     "ok" === uri.data.status && uri.data.events && "openid-connect" === uri.data.events.auth_method && getLogoutUri() ? (postfix = "_authevent_" + eventId, 
-                    uri = getLogoutUri(), delete $cookies["id_token_" + postfix], $window.location.href = uri) : simpleRedirectToLogin();
+                    uri = getLogoutUri(), $cookies.remove("id_token_" + postfix), $window.location.href = uri) : simpleRedirectToLogin();
                 }, function(response) {
                     simpleRedirectToLogin();
                 })) : $window.location.href = "/");
@@ -540,9 +542,9 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             }
             scope.csrf = null, scope.redirectingToUri = !1, function() {
                 !function() {
-                    if ($cookies["openid-connect-csrf"]) {
-                        var csrf = scope.csrf = angular.fromJson($cookies["openid-connect-csrf"]), uri = "?" + $window.location.hash.substr(1);
-                        if ($cookies["openid-connect-csrf"] = null, !!csrf && angular.isObject(csrf) && angular.isString(csrf.randomState) && angular.isString(csrf.randomNonce) && angular.isNumber(csrf.created) && getURIParameter("state", uri) === csrf.randomState && csrf.created - Date.now() < maxOAuthLoginTimeout) return;
+                    if ($cookies.get("openid-connect-csrf")) {
+                        var csrf = scope.csrf = angular.fromJson($cookies.get("openid-connect-csrf")), uri = "?" + $window.location.hash.substr(1);
+                        if ($cookies.remove("openid-connect-csrf"), !!csrf && angular.isObject(csrf) && angular.isString(csrf.randomState) && angular.isString(csrf.randomNonce) && angular.isNumber(csrf.created) && getURIParameter("state", uri) === csrf.randomState && csrf.created - Date.now() < maxOAuthLoginTimeout) return;
                         redirectToLogin();
                     } else redirectToLogin();
                 }();
@@ -551,12 +553,12 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                     provider: scope.csrf.providerId,
                     nonce: scope.csrf.randomNonce
                 }, postfix = "_authevent_" + scope.csrf.eventId;
-                $cookies["id_token_" + postfix] = data.id_token, Authmethod.login(data, scope.csrf.eventId).then(function(response) {
+                $cookies.put("id_token_" + postfix, data.id_token), Authmethod.login(data, scope.csrf.eventId).then(function(response) {
                     var postfix;
                     "ok" === response.data.status ? (scope.khmac = response.data.khmac, postfix = "_authevent_" + scope.csrf.eventId, 
-                    $cookies["authevent_" + scope.csrf.eventId] = scope.csrf.eventId, $cookies["userid" + postfix] = response.data.username, 
-                    $cookies["user" + postfix] = response.data.username, $cookies["auth" + postfix] = response.data["auth-token"], 
-                    $cookies["isAdmin" + postfix] = !1, Authmethod.setAuth($cookies["auth" + postfix], scope.isAdmin, scope.csrf.eventId), 
+                    $cookies.put("authevent_" + scope.csrf.eventId, scope.csrf.eventId), $cookies.put("userid" + postfix, response.data.username), 
+                    $cookies.put("user" + postfix, response.data.username), $cookies.put("auth" + postfix, response.data["auth-token"]), 
+                    $cookies.put("isAdmin" + postfix, !1), Authmethod.setAuth($cookies.get("auth" + postfix), scope.isAdmin, scope.csrf.eventId), 
                     angular.isDefined(response.data["redirect-to-url"]) ? $window.location.href = response.data["redirect-to-url"] : Authmethod.getPerm("vote", "AuthEvent", scope.csrf.eventId).then(function(hash) {
                         var msg = hash.data["permission-token"].split(";")[1], hash = msg.split("/")[0], msg = msg.split("/")[1];
                         $window.location.href = "/booth/" + scope.csrf.eventId + "/vote/" + hash + "/" + msg;
@@ -571,9 +573,9 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
 } ]), angular.module("avRegistration").controller("LogoutController", [ "$scope", "$stateParams", "$filter", "ConfigService", "$i18next", "$state", "$cookies", "Authmethod", function($scope, $stateParams, $filter, ConfigService, $i18next, $state, $cookies, postfix) {
     ConfigService.freeAuthId;
     var authevent = postfix.getAuthevent(), postfix = "_authevent_" + authevent;
-    $cookies["user" + postfix] = "", $cookies["auth" + postfix] = "", $cookies["authevent_" + authevent] = "", 
-    $cookies["userid" + postfix] = "", $cookies["isAdmin" + postfix] = !1, authevent !== ConfigService.freeAuthId + "" && authevent ? $state.go("registration.login", {
-        id: $cookies["authevent_" + authevent]
+    $cookies.put("user" + postfix, ""), $cookies.put("auth" + postfix, ""), $cookies.put("authevent_" + authevent, ""), 
+    $cookies.put("userid" + postfix, ""), $cookies.put("isAdmin" + postfix, !1), authevent !== ConfigService.freeAuthId + "" && authevent ? $state.go("registration.login", {
+        id: $cookies.get("authevent_" + authevent)
     }) : $state.go("admin.login");
 } ]), angular.module("avRegistration").controller("RegisterController", [ "$scope", "$stateParams", "$filter", "ConfigService", "$i18next", function($scope, $stateParams, $filter, ConfigService, $i18next) {
     $scope.event_id = $stateParams.id, $scope.email = $stateParams.email;
@@ -643,7 +645,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
 } ]), angular.module("avRegistration").factory("Patterns", function() {
     var patterns = {
         get: function(name) {
-            return "dni" === name ? /^\d{7,8}[a-zA-Z]{1}$/i : "mail" === name || "email" === name ? /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/ : /.*/;
+            return "dni" === name ? /^\d{7,8}[a-zA-Z]{1}$/i : "mail" === name || "email" === name ? '/^(([^<>()[]\\.,;:s@"]+(.[^<>()[]\\.,;:s@"]+)*)|(".+"))@(([[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}])|(([a-zA-Z-0-9]+.)+[a-zA-Z]{2,}))$/' : "/.*/";
         }
     };
     return patterns;
