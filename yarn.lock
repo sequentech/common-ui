@@ -137,20 +137,20 @@ amdefine@>=0.0.4:
   resolved "https://registry.yarnpkg.com/amdefine/-/amdefine-1.0.1.tgz#4a5282ac164729e93619bcfd3ad151f817ce91f5"
   integrity sha1-SlKCrBZHKek2Gbz9OtFR+BfOkfU=
 
-angular-animate@1.4.0:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/angular-animate/-/angular-animate-1.4.0.tgz#5c1ffaa9a9bfb5bd6e9be788c6c58c822513ba70"
-  integrity sha1-XB/6qam/tb1um+eIxsWMgiUTunA=
+angular-animate@1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/angular-animate/-/angular-animate-1.5.0.tgz#0e31f31fa7ab2ddf5ea5787e476548644d62fb93"
+  integrity sha1-DjHzH6erLd9epXh+R2VIZE1i+5M=
 
 angular-cookie@~4.0.9:
   version "4.0.10"
   resolved "https://registry.yarnpkg.com/angular-cookie/-/angular-cookie-4.0.10.tgz#8e4388da0fde5650114e43226ba3ac22dde523aa"
   integrity sha1-jkOI2g/eVlARTkMia6OsIt3lI6o=
 
-angular-cookies@1.4.0:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/angular-cookies/-/angular-cookies-1.4.0.tgz#c520d6c9cc46d7c76f68c3b6b8aea5d561e90937"
-  integrity sha1-xSDWycxG18dvaMO2uK6l1WHpCTc=
+angular-cookies@1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/angular-cookies/-/angular-cookies-1.5.0.tgz#5886a676fa414b867ed48d0d4a290441d6b9ba6d"
+  integrity sha1-WIamdvpBS4Z+1I0NSikEQda5um0=
 
 angular-drag-and-drop-lists@2.1.0:
   version "2.1.0"
@@ -162,10 +162,10 @@ angular-load@~0.2.0:
   resolved "https://registry.yarnpkg.com/angular-load/-/angular-load-0.2.0.tgz#8dc133b697a21dc1f7b53ec4728a4fcc72e9f83b"
   integrity sha1-jcEztpeiHcH3tT7EcopPzHLp+Ds=
 
-angular-mocks@~1.4.0:
-  version "1.4.14"
-  resolved "https://registry.yarnpkg.com/angular-mocks/-/angular-mocks-1.4.14.tgz#ea12ec70a5227697e79575523abbec0e0f9168a7"
-  integrity sha1-6hLscKUidpfnlXVSOrvsDg+RaKc=
+angular-mocks@~1.5.0:
+  version "1.5.11"
+  resolved "https://registry.yarnpkg.com/angular-mocks/-/angular-mocks-1.5.11.tgz#a0e1dd0ea55fd77ee7a757d75536c5e964c86f81"
+  integrity sha1-oOHdDqVf137np1fXVTbF6WTIb4E=
 
 angular-moment@1.3.0:
   version "1.3.0"
@@ -174,20 +174,20 @@ angular-moment@1.3.0:
   dependencies:
     moment ">=2.8.0 <3.0.0"
 
-angular-resource@1.4.0:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/angular-resource/-/angular-resource-1.4.0.tgz#d5ccaa1a5960c88416ffa9260395f85342fc5726"
-  integrity sha1-1cyqGllgyIQW/6kmA5X4U0L8VyY=
+angular-resource@1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/angular-resource/-/angular-resource-1.5.0.tgz#0583a437b54c22fcdce22bcf68265fe751f2d368"
+  integrity sha1-BYOkN7VMIvzc4ivPaCZf51Hy02g=
 
-angular-sanitize@1.4.0:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/angular-sanitize/-/angular-sanitize-1.4.0.tgz#a16faf25ffadfd9f510108a7999d94181274ae4b"
-  integrity sha1-oW+vJf+t/Z9RAQinmZ2UGBJ0rks=
+angular-sanitize@1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/angular-sanitize/-/angular-sanitize-1.5.0.tgz#7b9a01dd6b5736d0d5872933f03d1cfb9c188d2a"
+  integrity sha1-e5oB3WtXNtDVhykz8D0c+5wYjSo=
 
-angular@^1.0.8, angular@~1.4, angular@~1.4.0:
-  version "1.4.14"
-  resolved "https://registry.yarnpkg.com/angular/-/angular-1.4.14.tgz#9d0feaf60ce6e52ce50f49ee328656d1e1875c37"
-  integrity sha1-nQ/q9gzm5SzlD0nuMoZW0eGHXDc=
+angular@^1.0.8, angular@~1.5, angular@~1.5.0:
+  version "1.5.11"
+  resolved "https://registry.yarnpkg.com/angular/-/angular-1.5.11.tgz#8c5ba7386f15965c9acf3429f6881553aada30d6"
+  integrity sha1-jFunOG8VllyazzQp9ogVU6raMNY=
 
 ansi-regex@^0.2.0, ansi-regex@^0.2.1:
   version "0.2.1"
