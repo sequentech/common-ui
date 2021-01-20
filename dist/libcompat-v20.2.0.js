@@ -902,7 +902,7 @@
     }, function(name, fn) {
         jQuery.fn[name] = function(until, selector) {
             var ret = jQuery.map(this, fn, until);
-            return "Until" !== name.slice(-5) && (selector = until), selector && "string" == typeof selector && (ret = jQuery.filter(selector, ret)), 
+            return (selector = "Until" !== name.slice(-5) ? until : selector) && "string" == typeof selector && (ret = jQuery.filter(selector, ret)), 
             1 < this.length && (guaranteedUnique[name] || (ret = jQuery.unique(ret)), rparentsprev.test(name) && (ret = ret.reverse())), 
             this.pushStack(ret);
         };
@@ -1221,10 +1221,10 @@
     var xhrSupported = /[+-]?(?:\d*\.|)\d+(?:[eE][+-]?\d+|)/.source, cssExpand = [ "Top", "Right", "Bottom", "Left" ], access = jQuery.access = function(elems, fn, key, value, chainable, emptyGet, raw) {
         var i = 0, length = elems.length, bulk = null == key;
         if ("object" === jQuery.type(key)) for (i in chainable = !0, key) jQuery.access(elems, fn, i, key[i], !0, emptyGet, raw); else if (void 0 !== value && (chainable = !0, 
-        jQuery.isFunction(value) || (raw = !0), bulk && (fn = raw ? (fn.call(elems, value), 
+        jQuery.isFunction(value) || (raw = !0), fn = bulk ? raw ? (fn.call(elems, value), 
         null) : (bulk = fn, function(elem, key, value) {
             return bulk.call(jQuery(elem), value);
-        })), fn)) for (;i < length; i++) fn(elems[i], key, raw ? value : value.call(elems[i], i, fn(elems[i], key)));
+        }) : fn)) for (;i < length; i++) fn(elems[i], key, raw ? value : value.call(elems[i], i, fn(elems[i], key)));
         return chainable ? elems : bulk ? fn.call(elems) : length ? fn(elems[0], key) : emptyGet;
     }, rcheckableType = /^(?:checkbox|radio)$/i;
     !function() {
@@ -1948,8 +1948,7 @@
         css: function(elem, num, extra, styles) {
             var val, hooks = jQuery.camelCase(num);
             return num = jQuery.cssProps[hooks] || (jQuery.cssProps[hooks] = vendorPropName(elem.style, hooks)), 
-            (hooks = jQuery.cssHooks[num] || jQuery.cssHooks[hooks]) && "get" in hooks && (val = hooks.get(elem, !0, extra)), 
-            void 0 === val && (val = curCSS(elem, num, styles)), "normal" === val && num in cssNormalTransform && (val = cssNormalTransform[num]), 
+            "normal" === (val = void 0 === (val = (hooks = jQuery.cssHooks[num] || jQuery.cssHooks[hooks]) && "get" in hooks ? hooks.get(elem, !0, extra) : val) ? curCSS(elem, num, styles) : val) && num in cssNormalTransform && (val = cssNormalTransform[num]), 
             "" === extra || extra ? (num = parseFloat(val), !0 === extra || jQuery.isNumeric(num) ? num || 0 : val) : val;
         }
     }), jQuery.each([ "height", "width" ], function(i, name) {
@@ -2498,7 +2497,7 @@
         if (window.JSON && window.JSON.parse) return window.JSON.parse(data + "");
         var requireNonComma, depth = null, str = jQuery.trim(data + "");
         return str && !jQuery.trim(str.replace(rvalidtokens, function(token, comma, open, close) {
-            return requireNonComma && comma && (depth = 0), 0 === depth ? token : (requireNonComma = open || comma, 
+            return 0 === (depth = requireNonComma && comma ? 0 : depth) ? token : (requireNonComma = open || comma, 
             depth += !close - !open, "");
         })) ? Function("return " + str)() : jQuery.error("Invalid JSON: " + data);
     }, jQuery.parseXML = function(data) {
@@ -2951,7 +2950,7 @@
             "static" === curPosition && (elem.style.position = "relative"), curOffset = curElem.offset(), 
             curCSSTop = jQuery.css(elem, "top"), curLeft = jQuery.css(elem, "left"), curLeft = ("absolute" === curPosition || "fixed" === curPosition) && -1 < jQuery.inArray("auto", [ curCSSTop, curLeft ]) ? (curTop = (curPosition = curElem.position()).top, 
             curPosition.left) : (curTop = parseFloat(curCSSTop) || 0, parseFloat(curLeft) || 0), 
-            jQuery.isFunction(options) && (options = options.call(elem, i, curOffset)), null != options.top && (props.top = options.top - curOffset.top + curTop), 
+            null != (options = jQuery.isFunction(options) ? options.call(elem, i, curOffset) : options).top && (props.top = options.top - curOffset.top + curTop), 
             null != options.left && (props.left = options.left - curOffset.left + curLeft), 
             "using" in options ? options.using.call(elem, props) : curElem.css(props);
         }
@@ -2977,9 +2976,8 @@
                     left: 0
                 }, elem = this[0];
                 return "fixed" === jQuery.css(elem, "position") ? offset = elem.getBoundingClientRect() : (offsetParent = this.offsetParent(), 
-                offset = this.offset(), jQuery.nodeName(offsetParent[0], "html") || (parentOffset = offsetParent.offset()), 
-                parentOffset.top += jQuery.css(offsetParent[0], "borderTopWidth", !0), parentOffset.left += jQuery.css(offsetParent[0], "borderLeftWidth", !0)), 
-                {
+                offset = this.offset(), (parentOffset = !jQuery.nodeName(offsetParent[0], "html") ? offsetParent.offset() : parentOffset).top += jQuery.css(offsetParent[0], "borderTopWidth", !0), 
+                parentOffset.left += jQuery.css(offsetParent[0], "borderLeftWidth", !0)), {
                     top: offset.top - parentOffset.top - jQuery.css(elem, "marginTop", !0),
                     left: offset.left - parentOffset.left - jQuery.css(elem, "marginLeft", !0)
                 };
@@ -3178,7 +3176,7 @@
                 prefix = value.getUTCMilliseconds();
                 value = (year <= 0 || 1e4 <= year ? (year < 0 ? "-" : "+") + toPaddedString(6, year < 0 ? -year : year) : toPaddedString(4, year)) + "-" + toPaddedString(2, month + 1) + "-" + toPaddedString(2, date) + "T" + toPaddedString(2, hours) + ":" + toPaddedString(2, minutes) + ":" + toPaddedString(2, seconds) + "." + toPaddedString(3, prefix) + "Z";
             } else value = null;
-            if (callback && (value = callback.call(object, property, value)), null === value) return "null";
+            if (null === (value = callback ? callback.call(object, property, value) : value)) return "null";
             if ("[object Boolean]" == (className = getClass.call(value))) return "" + value;
             if ("[object Number]" == className) return -1 / 0 < value && value < 1 / 0 ? "" + value : "null";
             if ("[object String]" == className) return quote("" + value);

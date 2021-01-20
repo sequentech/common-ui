@@ -473,8 +473,7 @@
                                     uniqueCache[type] = [ dirruns, nodeIndex, diff ];
                                     break;
                                 }
-                            } else if (useCache && (diff = nodeIndex = (cache = (uniqueCache = (outerCache = (node = elem)[expando] || (node[expando] = {}))[node.uniqueID] || (outerCache[node.uniqueID] = {}))[type] || [])[0] === dirruns && cache[1]), 
-                            !1 === diff) for (;(node = ++nodeIndex && node && node[dir] || (diff = nodeIndex = 0) || start.pop()) && ((ofType ? node.nodeName.toLowerCase() !== name : 1 !== node.nodeType) || !++diff || (useCache && ((uniqueCache = (outerCache = node[expando] || (node[expando] = {}))[node.uniqueID] || (outerCache[node.uniqueID] = {}))[type] = [ dirruns, diff ]), 
+                            } else if (!1 === (diff = useCache ? nodeIndex = (cache = (uniqueCache = (outerCache = (node = elem)[expando] || (node[expando] = {}))[node.uniqueID] || (outerCache[node.uniqueID] = {}))[type] || [])[0] === dirruns && cache[1] : diff)) for (;(node = ++nodeIndex && node && node[dir] || (diff = nodeIndex = 0) || start.pop()) && ((ofType ? node.nodeName.toLowerCase() !== name : 1 !== node.nodeType) || !++diff || (useCache && ((uniqueCache = (outerCache = node[expando] || (node[expando] = {}))[node.uniqueID] || (outerCache[node.uniqueID] = {}))[type] = [ dirruns, diff ]), 
                             node !== elem)); ) ;
                             return (diff -= last) === first || diff % first == 0 && 0 <= diff / first;
                         }
@@ -904,7 +903,7 @@
     }, function(name, fn) {
         jQuery.fn[name] = function(until, selector) {
             var matched = jQuery.map(this, fn, until);
-            return "Until" !== name.slice(-5) && (selector = until), selector && "string" == typeof selector && (matched = jQuery.filter(selector, matched)), 
+            return (selector = "Until" !== name.slice(-5) ? until : selector) && "string" == typeof selector && (matched = jQuery.filter(selector, matched)), 
             1 < this.length && (guaranteedUnique[name] || jQuery.uniqueSort(matched), rparentsprev.test(name) && matched.reverse()), 
             this.pushStack(matched);
         };
@@ -1095,10 +1094,10 @@
     var access = function(elems, fn, key, value, chainable, emptyGet, raw) {
         var i = 0, len = elems.length, bulk = null == key;
         if ("object" === toType(key)) for (i in chainable = !0, key) access(elems, fn, i, key[i], !0, emptyGet, raw); else if (void 0 !== value && (chainable = !0, 
-        isFunction(value) || (raw = !0), bulk && (fn = raw ? (fn.call(elems, value), null) : (bulk = fn, 
+        isFunction(value) || (raw = !0), fn = bulk ? raw ? (fn.call(elems, value), null) : (bulk = fn, 
         function(elem, _key, value) {
             return bulk.call(jQuery(elem), value);
-        })), fn)) for (;i < len; i++) fn(elems[i], key, raw ? value : value.call(elems[i], i, fn(elems[i], key)));
+        }) : fn)) for (;i < len; i++) fn(elems[i], key, raw ? value : value.call(elems[i], i, fn(elems[i], key)));
         return chainable ? elems : bulk ? fn.call(elems) : len ? fn(elems[0], key) : emptyGet;
     }, rmsPrefix = /^-ms-/, rdashAlpha = /-([a-z])/g;
     function fcamelCase(_all, letter) {
@@ -1768,7 +1767,7 @@
     }
     var rnumnonpx = new RegExp("^(" + body + ")(?!px)[a-z%]+$", "i"), getStyles = function(elem) {
         var view = elem.ownerDocument.defaultView;
-        return view && view.opener || (view = window), view.getComputedStyle(elem);
+        return (view = !view || !view.opener ? window : view).getComputedStyle(elem);
     }, rboxStyle = new RegExp(cssExpand.join("|"), "i");
     function curCSS(minWidth, maxWidth, computed) {
         var width, ret, style = minWidth.style;
@@ -1918,8 +1917,7 @@
         },
         css: function(elem, num, extra, styles) {
             var val, hooks = camelCase(num);
-            return rcustomProp.test(num) || (num = finalPropName(hooks)), (hooks = jQuery.cssHooks[num] || jQuery.cssHooks[hooks]) && "get" in hooks && (val = hooks.get(elem, !0, extra)), 
-            void 0 === val && (val = curCSS(elem, num, styles)), "normal" === val && num in cssNormalTransform && (val = cssNormalTransform[num]), 
+            return rcustomProp.test(num) || (num = finalPropName(hooks)), "normal" === (val = void 0 === (val = (hooks = jQuery.cssHooks[num] || jQuery.cssHooks[hooks]) && "get" in hooks ? hooks.get(elem, !0, extra) : val) ? curCSS(elem, num, styles) : val) && num in cssNormalTransform && (val = cssNormalTransform[num]), 
             "" === extra || extra ? (num = parseFloat(val), !0 === extra || isFinite(num) ? num || 0 : val) : val;
         }
     }), jQuery.each([ "height", "width" ], function(_i, dimension) {
@@ -2904,8 +2902,8 @@
             "static" === curPosition && (elem.style.position = "relative"), curOffset = curElem.offset(), 
             curCSSTop = jQuery.css(elem, "top"), curLeft = jQuery.css(elem, "left"), curLeft = ("absolute" === curPosition || "fixed" === curPosition) && -1 < (curCSSTop + curLeft).indexOf("auto") ? (curTop = (curPosition = curElem.position()).top, 
             curPosition.left) : (curTop = parseFloat(curCSSTop) || 0, parseFloat(curLeft) || 0), 
-            isFunction(options) && (options = options.call(elem, i, jQuery.extend({}, curOffset))), 
-            null != options.top && (props.top = options.top - curOffset.top + curTop), null != options.left && (props.left = options.left - curOffset.left + curLeft), 
+            null != (options = isFunction(options) ? options.call(elem, i, jQuery.extend({}, curOffset)) : options).top && (props.top = options.top - curOffset.top + curTop), 
+            null != options.left && (props.left = options.left - curOffset.left + curLeft), 
             "using" in options ? options.using.call(elem, props) : ("number" == typeof props.top && (props.top += "px"), 
             "number" == typeof props.left && (props.left += "px"), curElem.css(props));
         }

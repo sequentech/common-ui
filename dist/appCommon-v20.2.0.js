@@ -162,9 +162,8 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             return $http.post(backendUrl + "auth-event/" + id + "/", data);
         },
         addCensus: function(id, d, validation) {
-            angular.isDefined(validation) || (validation = "enabled");
             d = {
-                "field-validation": validation,
+                "field-validation": validation = !angular.isDefined(validation) ? "enabled" : validation,
                 census: d
             };
             return $http.post(backendUrl + "auth-event/" + id + "/census/", d);
@@ -1132,7 +1131,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         }
         if (void 0 === format && (format = "str"), 0 === total_votes) return print(0);
         var base = question.totals.valid_votes + question.totals.null_votes + question.totals.blank_votes;
-        return null == over && (over = question.answer_total_votes_percentage), "over-valid-votes" === over || "over-total-valid-votes" === over ? base = question.totals.valid_votes : "over-total-valid-points" === over && void 0 !== question.totals.valid_points && (base = question.totals.valid_points), 
+        return "over-valid-votes" === (over = null == over ? question.answer_total_votes_percentage : over) || "over-total-valid-votes" === over ? base = question.totals.valid_votes : "over-total-valid-points" === over && void 0 !== question.totals.valid_points && (base = question.totals.valid_points), 
         print(100 * total_votes / base);
     };
 }), angular.module("avUi").service("CheckerService", function() {
@@ -1251,8 +1250,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
     return checker;
 }), angular.module("avUi").service("AddDotsToIntService", function() {
     return function(number, fixedDigits) {
-        angular.isNumber(fixedDigits) && 0 <= fixedDigits && (number = number.toFixed(parseInt(fixedDigits)));
-        var number_str = (number + "").replace(".", ","), ret = "", commaPos = number_str.length;
+        var number_str = ((number = angular.isNumber(fixedDigits) && 0 <= fixedDigits ? number.toFixed(parseInt(fixedDigits)) : number) + "").replace(".", ","), ret = "", commaPos = number_str.length;
         -1 !== number_str.indexOf(",") && (commaPos = number_str.indexOf(","));
         for (var i = 0; i < commaPos; i++) {
             var reverse = commaPos - i;
@@ -1303,7 +1301,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         var ngModel = $delegate[0], controller = ngModel.controller;
         return ngModel.controller = [ "$scope", "$element", "$attrs", "$injector", function(scope, element, attrs, $injector) {
             var $interpolate = $injector.get("$interpolate");
-            attrs.$set("name", $interpolate(attrs.name || "")(scope)), $injector.invoke(controller, this, {
+            attrs.$set("name", $interpolate(attrs.name || "")(scope)), $injector.invoke(controller, Object.setPrototypeOf(this, controller.prototype), {
                 $scope: scope,
                 $element: element,
                 $attrs: attrs
@@ -1313,7 +1311,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         var form = $delegate[0], controller = form.controller;
         return form.controller = [ "$scope", "$element", "$attrs", "$injector", function(scope, element, attrs, $injector) {
             var $interpolate = $injector.get("$interpolate");
-            attrs.$set("name", $interpolate(attrs.name || attrs.ngForm || "")(scope)), $injector.invoke(controller, this, {
+            attrs.$set("name", $interpolate(attrs.name || attrs.ngForm || "")(scope)), $injector.invoke(controller, Object.setPrototypeOf(this, controller.prototype), {
                 $scope: scope,
                 $element: element,
                 $attrs: attrs
