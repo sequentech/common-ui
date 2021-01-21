@@ -1625,7 +1625,7 @@ function q(a) {
     }
     function minErr(module, ErrorConstructor) {
         ErrorConstructor = ErrorConstructor || Error;
-        var url = "https://errors.angularjs.org/1.7.9/", regex = url.replace(".", "\\.") + "[\\s\\S]*", errRegExp = new RegExp(regex, "g");
+        var url = "https://errors.angularjs.org/1.8.2/", regex = url.replace(".", "\\.") + "[\\s\\S]*", errRegExp = new RegExp(regex, "g");
         return function() {
             var paramPrefix, i, code = arguments[0], template = arguments[1], message = "[" + (module ? module + ":" : "") + code + "] ", templateArgs = sliceArgs(arguments, 2).map(function(arg) {
                 return toDebugString(arg, minErrConfig.objectMaxDepth);
@@ -2041,6 +2041,9 @@ function q(a) {
         });
     }
     var bindJQueryFired = !1;
+    function UNSAFE_restoreLegacyJqLiteXHTMLReplacement() {
+        JQLite.legacyXHTMLReplacement = !0;
+    }
     function assertArg(arg, name, reason) {
         if (!arg) throw ngMinErr("areq", "Argument '{0}' is {1}", name || "?", reason || "required");
         return arg;
@@ -2154,11 +2157,11 @@ function q(a) {
         }(obj, maxDepth) : obj;
     }
     var version = {
-        full: "1.7.9",
+        full: "1.8.2",
         major: 1,
-        minor: 7,
-        dot: 9,
-        codeName: "pollution-eradication"
+        minor: 8,
+        dot: 2,
+        codeName: "meteoric-mining"
     };
     JQLite.expando = "ng339";
     var jqCache = JQLite.cache = {}, jqId = 1;
@@ -2176,13 +2179,21 @@ function q(a) {
         return name.replace(DASH_LOWERCASE_REGEXP, fnCamelCaseReplace);
     }
     var SINGLE_TAG_REGEXP = /^<([\w-]+)\s*\/?>(?:<\/\1>|)$/, HTML_REGEXP = /<|&#?\w+;/, TAG_NAME_REGEXP = /<([\w:-]+)/, XHTML_TAG_REGEXP = /<(?!area|br|col|embed|hr|img|input|link|meta|param)(([\w:-]+)[^>]*)\/>/gi, wrapMap = {
+        thead: [ "table" ],
+        col: [ "colgroup", "table" ],
+        tr: [ "tbody", "table" ],
+        td: [ "tr", "tbody", "table" ]
+    };
+    wrapMap.tbody = wrapMap.tfoot = wrapMap.colgroup = wrapMap.caption = wrapMap.thead, 
+    wrapMap.th = wrapMap.td;
+    var key, wrapMapIE9 = {
         option: [ 1, '<select multiple="multiple">', "</select>" ],
-        thead: [ 1, "<table>", "</table>" ],
-        col: [ 2, "<table><colgroup>", "</colgroup></table>" ],
-        tr: [ 2, "<table><tbody>", "</tbody></table>" ],
-        td: [ 3, "<table><tbody><tr>", "</tr></tbody></table>" ],
         _default: [ 0, "", "" ]
     };
+    for (key in wrapMap) {
+        var wrapMapValueClosing = wrapMap[key], wrapMapValue = wrapMapValueClosing.slice().reverse();
+        wrapMapIE9[key] = [ wrapMapValue.length, "<" + wrapMapValue.join("><") + ">", "</" + wrapMapValueClosing.join("></") + ">" ];
+    }
     function jqLiteIsTextNode(html) {
         return !HTML_REGEXP.test(html);
     }
@@ -2190,20 +2201,24 @@ function q(a) {
         nodeType = nodeType.nodeType;
         return nodeType === NODE_TYPE_ELEMENT || !nodeType || nodeType === NODE_TYPE_DOCUMENT;
     }
-    function jqLiteBuildFragment(html, wrap) {
-        var tmp, i, fragment = wrap.createDocumentFragment(), nodes = [];
-        if (jqLiteIsTextNode(html)) nodes.push(wrap.createTextNode(html)); else {
-            for (tmp = fragment.appendChild(wrap.createElement("div")), wrap = (TAG_NAME_REGEXP.exec(html) || [ "", "" ])[1].toLowerCase(), 
-            wrap = wrapMap[wrap] || wrapMap._default, tmp.innerHTML = wrap[1] + html.replace(XHTML_TAG_REGEXP, "<$1></$2>") + wrap[2], 
-            i = wrap[0]; i--; ) tmp = tmp.lastChild;
+    function jqLiteBuildFragment(finalHtml, tag) {
+        var tmp, wrap, i, fragment = tag.createDocumentFragment(), nodes = [];
+        if (jqLiteIsTextNode(finalHtml)) nodes.push(tag.createTextNode(finalHtml)); else {
+            if (tmp = fragment.appendChild(tag.createElement("div")), tag = (TAG_NAME_REGEXP.exec(finalHtml) || [ "", "" ])[1].toLowerCase(), 
+            finalHtml = JQLite.legacyXHTMLReplacement ? finalHtml.replace(XHTML_TAG_REGEXP, "<$1></$2>") : finalHtml, 
+            msie < 10) for (wrap = wrapMapIE9[tag] || wrapMapIE9._default, tmp.innerHTML = wrap[1] + finalHtml + wrap[2], 
+            i = wrap[0]; i--; ) tmp = tmp.firstChild; else {
+                for (i = (wrap = wrapMap[tag] || []).length; -1 < --i; ) tmp.appendChild(window.document.createElement(wrap[i])), 
+                tmp = tmp.firstChild;
+                tmp.innerHTML = finalHtml;
+            }
             nodes = concat(nodes, tmp.childNodes), (tmp = fragment.firstChild).textContent = "";
         }
         return fragment.textContent = "", fragment.innerHTML = "", forEach(nodes, function(node) {
             fragment.appendChild(node);
         }), fragment;
     }
-    wrapMap.optgroup = wrapMap.option, wrapMap.tbody = wrapMap.tfoot = wrapMap.colgroup = wrapMap.caption = wrapMap.thead, 
-    wrapMap.th = wrapMap.td;
+    wrapMapIE9.optgroup = wrapMapIE9.option;
     var jqLiteContains = window.Node.prototype.contains || function(arg) {
         return !!(16 & this.compareDocumentPosition(arg));
     };
@@ -3302,13 +3317,27 @@ function q(a) {
             return forEach(options, function(val, key) {
                 "$" === key.charAt(0) && (factory[key] = val, isFunction(controller) && (controller[key] = val));
             }), factory.$inject = [ "$injector" ], this.directive(name, factory);
-        }, this.aHrefSanitizationWhitelist = function(regexp) {
-            return void 0 !== regexp ? ($$sanitizeUriProvider.aHrefSanitizationWhitelist(regexp), 
-            this) : $$sanitizeUriProvider.aHrefSanitizationWhitelist();
-        }, this.imgSrcSanitizationWhitelist = function(regexp) {
-            return void 0 !== regexp ? ($$sanitizeUriProvider.imgSrcSanitizationWhitelist(regexp), 
-            this) : $$sanitizeUriProvider.imgSrcSanitizationWhitelist();
-        };
+        }, this.aHrefSanitizationTrustedUrlList = function(regexp) {
+            return void 0 !== regexp ? ($$sanitizeUriProvider.aHrefSanitizationTrustedUrlList(regexp), 
+            this) : $$sanitizeUriProvider.aHrefSanitizationTrustedUrlList();
+        }, Object.defineProperty(this, "aHrefSanitizationWhitelist", {
+            get: function() {
+                return this.aHrefSanitizationTrustedUrlList;
+            },
+            set: function(value) {
+                this.aHrefSanitizationTrustedUrlList = value;
+            }
+        }), this.imgSrcSanitizationTrustedUrlList = function(regexp) {
+            return void 0 !== regexp ? ($$sanitizeUriProvider.imgSrcSanitizationTrustedUrlList(regexp), 
+            this) : $$sanitizeUriProvider.imgSrcSanitizationTrustedUrlList();
+        }, Object.defineProperty(this, "imgSrcSanitizationWhitelist", {
+            get: function() {
+                return this.imgSrcSanitizationTrustedUrlList;
+            },
+            set: function(value) {
+                this.imgSrcSanitizationTrustedUrlList = value;
+            }
+        });
         var debugInfoEnabled = !0, strictComponentBindingsEnabled = !(this.debugInfoEnabled = function(enabled) {
             return void 0 !== enabled ? (debugInfoEnabled = enabled, this) : debugInfoEnabled;
         });
@@ -4219,15 +4248,22 @@ function q(a) {
         this.useApplyAsync = function(value) {
             return void 0 !== value ? (useApplyAsync = !!value, this) : useApplyAsync;
         };
-        var interceptorFactories = this.interceptors = [], xsrfWhitelistedOrigins = this.xsrfWhitelistedOrigins = [];
-        this.$get = [ "$browser", "$httpBackend", "$$cookieReader", "$cacheFactory", "$rootScope", "$q", "$injector", "$sce", function($browser, $httpBackend, $$cookieReader, $cacheFactory, $rootScope, $q, $injector, $sce) {
+        var interceptorFactories = this.interceptors = [], xsrfTrustedOrigins = this.xsrfTrustedOrigins = [];
+        Object.defineProperty(this, "xsrfWhitelistedOrigins", {
+            get: function() {
+                return this.xsrfTrustedOrigins;
+            },
+            set: function(origins) {
+                this.xsrfTrustedOrigins = origins;
+            }
+        }), this.$get = [ "$browser", "$httpBackend", "$$cookieReader", "$cacheFactory", "$rootScope", "$q", "$injector", "$sce", function($browser, $httpBackend, $$cookieReader, $cacheFactory, $rootScope, $q, $injector, $sce) {
             var defaultCache = $cacheFactory("$http");
             defaults.paramSerializer = isString(defaults.paramSerializer) ? $injector.get(defaults.paramSerializer) : defaults.paramSerializer;
             var reversedInterceptors = [];
             forEach(interceptorFactories, function(interceptorFactory) {
                 reversedInterceptors.unshift(isString(interceptorFactory) ? $injector.get(interceptorFactory) : $injector.invoke(interceptorFactory));
             });
-            var parsedAllowedOriginUrls, urlIsAllowedOrigin = (parsedAllowedOriginUrls = [ originUrl ].concat(xsrfWhitelistedOrigins.map(urlResolve)), 
+            var parsedAllowedOriginUrls, urlIsAllowedOrigin = (parsedAllowedOriginUrls = [ originUrl ].concat(xsrfTrustedOrigins.map(urlResolve)), 
             function(parsedUrl) {
                 parsedUrl = urlResolve(parsedUrl);
                 return parsedAllowedOriginUrls.some(urlsAreSameOrigin.bind(null, parsedUrl));
@@ -5939,14 +5975,14 @@ function q(a) {
         } ];
     }
     function $$SanitizeUriProvider() {
-        var aHrefSanitizationWhitelist = /^\s*(https?|s?ftp|mailto|tel|file):/, imgSrcSanitizationWhitelist = /^\s*((https?|ftp|file|blob):|data:image\/)/;
-        this.aHrefSanitizationWhitelist = function(regexp) {
-            return void 0 !== regexp ? (aHrefSanitizationWhitelist = regexp, this) : aHrefSanitizationWhitelist;
-        }, this.imgSrcSanitizationWhitelist = function(regexp) {
-            return void 0 !== regexp ? (imgSrcSanitizationWhitelist = regexp, this) : imgSrcSanitizationWhitelist;
+        var aHrefSanitizationTrustedUrlList = /^\s*(https?|s?ftp|mailto|tel|file):/, imgSrcSanitizationTrustedUrlList = /^\s*((https?|ftp|file|blob):|data:image\/)/;
+        this.aHrefSanitizationTrustedUrlList = function(regexp) {
+            return void 0 !== regexp ? (aHrefSanitizationTrustedUrlList = regexp, this) : aHrefSanitizationTrustedUrlList;
+        }, this.imgSrcSanitizationTrustedUrlList = function(regexp) {
+            return void 0 !== regexp ? (imgSrcSanitizationTrustedUrlList = regexp, this) : imgSrcSanitizationTrustedUrlList;
         }, this.$get = function() {
             return function(uri, normalizedVal) {
-                var regex = normalizedVal ? imgSrcSanitizationWhitelist : aHrefSanitizationWhitelist, normalizedVal = urlResolve(uri && uri.trim()).href;
+                var regex = normalizedVal ? imgSrcSanitizationTrustedUrlList : aHrefSanitizationTrustedUrlList, normalizedVal = urlResolve(uri && uri.trim()).href;
                 return "" === normalizedVal || normalizedVal.match(regex) ? uri : "unsafe:" + normalizedVal;
             };
         };
@@ -6601,12 +6637,26 @@ function q(a) {
     }
     function $SceDelegateProvider() {
         this.SCE_CONTEXTS = SCE_CONTEXTS;
-        var resourceUrlWhitelist = [ "self" ], resourceUrlBlacklist = [];
-        this.resourceUrlWhitelist = function(value) {
-            return resourceUrlWhitelist = arguments.length ? adjustMatchers(value) : resourceUrlWhitelist;
-        }, this.resourceUrlBlacklist = function(value) {
-            return resourceUrlBlacklist = arguments.length ? adjustMatchers(value) : resourceUrlBlacklist;
-        }, this.$get = [ "$injector", "$$sanitizeUri", function($injector, $$sanitizeUri) {
+        var trustedResourceUrlList = [ "self" ], bannedResourceUrlList = [];
+        this.trustedResourceUrlList = function(value) {
+            return trustedResourceUrlList = arguments.length ? adjustMatchers(value) : trustedResourceUrlList;
+        }, Object.defineProperty(this, "resourceUrlWhitelist", {
+            get: function() {
+                return this.trustedResourceUrlList;
+            },
+            set: function(value) {
+                this.trustedResourceUrlList = value;
+            }
+        }), this.bannedResourceUrlList = function(value) {
+            return bannedResourceUrlList = arguments.length ? adjustMatchers(value) : bannedResourceUrlList;
+        }, Object.defineProperty(this, "resourceUrlBlacklist", {
+            get: function() {
+                return this.bannedResourceUrlList;
+            },
+            set: function(value) {
+                this.bannedResourceUrlList = value;
+            }
+        }), this.$get = [ "$injector", "$$sanitizeUri", function($injector, $$sanitizeUri) {
             var htmlSanitizer = function(html) {
                 throw $sceMinErr("unsafe", "Attempting to use an unsafe value in a safe context.");
             };
@@ -6653,11 +6703,11 @@ function q(a) {
                     type === SCE_CONTEXTS.MEDIA_URL || type === SCE_CONTEXTS.URL) return $$sanitizeUri(maybeTrusted.toString(), type === SCE_CONTEXTS.MEDIA_URL);
                     if (type === SCE_CONTEXTS.RESOURCE_URL) {
                         if (function(url) {
-                            for (var parsedUrl = urlResolve(url.toString()), allowed = !1, i = 0, n = resourceUrlWhitelist.length; i < n; i++) if (matchUrl(resourceUrlWhitelist[i], parsedUrl)) {
+                            for (var parsedUrl = urlResolve(url.toString()), allowed = !1, i = 0, n = trustedResourceUrlList.length; i < n; i++) if (matchUrl(trustedResourceUrlList[i], parsedUrl)) {
                                 allowed = !0;
                                 break;
                             }
-                            if (allowed) for (i = 0, n = resourceUrlBlacklist.length; i < n; i++) if (matchUrl(resourceUrlBlacklist[i], parsedUrl)) {
+                            if (allowed) for (i = 0, n = bannedResourceUrlList.length; i < n; i++) if (matchUrl(bannedResourceUrlList[i], parsedUrl)) {
                                 allowed = !1;
                                 break;
                             }
@@ -9001,6 +9051,7 @@ function q(a) {
             },
             getTestability: getTestability,
             reloadWithDebugInfo: reloadWithDebugInfo,
+            UNSAFE_restoreLegacyJqLiteXHTMLReplacement: UNSAFE_restoreLegacyJqLiteXHTMLReplacement,
             $$minErr: minErr,
             $$csp: csp,
             $$encodeUriSegment: encodeUriSegment,
@@ -9105,7 +9156,7 @@ function q(a) {
                 $$cookieReader: $$CookieReaderProvider
             });
         } ]).info({
-            angularVersion: "1.7.9"
+            angularVersion: "1.8.2"
         });
     }(angular), angular.module("ngLocale", [], [ "$provide", function($provide) {
         var PLURAL_CATEGORY_ONE = "one", PLURAL_CATEGORY_OTHER = "other";
@@ -9178,7 +9229,7 @@ function q(a) {
     } ]), jqLite(function() {
         angularInit(window.document, bootstrap);
     }));
-}(window), window.angular.$$csp().noInlineStyle || window.angular.element(document.head).prepend('<style type="text/css">@charset "UTF-8";[ng\\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\\:form{display:block;}.ng-animate-shim{visibility:hidden;}.ng-anchor{position:absolute;}</style>'), 
+}(window), window.angular.$$csp().noInlineStyle || window.angular.element(document.head).prepend(window.angular.element("<style>").text('@charset "UTF-8";[ng\\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\\:form{display:block;}.ng-animate-shim{visibility:hidden;}.ng-anchor{position:absolute;}')), 
 function(window, angular) {
     "use strict";
     var bind, extend, forEach, isArray, isDefined, lowercase, noop, nodeContains, htmlParser, htmlSanitizeWriter, $sanitizeMinErr = angular.$$minErr("$sanitize");
@@ -9269,12 +9320,20 @@ function(window, angular) {
             newElements && newElements.length && extend(elementsMap, arrayToMap(newElements));
         }
         var getInertBodyElement = function(window, document) {
-            var inertDocument;
+            if (function() {
+                try {
+                    return !!getInertBodyElement_DOMParser("");
+                } catch (e) {
+                    return !1;
+                }
+            }()) return getInertBodyElement_DOMParser;
             if (!document || !document.implementation) throw $sanitizeMinErr("noinert", "Can't create an inert html document");
-            var inertBodyElement = ((inertDocument = document.implementation.createHTMLDocument("inert")).documentElement || inertDocument.getDocumentElement()).querySelector("body");
-            return inertBodyElement.innerHTML = '<svg><g onload="this.parentNode.remove()"></g></svg>', 
-            inertBodyElement.querySelector("svg") ? (inertBodyElement.innerHTML = '<svg><p><style><img src="</style><img src=x onerror=alert(1)//">', 
-            inertBodyElement.querySelector("svg img") ? function(html) {
+            var inertDocument = document.implementation.createHTMLDocument("inert"), inertBodyElement = (inertDocument.documentElement || inertDocument.getDocumentElement()).querySelector("body");
+            return function(html) {
+                inertBodyElement.innerHTML = html, document.documentMode && stripCustomNsAttrs(inertBodyElement);
+                return inertBodyElement;
+            };
+            function getInertBodyElement_DOMParser(html) {
                 html = "<remove></remove>" + html;
                 try {
                     var body = new window.DOMParser().parseFromString(html, "text/html").body;
@@ -9282,22 +9341,7 @@ function(window, angular) {
                 } catch (e) {
                     return;
                 }
-            } : function(html) {
-                inertBodyElement.innerHTML = html, document.documentMode && stripCustomNsAttrs(inertBodyElement);
-                return inertBodyElement;
-            }) : function(html) {
-                html = "<remove></remove>" + html;
-                try {
-                    html = encodeURI(html);
-                } catch (e) {
-                    return;
-                }
-                var body = new window.XMLHttpRequest();
-                body.responseType = "document", body.open("GET", "data:text/html;charset=utf-8," + html, !1), 
-                body.send(null);
-                body = body.response.body;
-                return body.firstChild.remove(), body;
-            };
+            }
         }(window, window.document);
         function encodeEntities(value) {
             return value.replace(/&/g, "&amp;").replace(SURROGATE_PAIR_REGEXP, function(value) {
@@ -9323,7 +9367,7 @@ function(window, angular) {
             return nextNode;
         }
     }).info({
-        angularVersion: "1.7.9"
+        angularVersion: "1.8.2"
     }), angular.module("ngSanitize").filter("linky", [ "$sanitize", function($sanitize) {
         var LINKY_URL_REGEXP = /((s?ftp|https?):\/\/|(www\.)|(mailto:)?[A-Za-z0-9._%+-]+@)\S*[^\s.;,(){}<>"\u201d\u2019]/i, MAILTO_REGEXP = /^mailto:/i, linkyMinErr = angular.$$minErr("linky"), isDefined = angular.isDefined, isFunction = angular.isFunction, isObject = angular.isObject, isString = angular.isString;
         return function(text, target, attributes) {
@@ -13353,7 +13397,7 @@ function(angular, undefined) {
         isObject = angular.isObject, isUndefined = angular.isUndefined, isDefined = angular.isDefined, 
         isFunction = angular.isFunction, isElement = angular.isElement;
     }).info({
-        angularVersion: "1.7.9"
+        angularVersion: "1.8.2"
     }).directive("ngAnimateSwap", [ "$animate", function($animate) {
         return {
             restrict: "A",
@@ -13442,7 +13486,7 @@ function(angular, undefined) {
         return dst;
     }
     angular.module("ngResource", [ "ng" ]).info({
-        angularVersion: "1.7.9"
+        angularVersion: "1.8.2"
     }).provider("$resource", function() {
         var PROTOCOL_AND_IPV6_REGEX = /^https?:\/\/\[[^\]]*][^/]*/, provider = this;
         this.defaults = {
@@ -16058,7 +16102,7 @@ function(angular) {
         };
     }
     angular.module("ngCookies", [ "ng" ]).info({
-        angularVersion: "1.7.9"
+        angularVersion: "1.8.2"
     }).provider("$cookies", [ function() {
         var defaults = this.defaults = {};
         function calcOptions(options) {
