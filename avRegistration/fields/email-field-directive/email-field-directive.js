@@ -18,9 +18,7 @@
 angular.module('avRegistration')
   .directive('avrEmailField', function($state, Patterns) {
     function link(scope, element, attrs) {
-        scope.patterns = function(name) {
-            return Patterns.get(name);
-        };
+      scope.emailRe = Patterns.get('email');
     }
     return {
       restrict: 'AE',

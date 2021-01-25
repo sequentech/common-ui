@@ -6,11 +6,6 @@ angular.module('avRegistration')
       } else {
         scope.re = new RegExp(scope.field.regex);
       }
-
-      // returns true if regex matches or if there's no regex
-      scope.getRe = function(value) {
-        return scope.re;
-      };
     }
     return {
       restrict: 'AE',
