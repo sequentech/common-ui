@@ -213,3 +213,56 @@
     line-height: 1.1;
     color: inherit;
 }
+
+
+/*
+ * Increase body font-size
+ */
+
+body {
+  font-size: 18px;
+}
+
+
+/*
+ * view-link allways visible 
+ */
+
+.view-link-text {
+  color: @brand-primary;
+}
+
+.selected .view-link-text {
+  color: @av-bg;
+}
+
+/* link icon */
+[avb-accordion-option] a.btn-right {
+  color: #aaa;
+}
+
+
+/*
+ * custom finish button 
+*/
+
+[avb-success-screen] .btn-login {
+  color: @av-bg;
+  background-color: @brand-primary;
+  font-weight: bold;
+}
+
+[avb-success-screen] .btn-login:hover {
+  color: @av-primary-contrast;
+  background-color: @brand-success;
+}
+
+
+/*
+ * custom accordion options titles
+ */
+
+[avb-accordion-option] .panel.in .panel-heading .panel-title a, [avb-accordion-options] [accordion] .panel.in .panel-heading .panel-title a {
+	background-color: @brand-primary;
+}
+

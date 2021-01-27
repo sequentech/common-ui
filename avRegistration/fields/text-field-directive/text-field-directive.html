@@ -19,7 +19,7 @@
         ng-model-options="{debounce: 500}"
         ng-disabled="field.disabled"
         tabindex="{{index}}"
-        ng-pattern="getRe()"
+        ng-pattern="re"
         ng-required={{field.required}} />
       <p class="help-block" ng-if="field.help">
         {{field.help}}

@@ -616,13 +616,13 @@ angular.module('avRegistration')
         authmethod.launchPingDaemon = function(autheventid) {
           var postfix = "_authevent_" + autheventid;
           // only needed if it's an admin and daemon has not been launched
-          if (!$cookies["isAdmin" + postfix]) {
+          if (!$cookies.get("isAdmin" + postfix)) {
             return;
           }
           authmethod.ping()
             .then(function(response) {
-                $cookies["auth" + postfix] = response.data['auth-token'];
-                authmethod.setAuth($cookies["auth" + postfix], $cookies["isAdmin" + postfix], autheventid);
+                $cookies.put("auth" + postfix, response.data['auth-token']);
+                authmethod.setAuth($cookies.get("auth" + postfix), $cookies.get("isAdmin" + postfix), autheventid);
             });
         };
 

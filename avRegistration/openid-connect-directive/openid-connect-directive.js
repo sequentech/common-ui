@@ -64,9 +64,9 @@ angular.module('avRegistration')
           uri = uri.replace("__EVENT_ID__", "" + eventId);
 
           var postfix = "_authevent_" + eventId;
-          if (!!$cookies["id_token_" + postfix])
+          if (!!$cookies.get("id_token_" + postfix))
           {
-            uri = uri.replace("__ID_TOKEN__", $cookies["id_token_" + postfix]);
+            uri = uri.replace("__ID_TOKEN__", $cookies.get("id_token_" + postfix));
 
           // if __ID_TOKEN__ is there but we cannot replace it, we need to
           // directly redirect to the login, otherwise the URI might show an
@@ -112,7 +112,7 @@ angular.module('avRegistration')
 
                 var postfix = "_authevent_" + eventId;
                 var uri = getLogoutUri();
-                delete $cookies["id_token_" + postfix];
+                $cookies.remove("id_token_" + postfix);
                 $window.location.href = uri;
               },
               function onError(response)
@@ -145,14 +145,14 @@ angular.module('avRegistration')
         // validates the CSRF token
         function validateCsrfToken()
         {
-            if (!$cookies['openid-connect-csrf'])
+            if (!$cookies.get('openid-connect-csrf'))
             {
                 redirectToLogin();
                 return null;
             }
 
             // validate csrf token format and data
-            var csrf = scope.csrf = angular.fromJson($cookies['openid-connect-csrf']);
+            var csrf = scope.csrf = angular.fromJson($cookies.get('openid-connect-csrf'));
             var uri = "?" + $window.location.hash.substr(1);
 
             // NOTE: if you need to debug this callback, obtain the callback
@@ -171,7 +171,7 @@ angular.module('avRegistration')
             //   eventId: 11111
             // };
 
-            $cookies['openid-connect-csrf'] = null;
+            $cookies.remove('openid-connect-csrf');
             var isCsrfValid = (!!csrf &&
               angular.isObject(csrf) &&
               angular.isString(csrf.randomState) &&
@@ -206,7 +206,7 @@ angular.module('avRegistration')
             };
 
             var postfix = "_authevent_" + scope.csrf.eventId;
-            $cookies["id_token_" + postfix] = data.id_token;
+            $cookies.put("id_token_" + postfix, data.id_token);
 
             // Send the authentication request to our server
             Authmethod.login(data, scope.csrf.eventId)
@@ -217,12 +217,12 @@ angular.module('avRegistration')
                     {
                         scope.khmac = response.data.khmac;
                         var postfix = "_authevent_" + scope.csrf.eventId;
-                        $cookies["authevent_" + scope.csrf.eventId] = scope.csrf.eventId;
-                        $cookies["userid" + postfix] = response.data.username;
-                        $cookies["user" + postfix] = response.data.username;
-                        $cookies["auth" + postfix] = response.data['auth-token'];
-                        $cookies["isAdmin" + postfix] = false;
-                        Authmethod.setAuth($cookies["auth" + postfix], scope.isAdmin, scope.csrf.eventId);
+                        $cookies.put("authevent_" + scope.csrf.eventId, scope.csrf.eventId);
+                        $cookies.put("userid" + postfix, response.data.username);
+                        $cookies.put("user" + postfix, response.data.username);
+                        $cookies.put("auth" + postfix, response.data['auth-token']);
+                        $cookies.put("isAdmin" + postfix, false);
+                        Authmethod.setAuth($cookies.get("auth" + postfix), scope.isAdmin, scope.csrf.eventId);
 
                         if (angular.isDefined(response.data['redirect-to-url']))
                         {

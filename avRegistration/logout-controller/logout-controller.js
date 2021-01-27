@@ -20,15 +20,15 @@ angular.module('avRegistration').controller('LogoutController',
     var adminId = ConfigService.freeAuthId;
     var authevent = Authmethod.getAuthevent();
     var postfix = "_authevent_" + authevent;
-    $cookies["user" + postfix] = '';
-    $cookies["auth" + postfix] = '';
-    $cookies["authevent_" + authevent] = '';
-    $cookies["userid" + postfix] = '';
-    $cookies["isAdmin" + postfix] = false;
+    $cookies.put("user" + postfix, '');
+    $cookies.put("auth" + postfix, '');
+    $cookies.put("authevent_" + authevent, '');
+    $cookies.put("userid" + postfix, '');
+    $cookies.put("isAdmin" + postfix, false);
     if (authevent === ConfigService.freeAuthId + '' || !authevent) {
         $state.go("admin.login");
     } else {
-        $state.go("registration.login", {id: $cookies["authevent_" + authevent]});
+        $state.go("registration.login", {id: $cookies.get("authevent_" + authevent)});
     }
   }
 );
