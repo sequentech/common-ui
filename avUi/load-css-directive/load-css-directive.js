@@ -21,16 +21,21 @@ angular
     'avLoadCss', 
     function() 
     {
-      function link(scope, element, _attrs) 
+      function link(scope, element, attrs) 
       {
-        element.text(scope.css);
+        function updateCss(value)
+        {
+          if (value && typeof value === 'string') {
+            element.text(value);
+          }
+        }
+        updateCss(attrs.css);
+        scope.$watch(attrs.css, updateCss);
       }
 
       return {
         restrict: 'AE',
-        scope: {
-          css: '='
-        },
+        scope: {},
         link: link
       };
   });

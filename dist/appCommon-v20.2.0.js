@@ -1119,11 +1119,12 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
 }), angular.module("avUi").directive("avLoadCss", function() {
     return {
         restrict: "AE",
-        scope: {
-            css: "="
-        },
-        link: function(scope, element, _attrs) {
-            element.text(scope.css);
+        scope: {},
+        link: function(scope, element, attrs) {
+            function updateCss(value) {
+                value && "string" == typeof value && element.text(value);
+            }
+            updateCss(attrs.css), scope.$watch(attrs.css, updateCss);
         }
     };
 }), angular.module("avUi").service("PercentVotesService", function() {
