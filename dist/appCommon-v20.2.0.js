@@ -1116,6 +1116,19 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
             return !0;
         }
     };
+}), angular.module("avUi").directive("avLoadCss", function() {
+    return {
+        restrict: "AE",
+        scope: {
+            css: "="
+        },
+        link: function(scope, element, _attrs) {
+            function updateCss(newValue, oldValue) {
+                newValue && "string" == typeof newValue && newValue !== oldValue && element.text(newValue);
+            }
+            updateCss(scope.css), scope.$watch("css", updateCss);
+        }
+    };
 }), angular.module("avUi").service("PercentVotesService", function() {
     return function(total_votes, question, over, format) {
         function print(num) {

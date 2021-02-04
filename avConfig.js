@@ -57,6 +57,12 @@ var avConfigData = {
   // Allowed values: true|false
   allowEditElectionJson: true,
 
+  // For admins:
+  // Allow editing the election.presentation.theme_css so that any election
+  // Admin can highly customize the election directly with CSS.
+  // Allowed values: true|false
+  allowCustomElectionThemeCss: false,
+
   // show the documentation links after successfully casting a vote
   // allowed values: true| false
   showDocOnVoteCast: false,
