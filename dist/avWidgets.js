@@ -18,7 +18,7 @@
     }
     window.addEventListener("message", function(e) {
         var args = "avRequestAuthorization:";
-        e.data.substr(0, args.length) === args && (args = [ JSON.parse(e.data.substr(args.length, e.data.length)), function(khmac) {
+        e && e.data && e.data.substr(0, args.length) === args && (args = [ JSON.parse(e.data.substr(args.length, e.data.length)), function(khmac) {
             e.source.postMessage("avPostAuthorization:" + khmac, "*");
         } ], window[window.avRequestAuthorizationFuncName].apply(window, args));
     }, !1), processLinks("agoravoting-voting-booth", function(funcName) {
