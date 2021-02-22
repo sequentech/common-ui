@@ -334,8 +334,16 @@ module.exports = function (grunt) {
           '<%= dom_munger.data.appjs %>',
           '<%= ngtemplates.main.dest %>',
           'node_modules/angular-mocks/angular-mocks.js',
+          '**/*.html',
           createFolderGlobs('*-spec.js')
         ],
+        preprocessors: {
+          'avRegistration/**/*.html': ['ng-html2js']
+        },
+        ngHtml2JsPreprocessor: {
+          // the name of the Angular module to create
+          moduleName: "avRegistration"
+        },
         logLevel:'ERROR',
         reporters:['mocha'],
         autoWatch: false, //watching is handled by grunt-contrib-watch

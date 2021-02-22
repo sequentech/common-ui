@@ -73,7 +73,9 @@
     "ws": "7.2.1",
     "yarn": "^1.22.0"
   },
-  "dependencies": {},
+  "dependencies": {
+    "karma-ng-html2js-preprocessor": "^1.0.0"
+  },
   "resolutions": {
     "**/socket.io": "2.4.0",
     "**/angular": "~1.8",
