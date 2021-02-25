@@ -1,6 +1,9 @@
-# agora-core-view
+# agora-gui-common [![tests_badge]][tests_link] 
 
-Agora-core-view contais the whole interface for agora v3, and it's developed
+[tests_badge]: https://github.com/agoravoting/agora-gui-common/workflows/Test%20all/badge.svg
+[tests_link]: https://github.com/agoravoting/agora-gui-common/actions?query=workflow%3A%22Test+all%22
+
+Agora-gui-common contais the common library interface for Agora GUI, and it's developed
 with AngularJS.
 
 # Installation
