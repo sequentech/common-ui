@@ -334,8 +334,16 @@ module.exports = function (grunt) {
           '<%= dom_munger.data.appjs %>',
           '<%= ngtemplates.main.dest %>',
           'node_modules/angular-mocks/angular-mocks.js',
+          '**/*.html',
           createFolderGlobs('*-spec.js')
         ],
+        preprocessors: {
+          'avRegistration/**/*.html': ['ng-html2js']
+        },
+        ngHtml2JsPreprocessor: {
+          // the name of the Angular module to create
+          moduleName: "avRegistration"
+        },
         logLevel:'ERROR',
         reporters:['mocha'],
         autoWatch: false, //watching is handled by grunt-contrib-watch
@@ -343,6 +351,9 @@ module.exports = function (grunt) {
       },
       all_tests: {
         browsers: ['PhantomJS','Chrome','Firefox']
+      },
+      headless: {
+        browsers: ['PhantomJS']
       },
       during_watch: {
         browsers: ['PhantomJS']
@@ -390,7 +401,8 @@ module.exports = function (grunt) {
     ]
   );
   grunt.registerTask('serve', ['dom_munger:read','jshint','connect', 'watch']);
-  grunt.registerTask('test',['dom_munger:read','karma:all_tests']);
+  grunt.registerTask('test',['dom_munger:read','karma:headless']);
+  grunt.registerTask('test-all',['dom_munger:read','karma:all_tests']);
 
   grunt.event.on('watch', function(action, filepath) {
     //https://github.com/gruntjs/grunt-contrib-watch/issues/156
