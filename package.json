@@ -84,6 +84,7 @@
     "**/minimist": "1.2.5",
     "**/yargs-parser": "13.1.2",
     "**/cheerio": "0.12.3",
-    "**/cheerio-select": "0.0.3"
+    "**/cheerio-select": "0.0.3",
+    "**/is-svg": "4.3.1"
   }
 }
