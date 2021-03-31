@@ -1154,52 +1154,52 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
         }
         angular.isUndefined(d.errorData) && (d.errorData = {});
         var ret = _.every(d.checks, function(item) {
-            var errorData, min, max, itemMin, itemMax, data, extra, prefix, pass = !0;
-            return "is-int" === item.check ? (pass = angular.isNumber(d.data[item.key], item.postfix)) || error(item.check, {
+            var errorData, min, max, itemMin, itemMax, data, extra, prefix, pass = !0, dataToCheck = angular.isDefined(item.key) ? d.data[item.key] : d.data;
+            return "is-int" === item.check ? (pass = angular.isNumber(dataToCheck, item.postfix)) || error(item.check, {
                 key: item.key
-            }, item.postfix) : "is-array" === item.check ? (pass = angular.isArray(d.data[item.key], item.postfix)) || error(item.check, {
+            }, item.postfix) : "is-array" === item.check ? (pass = angular.isArray(dataToCheck, item.postfix)) || error(item.check, {
                 key: item.key
-            }, item.postfix) : "lambda" === item.check ? item.validator(d.data[item.key]) || (errorData = {
+            }, item.postfix) : "lambda" === item.check ? item.validator(dataToCheck) || (errorData = {
                 key: item.key
-            }, angular.isUndefined(item.appendOnErrorLambda) || (errorData = item.appendOnErrorLambda(d.data[item.key])), 
+            }, angular.isUndefined(item.appendOnErrorLambda) || (errorData = item.appendOnErrorLambda(dataToCheck)), 
             _.isObject(item.append) && _.isString(item.append.key) && !_.isUndefined(item.append.value) && (errorData[item.append.key] = evalValue(item.append.value, item)), 
-            error(item.check, errorData, item.postfix)) : "is-string-if-defined" === item.check ? (pass = angular.isUndefined(d.data[item.key]) || angular.isString(d.data[item.key], item.postfix)) || error(item.check, {
+            error(item.check, errorData, item.postfix)) : "is-string-if-defined" === item.check ? (pass = angular.isUndefined(dataToCheck) || angular.isString(dataToCheck, item.postfix)) || error(item.check, {
                 key: item.key
-            }, item.postfix) : "array-length-if-defined" === item.check ? angular.isDefined(d.data[item.key]) && (itemMin = evalValue(item.min, d.data), 
-            itemMax = evalValue(item.max, d.data), (angular.isArray(d.data[item.key]) || angular.isString(d.data[item.key])) && (min = angular.isUndefined(item.min) || d.data[item.key].length >= itemMin, 
-            max = angular.isUndefined(item.max) || d.data[item.key].length <= itemMax, pass = min && max, 
+            }, item.postfix) : "array-length-if-defined" === item.check ? angular.isDefined(dataToCheck) && (itemMin = evalValue(item.min, d.data), 
+            itemMax = evalValue(item.max, d.data), (angular.isArray(dataToCheck) || angular.isString(dataToCheck)) && (min = angular.isUndefined(item.min) || dataToCheck.length >= itemMin, 
+            max = angular.isUndefined(item.max) || dataToCheck.length <= itemMax, pass = min && max, 
             min || error("array-length-min", {
                 key: item.key,
                 min: itemMin,
-                num: d.data[item.key].length
+                num: dataToCheck.length
             }, item.postfix), max || error("array-length-max", {
                 key: item.key,
                 max: itemMax,
-                num: d.data[item.key].length
-            }, item.postfix))) : "is-string" === item.check ? (pass = angular.isString(d.data[item.key], item.postfix)) || error(item.check, {
+                num: dataToCheck.length
+            }, item.postfix))) : "is-string" === item.check ? (pass = angular.isString(dataToCheck, item.postfix)) || error(item.check, {
                 key: item.key
             }, item.postfix) : "array-length" === item.check ? (itemMin = evalValue(item.min, d.data), 
-            itemMax = evalValue(item.max, d.data), (angular.isArray(d.data[item.key]) || angular.isString(d.data[item.key])) && (min = angular.isUndefined(item.min) || d.data[item.key].length >= itemMin, 
-            max = angular.isUndefined(item.max) || d.data[item.key].length <= itemMax, pass = min && max, 
+            itemMax = evalValue(item.max, d.data), (angular.isArray(dataToCheck) || angular.isString(dataToCheck)) && (min = angular.isUndefined(item.min) || dataToCheck.length >= itemMin, 
+            max = angular.isUndefined(item.max) || dataToCheck.length <= itemMax, pass = min && max, 
             min || error("array-length-min", {
                 key: item.key,
                 min: itemMin,
-                num: d.data[item.key].length
+                num: dataToCheck.length
             }, item.postfix), max || error("array-length-max", {
                 key: item.key,
                 max: itemMax,
-                num: d.data[item.key].length
+                num: dataToCheck.length
             }, item.postfix))) : "int-size" === item.check ? (itemMin = evalValue(item.min, d.data), 
-            itemMax = evalValue(item.max, d.data), min = angular.isUndefined(item.min) || d.data[item.key] >= itemMin, 
-            max = angular.isUndefined(item.max) || d.data[item.key] <= itemMax, pass = min && max, 
+            itemMax = evalValue(item.max, d.data), min = angular.isUndefined(item.min) || itemMin <= dataToCheck, 
+            max = angular.isUndefined(item.max) || dataToCheck <= itemMax, pass = min && max, 
             min || error("int-size-min", {
                 key: item.key,
                 min: itemMin,
-                value: d.data[item.key]
+                value: dataToCheck
             }, item.postfix), max || error("int-size-max", {
                 key: item.key,
                 max: itemMax,
-                value: d.data[item.key]
+                value: dataToCheck
             }, item.postfix)) : "group-chain" === item.check ? pass = _.all(_.map(item.checks, function(check) {
                 return checker({
                     data: d.data,
@@ -1208,7 +1208,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                     checks: [ check ],
                     prefix: sumStrs(d.prefix, item.prefix)
                 });
-            })) : "array-key-group-chain" === item.check ? pass = _.every(d.data[item.key], function(data, index) {
+            })) : "array-key-group-chain" === item.check ? pass = _.every(dataToCheck, function(data, index) {
                 var extra = {}, prefix = "";
                 return angular.isString(d.prefix) && (prefix = d.prefix), angular.isString(item.prefix) && (prefix += item.prefix), 
                 extra.prefix = prefix, extra[item.append.key] = evalValue(item.append.value, data), 
@@ -1237,7 +1237,7 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                     checks: item.checks,
                     prefix: sumStrs(d.prefix, item.prefix)
                 });
-            }), !0) : "object-key-chain" === item.check && (pass = _.isString(item.key) && _.isObject(d.data[item.key])) && (data = d.data[item.key], 
+            }), !0) : "object-key-chain" === item.check && (pass = _.isString(item.key) && _.isObject(dataToCheck)) && (data = dataToCheck, 
             (extra = {})[item.append.key] = evalValue(item.append.value, data), prefix = "", 
             angular.isString(d.prefix) && (prefix += d.prefix), angular.isString(item.prefix) && (prefix += item.prefix), 
             pass = _.every(item.checks, function(check, index) {

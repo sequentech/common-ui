@@ -114,22 +114,23 @@ angular.module('avUi')
         var itemMax;
         var max;
         var min;
+        var dataToCheck = angular.isDefined(item.key) ? d.data[item.key] : d.data;
         if (item.check === "is-int") {
-          pass = angular.isNumber(d.data[item.key], item.postfix);
+          pass = angular.isNumber(dataToCheck, item.postfix);
           if (!pass) {
             error(item.check, {key: item.key}, item.postfix);
           }
 
         } else if (item.check === "is-array") {
-          pass = angular.isArray(d.data[item.key], item.postfix);
+          pass = angular.isArray(dataToCheck, item.postfix);
           if (!pass) {
             error(item.check, {key: item.key}, item.postfix);
           }
         } else if (item.check === "lambda") {
-          if (!item.validator(d.data[item.key])) {
+          if (!item.validator(dataToCheck)) {
             var errorData = {key: item.key};
             if (!angular.isUndefined(item.appendOnErrorLambda)) {
-              errorData = item.appendOnErrorLambda(d.data[item.key]);
+              errorData = item.appendOnErrorLambda(dataToCheck);
             }
             if (_.isObject(item.append) &&
                 _.isString(item.append.key) &&
@@ -140,30 +141,30 @@ angular.module('avUi')
           }
 
         } else if (item.check === "is-string-if-defined") {
-          pass = angular.isUndefined(d.data[item.key]) ||
-                   angular.isString(d.data[item.key], item.postfix);
+          pass = angular.isUndefined(dataToCheck) ||
+                   angular.isString(dataToCheck, item.postfix);
           if (!pass) {
             error(item.check, {key: item.key}, item.postfix);
           }
 
         } else if (item.check === "array-length-if-defined") {
-          if (angular.isDefined(d.data[item.key])) {
+          if (angular.isDefined(dataToCheck)) {
             itemMin = evalValue(item.min, d.data);
             itemMax = evalValue(item.max, d.data);
 
-            if (angular.isArray(d.data[item.key]) || angular.isString(d.data[item.key]))
+            if (angular.isArray(dataToCheck) || angular.isString(dataToCheck))
             {
-              min = angular.isUndefined(item.min) || d.data[item.key].length >= itemMin;
-              max = angular.isUndefined(item.max) || d.data[item.key].length <= itemMax;
+              min = angular.isUndefined(item.min) || dataToCheck.length >= itemMin;
+              max = angular.isUndefined(item.max) || dataToCheck.length <= itemMax;
               pass = min && max;
               if (!min) {
                 error(
                   "array-length-min",
-                  {key: item.key, min: itemMin, num: d.data[item.key].length},
+                  {key: item.key, min: itemMin, num: dataToCheck.length},
                   item.postfix);
               }
               if (!max) {
-                var itemErrorData0 = {key: item.key, max: itemMax, num: d.data[item.key].length};
+                var itemErrorData0 = {key: item.key, max: itemMax, num: dataToCheck.length};
                 error(
                   "array-length-max",
                   itemErrorData0,
@@ -172,7 +173,7 @@ angular.module('avUi')
             }
           }
         } else if (item.check === "is-string") {
-          pass = angular.isString(d.data[item.key], item.postfix);
+          pass = angular.isString(dataToCheck, item.postfix);
           if (!pass) {
             error(item.check, {key: item.key}, item.postfix);
           }
@@ -181,19 +182,19 @@ angular.module('avUi')
           itemMin = evalValue(item.min, d.data);
           itemMax = evalValue(item.max, d.data);
 
-          if (angular.isArray(d.data[item.key]) || angular.isString(d.data[item.key]))
+          if (angular.isArray(dataToCheck) || angular.isString(dataToCheck))
           {
-            min = angular.isUndefined(item.min) || d.data[item.key].length >= itemMin;
-            max = angular.isUndefined(item.max) || d.data[item.key].length <= itemMax;
+            min = angular.isUndefined(item.min) || dataToCheck.length >= itemMin;
+            max = angular.isUndefined(item.max) || dataToCheck.length <= itemMax;
             pass = min && max;
             if (!min) {
               error(
                 "array-length-min",
-                {key: item.key, min: itemMin, num: d.data[item.key].length},
+                {key: item.key, min: itemMin, num: dataToCheck.length},
                 item.postfix);
             }
             if (!max) {
-              var itemErrorData = {key: item.key, max: itemMax, num: d.data[item.key].length};
+              var itemErrorData = {key: item.key, max: itemMax, num: dataToCheck.length};
               error(
                 "array-length-max",
                 itemErrorData,
@@ -204,19 +205,19 @@ angular.module('avUi')
         } else if (item.check === "int-size") {
           itemMin = evalValue(item.min, d.data);
           itemMax = evalValue(item.max, d.data);
-          min = angular.isUndefined(item.min) || d.data[item.key] >= itemMin;
-          max = angular.isUndefined(item.max) || d.data[item.key] <= itemMax;
+          min = angular.isUndefined(item.min) || dataToCheck >= itemMin;
+          max = angular.isUndefined(item.max) || dataToCheck <= itemMax;
           pass = min && max;
           if (!min) {
             error(
               "int-size-min",
-              {key: item.key, min: itemMin, value: d.data[item.key]},
+              {key: item.key, min: itemMin, value: dataToCheck},
               item.postfix);
           }
           if (!max) {
             error(
               "int-size-max",
-              {key: item.key, max: itemMax, value: d.data[item.key]},
+              {key: item.key, max: itemMax, value: dataToCheck},
               item.postfix);
           }
         } else if (item.check === "group-chain") {
@@ -235,7 +236,7 @@ angular.module('avUi')
             );
         } else if (item.check === "array-key-group-chain") {
           pass = _.every(
-            d.data[item.key],
+            dataToCheck,
             function (data, index) {
               var extra = {};
               var prefix = "";
@@ -284,9 +285,9 @@ angular.module('avUi')
               }),
             true);
         } else if (item.check === "object-key-chain") {
-          pass = _.isString(item.key) && _.isObject(d.data[item.key]);
+          pass = _.isString(item.key) && _.isObject(dataToCheck);
           if (!!pass) {
-            var data = d.data[item.key];
+            var data = dataToCheck;
             var extra = {};
             extra[item.append.key] = evalValue(item.append.value, data);
             var prefix = "";
