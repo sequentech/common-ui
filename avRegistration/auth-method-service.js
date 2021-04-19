@@ -621,7 +621,12 @@ angular.module('avRegistration')
           }
           authmethod.ping()
             .then(function(response) {
-                $cookies.put("auth" + postfix, response.data['auth-token']);
+                var options = {};
+                if (ConfigService.cookies && ConfigService.cookies.expires) {
+                  options.expires = new Date();
+                  options.expires.setMinutes(options.expires.getMinutes() + ConfigService.cookies.expires);
+                }
+                $cookies.put("auth" + postfix, response.data['auth-token'], options);
                 authmethod.setAuth($cookies.get("auth" + postfix), $cookies.get("isAdmin" + postfix), autheventid);
             });
         };

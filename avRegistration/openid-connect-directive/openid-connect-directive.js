@@ -205,8 +205,14 @@ angular.module('avRegistration')
                 nonce: scope.csrf.randomNonce
             };
 
+            var options = {};
+            if (ConfigService.cookies && ConfigService.cookies.expires) {
+              options.expires = new Date();
+              options.expires.setMinutes(options.expires.getMinutes() + ConfigService.cookies.expires);
+            }
+
             var postfix = "_authevent_" + scope.csrf.eventId;
-            $cookies.put("id_token_" + postfix, data.id_token);
+            $cookies.put("id_token_" + postfix, data.id_token, options);
 
             // Send the authentication request to our server
             Authmethod.login(data, scope.csrf.eventId)
@@ -217,11 +223,11 @@ angular.module('avRegistration')
                     {
                         scope.khmac = response.data.khmac;
                         var postfix = "_authevent_" + scope.csrf.eventId;
-                        $cookies.put("authevent_" + scope.csrf.eventId, scope.csrf.eventId);
-                        $cookies.put("userid" + postfix, response.data.username);
-                        $cookies.put("user" + postfix, response.data.username);
-                        $cookies.put("auth" + postfix, response.data['auth-token']);
-                        $cookies.put("isAdmin" + postfix, false);
+                        $cookies.put("authevent_" + scope.csrf.eventId, scope.csrf.eventId, options);
+                        $cookies.put("userid" + postfix, response.data.username, options);
+                        $cookies.put("user" + postfix, response.data.username, options);
+                        $cookies.put("auth" + postfix, response.data['auth-token'], options);
+                        $cookies.put("isAdmin" + postfix, false, options);
                         Authmethod.setAuth($cookies.get("auth" + postfix), scope.isAdmin, scope.csrf.eventId);
 
                         if (angular.isDefined(response.data['redirect-to-url']))
