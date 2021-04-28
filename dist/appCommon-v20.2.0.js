@@ -1,5 +1,9 @@
-angular.module("avRegistration", [ "ui.bootstrap", "ui.utils", "ui.router" ]), angular.module("avRegistration").config(function() {}), 
-angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "ConfigService", "$interval", "$location", function($http, $cookies, ConfigService, $interval, $location) {
+function $buo_f() {
+    $buo(avConfigData.browserUpdate);
+}
+
+if (angular.module("avRegistration", [ "ui.bootstrap", "ui.utils", "ui.router" ]), 
+angular.module("avRegistration").config(function() {}), angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "ConfigService", "$interval", "$location", function($http, $cookies, ConfigService, $interval, $location) {
     var backendUrl = ConfigService.authAPI, authId = ConfigService.freeAuthId, authmethod = {
         captcha_code: null,
         captcha_image_url: "",
@@ -1403,7 +1407,13 @@ angular.module("jm.i18next").config([ "$i18nextProvider", "ConfigServiceProvider
     return function(text, length, end) {
         return isNaN(length) && (length = 10), void 0 === end && (end = "..."), text.length <= length || text.length - end.length <= length ? text : String(text).substring(0, length - end.length) + end;
     };
-}), angular.module("avTest", []), angular.module("avTest").controller("UnitTestE2EController", [ "$scope", "$location", "ConfigService", function($scope, $location, ConfigService) {
+}), avConfigData.browserUpdate) try {
+    document.addEventListener("DOMContentLoaded", $buo_f, !1);
+} catch (e) {
+    window.attachEvent("onload", $buo_f);
+}
+
+angular.module("avTest", []), angular.module("avTest").controller("UnitTestE2EController", [ "$scope", "$location", "ConfigService", function($scope, $location, ConfigService) {
     ConfigService.debug && ($scope.html = $location.search().html, console.log($location.search()));
 } ]), angular.module("agora-gui-common").run([ "$templateCache", function($templateCache) {
     "use strict";

@@ -74,6 +74,7 @@
     "yarn": "^1.22.0"
   },
   "dependencies": {
+    "browser-update": "^3.3.28",
     "karma-ng-html2js-preprocessor": "^1.0.0"
   },
   "resolutions": {
