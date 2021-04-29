@@ -428,11 +428,12 @@ angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "C
                 }), scope.sendingData = !0, Authmethod.login(data, autheventid).then(function(tokens) {
                     var postfix;
                     "ok" === tokens.data.status ? (postfix = "_authevent_" + autheventid, $cookies.put("authevent_" + autheventid, autheventid), 
-                    $cookies.put("userid" + postfix, tokens.data.username), $cookies.put("user" + postfix, scope.email), 
+                    $cookies.put("userid" + postfix, tokens.data.username), $cookies.put("user" + postfix, scope.email || tokens.data.username || tokens.data.email), 
                     $cookies.put("auth" + postfix, tokens.data["auth-token"]), $cookies.put("isAdmin" + postfix, scope.isAdmin), 
                     Authmethod.setAuth($cookies.get("auth" + postfix), scope.isAdmin, autheventid), 
                     scope.isAdmin ? Authmethod.getUserInfo().then(function(response) {
-                        $cookies.put("user" + postfix, response.data.email), $window.location.href = "/admin/elections";
+                        $cookies.put("user" + postfix, response.data.email || scope.email || response.data.username), 
+                        $window.location.href = "/admin/elections";
                     }, function(response) {
                         $window.location.href = "/admin/elections";
                     }) : angular.isDefined(tokens.data["redirect-to-url"]) ? $window.location.href = tokens.data["redirect-to-url"] : angular.isDefined(tokens.data["vote-permission-token"]) ? ($cookies.put("vote_permission_tokens", JSON.stringify([ {
