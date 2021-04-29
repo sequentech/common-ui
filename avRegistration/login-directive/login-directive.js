@@ -257,7 +257,7 @@ angular.module('avRegistration')
                   var postfix = "_authevent_" + autheventid;
                   $cookies.put("authevent_" + autheventid, autheventid);
                   $cookies.put("userid" + postfix, response.data.username);
-                  $cookies.put("user" + postfix, scope.email);
+                  $cookies.put("user" + postfix, scope.email || response.data.username || response.data.email);
                   $cookies.put("auth" + postfix, response.data['auth-token']);
                   $cookies.put("isAdmin" + postfix, scope.isAdmin);
                   Authmethod.setAuth($cookies.get("auth" + postfix), scope.isAdmin, autheventid);
@@ -266,7 +266,7 @@ angular.module('avRegistration')
                     Authmethod.getUserInfo()
                       .then(
                         function onSuccess(response) {
-                          $cookies.put("user" + postfix, response.data.email);
+                          $cookies.put("user" + postfix, response.data.email || scope.email || response.data.username);
                           $window.location.href = '/admin/elections';
                         },
                         function onError(response) {
