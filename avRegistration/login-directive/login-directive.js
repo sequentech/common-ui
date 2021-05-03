@@ -255,18 +255,23 @@ angular.module('avRegistration')
               function onSuccess(response) {
                 if (response.data.status === "ok") {
                   var postfix = "_authevent_" + autheventid;
-                  $cookies.put("authevent_" + autheventid, autheventid);
-                  $cookies.put("userid" + postfix, response.data.username);
-                  $cookies.put("user" + postfix, scope.email || response.data.username || response.data.email);
-                  $cookies.put("auth" + postfix, response.data['auth-token']);
-                  $cookies.put("isAdmin" + postfix, scope.isAdmin);
+                  var options = {};
+                  if (ConfigService.cookies && ConfigService.cookies.expires) {
+                    options.expires = new Date();
+                    options.expires.setMinutes(options.expires.getMinutes() + ConfigService.cookies.expires);
+                  }
+                  $cookies.put("authevent_" + autheventid, autheventid, options);
+                  $cookies.put("userid" + postfix, response.data.username, options);
+                  $cookies.put("user" + postfix, scope.email || response.data.username || response.data.email, options);
+                  $cookies.put("auth" + postfix, response.data['auth-token'], options);
+                  $cookies.put("isAdmin" + postfix, scope.isAdmin, options);
                   Authmethod.setAuth($cookies.get("auth" + postfix), scope.isAdmin, autheventid);
                   if (scope.isAdmin)
                   {
                     Authmethod.getUserInfo()
                       .then(
                         function onSuccess(response) {
-                          $cookies.put("user" + postfix, response.data.email || scope.email || response.data.username);
+                          $cookies.put("user" + postfix, response.data.email || scope.email || response.data.username, options);
                           $window.location.href = '/admin/elections';
                         },
                         function onError(response) {
@@ -284,7 +289,7 @@ angular.module('avRegistration')
                     $cookies.put("vote_permission_tokens", JSON.stringify([{
                       electionId: autheventid,
                       token: response.data['vote-permission-token']
-                    }]));
+                    }]), options);
                     $window.location.href = '/booth/' + autheventid + '/vote';
                   }
                   // if it's an election with children elections then show access to them
@@ -306,7 +311,7 @@ angular.module('avRegistration')
                         };
                       })
                       .value();
-                    $cookies.put("vote_permission_tokens", JSON.stringify(tokens));
+                    $cookies.put("vote_permission_tokens", JSON.stringify(tokens), options);
 
                     if (tokens.length > 0) {
                       $window.location.href = '/booth/' + tokens[0].electionId + '/vote';

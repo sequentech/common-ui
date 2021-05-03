@@ -143,3 +143,19 @@ angular.module('agora-gui-common').filter('truncate', function () {
 
         };
     });
+
+/*globals avConfigData:false, $buo:false */
+/**
+ * Check browser version with browser-update.org
+ */
+function $buo_f() {
+  $buo(avConfigData.browserUpdate);
+}
+
+if (avConfigData.browserUpdate) {
+  try {
+    document.addEventListener("DOMContentLoaded", $buo_f, false);
+  } catch (e) {
+    window.attachEvent("onload", $buo_f);
+  }
+}
