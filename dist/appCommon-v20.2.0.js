@@ -438,10 +438,12 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                     ConfigService.cookies && ConfigService.cookies.expires && (options.expires = new Date(), 
                     options.expires.setMinutes(options.expires.getMinutes() + ConfigService.cookies.expires)), 
                     $cookies.put("authevent_" + autheventid, autheventid, options), $cookies.put("userid" + postfix, tokens.data.username, options), 
-                    $cookies.put("user" + postfix, scope.email, options), $cookies.put("auth" + postfix, tokens.data["auth-token"], options), 
-                    $cookies.put("isAdmin" + postfix, scope.isAdmin, options), Authmethod.setAuth($cookies.get("auth" + postfix), scope.isAdmin, autheventid), 
+                    $cookies.put("user" + postfix, scope.email || tokens.data.username || tokens.data.email, options), 
+                    $cookies.put("auth" + postfix, tokens.data["auth-token"], options), $cookies.put("isAdmin" + postfix, scope.isAdmin, options), 
+                    Authmethod.setAuth($cookies.get("auth" + postfix), scope.isAdmin, autheventid), 
                     scope.isAdmin ? Authmethod.getUserInfo().then(function(response) {
-                        $cookies.put("user" + postfix, response.data.email, options), $window.location.href = "/admin/elections";
+                        $cookies.put("user" + postfix, response.data.email || scope.email || response.data.username, options), 
+                        $window.location.href = "/admin/elections";
                     }, function(response) {
                         $window.location.href = "/admin/elections";
                     }) : angular.isDefined(tokens.data["redirect-to-url"]) ? $window.location.href = tokens.data["redirect-to-url"] : angular.isDefined(tokens.data["vote-permission-token"]) ? ($cookies.put("vote_permission_tokens", JSON.stringify([ {
