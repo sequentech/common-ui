@@ -194,7 +194,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 type: "password",
                 required: !0,
                 required_on_authentication: !0
-            })) : "email-and-password" === viewEventData.auth_method && (hide_default_login_lookup_field || fields.push({
+            })) : "email-and-password" === viewEventData.auth_method ? (hide_default_login_lookup_field || fields.push({
                 name: "email",
                 type: "email",
                 required: !0,
@@ -204,7 +204,14 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 type: "password",
                 required: !0,
                 required_on_authentication: !0
-            })) : fields.push({
+            })) : "email-and-password" === viewEventData.auth_method && fields.push({
+                name: "user_id",
+                type: "text",
+                required: !0,
+                min: 1,
+                max: 255,
+                required_on_authentication: !0
+            }) : fields.push({
                 name: "email",
                 type: "email",
                 required: !0,
@@ -376,7 +383,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
 } ]), angular.module("avRegistration").controller("LoginController", [ "$scope", "$stateParams", "$filter", "$i18next", "$cookies", "$window", "ConfigService", "Authmethod", function($scope, $stateParams, $filter, $i18next, $cookies, $window, ConfigService, Authmethod) {
     $scope.event_id = $stateParams.id, $scope.code = $stateParams.code, $scope.email = $stateParams.email, 
     $scope.isOpenId = $stateParams.isOpenId;
-} ]), angular.module("avRegistration").directive("avLogin", [ "Authmethod", "StateDataService", "$parse", "$state", "$location", "$cookies", "$i18next", "$window", "$timeout", "ConfigService", "Patterns", function(Authmethod, StateDataService, $parse, $state, $location, $cookies, $i18next, $window, $timeout, ConfigService, Patterns) {
+} ]), angular.module("avRegistration").directive("avLogin", [ "Authmethod", "StateDataService", "$state", "$location", "$cookies", "$i18next", "$window", "$timeout", "ConfigService", "Patterns", function(Authmethod, StateDataService, $state, $location, $cookies, $i18next, $window, $timeout, ConfigService, Patterns) {
     return {
         restrict: "AE",
         scope: !0,
@@ -432,7 +439,8 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 }, _.each(scope.login_fields, function(field) {
                     "email" === field.name ? scope.email = field.value : "code" === field.name && (field.value = field.value.trim().replace(/ |\n|\t|-|_/g, "").toUpperCase()), 
                     data[field.name] = field.value;
-                }), scope.sendingData = !0, Authmethod.login(data, autheventid).then(function(tokens) {
+                }), "smart-link" === scope.method && (data.auth_token = $location.search().auth_token), 
+                scope.sendingData = !0, Authmethod.login(data, autheventid).then(function(tokens) {
                     var postfix, options;
                     "ok" === tokens.data.status ? (postfix = "_authevent_" + autheventid, options = {}, 
                     ConfigService.cookies && ConfigService.cookies.expires && (options.expires = new Date(), 

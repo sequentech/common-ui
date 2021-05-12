@@ -398,6 +398,15 @@ angular.module('avRegistration')
               "required": true,
               "required_on_authentication": true
             });
+          } else if (viewEventData.auth_method === "email-and-password") {
+            fields.push({
+              "name": "user_id",
+              "type": "text",
+              "required": true,
+              "min": 1,
+              "max": 255,
+              "required_on_authentication": true
+            });
           }
 
           // put captcha the last
