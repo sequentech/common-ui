@@ -439,7 +439,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 }, _.each(scope.login_fields, function(field) {
                     "email" === field.name ? scope.email = field.value : "code" === field.name && (field.value = field.value.trim().replace(/ |\n|\t|-|_/g, "").toUpperCase()), 
                     data[field.name] = field.value;
-                }), "smart-link" === scope.method && (data.auth_token = $location.search().auth_token), 
+                }), "smart-link" === scope.method && (data["auth-token"] = $location.search()["auth-token"]), 
                 scope.sendingData = !0, Authmethod.login(data, autheventid).then(function(tokens) {
                     var postfix, options;
                     "ok" === tokens.data.status ? (postfix = "_authevent_" + autheventid, options = {}, 

@@ -251,7 +251,7 @@ angular.module('avRegistration')
           // this is an auth event with smart-link auth method
           if (scope.method === 'smart-link')
           {
-            data.auth_token = $location.search().auth_token;
+            data['auth-token'] = $location.search()['auth-token'];
           }
 
           scope.sendingData = true;
