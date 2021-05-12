@@ -21,7 +21,6 @@ angular.module('avRegistration')
     function(
       Authmethod,
       StateDataService,
-      $parse,
       $state,
       $location,
       $cookies,
@@ -248,6 +247,13 @@ angular.module('avRegistration')
             data[field.name] = field.value;
           });
 
+          // Get the smart link authentication token and set it in the data if
+          // this is an auth event with smart-link auth method
+          if (scope.method === 'smart-link')
+          {
+            data['auth-token'] = $location.search()['auth-token'];
+          }
+
           scope.sendingData = true;
           Authmethod
             .login(data, autheventid)
@@ -422,10 +428,13 @@ angular.module('avRegistration')
             var filled_fields = _.filter(fields,
               function (el) { return el.value !== null; });
 
+            // if not all the fields all filled at this point, then we stop here
             if (filled_fields.length !== scope.login_fields.length) {
               return;
             }
 
+            // if all fields all filled in and it's not OpenID Connect do
+            // auto-login
             if (scope.method !== 'openid-connect')
             {
               scope.loginUser(true);
