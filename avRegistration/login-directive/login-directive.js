@@ -292,10 +292,13 @@ angular.module('avRegistration')
                   // if it's an election with no children elections
                   else if (angular.isDefined(response.data['vote-permission-token']))
                   {
-                    $cookies.put("vote_permission_tokens", JSON.stringify([{
-                      electionId: autheventid,
-                      token: response.data['vote-permission-token']
-                    }]), options);
+                    $window.sessionStorage.setItem(
+                      "vote_permission_tokens", 
+                      JSON.stringify([{
+                        electionId: autheventid,
+                        token: response.data['vote-permission-token']
+                      }])
+                    );
                     $window.location.href = '/booth/' + autheventid + '/vote';
                   }
                   // if it's an election with children elections then show access to them
@@ -317,7 +320,10 @@ angular.module('avRegistration')
                         };
                       })
                       .value();
-                    $cookies.put("vote_permission_tokens", JSON.stringify(tokens), options);
+                    $window.sessionStorage.setItem(
+                      "vote_permission_tokens", 
+                      JSON.stringify(tokens)
+                    );
 
                     if (tokens.length > 0) {
                       $window.location.href = '/booth/' + tokens[0].electionId + '/vote';
