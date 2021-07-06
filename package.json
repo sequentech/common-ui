@@ -81,7 +81,7 @@
     "**/xmlhttprequest-ssl": "1.6.2",
     "**/socket.io": "2.4.0",
     "**/angular": "~1.8",
-    "**/ws": "7.2.1",
+    "**/ws": "7.4.6",
     "**/lodash": "^4.17.21",
     "**/hosted-git-info": "3.0.8",
     "**/minimist": "1.2.5",
