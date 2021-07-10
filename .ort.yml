@@ -1,5 +1,10 @@
 ---
 resolutions:
+  excludes:
+    paths:
+    - pattern: "*/angular-bootstrap/**"
+      reason: "PROVIDED_DEPENDENCY_OF"
+      comment: "This tool is MIT licensed but does not include a package.json, uses bower instead.."
   rule_violations:
   - message: "The package Yarn::agora-gui-common:.* has the declared ScanCode copyleft catalogized license AGPL-3.0-only."
     reason: "LICENSE_ACQUIRED_EXCEPTION"
