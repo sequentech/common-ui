@@ -217,7 +217,7 @@ module.exports = function (grunt) {
         files: {
         'temp/app.js':['temp/app.js'],
         'temp/lib.js': ['temp/lib.js'],
-        'temp/libnocompat.js': ['temp/libnocompat.js'],
+        'temp/libnocompat.js': ['temp/libnocompat.js']
         }
       }
     },
