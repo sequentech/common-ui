@@ -8,10 +8,6 @@
   dependencies:
     angular "^1.0.8"
 
-"@bower_components/angular-ui-utils@angular-ui/ui-utils#0.2.2":
-  version "0.0.0"
-  resolved "https://codeload.github.com/angular-ui/ui-utils/tar.gz/d390dd34b6218f78fd2a84f599c4a56e888c6fdf"
-
 "@bower_components/i18next@i18next/i18next#1.9.0":
   version "1.9.0"
   resolved "https://codeload.github.com/i18next/i18next/tar.gz/427496cc062b9427648cf4ba9d84569e33e3bafd"
