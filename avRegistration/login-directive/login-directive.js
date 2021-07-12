@@ -316,7 +316,8 @@ angular.module('avRegistration')
                       .map(function (child) {
                         return {
                           electionId: child['auth-event-id'],
-                          token: child['vote-permission-token']
+                          token: child['vote-permission-token'],
+                          skipped: false
                         };
                       })
                       .value();
