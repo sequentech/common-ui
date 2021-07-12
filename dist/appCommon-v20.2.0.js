@@ -462,7 +462,8 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                     }).map(function(child) {
                         return {
                             electionId: child["auth-event-id"],
-                            token: child["vote-permission-token"]
+                            token: child["vote-permission-token"],
+                            skipped: !1
                         };
                     }).value(), $window.sessionStorage.setItem("vote_permission_tokens", JSON.stringify(tokens)), 
                     0 < tokens.length ? $window.location.href = "/booth/" + tokens[0].electionId + "/vote" : scope.error = $i18next("avRegistration.invalidCredentials", {
