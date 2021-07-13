@@ -313,11 +313,12 @@ angular.module('avRegistration')
                           child['num-successful-logins'] < child['num-successful-logins-allowed']
                          ) && !!child['vote-permission-token'];
                       })
-                      .map(function (child) {
+                      .map(function (child, index) {
                         return {
                           electionId: child['auth-event-id'],
                           token: child['vote-permission-token'],
-                          skipped: false
+                          skipped: false,
+                          isFirst: index === 0
                         };
                       })
                       .value();
