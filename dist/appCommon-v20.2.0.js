@@ -464,6 +464,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                             electionId: child["auth-event-id"],
                             token: child["vote-permission-token"],
                             skipped: !1,
+                            voted: !1,
                             isFirst: 0 === index
                         };
                     }).value(), $window.sessionStorage.setItem("vote_permission_tokens", JSON.stringify(tokens)), 
