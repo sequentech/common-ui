@@ -459,10 +459,13 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                         token: tokens.data["vote-permission-token"]
                     } ])), $window.location.href = "/booth/" + autheventid + "/vote") : angular.isDefined(tokens.data["vote-children-info"]) ? (tokens = _.chain(tokens.data["vote-children-info"]).filter(function(child) {
                         return (0 === child["num-successful-logins-allowed"] || child["num-successful-logins"] < child["num-successful-logins-allowed"]) && !!child["vote-permission-token"];
-                    }).map(function(child) {
+                    }).map(function(child, index) {
                         return {
                             electionId: child["auth-event-id"],
-                            token: child["vote-permission-token"]
+                            token: child["vote-permission-token"],
+                            skipped: !1,
+                            voted: !1,
+                            isFirst: 0 === index
                         };
                     }).value(), $window.sessionStorage.setItem("vote_permission_tokens", JSON.stringify(tokens)), 
                     0 < tokens.length ? $window.location.href = "/booth/" + tokens[0].electionId + "/vote" : scope.error = $i18next("avRegistration.invalidCredentials", {
