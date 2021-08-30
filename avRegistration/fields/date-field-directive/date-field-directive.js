@@ -50,14 +50,13 @@ angular.module('avRegistration')
         };
 
         scope.onChange = function() {
-            scope.ngModel = scope.date.year + "-" + scope.date.month + "-" + scope.date.day;
+            scope.field.value = scope.date.year + "-" + scope.date.month + "-" + scope.date.day;
         };
     }
     return {
       restrict: 'AE',
       link: link,
       scope: {
-        ngModel: '=',
         label: '=',
       },
       templateUrl: 'avRegistration/fields/date-field-directive/date-field-directive.html'
