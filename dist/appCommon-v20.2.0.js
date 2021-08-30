@@ -711,7 +711,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 return days;
             }, scope.onChange = function() {
                 scope.field.value = scope.date.year + "-" + scope.date.month + "-" + scope.date.day;
-            };
+            }, scope.onChange();
         },
         scope: {
             label: "="

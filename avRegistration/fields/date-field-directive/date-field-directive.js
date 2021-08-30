@@ -52,6 +52,9 @@ angular.module('avRegistration')
         scope.onChange = function() {
             scope.field.value = scope.date.year + "-" + scope.date.month + "-" + scope.date.day;
         };
+
+        // initial value update
+        scope.onChange();
     }
     return {
       restrict: 'AE',
