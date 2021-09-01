@@ -19,7 +19,7 @@
 'use strict';
 
 var pkg = require('./package.json');
-var AV_CONFIG_VERSION = '20.2.0';
+var AV_CONFIG_VERSION = '4.0.0-beta.1';
 
 //Using exclusion patterns slows down Grunt significantly
 //instead of creating a set of patterns like '**/*.js' and '!**/node_modules/**'
@@ -165,10 +165,10 @@ module.exports = function (grunt) {
         options: {
           remove: ['script[data-remove!="false"]','link[data-remove!="false"]'],
           append: [
-            {selector:'body',html:'<script src="/libnocompat-v20.2.0.js"></script>'},
+            {selector:'body',html:'<script src="/libnocompat-v4.0.0-beta.1.js"></script>'},
             {selector:'body',html:'<!--All the source code of this program under copyright. Take a look at the license details at https://github.com/agoravoting/agora-core-common/blob/master/README.md -->'},
-            {selector:'body',html:'<script src="/appCommon-v20.2.0.js"></script>'},
-            {selector:'body',html:'<script src="/avPlugins-v20.2.0.js"></script>'},
+            {selector:'body',html:'<script src="/appCommon-v4.0.0-beta.1.js"></script>'},
+            {selector:'body',html:'<script src="/avPlugins-v4.0.0-beta.1.js"></script>'},
             {selector:'head',html:'<link rel="stylesheet" id="theme" href="/themes/default/app.min.css">'}
           ]
         },
@@ -194,9 +194,9 @@ module.exports = function (grunt) {
           'temp/libnocompat.js': ['<%= dom_munger.data.libnocompatjs %>'],
           'temp/lib.js': ['<%= dom_munger.data.libjs %>'],
           'temp/app.js': ['<%= dom_munger.data.appjs %>','<%= ngtemplates.main.dest %>'],
-          'dist/avConfig-v20.2.0.js': ['avConfig.js'],
-          'dist/avThemes-v20.2.0.js': ['avThemes.js'],
-          'dist/avPlugins-v20.2.0.js': ['plugins/**/*.js']
+          'dist/avConfig-v4.0.0-beta.1.js': ['avConfig.js'],
+          'dist/avThemes-v4.0.0-beta.1.js': ['avThemes.js'],
+          'dist/avPlugins-v4.0.0-beta.1.js': ['plugins/**/*.js']
         }
       }
     },
@@ -229,9 +229,9 @@ module.exports = function (grunt) {
           beautify: true
         },
         files: {
-          'dist/appCommon-v20.2.0.js': 'temp/app.js',
-          'dist/libCommon-v20.2.0.js': 'temp/lib.js',
-          'dist/libnocompat-v20.2.0.js': 'temp/libnocompat.js',
+          'dist/appCommon-v4.0.0-beta.1.js': 'temp/app.js',
+          'dist/libCommon-v4.0.0-beta.1.js': 'temp/lib.js',
+          'dist/libnocompat-v4.0.0-beta.1.js': 'temp/libnocompat.js',
           'dist/avWidgets.js': 'avWidgets.js',
 
           "dist/locales/moment/es.js": "node_modules/moment/locale/es.js",
