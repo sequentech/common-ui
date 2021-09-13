@@ -19,7 +19,7 @@
 'use strict';
 
 var pkg = require('./package.json');
-var AV_CONFIG_VERSION = '20.2.0';
+var AV_CONFIG_VERSION = 'master';
 
 //Using exclusion patterns slows down Grunt significantly
 //instead of creating a set of patterns like '**/*.js' and '!**/node_modules/**'
@@ -63,7 +63,7 @@ module.exports = function (grunt) {
             grunt.log.error('No avConfig.js file found');
             done(false);
         } else {
-            var match = data.toString().match(/AV_CONFIG_VERSION = [\'\"](.*)[\'\"];/);
+            var match = data.toString().match(/AV_CONFIG_VERSION = [\'\"](.*)[\'\"\-];/);
             if (!match) {
                 grunt.log.error('Invalid avConfig.js version');
             } else {
@@ -165,10 +165,10 @@ module.exports = function (grunt) {
         options: {
           remove: ['script[data-remove!="false"]','link[data-remove!="false"]'],
           append: [
-            {selector:'body',html:'<script src="/libnocompat-v20.2.0.js"></script>'},
+            {selector:'body',html:'<script src="/libnocompat-vmaster.js"></script>'},
             {selector:'body',html:'<!--All the source code of this program under copyright. Take a look at the license details at https://github.com/agoravoting/agora-core-common/blob/master/README.md -->'},
-            {selector:'body',html:'<script src="/appCommon-v20.2.0.js"></script>'},
-            {selector:'body',html:'<script src="/avPlugins-v20.2.0.js"></script>'},
+            {selector:'body',html:'<script src="/appCommon-vmaster.js"></script>'},
+            {selector:'body',html:'<script src="/avPlugins-vmaster.js"></script>'},
             {selector:'head',html:'<link rel="stylesheet" id="theme" href="/themes/default/app.min.css">'}
           ]
         },
@@ -194,9 +194,9 @@ module.exports = function (grunt) {
           'temp/libnocompat.js': ['<%= dom_munger.data.libnocompatjs %>'],
           'temp/lib.js': ['<%= dom_munger.data.libjs %>'],
           'temp/app.js': ['<%= dom_munger.data.appjs %>','<%= ngtemplates.main.dest %>'],
-          'dist/avConfig-v20.2.0.js': ['avConfig.js'],
-          'dist/avThemes-v20.2.0.js': ['avThemes.js'],
-          'dist/avPlugins-v20.2.0.js': ['plugins/**/*.js']
+          'dist/avConfig-vmaster.js': ['avConfig.js'],
+          'dist/avThemes-vmaster.js': ['avThemes.js'],
+          'dist/avPlugins-vmaster.js': ['plugins/**/*.js']
         }
       }
     },
@@ -229,9 +229,9 @@ module.exports = function (grunt) {
           beautify: true
         },
         files: {
-          'dist/appCommon-v20.2.0.js': 'temp/app.js',
-          'dist/libCommon-v20.2.0.js': 'temp/lib.js',
-          'dist/libnocompat-v20.2.0.js': 'temp/libnocompat.js',
+          'dist/appCommon-vmaster.js': 'temp/app.js',
+          'dist/libCommon-vmaster.js': 'temp/lib.js',
+          'dist/libnocompat-vmaster.js': 'temp/libnocompat.js',
           'dist/avWidgets.js': 'avWidgets.js',
 
           "dist/locales/moment/es.js": "node_modules/moment/locale/es.js",
