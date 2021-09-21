@@ -98,7 +98,7 @@
       <p>
         <a
           ng-if="!isAdmin"
-          href="#/election/{{election.id}}/public/register"
+          href="/election/{{election.id}}/public/register"
           ng-i18next="avRegistration.registerHere"
           ng-click="goSignup()"
           tabindex="{{login_fields.length+2}}">

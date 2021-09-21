@@ -21,36 +21,59 @@ angular.module('avRegistration')
         scope.years = [];
         scope.months = [];
         scope.field = scope.$parent.field;
+        scope.date = null;
 
-        var now = new Date();
-        scope.date = {
-            year: now.getFullYear(),
-            month: now.getMonth() + 1,
-            day: now.getDate()
+        function initializeValue() {
+          var dateValue = null;
+          if (
+            scope.field.value === null || scope.field.value.length === 0
+          ) {
+            dateValue = new Date();
+          } else {
+            var data = scope.field.value.split('-');
+            dateValue = new Date(data[0], parseInt(data[1]) - 1, data[2]);
+          }
+          scope.date = {
+            year: dateValue.getFullYear(),
+            month: dateValue.getMonth() + 1,
+            day: dateValue.getDate()
+          };
+        }
+        initializeValue();
+
+        scope.getYears = function () {
+          var initY = (new Date()).getFullYear();
+          var i = 0;
+          var years = [];
+ 
+          for (i=initY; i>=initY-130; i--) {
+            years.push(i);
+          }
+          return years;
         };
 
-        var initY = (new Date()).getFullYear();
-        var i = 0;
-
-        for (i=initY; i>=initY-130; i--) {
-            scope.years.push(i);
-        }
-
-        for (i=1; i<=12; i++) {
-            scope.months.push(i);
-        }
+        scope.getMonths = function () {
+          var i = 0;
+          var months = [];
+  
+          for (i=1; i<=12; i++) {
+            months.push(i);
+          }
+          return months;
+        };
 
         scope.getDays = function() {
-            var days = [];
-            var ndays = (new Date(scope.date.year, scope.date.month, 0)).getDate();
-            for (i=1; i<=ndays; i++) {
-                days.push(i);
-            }
-            return days;
+          var days = [];
+          var i = 0;
+          var ndays = (new Date(scope.date.year, scope.date.month, 0)).getDate();
+          for (i=1; i<=ndays; i++) {
+            days.push(i);
+          }
+          return days;
         };
 
         scope.onChange = function() {
-            scope.field.value = scope.date.year + "-" + scope.date.month + "-" + scope.date.day;
+          scope.field.value = scope.date.year + "-" + scope.date.month + "-" + scope.date.day;
         };
 
         // initial value update
