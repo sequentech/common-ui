@@ -17,7 +17,7 @@
       >
          <option
             ng-selected="date.year == item" 
-            ng-repeat="item in years" 
+            ng-repeat="item in getYears()" 
             ng-value="item"
          >{{item}}</option>
       </select>
@@ -30,7 +30,7 @@
       >
          <option
             ng-selected="date.month == item"
-            ng-repeat="item in months" 
+            ng-repeat="item in getMonths()" 
             ng-value="item"
          >{{item}}</option>
       </select>
