@@ -388,7 +388,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         restrict: "AE",
         scope: !0,
         link: function(scope, element, attrs) {
-            scope.isCensusQuery = attrs.isCensusQuery, scope.hide_default_login_lookup_field = !1;
+            scope.isCensusQuery = attrs.isCensusQuery, scope.error = null, scope.hide_default_login_lookup_field = !1;
             var adminId = ConfigService.freeAuthId + "", autheventid = scope.eventId = attrs.eventId;
             scope.orgName = ConfigService.organization.orgName, scope.openIDConnectProviders = ConfigService.openIDConnectProviders;
             var autheventCookie = $cookies.get("authevent_" + adminId), authCookie = $cookies.get("auth_authevent_" + adminId);
@@ -415,7 +415,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 })), stop || (field && (field.value = ""), scope.sendingData = !0, Authmethod.resendAuthCode(data, autheventid).then(function(response) {
                     _.each(scope.login_fields, function(element) {
                         void 0 !== element.steps && -1 === element.steps.indexOf(0) || (element.disabled = !0);
-                    }), scope.currentFormStep = 1, $timeout(scope.sendingDataTimeout, 3e3);
+                    }), scope.currentFormStep = 1, scope.error = null, $timeout(scope.sendingDataTimeout, 3e3);
                 }, function(response) {
                     $timeout(scope.sendingDataTimeout, 3e3), scope.error = $i18next("avRegistration.errorSendingAuthCode");
                 }))));
@@ -440,7 +440,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                     "email" === field.name ? scope.email = field.value : "code" === field.name && (field.value = field.value.trim().replace(/ |\n|\t|-|_/g, "").toUpperCase()), 
                     data[field.name] = field.value;
                 }), "smart-link" === scope.method && (data["auth-token"] = $location.search()["auth-token"]), 
-                scope.sendingData = !0, Authmethod.login(data, autheventid).then(function(tokens) {
+                scope.sendingData = !0, scope.error = null, Authmethod.login(data, autheventid).then(function(tokens) {
                     var postfix, options;
                     "ok" === tokens.data.status ? (postfix = "_authevent_" + autheventid, options = {}, 
                     ConfigService.cookies && ConfigService.cookies.expires && (options.expires = new Date(), 
@@ -611,8 +611,9 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         link: function(scope, element, attrs) {
             var autheventid = attrs.eventId;
             scope.dnieurl = ConfigService.dnieUrl + autheventid + "/", scope.register = {}, 
-            scope.sendingData = !1, scope.admin = !1, scope.email = null, attrs.email && 0 < attrs.email.length && (scope.email = attrs.email), 
-            "admin" in attrs && (scope.admin = !0), scope.getLoginDetails = function(eventId) {
+            scope.sendingData = !1, scope.admin = !1, scope.error = null, scope.email = null, 
+            attrs.email && 0 < attrs.email.length && (scope.email = attrs.email), "admin" in attrs && (scope.admin = !0), 
+            scope.getLoginDetails = function(eventId) {
                 return scope.admin ? {
                     path: "admin.login_email",
                     data: {
@@ -627,7 +628,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 };
             }, scope.signUp = function(valid) {
                 var data, details;
-                valid && (scope.sendingData = !0, data = {
+                valid && (scope.sendingData = !0, scope.error = null, data = {
                     captcha_code: Authmethod.captcha_code
                 }, _.each(scope.register_fields, function(field) {
                     data[field.name] = field.value, ("email" === field.name && _.contains([ "email", "email-otp" ], scope.method) || "tlf" === field.name && _.contains([ "sms", "sms-otp" ], scope.method)) && (scope.email = field.value);
