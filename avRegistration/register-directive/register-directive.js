@@ -24,6 +24,7 @@ angular.module('avRegistration')
         scope.register = {};
         scope.sendingData = false;
         scope.admin = false;
+        scope.error = null;
 
         scope.email = null;
         if (attrs.email && attrs.email.length > 0) {
@@ -50,6 +51,7 @@ angular.module('avRegistration')
                 return;
             }
             scope.sendingData = true;
+            scope.error = null;
             var data = {
                 'captcha_code': Authmethod.captcha_code,
             };

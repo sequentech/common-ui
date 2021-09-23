@@ -17,6 +17,7 @@
         ng-model-options="{debounce: 500}"
         ng-disabled="field.disabled"
         tabindex="{{index}}"
+        autocomplete="off"
         ui-validate="{dni: 'validateDni($value)'}"
         ng-required={{field.required}} />
       <p class="help-block" ng-i18next="avRegistration.dniHelp">

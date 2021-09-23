@@ -34,6 +34,7 @@ angular.module('avRegistration')
       function link(scope, element, attrs)
       {
         scope.isCensusQuery = attrs.isCensusQuery;
+        scope.error = null;
 
         // by default
         scope.hide_default_login_lookup_field = false;
@@ -177,6 +178,7 @@ angular.module('avRegistration')
                   }
                 );
                 scope.currentFormStep = 1;
+                scope.error = null;
                 $timeout(scope.sendingDataTimeout, 3000);
               },
               function onError(response) {
@@ -255,6 +257,7 @@ angular.module('avRegistration')
           }
 
           scope.sendingData = true;
+          scope.error = null;
           Authmethod
             .login(data, autheventid)
             .then(
