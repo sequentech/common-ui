@@ -331,7 +331,7 @@ angular.module('avRegistration')
             {params:params});
         };
 
-        authmethod.getRegisterFields = function (viewEventData, hide_default_login_lookup_field) {
+        authmethod.getRegisterFields = function (viewEventData) {
           var fields = _.filter(
             angular.copy(viewEventData.extra_fields),
             function (item) {
@@ -342,80 +342,28 @@ angular.module('avRegistration')
             });
 
           if (!fields) { fields = []; }
-          var found = false;
-          _.each(fields, function(field) {
-            if (viewEventData.auth_method === "sms" && field.name === 'tlf') {
-              if (field.type === 'text') {
-                field.type = 'tlf';
-              }
-              found = true;
-            } else if (viewEventData.auth_method === "email" && field.name === 'email') {
-              found = true;
-            }
-          });
 
-          if ((viewEventData.auth_method === "sms" || viewEventData.auth_method === "sms-otp") && !found && !hide_default_login_lookup_field) {
-            fields.push({
-              "name": "tlf",
-              "type": "tlf",
-              "required": true,
-              "required_on_authentication": true
-            });
-          } else if (_.contains(["email", 'email-otp'], viewEventData.auth_method) && !found && !hide_default_login_lookup_field) {
-            fields.push({
-              "name": "email",
-              "type": "email",
-              "required": true,
-              "required_on_authentication": true
-            });
-          } else if (viewEventData.auth_method === "user-and-password") {
-            if (!hide_default_login_lookup_field) {
-              fields.push({
-                "name": "username",
-                "type": "text",
-                "required": true,
-                "required_on_authentication": true
-              });
-            }
+          if (
+            _.contains(
+              ["user-and-password", "email-and-password"], 
+              viewEventData.auth_method
+            )
+          ) {
             fields.push({
               "name": "password",
               "type": "password",
               "required": true,
-              "required_on_authentication": true
-            });
-          } else if (viewEventData.auth_method === "email-and-password") {
-            if (!hide_default_login_lookup_field) {
-              fields.push({
-                "name": "email",
-                "type": "email",
-                "required": true,
-                "required_on_authentication": true
-              });
-            }
-            fields.push({
-              "name": "password",
-              "type": "password",
-              "required": true,
-              "required_on_authentication": true
-            });
-          } else if (viewEventData.auth_method === "email-and-password") {
-            fields.push({
-              "name": "user_id",
-              "type": "text",
-              "required": true,
-              "min": 1,
-              "max": 255,
               "required_on_authentication": true
             });
           }
 
           // put captcha the last
-          for (var i=0; i<fields.length; i++) {
-              if (fields[i]['type'] === "captcha") {
-                  var captcha = fields.splice(i, 1);
-                  fields.push(captcha[0]);
-                  break;
-              }
+          for (var i = 0; i < fields.length; i++) {
+            if (fields[i]['type'] === "captcha") {
+              var captcha = fields.splice(i, 1);
+              fields.push(captcha[0]);
+              break;
+            }
           }
           return fields;
         };
@@ -436,8 +384,7 @@ angular.module('avRegistration')
 
         authmethod.getLoginFields = function (viewEventData) {
             var fields = authmethod.getRegisterFields(
-              viewEventData,
-              viewEventData.hide_default_login_lookup_field
+              viewEventData
             );
             if (_.contains(["sms", "email"], viewEventData.auth_method))
             {
