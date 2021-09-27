@@ -178,16 +178,9 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             }) : $http.get(backendUrl + "auth-event/" + id + "/census/");
         },
         getRegisterFields: function(viewEventData) {
-            var fields = (fields = _.filter(angular.copy(viewEventData.extra_fields), function(item) {
+            for (var fields = (fields = _.filter(angular.copy(viewEventData.extra_fields), function(item) {
                 return !0 !== item.required_when_registered;
-            })) || [];
-            _.contains([ "user-and-password", "email-and-password" ], viewEventData.auth_method) && fields.push({
-                name: "password",
-                type: "password",
-                required: !0,
-                required_on_authentication: !0
-            });
-            for (var i = 0; i < fields.length; i++) if ("captcha" === fields[i].type) {
+            })) || [], i = 0; i < fields.length; i++) if ("captcha" === fields[i].type) {
                 var captcha = fields.splice(i, 1);
                 fields.push(captcha[0]);
                 break;
