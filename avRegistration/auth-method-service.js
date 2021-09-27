@@ -343,20 +343,6 @@ angular.module('avRegistration')
 
           if (!fields) { fields = []; }
 
-          if (
-            _.contains(
-              ["user-and-password", "email-and-password"], 
-              viewEventData.auth_method
-            )
-          ) {
-            fields.push({
-              "name": "password",
-              "type": "password",
-              "required": true,
-              "required_on_authentication": true
-            });
-          }
-
           // put captcha the last
           for (var i = 0; i < fields.length; i++) {
             if (fields[i]['type'] === "captcha") {
