@@ -177,48 +177,13 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 params: params
             }) : $http.get(backendUrl + "auth-event/" + id + "/census/");
         },
-        getRegisterFields: function(viewEventData, hide_default_login_lookup_field) {
+        getRegisterFields: function(viewEventData) {
             var fields = (fields = _.filter(angular.copy(viewEventData.extra_fields), function(item) {
                 return !0 !== item.required_when_registered;
-            })) || [], found = !1;
-            _.each(fields, function(field) {
-                "sms" === viewEventData.auth_method && "tlf" === field.name ? ("text" === field.type && (field.type = "tlf"), 
-                found = !0) : "email" === viewEventData.auth_method && "email" === field.name && (found = !0);
-            }), "sms" !== viewEventData.auth_method && "sms-otp" !== viewEventData.auth_method || found || hide_default_login_lookup_field ? !_.contains([ "email", "email-otp" ], viewEventData.auth_method) || found || hide_default_login_lookup_field ? "user-and-password" === viewEventData.auth_method ? (hide_default_login_lookup_field || fields.push({
-                name: "username",
-                type: "text",
-                required: !0,
-                required_on_authentication: !0
-            }), fields.push({
+            })) || [];
+            _.contains([ "user-and-password", "email-and-password" ], viewEventData.auth_method) && fields.push({
                 name: "password",
                 type: "password",
-                required: !0,
-                required_on_authentication: !0
-            })) : "email-and-password" === viewEventData.auth_method ? (hide_default_login_lookup_field || fields.push({
-                name: "email",
-                type: "email",
-                required: !0,
-                required_on_authentication: !0
-            }), fields.push({
-                name: "password",
-                type: "password",
-                required: !0,
-                required_on_authentication: !0
-            })) : "email-and-password" === viewEventData.auth_method && fields.push({
-                name: "user_id",
-                type: "text",
-                required: !0,
-                min: 1,
-                max: 255,
-                required_on_authentication: !0
-            }) : fields.push({
-                name: "email",
-                type: "email",
-                required: !0,
-                required_on_authentication: !0
-            }) : fields.push({
-                name: "tlf",
-                type: "tlf",
                 required: !0,
                 required_on_authentication: !0
             });
@@ -236,7 +201,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             });
         },
         getLoginFields: function(viewEventData) {
-            var fields = authmethod.getRegisterFields(viewEventData, viewEventData.hide_default_login_lookup_field);
+            var fields = authmethod.getRegisterFields(viewEventData);
             _.contains([ "sms", "email" ], viewEventData.auth_method) ? fields.push({
                 name: "code",
                 type: "code",
