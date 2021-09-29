@@ -72,8 +72,15 @@ angular.module('avRegistration')
           return days;
         };
 
+        function numberPadStart(num, size) {
+          var str = "000000000" + num;
+          return str.substr(str.length - size);
+        }
+
         scope.onChange = function() {
-          scope.field.value = scope.date.year + "-" + scope.date.month + "-" + scope.date.day;
+          var monthStr = numberPadStart(scope.date.month, 2);
+          var dayStr = numberPadStart(scope.date.day, 2);
+          scope.field.value = scope.date.year + "-" + monthStr + "-" + dayStr;
         };
 
         // initial value update
