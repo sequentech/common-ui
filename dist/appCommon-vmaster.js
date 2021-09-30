@@ -656,6 +656,10 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         restrict: "AE",
         link: function(scope, element, attrs) {
             var data, dateValue;
+            function numberPadStart(str, size) {
+                str = "000000000" + str;
+                return str.substr(str.length - size);
+            }
             scope.years = [], scope.months = [], scope.field = scope.$parent.field, scope.date = null, 
             dateValue = (dateValue = null) === scope.field.value || 0 === scope.field.value.length ? new Date() : (data = scope.field.value.split("-"), 
             new Date(data[0], parseInt(data[1]) - 1, data[2])), scope.date = {
@@ -672,7 +676,8 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 for (var days = [], i = 0, ndays = new Date(scope.date.year, scope.date.month, 0).getDate(), i = 1; i <= ndays; i++) days.push(i);
                 return days;
             }, scope.onChange = function() {
-                scope.field.value = scope.date.year + "-" + scope.date.month + "-" + scope.date.day;
+                var monthStr = numberPadStart(scope.date.month, 2), dayStr = numberPadStart(scope.date.day, 2);
+                scope.field.value = scope.date.year + "-" + monthStr + "-" + dayStr;
             }, scope.onChange();
         },
         scope: {
