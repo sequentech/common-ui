@@ -20,17 +20,13 @@ angular.module('avRegistration')
     'LoginController',
     function(
       $scope,
-      $stateParams,
-      $filter,
-      $i18next,
-      $cookies,
-      $window,
-      ConfigService,
-      Authmethod)
-    {
+      $stateParams
+    ) {
       $scope.event_id = $stateParams.id;
       $scope.code = $stateParams.code;
       $scope.email = $stateParams.email;
+      $scope.username = $stateParams.username;
       $scope.isOpenId = $stateParams.isOpenId;
+      $scope.withCode = $stateParams.withCode;
     }
   );
