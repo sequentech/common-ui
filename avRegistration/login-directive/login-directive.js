@@ -35,6 +35,7 @@ angular.module('avRegistration')
       {
         scope.isCensusQuery = attrs.isCensusQuery;
         scope.withCode = attrs.withCode;
+        scope.username = attrs.username;
         scope.error = null;
 
         // by default
@@ -437,6 +438,9 @@ angular.module('avRegistration')
                   }
                   scope.telIndex = index+1;
                   scope.telField = el;
+                } else if (el.name === '__username' && scope.withCode) {
+                  el.value = scope.username;
+                  el.disabled = true;
                 }
                 return el;
               });
