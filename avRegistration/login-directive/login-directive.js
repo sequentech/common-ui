@@ -386,6 +386,9 @@ angular.module('avRegistration')
             scope.emailIndex = -1;
             scope.telField = null;
             scope.allowUserResend = (function () {
+              if (scope.withCode) {
+                return false;
+              }
               var ret = false;
               var href = $location.path();
               var adminMatch = href.match(/^\/admin\//);

@@ -463,14 +463,15 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                     });
                 }))));
             }, scope.apply = function(authevent) {
-                var electionsMatch, adminMatch;
                 scope.method = authevent.auth_method, scope.name = authevent.name, scope.registrationAllowed = "open" === authevent.census && (autheventid !== adminId || ConfigService.allowAdminRegistration), 
                 scope.isCensusQuery || scope.withCode ? scope.withCode ? scope.login_fields = Authmethod.getLoginWithCode(authevent) : scope.login_fields = Authmethod.getCensusQueryFields(authevent) : scope.login_fields = Authmethod.getLoginFields(authevent), 
                 scope.hide_default_login_lookup_field = authevent.hide_default_login_lookup_field, 
-                scope.telIndex = -1, scope.emailIndex = -1, scope.telField = null, scope.allowUserResend = (fields = !1, 
-                electionsMatch = $location.path(), adminMatch = electionsMatch.match(/^\/admin\//), 
-                electionsMatch = electionsMatch.match(/^\/(elections|election)\/([0-9]+)\//), _.isArray(adminMatch) ? fields = !0 : _.isArray(electionsMatch) && 3 === electionsMatch.length && (fields = _.isObject(authevent.auth_method_config) && _.isObject(authevent.auth_method_config.config) && !0 === authevent.auth_method_config.config.allow_user_resend), 
-                fields);
+                scope.telIndex = -1, scope.emailIndex = -1, scope.telField = null, scope.allowUserResend = function() {
+                    if (scope.withCode) return !1;
+                    var ret = !1, electionsMatch = $location.path(), adminMatch = electionsMatch.match(/^\/admin\//), electionsMatch = electionsMatch.match(/^\/(elections|election)\/([0-9]+)\//);
+                    return _.isArray(adminMatch) ? ret = !0 : _.isArray(electionsMatch) && 3 === electionsMatch.length && (ret = _.isObject(authevent.auth_method_config) && _.isObject(authevent.auth_method_config.config) && !0 === authevent.auth_method_config.config.allow_user_resend), 
+                    ret;
+                }();
                 var fields = _.map(scope.login_fields, function(el, index) {
                     return scope.stateData[el.name] ? (el.value = scope.stateData[el.name], el.disabled = !0) : (el.value = null, 
                     el.disabled = !1), "email" === el.type ? (null !== scope.email && (el.value = scope.email, 
