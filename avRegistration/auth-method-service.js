@@ -159,6 +159,17 @@ angular.module('avRegistration')
         /**
          * @returns the http request
          */
+        authmethod.obtainVoterAuthCode = function (electionId, username)
+        {
+          var params = {username: username};
+          var url = backendUrl + 'auth-event/' + electionId + '/generate-auth-code/';
+
+          return $http.post(url, params);
+        };
+
+        /**
+         * @returns the http request
+         */
         authmethod.postTallySheet = function(eid, ballot_box_id, data)
         {
             var url = backendUrl + 'auth-event/' + eid + '/ballot-box/' + ballot_box_id + '/tally-sheet/';
@@ -366,6 +377,25 @@ angular.module('avRegistration')
             );
 
             return fields;
+        };
+
+        authmethod.getLoginWithCode = function (_viewEventData) {
+          return [
+            {
+              "name": "__username",
+              "type": "text",
+              "required": true,
+              "min": 3, 
+              "max": 200,
+              "required_on_authentication": true
+            },
+            {
+              "name": "code",
+              "type": "code",
+              "required": true,
+              "required_on_authentication": true
+            }
+          ];
         };
 
         authmethod.getLoginFields = function (viewEventData) {

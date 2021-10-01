@@ -34,6 +34,7 @@ angular.module('avRegistration')
       function link(scope, element, attrs)
       {
         scope.isCensusQuery = attrs.isCensusQuery;
+        scope.withCode = attrs.withCode;
         scope.error = null;
 
         // by default
@@ -372,9 +373,11 @@ angular.module('avRegistration')
               (authevent['census'] === 'open') &&
               (autheventid !== adminId || ConfigService.allowAdminRegistration)
             );
-            if (!scope.isCensusQuery) {
+            if (!scope.isCensusQuery && !scope.withCode) {
               scope.login_fields = Authmethod.getLoginFields(authevent);
-            } else {
+            } else if (scope.withCode) {
+              scope.login_fields = Authmethod.getLoginWithCode(authevent);
+            } else { // scope.isCensusQuery is true
               scope.login_fields = Authmethod.getCensusQueryFields(authevent);
             }
             scope.hide_default_login_lookup_field = authevent.hide_default_login_lookup_field;
