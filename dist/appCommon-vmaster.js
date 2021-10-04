@@ -266,11 +266,11 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             angular.isDefined(user_ids) && (data["user-ids"] = user_ids), angular.isDefined(auth_method) && (data["auth-method"] = auth_method), 
             extra && (data.extra = extra), $http.post(url, data);
         },
-        removeUsersIds: function(url, election, data) {
+        removeUsersIds: function(url, election, data, comment) {
             url = backendUrl + "auth-event/" + url + "/census/delete/", data = {
                 "user-ids": data
             };
-            return $http.post(url, data);
+            return comment && (data.comment = comment), $http.post(url, data);
         },
         activateUsersIds: function(url, election, user_ids, data) {
             url = backendUrl + "auth-event/" + url + "/census/activate/", data = {
