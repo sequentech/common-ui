@@ -235,7 +235,11 @@ angular.module('avRegistration')
           }
 
           // loginUser
-          if (_.contains(['sms-otp', 'email-otp'], scope.method) && scope.currentFormStep === 0) {
+          if (
+            !scope.withCode &&
+            _.contains(['sms-otp', 'email-otp'], scope.method) &&
+            scope.currentFormStep === 0
+          ) {
             scope.resendAuthCode();
             return;
           }
