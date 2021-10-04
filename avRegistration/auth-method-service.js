@@ -522,9 +522,12 @@ angular.module('avRegistration')
             return $http.post(url, data);
         };
 
-        authmethod.removeUsersIds = function(eid, election, user_ids) {
+        authmethod.removeUsersIds = function(eid, election, user_ids, comment) {
             var url = backendUrl + 'auth-event/'+eid+'/census/delete/';
-            var data = {"user-ids": user_ids};
+            var data = {"user-ids": user_ids, comment};
+            if (comment) {
+              data['comment'] = comment;
+            }
             return $http.post(url, data);
         };
 
