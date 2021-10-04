@@ -524,7 +524,7 @@ angular.module('avRegistration')
 
         authmethod.removeUsersIds = function(eid, election, user_ids, comment) {
             var url = backendUrl + 'auth-event/'+eid+'/census/delete/';
-            var data = {"user-ids": user_ids, comment};
+            var data = {"user-ids": user_ids};
             if (comment) {
               data['comment'] = comment;
             }
