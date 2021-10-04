@@ -415,7 +415,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 })));
             }, scope.loginUser = function(valid) {
                 var data;
-                valid && (scope.sendingData || (_.contains([ "sms-otp", "email-otp" ], scope.method) && 0 === scope.currentFormStep ? scope.resendAuthCode() : (data = {
+                valid && (scope.sendingData || (scope.withCode || !_.contains([ "sms-otp", "email-otp" ], scope.method) || 0 !== scope.currentFormStep ? (data = {
                     captcha_code: Authmethod.captcha_code
                 }, _.each(scope.login_fields, function(field) {
                     "email" === field.name ? scope.email = field.value : "code" === field.name && (field.value = field.value.trim().replace(/ |\n|\t|-|_/g, "").toUpperCase()), 
@@ -461,7 +461,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                     scope.error = $i18next("avRegistration.invalidCredentials", {
                         support: ConfigService.contact.email
                     });
-                }))));
+                })) : scope.resendAuthCode()));
             }, scope.apply = function(authevent) {
                 scope.method = authevent.auth_method, scope.name = authevent.name, scope.registrationAllowed = "open" === authevent.census && (autheventid !== adminId || ConfigService.allowAdminRegistration), 
                 scope.isCensusQuery || scope.withCode ? scope.withCode ? scope.login_fields = Authmethod.getLoginWithCode(authevent) : scope.login_fields = Authmethod.getCensusQueryFields(authevent) : scope.login_fields = Authmethod.getLoginFields(authevent), 
