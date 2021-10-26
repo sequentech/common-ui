@@ -685,7 +685,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 return str.substr(str.length - size);
             }
             scope.years = [], scope.months = [], scope.field = scope.$parent.field, scope.date = null, 
-            dateValue = (dateValue = null) === scope.field.value || 0 === scope.field.value.length ? new Date() : (data = scope.field.value.split("-"), 
+            dateValue = null, dateValue = void 0 === scope.field.value || null === scope.field.value || 0 === scope.field.value.length ? new Date() : (data = scope.field.value.split("-"), 
             new Date(data[0], parseInt(data[1]) - 1, data[2])), scope.date = {
                 year: dateValue.getFullYear(),
                 month: dateValue.getMonth() + 1,

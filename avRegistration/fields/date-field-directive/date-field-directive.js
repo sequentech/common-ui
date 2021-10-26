@@ -26,7 +26,9 @@ angular.module('avRegistration')
         function initializeValue() {
           var dateValue = null;
           if (
-            scope.field.value === null || scope.field.value.length === 0
+            scope.field.value === undefined ||
+            scope.field.value === null ||
+            scope.field.value.length === 0
           ) {
             dateValue = new Date();
           } else {
