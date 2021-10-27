@@ -23,10 +23,15 @@
         />
         <p
             class="text-warning"
-            ng-if="'email-otp' === method"
+            ng-if="'email-otp' === method && (!field.help || field.help.length === 0)"
             ng-i18next="avRegistration.otpHelp"
         >
         </p>
+        <p
+            class="help-block"
+            ng-if="!!field.help && field.help.length > 0"
+            ng-bind-html="field.help | addTargetBlank"
+        ></p>
         <div class="input-error">
             <small
                 class="error text-danger"

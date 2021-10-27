@@ -21,9 +21,12 @@
               ng-pattern="re"
               tabindex="{{index}}"
               ng-required="{{field.required}}" />
-          <p class="help-block" ng-if="field.help">
-            {{field.help}}
-          </p>
+
+          <p
+            class="help-block"
+            ng-if="!!field.help && field.help.length > 0"
+            ng-bind-html="field.help | addTargetBlank"
+          ></p>
           <div class="input-error">
             <span
               class="error text-brand-danger"
