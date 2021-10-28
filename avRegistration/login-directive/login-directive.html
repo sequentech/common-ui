@@ -31,6 +31,15 @@
               <div class="input-error" ng-if="!isCensusQuery">
                   <div class="error text-danger" ng-if="error">{{ error }}</div>
               </div>
+              <div class="input-error" ng-if="form.$errors">
+                <ul>
+                  <li ng-repeat="(key, errors) in form.$error track by $index"> <strong>{{ key }}</strong> errors:
+                    <ul>
+                      <li ng-repeat="e in errors">{{ e.$name }} has an error: <strong>{{ key }}</strong>.</li>
+                    </ul>
+                  </li>
+                </ul>
+              </div>
               <div class="input-warn">
                 <span
                   class="text-warning"
