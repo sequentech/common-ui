@@ -80,7 +80,7 @@
     "loadingRegistration": "Loading",
     "successRegistration": "Success",
     "errorRegistration": "Error",
-    "otpHelp": "You will receive an SMS and/or Email with the auth code on the next step",
+    "otpHelp": "You will receive a message with the auth code on the next step",
 
     "invalidCredentials": "Authentication failed, possibly for one of the following reasons:\n- Credentials are invalid\n- The user is not active\n- The user has exceeded the maximum number of allowed revotes for this election\n- There is a technical problem in the server\nIf the problem persists, please contact support at __support__",
     "invalidDataRegEx": "Invalid data",

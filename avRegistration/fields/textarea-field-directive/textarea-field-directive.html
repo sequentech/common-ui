@@ -1,8 +1,10 @@
 <div class="form-group">
     <div class="col-sm-offset-2 col-sm-10">
         <textarea aria-label="{{index}}Text" id="{{index}}Text" rows="5" cols="60" tabindex="{{index}}" readonly>{{field.name}}</textarea>
-        <p class="help-block" ng-if="field.help">
-          {{field.help}}
+        <p
+            class="help-block"
+            ng-if="field.help"
+            ng-bind-html="field.help | addTargetBlank">
         </p>
     </div>
 </div>

@@ -10,10 +10,21 @@
             tabindex="{{index}}"
             name="input{{index}}"
             required />
-        <p class="help-block" ng-i18next="avRegistration.telHelp">
-        </p>
-        <p class="text-warning" ng-if="'sms-otp' === method" ng-i18next="avRegistration.otpHelp">
-        </p>
+        <p 
+            class="help-block"
+            ng-if="!field.help || field.help.length === 0"
+            ng-i18next="avRegistration.telHelp"
+        ></p>
+        <p
+            class="help-block"
+            ng-if="!!field.help && field.help.length > 0"
+            ng-bind-html="field.help | addTargetBlank"
+        ></p>
+        <p
+            class="text-warning"
+            ng-if="'sms-otp' === method"
+            ng-i18next="avRegistration.otpHelp"
+        ></p>
         <div class="input-error">
           <span class="error" ng-show="!isValidNumber" ng-i18next="avRegistration.telInvalid"></span>
         </div>

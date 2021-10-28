@@ -48,8 +48,7 @@
          >{{item}}</option>
       </select>
 
-      <p class="help-block" ng-if="field.help">
-         {{field.help}}
+      <p class="help-block" ng-if="field.help" ng-bind-html="field.help | addTargetBlank">
       </p>
    </div>
 </div>

@@ -18,7 +18,16 @@
             name="{{code_id}}"
             ng-i18next="[placeholder]avRegistration.codePlaceholder"
             required />
-        <p class="help-block" ng-i18next="avRegistration.codeHelp">
+        <p
+            class="help-block"
+            ng-if="!field.help || field.help.length === 0"
+            ng-i18next="avRegistration.codeHelp">
+        </p>
+        <p
+            class="help-block"
+            ng-if="!!field.help && field.help.length > 0"
+            ng-bind-html="field.help | addTargetBlank"
+        ></p>
         <p class="help-block code-help">
           <span ng-if="allowUserResend && showResendAuthCode() && !sendingData && ((method !== 'sms' && method !== 'sms-otp') || isValidTel)">
             <b ng-i18next="avRegistration.noCodeReceivedQuestion"></b>
