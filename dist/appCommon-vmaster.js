@@ -69,6 +69,13 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             }, url = backendUrl + "auth-event/" + url + "/generate-auth-code/";
             return $http.post(url, params);
         },
+        resetVotersToPreRegistration: function(url, voterIds, params) {
+            params = {
+                "user-ids": voterIds,
+                comment: params
+            }, url = backendUrl + "auth-event/" + url + "/reset-voter/";
+            return $http.post(url, params);
+        },
         postTallySheet: function(eid, url, data) {
             url = backendUrl + "auth-event/" + eid + "/ballot-box/" + url + "/tally-sheet/";
             return $http.post(url, data);
