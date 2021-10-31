@@ -177,7 +177,7 @@ angular.module('avRegistration')
             "user-ids": voterIds,
             "comment": comment
           };
-          var url = backendUrl + 'auth-event/' + electionId + '/reset-voter/';
+          var url = backendUrl + 'auth-event/' + electionId + '/census/reset-voter/';
 
           return $http.post(url, params);
         };

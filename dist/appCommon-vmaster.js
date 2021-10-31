@@ -73,7 +73,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             params = {
                 "user-ids": voterIds,
                 comment: params
-            }, url = backendUrl + "auth-event/" + url + "/reset-voter/";
+            }, url = backendUrl + "auth-event/" + url + "/census/reset-voter/";
             return $http.post(url, params);
         },
         postTallySheet: function(eid, url, data) {
