@@ -170,6 +170,21 @@ angular.module('avRegistration')
         /**
          * @returns the http request
          */
+        authmethod.resetVotersToPreRegistration = function (
+          electionId, voterIds, comment
+        ){
+          var params = {
+            "user-ids": voterIds,
+            "comment": comment
+          };
+          var url = backendUrl + 'auth-event/' + electionId + '/census/reset-voter/';
+
+          return $http.post(url, params);
+        };
+
+        /**
+         * @returns the http request
+         */
         authmethod.postTallySheet = function(eid, ballot_box_id, data)
         {
             var url = backendUrl + 'auth-event/' + eid + '/ballot-box/' + ballot_box_id + '/tally-sheet/';
