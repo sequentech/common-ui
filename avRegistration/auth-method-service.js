@@ -616,8 +616,33 @@ angular.module('avRegistration')
                   options.expires = new Date();
                   options.expires.setMinutes(options.expires.getMinutes() + ConfigService.cookies.expires);
                 }
-                $cookies.put("auth" + postfix, response.data['auth-token'], options);
-                authmethod.setAuth($cookies.get("auth" + postfix), $cookies.get("isAdmin" + postfix), autheventid);
+                // update cookies expiration
+                $cookies.put(
+                  "auth" + postfix,
+                  response.data['auth-token'],
+                  options
+                );
+                $cookies.put(
+                  "isAdmin" + postfix,
+                  $cookies.get("isAdmin" + postfix)
+                );
+                $cookies.put(
+                  "userid" + postfix,
+                  $cookies.get("userid" + postfix)
+                );
+                $cookies.put(
+                  "userid" + postfix,
+                  $cookies.get("userid" + postfix)
+                );
+                $cookies.put(
+                  "user" + postfix,
+                  $cookies.get("user" + postfix)
+                );
+                authmethod.setAuth(
+                  $cookies.get("auth" + postfix),
+                  $cookies.get("isAdmin" + postfix),
+                  autheventid
+                );
             });
         };
 
