@@ -17,7 +17,14 @@
 
 angular.module('avRegistration')
 
-    .factory('Authmethod', function($http, $cookies, ConfigService, $interval, $location) {
+    .factory('Authmethod', function(
+      $http,
+      $cookies,
+      ConfigService,
+      $interval,
+      $location,
+      $document
+    ) {
         var backendUrl = ConfigService.authAPI;
         var authId = ConfigService.freeAuthId;
         var authmethod = {};
@@ -605,8 +612,9 @@ angular.module('avRegistration')
 
         authmethod.launchPingDaemon = function(autheventid) {
           var postfix = "_authevent_" + autheventid;
-          // only needed if it's an admin and daemon has not been launched
-          if (!$cookies.get("isAdmin" + postfix)) {
+          // only needed if it's an admin and daemon has not been launched and
+          // the tab is active
+          if (!$cookies.get("isAdmin" + postfix) && !$document.hidden) {
             return;
           }
           authmethod.ping()
@@ -616,8 +624,37 @@ angular.module('avRegistration')
                   options.expires = new Date();
                   options.expires.setMinutes(options.expires.getMinutes() + ConfigService.cookies.expires);
                 }
-                $cookies.put("auth" + postfix, response.data['auth-token'], options);
-                authmethod.setAuth($cookies.get("auth" + postfix), $cookies.get("isAdmin" + postfix), autheventid);
+                // update cookies expiration
+                $cookies.put(
+                  "auth" + postfix,
+                  response.data['auth-token'],
+                  options
+                );
+                $cookies.put(
+                  "isAdmin" + postfix,
+                  $cookies.get("isAdmin" + postfix),
+                  options
+                );
+                $cookies.put(
+                  "userid" + postfix,
+                  $cookies.get("userid" + postfix),
+                  options
+                );
+                $cookies.put(
+                  "userid" + postfix,
+                  $cookies.get("userid" + postfix),
+                  options
+                );
+                $cookies.put(
+                  "user" + postfix,
+                  $cookies.get("user" + postfix),
+                  options
+                );
+                authmethod.setAuth(
+                  $cookies.get("auth" + postfix),
+                  $cookies.get("isAdmin" + postfix),
+                  autheventid
+                );
             });
         };
 
