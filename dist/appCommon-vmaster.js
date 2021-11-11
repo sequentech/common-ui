@@ -322,7 +322,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         },
         launchPingDaemon: function(autheventid) {
             var postfix = "_authevent_" + autheventid;
-            authmethod.admin && ("hidden" !== $document.visibilityState ? authmethod.ping().then(function(response) {
+            authmethod.admin && ("hidden" !== document.visibilityState ? authmethod.ping().then(function(response) {
                 var options = {};
                 ConfigService.cookies && ConfigService.cookies.expires && (options.expires = new Date(), 
                 options.expires.setMinutes(options.expires.getMinutes() + ConfigService.cookies.expires)), 

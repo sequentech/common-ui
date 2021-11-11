@@ -620,7 +620,7 @@ angular.module('avRegistration')
           }
           // if document is hidden, then do not update the cookie, and redirect
           // to admin logout if cookie expired
-          if ($document.visibilityState === 'hidden') {
+          if (document.visibilityState === 'hidden') {
             if (!$cookies.get("auth" + postfix)) {
               $state.go("admin.logout");
             }
