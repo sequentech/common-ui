@@ -632,19 +632,23 @@ angular.module('avRegistration')
                 );
                 $cookies.put(
                   "isAdmin" + postfix,
-                  $cookies.get("isAdmin" + postfix)
+                  $cookies.get("isAdmin" + postfix),
+                  options
                 );
                 $cookies.put(
                   "userid" + postfix,
-                  $cookies.get("userid" + postfix)
+                  $cookies.get("userid" + postfix),
+                  options
                 );
                 $cookies.put(
                   "userid" + postfix,
-                  $cookies.get("userid" + postfix)
+                  $cookies.get("userid" + postfix),
+                  options
                 );
                 $cookies.put(
                   "user" + postfix,
-                  $cookies.get("user" + postfix)
+                  $cookies.get("user" + postfix),
+                  options
                 );
                 authmethod.setAuth(
                   $cookies.get("auth" + postfix),
