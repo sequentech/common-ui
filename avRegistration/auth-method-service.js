@@ -17,7 +17,14 @@
 
 angular.module('avRegistration')
 
-    .factory('Authmethod', function($http, $cookies, ConfigService, $interval, $location) {
+    .factory('Authmethod', function(
+      $http,
+      $cookies,
+      ConfigService,
+      $interval,
+      $location,
+      $document
+    ) {
         var backendUrl = ConfigService.authAPI;
         var authId = ConfigService.freeAuthId;
         var authmethod = {};
@@ -605,8 +612,9 @@ angular.module('avRegistration')
 
         authmethod.launchPingDaemon = function(autheventid) {
           var postfix = "_authevent_" + autheventid;
-          // only needed if it's an admin and daemon has not been launched
-          if (!$cookies.get("isAdmin" + postfix)) {
+          // only needed if it's an admin and daemon has not been launched and
+          // the tab is active
+          if (!$cookies.get("isAdmin" + postfix) && !$document.hidden) {
             return;
           }
           authmethod.ping()
