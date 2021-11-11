@@ -3,7 +3,7 @@ function $buo_f() {
 }
 
 if (angular.module("avRegistration", [ "ui.bootstrap", "ui.utils", "ui.router" ]), 
-angular.module("avRegistration").config(function() {}), angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "ConfigService", "$interval", "$location", "$document", function($http, $cookies, ConfigService, $interval, $location, $document) {
+angular.module("avRegistration").config(function() {}), angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "ConfigService", "$interval", "$state", "$location", "$document", function($http, $cookies, ConfigService, $interval, $state, $location, $document) {
     var backendUrl = ConfigService.authAPI, authId = ConfigService.freeAuthId, authmethod = {
         captcha_code: null,
         captcha_image_url: "",
@@ -322,14 +322,14 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         },
         launchPingDaemon: function(autheventid) {
             var postfix = "_authevent_" + autheventid;
-            ($cookies.get("isAdmin" + postfix) || $document.hidden) && authmethod.ping().then(function(response) {
+            authmethod.admin && ("hidden" !== $document.visibilityState ? authmethod.ping().then(function(response) {
                 var options = {};
                 ConfigService.cookies && ConfigService.cookies.expires && (options.expires = new Date(), 
                 options.expires.setMinutes(options.expires.getMinutes() + ConfigService.cookies.expires)), 
                 $cookies.put("auth" + postfix, response.data["auth-token"], options), $cookies.put("isAdmin" + postfix, $cookies.get("isAdmin" + postfix), options), 
                 $cookies.put("userid" + postfix, $cookies.get("userid" + postfix), options), $cookies.put("userid" + postfix, $cookies.get("userid" + postfix), options), 
                 $cookies.put("user" + postfix, $cookies.get("user" + postfix), options), authmethod.setAuth($cookies.get("auth" + postfix), $cookies.get("isAdmin" + postfix), autheventid);
-            });
+            }) : $cookies.get("auth" + postfix) || $state.go("admin.logout"));
         },
         getUserDraft: function() {
             if (authmethod.isLoggedIn()) return $http.get(backendUrl + "user/draft/", {});
