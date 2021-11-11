@@ -22,6 +22,7 @@ angular.module('avRegistration')
       $cookies,
       ConfigService,
       $interval,
+      $state,
       $location,
       $document
     ) {
@@ -612,9 +613,17 @@ angular.module('avRegistration')
 
         authmethod.launchPingDaemon = function(autheventid) {
           var postfix = "_authevent_" + autheventid;
-          // only needed if it's an admin and daemon has not been launched and
-          // the tab is active
-          if (!$cookies.get("isAdmin" + postfix) && !$document.hidden) {
+
+          // ping daemon is not active for normal users
+          if (!authmethod.admin) {
+            return;
+          }
+          // if document is hidden, then do not update the cookie, and redirect
+          // to admin logout if cookie expired
+          if (document.visibilityState === 'hidden') {
+            if (!$cookies.get("auth" + postfix)) {
+              $state.go("admin.logout");
+            }
             return;
           }
           authmethod.ping()
