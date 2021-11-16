@@ -458,9 +458,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                             isFirst: 0 === index
                         };
                     }).value(), $window.sessionStorage.setItem("vote_permission_tokens", JSON.stringify(tokens)), 
-                    0 < tokens.length ? $window.location.href = "/booth/" + autheventid + "/vote" : scope.error = $i18next("avRegistration.invalidCredentials", {
-                        support: ConfigService.contact.email
-                    })) : scope.error = $i18next("avRegistration.invalidCredentials", {
+                    $window.location.href = "/booth/" + autheventid + "/vote") : scope.error = $i18next("avRegistration.invalidCredentials", {
                         support: ConfigService.contact.email
                     })) : (scope.sendingData = !1, scope.status = "Not found", scope.error = $i18next("avRegistration.invalidCredentials", {
                         support: ConfigService.contact.email

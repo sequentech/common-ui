@@ -333,14 +333,7 @@ angular.module('avRegistration')
                       JSON.stringify(tokens)
                     );
 
-                    if (tokens.length > 0) {
-                      $window.location.href = '/booth/' + autheventid + '/vote';
-                    } else {
-                      scope.error = $i18next(
-                        'avRegistration.invalidCredentials', 
-                        {support: ConfigService.contact.email}
-                      );
-                    }
+                    $window.location.href = '/booth/' + autheventid + '/vote';
                   } else {
                     scope.error = $i18next(
                       'avRegistration.invalidCredentials', 
