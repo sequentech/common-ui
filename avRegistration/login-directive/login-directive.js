@@ -316,18 +316,14 @@ angular.module('avRegistration')
                     // assumes the authapi response has the same children 
                     var tokens = _
                       .chain(response.data['vote-children-info'])
-                      .filter(function (child) {
-                        return (
-                          child['num-successful-logins-allowed'] === 0 ||
-                          child['num-successful-logins'] < child['num-successful-logins-allowed']
-                         ) && !!child['vote-permission-token'];
-                      })
                       .map(function (child, index) {
                         return {
                           electionId: child['auth-event-id'],
-                          token: child['vote-permission-token'],
+                          token: child['vote-permission-token'] || null,
                           skipped: false,
                           voted: false,
+                          numSuccessfulLoginsAllowed: child['num-successful-logins-allowed'],
+                          numSuccessfulLogins: child['num-successful-logins'],
                           isFirst: index === 0
                         };
                       })
@@ -337,14 +333,7 @@ angular.module('avRegistration')
                       JSON.stringify(tokens)
                     );
 
-                    if (tokens.length > 0) {
-                      $window.location.href = '/booth/' + tokens[0].electionId + '/vote';
-                    } else {
-                      scope.error = $i18next(
-                        'avRegistration.invalidCredentials', 
-                        {support: ConfigService.contact.email}
-                      );
-                    }
+                    $window.location.href = '/booth/' + autheventid + '/vote';
                   } else {
                     scope.error = $i18next(
                       'avRegistration.invalidCredentials', 
