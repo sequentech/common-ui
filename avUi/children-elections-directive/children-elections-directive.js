@@ -25,6 +25,7 @@ angular.module('avUi')
       {
         scope.electionsById = {};
         scope.selectedElectionId = scope.parentElectionId;
+        scope.hideParent = (attrs.hideParent === 'true');
 
         // process each election
         _.each(
