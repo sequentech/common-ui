@@ -3,7 +3,7 @@
     <div class="col-sm-12 loginheader">
         <h2
           class="tex-center"
-          ng-if="!isCensusQuery && method !== 'openid-connect'"
+          ng-if="!isAdmin && !isCensusQuery && method !== 'openid-connect'"
           ng-i18next="[i18next]({name: orgName})avRegistration.loginHeader">
         </h2>
         <h2
