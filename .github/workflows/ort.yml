@@ -25,7 +25,6 @@ jobs:
         id: ort-action
         uses: edulix/ort-action@develop
         with:
-          fail-on: hints
           package-curations-dir: .ort-data/curations-dir/
           rules-file: .ort-data/rules.kts
           license-classifications-file: .ort-data/license-classifications.yml
@@ -33,6 +32,8 @@ jobs:
           report-extra-args: >
             --report-option
             ADocTemplate=template.path=/project/.ort-data/disclosure_document.ftl
+          evaluate-extra-args: >
+            -P ort.severeRuleViolationThreshold=HINT
 
       - uses: actions/upload-artifact@v2
         with:
