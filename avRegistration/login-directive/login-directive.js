@@ -314,9 +314,13 @@ angular.module('avRegistration')
                   else if (angular.isDefined(response.data['vote-children-info']))
                   {
                     // assumes the authapi response has the same children 
+                    var tokenIndex = 0;
                     var tokens = _
                       .chain(response.data['vote-children-info'])
-                      .map(function (child, index) {
+                      .map(function (child) {
+                        if (!!child['vote-permission-token']) {
+                          tokenIndex += 1;
+                        }
                         return {
                           electionId: child['auth-event-id'],
                           token: child['vote-permission-token'] || null,
@@ -324,7 +328,10 @@ angular.module('avRegistration')
                           voted: false,
                           numSuccessfulLoginsAllowed: child['num-successful-logins-allowed'],
                           numSuccessfulLogins: child['num-successful-logins'],
-                          isFirst: index === 0
+                          isFirst: (
+                            !!child['vote-permission-token'] &&
+                            tokenIndex === 1
+                          )
                         };
                       })
                       .value();
