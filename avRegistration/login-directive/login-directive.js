@@ -305,7 +305,8 @@ angular.module('avRegistration')
                       "vote_permission_tokens", 
                       JSON.stringify([{
                         electionId: autheventid,
-                        token: response.data['vote-permission-token']
+                        token: response.data['vote-permission-token'],
+                        isFirst: true
                       }])
                     );
                     $window.location.href = '/booth/' + autheventid + '/vote';
