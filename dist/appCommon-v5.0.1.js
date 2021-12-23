@@ -431,7 +431,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                     data[field.name] = field.value;
                 }), "smart-link" === scope.method && (data["auth-token"] = $location.search()["auth-token"]), 
                 scope.sendingData = !0, scope.error = null, Authmethod.login(data, autheventid).then(function(tokens) {
-                    var postfix, options;
+                    var postfix, options, tokenIndex;
                     "ok" === tokens.data.status ? (postfix = "_authevent_" + autheventid, options = {}, 
                     ConfigService.cookies && ConfigService.cookies.expires && (options.expires = new Date(), 
                     options.expires.setMinutes(options.expires.getMinutes() + ConfigService.cookies.expires)), 
@@ -447,15 +447,16 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                     }) : angular.isDefined(tokens.data["redirect-to-url"]) ? $window.location.href = tokens.data["redirect-to-url"] : angular.isDefined(tokens.data["vote-permission-token"]) ? ($window.sessionStorage.setItem("vote_permission_tokens", JSON.stringify([ {
                         electionId: autheventid,
                         token: tokens.data["vote-permission-token"]
-                    } ])), $window.location.href = "/booth/" + autheventid + "/vote") : angular.isDefined(tokens.data["vote-children-info"]) ? (tokens = _.chain(tokens.data["vote-children-info"]).map(function(child, index) {
-                        return {
+                    } ])), $window.location.href = "/booth/" + autheventid + "/vote") : angular.isDefined(tokens.data["vote-children-info"]) ? (tokenIndex = 0, 
+                    tokens = _.chain(tokens.data["vote-children-info"]).map(function(child) {
+                        return child["vote-permission-token"] && (tokenIndex += 1), {
                             electionId: child["auth-event-id"],
                             token: child["vote-permission-token"] || null,
                             skipped: !1,
                             voted: !1,
                             numSuccessfulLoginsAllowed: child["num-successful-logins-allowed"],
                             numSuccessfulLogins: child["num-successful-logins"],
-                            isFirst: 0 === index
+                            isFirst: !!child["vote-permission-token"] && 1 === tokenIndex
                         };
                     }).value(), $window.sessionStorage.setItem("vote_permission_tokens", JSON.stringify(tokens)), 
                     $window.location.href = "/booth/" + autheventid + "/vote") : scope.error = $i18next("avRegistration.invalidCredentials", {
