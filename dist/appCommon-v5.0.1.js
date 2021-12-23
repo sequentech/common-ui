@@ -446,7 +446,8 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                         $window.location.href = "/admin/elections";
                     }) : angular.isDefined(tokens.data["redirect-to-url"]) ? $window.location.href = tokens.data["redirect-to-url"] : angular.isDefined(tokens.data["vote-permission-token"]) ? ($window.sessionStorage.setItem("vote_permission_tokens", JSON.stringify([ {
                         electionId: autheventid,
-                        token: tokens.data["vote-permission-token"]
+                        token: tokens.data["vote-permission-token"],
+                        isFirst: !0
                     } ])), $window.location.href = "/booth/" + autheventid + "/vote") : angular.isDefined(tokens.data["vote-children-info"]) ? (tokenIndex = 0, 
                     tokens = _.chain(tokens.data["vote-children-info"]).map(function(child) {
                         return child["vote-permission-token"] && (tokenIndex += 1), {
