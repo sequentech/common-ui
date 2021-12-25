@@ -225,7 +225,10 @@ var avConfigData = {
   tos: {
     text:"",
     title: ""
-  }
+  },
+
+  mainVersion: "master",
+  repoVersions: []
 };
 
 angular.module('avConfig', [])
