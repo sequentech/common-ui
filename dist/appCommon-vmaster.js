@@ -940,6 +940,39 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         transclude: !0,
         templateUrl: "avUi/simple-error-directive/simple-error-directive.html"
     };
+} ]), angular.module("avUi").controller("ConfirmModal", [ "$scope", "$modalInstance", "data", function($scope, $modalInstance, data) {
+    $scope.data = data, $scope.ok = function() {
+        $modalInstance.close(data.closingData);
+    }, $scope.cancel = function() {
+        $modalInstance.dismiss("cancel");
+    };
+} ]), angular.module("avUi").service("ShowVersionsModalService", [ "ConfigService", "$modal", "$i18next", function(ConfigService, $modal, $i18next) {
+    return function() {
+        $modal.open({
+            templateUrl: "avUi/confirm-modal-controller/confirm-modal-controller.html",
+            controller: "ConfirmModal",
+            size: "lg",
+            resolve: {
+                data: function() {
+                    var versionList = "<li><strong>" + $i18next("avCommon.showVersionModal.mainVersion") + " (agora-dev-box):</strong> " + ConfigService.mainVersion + "<br><br></li>";
+                    _.each(ConfigService.repoVersions, function(repo) {
+                        versionList += "<li><strong>" + repo.repoName + ":</strong> " + repo.repoVersion + "</li>";
+                    });
+                    var body = $i18next("avCommon.showVersionModal.body", {
+                        versionList: versionList
+                    });
+                    return {
+                        i18n: {
+                            header: $i18next("avCommon.showVersionModal.header"),
+                            body: body,
+                            confirmButton: $i18next("avCommon.showVersionModal.confirmButton")
+                        },
+                        hideCancelButton: !0
+                    };
+                }
+            }
+        });
+    };
 } ]), angular.module("avUi").directive("avChangeLang", [ "$i18next", "ipCookie", "angularLoad", "amMoment", "ConfigService", function($i18next, ipCookie, angularLoad, amMoment, ConfigService) {
     return {
         restrict: "AE",
@@ -1452,6 +1485,7 @@ angular.module("avTest", []), angular.module("avTest").controller("UnitTestE2ECo
     $templateCache.put("avRegistration/success.html", '<div av-success><p ng-i18next="avRegistration.successRegistration"></p></div>'), 
     $templateCache.put("avUi/change-lang-directive/change-lang-directive.html", '<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="glyphicon glyphicon-flag"></span> <span>{{ deflang }}</span> <span class="caret"></span></a><ul class="dropdown-menu" role="menu"><li ng-repeat="lang in langs"><a role="menuitem" ng-click="changeLang(lang)" ng-space-click tabindex="0">{{lang}}</a></li></ul>'), 
     $templateCache.put("avUi/children-elections-directive/children-elections-directive.html", '<div class="row" ng-if="mode === \'toggle-and-callback\' && !hideParent"><div class="col-xs-12"><div class="btn btn-success btn-election" ng-class="{\'selected\': selectedElectionId === parentElectionId}" ng-click="click({event_id: parentElectionId})"><span ng-i18next>avAdmin.childrenElections.main</span></div></div></div><div ng-repeat="category in childrenElectionInfo.presentation.categories" class="row"><div class="col-xs-12"><h4>{{category.title}}</h4><div ng-repeat="election in category.events" class="btn btn-success btn-election" ng-disabled="election.disabled" ng-class="{\'selected\': selectedElectionId === election.event_id}" data-election-id="{{election.event_id}}" ng-click="click(election)"><i ng-if="mode === \'checkbox\'" class="fa-fw fa" ng-class="{\'fa-square-o\': !election.data, \'fa-check-square-o\': !!election.data}" aria-hidden="true"></i> {{election.title}}</div></div></div>'), 
+    $templateCache.put("avUi/confirm-modal-controller/confirm-modal-controller.html", '<div class="confirm-modal-controller"><div class="modal-header dialog-header-warning"><h4 class="modal-title"><span class="glyphicon glyphicon-warning-sign"></span> <span class="title" ng-bind-html="data.i18n.header"></span> <button type="button" class="close pull-right" ng-click="cancel()">×</button></h4></div><div class="modal-body"><p><span class="body-data" ng-bind-html="data.i18n.body"></span></p></div><div class="modal-footer"><button class="btn btn-success" ng-click="ok()">{{ data.i18n.confirmButton }}</button> <button class="btn btn-cancel" ng-click="cancel()" ng-if="!data.hideCancelButton" ng-i18next="avCommon.cancel">avCommon.cancel</button></div></div>'), 
     $templateCache.put("avUi/documentation-directive/documentation-directive.html", '<div><h2 class="text-center text-av-secondary" ng-i18next="avDocumentation.documentation.title"></h2><p ng-i18next="avDocumentation.documentation.first_line"></p><ul class="docu-ul"><li ng-if="!!documentation.faq"><a href="{{documentation.faq}}" target="_blank" ng-i18next="avDocumentation.documentation.faq"></a></li><li ng-if="!!documentation.overview"><a href="{{documentation.overview}}" target="_blank" ng-i18next="avDocumentation.documentation.overview"></a></li><li><a href="{{auths_url}}" target="_blank" ng-i18next="avDocumentation.documentation.authorities"></a></li><li ng-if="!!documentation.technical"><a href="{{documentation.technical}}" target="_blank" ng-i18next="avDocumentation.documentation.technical"></a></li><li ng-if="!!documentation.security_contact"><a href="{{documentation.security_contact}}" target="_blank" ng-i18next="avDocumentation.documentation.security_contact"></a></li></ul><div class="documentation-html-include" av-plugin-html ng-bind-html="documentation_html_include"></div></div>'), 
     $templateCache.put("avUi/foot-directive/foot-directive.html", '<div class="commonfoot"><div class="social" style="text-align: center;"><span class="powered-by pull-left" ng-i18next="[html:i18next]({url: organization.orgUrl, name: organization.orgName})avCommon.poweredBy"></span> <a href="{{social.facebook}}" target="_blank" ng-if="!!social.facebook" aria-label="Facebook"><i class="fa fa-fw fa-lg fa-facebook"></i></a> <a href="{{social.twitter}}" target="_blank" ng-if="!!social.twitter" aria-label="Twitter"><i class="fa fa-fw fa-lg fa-twitter"></i></a> <a href="{{social.googleplus}}" target="_blank" ng-if="!!social.googleplus" aria-label="Google Plus"><i class="fa fa-fw fa-lg fa-google-plus"></i></a> <a href="{{social.youtube}}" target="_blank" ng-if="!!social.youtube" aria-label="Youtube"><i class="fa fa-fw fa-lg fa-youtube-play"></i></a> <a href="{{social.github}}" target="_blank" ng-if="!!social.github" aria-label="Github"><i class="fa fa-fw fa-lg fa-github"></i></a></div></div>'), 
     $templateCache.put("avUi/simple-error-directive/simple-error-directive.html", '<div class="av-simple-error-title" ng-transclude></div>'), 
