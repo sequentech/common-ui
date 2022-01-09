@@ -210,6 +210,25 @@ angular.module('avRegistration')
             return $http.get(url);
         };
 
+        /**
+         * @returns the http request
+         */
+         authmethod.suspend = function(eid)
+         {
+             var url = backendUrl + 'auth-event/' + eid + '/suspended/';
+
+             return $http.get(url);
+         };
+
+        /**
+         * @returns the http request
+         */
+         authmethod.resume = function(eid)
+         {
+             var url = backendUrl + 'auth-event/' + eid + '/resumed/';
+
+             return $http.get(url);
+         };
 
         /**
          * @returns the http request
