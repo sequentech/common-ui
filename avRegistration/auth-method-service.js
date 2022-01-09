@@ -217,7 +217,7 @@ angular.module('avRegistration')
          {
              var url = backendUrl + 'auth-event/' + eid + '/suspended/';
 
-             return $http.get(url);
+             return $http.post(url);
          };
 
         /**
@@ -227,7 +227,7 @@ angular.module('avRegistration')
          {
              var url = backendUrl + 'auth-event/' + eid + '/resumed/';
 
-             return $http.get(url);
+             return $http.post(url);
          };
 
         /**
