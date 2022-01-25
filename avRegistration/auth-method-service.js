@@ -719,6 +719,29 @@ angular.module('avRegistration')
             return $http.post(backendUrl + 'user/draft/', draft_data);
         };
 
+        authmethod.launchSelfTestTask = function() {
+          return $http.post(backendUrl + 'tasks/launch-self-test/', {});
+        };
+
+        authmethod.getTasks = function(params) {
+          var url = backendUrl + 'tasks/';
+          if (!angular.isObject(params)) {
+            return $http.get(url);
+          }
+
+          return $http.get(url, {params:params});
+        };
+
+        authmethod.getTask = function(id) {
+          var url = backendUrl + 'tasks/' + id + '/';
+          return $http.get(url);
+        };
+
+        authmethod.cancelTask = function(id) {
+          var url = backendUrl + 'tasks/' + id + '/cancel/';
+          return $http.post(url, {});
+        };
+
         return authmethod;
     });
 
