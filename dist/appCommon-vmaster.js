@@ -373,6 +373,23 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 draft_election: draft_data
             };
             return $http.post(backendUrl + "user/draft/", draft_data);
+        },
+        launchSelfTestTask: function() {
+            return $http.post(backendUrl + "tasks/launch-self-test/", {});
+        },
+        getTasks: function(params) {
+            var url = backendUrl + "tasks/";
+            return angular.isObject(params) ? $http.get(url, {
+                params: params
+            }) : $http.get(url);
+        },
+        getTask: function(url) {
+            url = backendUrl + "tasks/" + url + "/";
+            return $http.get(url);
+        },
+        cancelTask: function(url) {
+            url = backendUrl + "tasks/" + url + "/cancel/";
+            return $http.post(url, {});
         }
     };
     return authmethod;
