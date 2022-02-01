@@ -22,7 +22,7 @@
  * changes, the top-margin of the specified is recalculated and set.
  */
 angular.module('avUi')
-  .directive('avAffixTop', function($window, $timeout) {
+  .directive('avAffixTop', function($window, $interval) {
 
     // add margin-top automatically
     var updateMargin = function(el, options) {
@@ -47,8 +47,8 @@ angular.module('avUi')
         var timeout;
 
         function updateMarginTimeout() {
-          timeout = $timeout(function() {
-            $timeout.cancel(timeout);
+          timeout = $interval(function() {
+            $interval.cancel(timeout);
             updateMargin(iElement, iAttrs);
           }, 300);
         }

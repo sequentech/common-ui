@@ -27,7 +27,7 @@
  * </div>
  */
 angular.module('avUi')
-  .directive('avAutoHeight', function($window, $timeout) {
+  .directive('avAutoHeight', function($window, $interval) {
     return {
       link: function(scope, element, attrs) {
         var sibling, recalculate, promise = null;
@@ -38,9 +38,9 @@ angular.module('avUi')
 
         recalculate = function () {
           if (promise) {
-            $timeout.cancel(promise);
+            $interval.cancel(promise);
           }
-          promise = $timeout(function() {
+          promise = $interval(function() {
             var additionalHeight = 0, height;
             if (!!attrs.additionalHeight) {
               additionalHeight = parseInt(attrs.additionalHeight, 10);

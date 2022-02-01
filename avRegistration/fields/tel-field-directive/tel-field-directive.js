@@ -16,7 +16,7 @@
 **/
 
 angular.module('avRegistration')
-  .directive('avrTelField', function($state, $timeout) {
+  .directive('avrTelField', function($state, $interval) {
     function link(scope, element, attrs) {
 
       scope.tlfPattern = /^[+]?\d{9,14}$/;
@@ -34,7 +34,7 @@ angular.module('avRegistration')
           }
         });
 
-      $timeout(function() {
+      $interval(function() {
         /* configure registration telephone phone number */
         var telInput = angular.element(document.getElementById("input" + scope.index));
         // initialise plugin

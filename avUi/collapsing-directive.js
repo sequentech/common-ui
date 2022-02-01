@@ -34,7 +34,7 @@
  *   Otherwise, it will directly a global angular.element() to find them.
  */
 angular.module('avUi')
-  .directive('avCollapsing', function($window, $timeout) {
+  .directive('avCollapsing', function($window, $interval) {
 
     function select(instance, el, selector) {
       var val;
@@ -130,8 +130,8 @@ angular.module('avUi')
         var timeout;
 
         function callCheck() {
-          timeout = $timeout(function() {
-            $timeout.cancel(timeout);
+          timeout = $interval(function() {
+            $interval.cancel(timeout);
             checkCollapse(instance, iElement, iAttrs);
           }, 500);
         }

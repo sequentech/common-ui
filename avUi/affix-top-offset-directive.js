@@ -16,7 +16,7 @@
 **/
 
 angular.module('avUi')
-  .directive('avAffixTopOffset', function($window, $timeout, $parse) {
+  .directive('avAffixTopOffset', function($window, $interval, $parse) {
     var affixClass = "affix-top";
     var checkPosition = function(scope, instance, el, options) {
 
@@ -83,7 +83,7 @@ angular.module('avUi')
           iElement.attr("style", "");
           instance.affix = false;
           instance.scrollAffix = null;
-          $timeout(function () {
+          $interval(function () {
             instance.baseOffset = iElement.offset();
             instance.baseWidth = iElement.width();
             callCheckPos();

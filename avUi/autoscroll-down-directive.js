@@ -24,7 +24,7 @@
  *    <div av-autoscroll-down ng-bind-html="log"></div>
  */
 angular.module('avUi')
-  .directive('avScrollToBottom', function($timeout) {
+  .directive('avScrollToBottom', function($interval) {
     return {
       restrict: 'A',
       link: function postLink(scope, element, attrs) {
