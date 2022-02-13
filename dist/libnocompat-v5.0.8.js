@@ -36,7 +36,7 @@
         return !isFunction(obj) && !isWindow(obj) && ("array" === type || 0 === length || "number" == typeof length && 0 < length && length - 1 in obj);
     }
     jQuery.fn = jQuery.prototype = {
-        jquery: "3.5.0",
+        jquery: "3.5.1",
         constructor: jQuery,
         length: 0,
         toArray: function() {
@@ -96,7 +96,7 @@
         copyIsArray = !1, target[name] = jQuery.extend(deep, clone, copy)) : void 0 !== copy && (target[name] = copy));
         return target;
     }, jQuery.extend({
-        expando: "jQuery" + ("3.5.0" + Math.random()).replace(/\D/g, ""),
+        expando: "jQuery" + ("3.5.1" + Math.random()).replace(/\D/g, ""),
         isReady: !0,
         error: function(msg) {
             throw new Error(msg);
@@ -1115,7 +1115,7 @@
     Data.uid = 1, Data.prototype = {
         cache: function(owner) {
             var value = owner[this.expando];
-            return value || (value = Object.create(null), acceptData(owner) && (owner.nodeType ? owner[this.expando] = value : Object.defineProperty(owner, this.expando, {
+            return value || (value = {}, acceptData(owner) && (owner.nodeType ? owner[this.expando] = value : Object.defineProperty(owner, this.expando, {
                 value: value,
                 configurable: !0
             }))), value;
