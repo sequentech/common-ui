@@ -908,7 +908,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         for (var i = 0; i < plugins.hooks.length; i++) if (!(0, plugins.hooks[i])(hookname, data)) return !1;
         return !0;
     }, plugins;
-}), angular.module("avRegistration").directive("SequentPluginHtml", [ "$compile", "$sce", "$parse", function($compile, $sce, $parse) {
+}), angular.module("avRegistration").directive("sequentPluginHtml", [ "$compile", "$sce", "$parse", function($compile, $sce, $parse) {
     return function(scope, element, attrs) {
         var parsedHtml = $parse(attrs.ngBindHtml);
         scope.$watch(function() {

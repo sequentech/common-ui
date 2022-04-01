@@ -282,7 +282,7 @@ angular.module('avRegistration')
  **/
 angular.module('avRegistration')
 .directive(
-  'SequentPluginHtml',
+  'sequentPluginHtml',
   function ($compile, $sce, $parse)
   {
     return function(scope, element, attrs)
