@@ -1,7 +1,7 @@
-# agora-gui-common [![tests_badge]][tests_link] 
+# common-ui [![tests_badge]][tests_link] 
 
-[tests_badge]: https://github.com/agoravoting/agora-gui-common/workflows/Test%20all/badge.svg
-[tests_link]: https://github.com/agoravoting/agora-gui-common/actions?query=workflow%3A%22Test+all%22
+[tests_badge]: https://github.com/sequentech/common-ui/workflows/Test%20all/badge.svg
+[tests_link]: https://github.com/sequentech/common-ui/actions?query=workflow%3A%22Test+all%22
 
 Agora-gui-common contais the common library interface for Agora GUI, and it's developed
 with AngularJS.
@@ -23,7 +23,7 @@ You need also to install globally grunt and yarn:
 
     sudo npm install -g grunt-cli grunt yarn
 
-After that, you can install the agora-core-view javascript dependencies:
+After that, you can install the sequent-core-view javascript dependencies:
 
     yarn
 
@@ -84,21 +84,21 @@ In a third terminal, we will launch the E2E unit tests:
 
 # License
 
-Copyright (C) 2015 Agora Voting SL and/or its subsidiary(-ies).
-Contact: legal@agoravoting.com
+Copyright (C) 2015 Sequent Tech Inc and/or its subsidiary(-ies).
+Contact: legal@sequentech.io
 
-This file is part of the agora-core-view module of the Agora Voting project.
+This file is part of the sequent-core-view module of the Sequent Tech project.
 
 This program is distributed in the hope that it will be useful, but WITHOUT ANY
 WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
 Commercial License Usage
-Licensees holding valid commercial Agora Voting project licenses may use this
+Licensees holding valid commercial Sequent Tech project licenses may use this
 file in accordance with the commercial license agreement provided with the
 Software or, alternatively, in accordance with the terms contained in
-a written agreement between you and Agora Voting SL. For licensing terms and
-conditions and further information contact us at legal@agoravoting.com .
+a written agreement between you and Sequent Tech Inc. For licensing terms and
+conditions and further information contact us at legal@sequentech.io .
 
 GNU Affero General Public License Usage
 Alternatively, this file may be used under the terms of the GNU Affero General

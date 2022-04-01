@@ -1,25 +1,25 @@
 /**
- * This file is part of agora-gui-common.
- * Copyright (C) 2015-2016  Agora Voting SL <agora@agoravoting.com>
+ * This file is part of common-ui.
+ * Copyright (C) 2015-2016  Sequent Tech Inc <legal@sequentech.io>
 
- * agora-gui-common is free software: you can redistribute it and/or modify
+ * common-ui is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License.
 
- * agora-gui-common  is distributed in the hope that it will be useful,
+ * common-ui  is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
 
  * You should have received a copy of the GNU Affero General Public License
- * along with agora-gui-common.  If not, see <http://www.gnu.org/licenses/>.
+ * along with common-ui.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
 /*jslint node: true */
 'use strict';
 
 var pkg = require('./package.json');
-var AV_CONFIG_VERSION = 'master';
+var SEQUENT_CONFIG_VERSION = 'master';
 
 //Using exclusion patterns slows down Grunt significantly
 //instead of creating a set of patterns like '**/*.js' and '!**/node_modules/**'
@@ -53,25 +53,25 @@ module.exports = function (grunt) {
   // load all grunt tasks
   require('load-grunt-tasks')(grunt);
 
-  // custom grunt task to check avConfig.js
+  // custom grunt task to check SequentConfig.js
   grunt.registerTask('check_config', function() {
     var fs = require('fs');
     var done = this.async();
-    grunt.log.ok('Checking avConfig.js...');
-    var conf = fs.readFile('avConfig.js', function(err, data) {
+    grunt.log.ok('Checking SequentConfig.js...');
+    var conf = fs.readFile('SequentConfig.js', function(err, data) {
         if (err) {
-            grunt.log.error('No avConfig.js file found');
+            grunt.log.error('No SequentConfig.js file found');
             done(false);
         } else {
-            var match = data.toString().match(/AV_CONFIG_VERSION = [\'\"](.*)[\'\"\-];/);
+            var match = data.toString().match(/SEQUENT_CONFIG_VERSION = [\'\"](.*)[\'\"\-];/);
             if (!match) {
-                grunt.log.error('Invalid avConfig.js version');
+                grunt.log.error('Invalid SequentConfig.js version');
             } else {
                 var v = match[1];
-                if (v === AV_CONFIG_VERSION) {
+                if (v === SEQUENT_CONFIG_VERSION) {
                     return done();
                 } else {
-                    grunt.log.error('Invalid avConfig.js version: ' + v);
+                    grunt.log.error('Invalid SequentConfig.js version: ' + v);
                 }
             }
             done(false);
@@ -166,9 +166,9 @@ module.exports = function (grunt) {
           remove: ['script[data-remove!="false"]','link[data-remove!="false"]'],
           append: [
             {selector:'body',html:'<script src="/libnocompat-vmaster.js"></script>'},
-            {selector:'body',html:'<!--All the source code of this program under copyright. Take a look at the license details at https://github.com/agoravoting/agora-core-common/blob/master/README.md -->'},
+            {selector:'body',html:'<!--All the source code of this program under copyright. Take a look at the license details at https://github.com/sequent/sequent-core-common/blob/master/README.md -->'},
             {selector:'body',html:'<script src="/appCommon-vmaster.js"></script>'},
-            {selector:'body',html:'<script src="/avPlugins-vmaster.js"></script>'},
+            {selector:'body',html:'<script src="/SequentPlugins-vmaster.js"></script>'},
             {selector:'head',html:'<link rel="stylesheet" id="theme" href="/themes/default/app.min.css">'}
           ]
         },
@@ -194,9 +194,9 @@ module.exports = function (grunt) {
           'temp/libnocompat.js': ['<%= dom_munger.data.libnocompatjs %>'],
           'temp/lib.js': ['<%= dom_munger.data.libjs %>'],
           'temp/app.js': ['<%= dom_munger.data.appjs %>','<%= ngtemplates.main.dest %>'],
-          'dist/avConfig-vmaster.js': ['avConfig.js'],
-          'dist/avThemes-vmaster.js': ['avThemes.js'],
-          'dist/avPlugins-vmaster.js': ['plugins/**/*.js']
+          'dist/SequentConfig-vmaster.js': ['SequentConfig.js'],
+          'dist/SequentThemes-vmaster.js': ['SequentThemes.js'],
+          'dist/SequentPlugins-vmaster.js': ['plugins/**/*.js']
         }
       }
     },
@@ -322,8 +322,8 @@ module.exports = function (grunt) {
         files: [  //this files data is also updated in the watch handler, if updated change there too
           '<%= dom_munger.data.libnocompatjs %>',
           '<%= dom_munger.data.libjs %>',
-          'avConfig.js',
-          'avThemes.js',
+          'SequentConfig.js',
+          'SequentThemes.js',
           'avWidgets.js',
           '<%= dom_munger.data.appjs %>',
           '<%= ngtemplates.main.dest %>',
@@ -421,8 +421,8 @@ module.exports = function (grunt) {
         var files = [].concat(grunt.config('dom_munger.data.libnocompatjs'));
         files.concat(grunt.config('dom_munger.data.libjs'));
         files.push('node_modules/angular-mocks/angular-mocks.js');
-        files.push('avConfig.js');
-        files.push('avThemes.js');
+        files.push('SequentConfig.js');
+        files.push('SequentThemes.js');
         files.push('avWidgets.js');
         files.concat(grunt.config('dom_munger.data.appjs'));
         files.concat(grunt.config('ngtemplates.main.dest'));

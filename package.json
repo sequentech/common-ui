@@ -1,11 +1,11 @@
 {
-  "name": "agora-gui-common",
+  "name": "common-ui",
   "version" : "4.0.0",
   "license": "AGPL-3.0-only",
   "author": {
-    "name": "Agora Voting SL and others",
-    "email": "legal@nvotes.com",
-    "url": "https://nvotes.com"
+    "name": "Sequent Tech Inc and others",
+    "email": "legal@sequentech.io",
+    "url": "https://sequentech.io"
   },
   "browsers": [
     "ie >= 8",

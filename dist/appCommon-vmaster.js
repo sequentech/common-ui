@@ -1,5 +1,5 @@
 function $buo_f() {
-    $buo(avConfigData.browserUpdate);
+    $buo(SequentConfigData.browserUpdate);
 }
 
 if (angular.module("avRegistration", [ "ui.bootstrap", "ui.utils", "ui.router" ]), 
@@ -908,7 +908,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         for (var i = 0; i < plugins.hooks.length; i++) if (!(0, plugins.hooks[i])(hookname, data)) return !1;
         return !0;
     }, plugins;
-}), angular.module("avRegistration").directive("avPluginHtml", [ "$compile", "$sce", "$parse", function($compile, $sce, $parse) {
+}), angular.module("avRegistration").directive("SequentPluginHtml", [ "$compile", "$sce", "$parse", function($compile, $sce, $parse) {
     return function(scope, element, attrs) {
         var parsedHtml = $parse(attrs.ngBindHtml);
         scope.$watch(function() {
@@ -979,7 +979,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             size: "lg",
             resolve: {
                 data: function() {
-                    var versionList = "<li><strong>" + $i18next("avCommon.showVersionModal.mainVersion") + " (agora-dev-box):</strong> " + ConfigService.mainVersion + "<br><br></li>";
+                    var versionList = "<li><strong>" + $i18next("avCommon.showVersionModal.mainVersion") + " (deployment-tool):</strong> " + ConfigService.mainVersion + "<br><br></li>";
                     _.each(ConfigService.repoVersions, function(repo) {
                         versionList += "<li><strong>" + repo.repoName + ":</strong> " + repo.repoVersion + "</li>";
                     });
@@ -1432,7 +1432,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         },
         templateUrl: "avUi/foot-directive/foot-directive.html"
     };
-} ]), angular.module("agora-gui-common", [ "ui.bootstrap", "ui.utils", "ui.router", "ngAnimate", "ngResource", "ngCookies", "ipCookie", "ngSanitize", "infinite-scroll", "angularMoment", "avConfig", "jm.i18next", "avRegistration", "avUi", "avTest", "angularFileUpload", "dndLists", "angularLoad", "ng-autofocus" ]), 
+} ]), angular.module("common-ui", [ "ui.bootstrap", "ui.utils", "ui.router", "ngAnimate", "ngResource", "ngCookies", "ipCookie", "ngSanitize", "infinite-scroll", "angularMoment", "SequentConfig", "jm.i18next", "avRegistration", "avUi", "avTest", "angularFileUpload", "dndLists", "angularLoad", "ng-autofocus" ]), 
 angular.module("jm.i18next").config([ "$i18nextProvider", "ConfigServiceProvider", function($i18nextProvider, ConfigServiceProvider) {
     $("#no-js").hide(), $i18nextProvider.options = _.extend({
         useCookie: !0,
@@ -1444,7 +1444,7 @@ angular.module("jm.i18next").config([ "$i18nextProvider", "ConfigServiceProvider
         resGetPath: "/locales/__lng__.json",
         defaultLoadingValue: ""
     }, ConfigServiceProvider.i18nextInitOptions);
-} ]), angular.module("agora-gui-common").run([ "$http", "$rootScope", function($http, $rootScope) {
+} ]), angular.module("common-ui").run([ "$http", "$rootScope", function($http, $rootScope) {
     $rootScope.safeApply = function(fn) {
         var phase = $rootScope.$$phase;
         "$apply" === phase || "$digest" === phase ? fn && "function" == typeof fn && fn() : this.$apply(fn);
@@ -1453,7 +1453,7 @@ angular.module("jm.i18next").config([ "$i18nextProvider", "ConfigServiceProvider
     }), $rootScope.$on("$stateChangeSuccess", function(event, toState, toParams, fromState, fromParams) {
         console.log("change success"), $("#angular-preloading").hide();
     });
-} ]), angular.module("agora-gui-common").directive("ngSpaceClick", [ "$timeout", function($timeout) {
+} ]), angular.module("common-ui").directive("ngSpaceClick", [ "$timeout", function($timeout) {
     return function(scope, element, attrs) {
         element.bind("keydown", function(event) {
             switch (event.which) {
@@ -1465,7 +1465,7 @@ angular.module("jm.i18next").config([ "$i18nextProvider", "ConfigServiceProvider
             }
         });
     };
-} ]), angular.module("agora-gui-common").directive("ngEnter", function() {
+} ]), angular.module("common-ui").directive("ngEnter", function() {
     return function(scope, element, attrs) {
         element.bind("keydown keypress", function(event) {
             13 === event.which && (scope.$apply(function() {
@@ -1473,11 +1473,11 @@ angular.module("jm.i18next").config([ "$i18nextProvider", "ConfigServiceProvider
             }), event.preventDefault());
         });
     };
-}), angular.module("agora-gui-common").filter("truncate", function() {
+}), angular.module("common-ui").filter("truncate", function() {
     return function(text, length, end) {
         return isNaN(length) && (length = 10), void 0 === end && (end = "..."), text.length <= length || text.length - end.length <= length ? text : String(text).substring(0, length - end.length) + end;
     };
-}), avConfigData.browserUpdate) try {
+}), SequentConfigData.browserUpdate) try {
     document.addEventListener("DOMContentLoaded", $buo_f, !1);
 } catch (e) {
     window.attachEvent("onload", $buo_f);
@@ -1485,7 +1485,7 @@ angular.module("jm.i18next").config([ "$i18nextProvider", "ConfigServiceProvider
 
 angular.module("avTest", []), angular.module("avTest").controller("UnitTestE2EController", [ "$scope", "$location", "ConfigService", function($scope, $location, ConfigService) {
     ConfigService.debug && ($scope.html = $location.search().html, console.log($location.search()));
-} ]), angular.module("agora-gui-common").run([ "$templateCache", function($templateCache) {
+} ]), angular.module("common-ui").run([ "$templateCache", function($templateCache) {
     "use strict";
     $templateCache.put("avRegistration/error.html", '<div av-simple-error><p ng-i18next="avRegistration.errorRegistration"></p></div>'), 
     $templateCache.put("avRegistration/field-directive/field-directive.html", '<div ng-switch="field.type"><div avr-email-field ng-switch-when="email"></div><div avr-password-field ng-switch-when="password"></div><div avr-code-field ng-switch-when="code"></div><div avr-text-field ng-switch-when="text"></div><div avr-dni-field ng-switch-when="dni"></div><div avr-date-field ng-switch-when="date"></div><div avr-tel-field ng-switch-when="tlf"></div><div avr-int-field ng-switch-when="int"></div><div avr-bool-field ng-switch-when="bool"></div><div avr-captcha-field ng-switch-when="captcha"></div><div avr-textarea-field ng-switch-when="textarea"></div><div avr-image-field ng-switch-when="image"></div></div>'), 
@@ -1514,6 +1514,6 @@ angular.module("avTest", []), angular.module("avTest").controller("UnitTestE2ECo
     $templateCache.put("avUi/documentation-directive/documentation-directive.html", '<div><h2 class="text-center text-av-secondary" ng-i18next="avDocumentation.documentation.title"></h2><p ng-i18next="avDocumentation.documentation.first_line"></p><ul class="docu-ul"><li ng-if="!!documentation.faq"><a href="{{documentation.faq}}" target="_blank" ng-i18next="avDocumentation.documentation.faq"></a></li><li ng-if="!!documentation.overview"><a href="{{documentation.overview}}" target="_blank" ng-i18next="avDocumentation.documentation.overview"></a></li><li><a href="{{auths_url}}" target="_blank" ng-i18next="avDocumentation.documentation.authorities"></a></li><li ng-if="!!documentation.technical"><a href="{{documentation.technical}}" target="_blank" ng-i18next="avDocumentation.documentation.technical"></a></li><li ng-if="!!documentation.security_contact"><a href="{{documentation.security_contact}}" target="_blank" ng-i18next="avDocumentation.documentation.security_contact"></a></li></ul><div class="documentation-html-include" av-plugin-html ng-bind-html="documentation_html_include"></div></div>'), 
     $templateCache.put("avUi/foot-directive/foot-directive.html", '<div class="commonfoot"><div class="social" style="text-align: center;"><span class="powered-by pull-left" ng-i18next="[html:i18next]({url: organization.orgUrl, name: organization.orgName})avCommon.poweredBy"></span> <a href="{{social.facebook}}" target="_blank" ng-if="!!social.facebook" aria-label="Facebook"><i class="fa fa-fw fa-lg fa-facebook"></i></a> <a href="{{social.twitter}}" target="_blank" ng-if="!!social.twitter" aria-label="Twitter"><i class="fa fa-fw fa-lg fa-twitter"></i></a> <a href="{{social.googleplus}}" target="_blank" ng-if="!!social.googleplus" aria-label="Google Plus"><i class="fa fa-fw fa-lg fa-google-plus"></i></a> <a href="{{social.youtube}}" target="_blank" ng-if="!!social.youtube" aria-label="Youtube"><i class="fa fa-fw fa-lg fa-youtube-play"></i></a> <a href="{{social.github}}" target="_blank" ng-if="!!social.github" aria-label="Github"><i class="fa fa-fw fa-lg fa-github"></i></a></div></div>'), 
     $templateCache.put("avUi/simple-error-directive/simple-error-directive.html", '<div class="av-simple-error-title" ng-transclude></div>'), 
-    $templateCache.put("test/test_booth_widget.html", '<!DOCTYPE html><html><head><title>Test frame</title><meta charset="UTF-8"></head><script>function getCastHmac(auth_data, callback) {\n      callback("khmac:///sha-256;5e25a9af28a33d94b8c2c0edbc83d6d87355e45b93021c35a103821557ec7dc5/voter-1110-1dee0c135afeae29e208550e7258dab7b64fb008bc606fc326d41946ab8e773f:1415185712");\n    }<\/script><body style="overflow-y: hidden; overflow-x: hidden; padding: 0; margin: 0"><div style="width: 100%; display: block; position: absolute; top: 0; bottom: 0; scroll: none; padding: 0; margin: 0"><a class="agoravoting-voting-booth" href="http://agora.dev/#/election/1110/vote" data-authorization-funcname="getCastHmac">Votar con Agora Voting</a><script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="http://agora.dev/avWidgets.min.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","agoravoting-widgets-js");<\/script></div></body></html>'), 
+    $templateCache.put("test/test_booth_widget.html", '<!DOCTYPE html><html><head><title>Test frame</title><meta charset="UTF-8"></head><script>function getCastHmac(auth_data, callback) {\n      callback("khmac:///sha-256;5e25a9af28a33d94b8c2c0edbc83d6d87355e45b93021c35a103821557ec7dc5/voter-1110-1dee0c135afeae29e208550e7258dab7b64fb008bc606fc326d41946ab8e773f:1415185712");\n    }<\/script><body style="overflow-y: hidden; overflow-x: hidden; padding: 0; margin: 0"><div style="width: 100%; display: block; position: absolute; top: 0; bottom: 0; scroll: none; padding: 0; margin: 0"><a class="sequent-voting-booth" href="http://sequent.dev/#/election/1110/vote" data-authorization-funcname="getCastHmac">Votar con Sequent Tech</a><script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="http://sequent.dev/avWidgets.min.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","sequent-widgets-js");<\/script></div></body></html>'), 
     $templateCache.put("test/unit_test_e2e.html", '<div dynamic="html" id="dynamic-result"></div>');
 } ]);
