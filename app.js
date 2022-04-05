@@ -1,22 +1,22 @@
 /**
- * This file is part of agora-gui-common.
- * Copyright (C) 2015-2016  Agora Voting SL <agora@agoravoting.com>
+ * This file is part of common-ui.
+ * Copyright (C) 2015-2016  Sequent Tech Inc <legal@sequentech.io>
 
- * agora-gui-common is free software: you can redistribute it and/or modify
+ * common-ui is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License.
 
- * agora-gui-common  is distributed in the hope that it will be useful,
+ * common-ui  is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
 
  * You should have received a copy of the GNU Affero General Public License
- * along with agora-gui-common.  If not, see <http://www.gnu.org/licenses/>.
+ * along with common-ui.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
 angular.module(
-  'agora-gui-common',
+  'common-ui',
   ['ui.bootstrap',
   'ui.utils',
   'ui.router',
@@ -27,7 +27,7 @@ angular.module(
   'ngSanitize',
   'infinite-scroll',
   'angularMoment',
-  'avConfig',
+  'SequentConfig',
   'jm.i18next',
   'avRegistration',
   'avUi',
@@ -57,7 +57,7 @@ angular.module('jm.i18next').config(function ($i18nextProvider, ConfigServicePro
     ConfigServiceProvider.i18nextInitOptions);
 });
 
-angular.module('agora-gui-common').run(function($http, $rootScope) {
+angular.module('common-ui').run(function($http, $rootScope) {
 
   $rootScope.safeApply = function(fn) {
     var phase = $rootScope.$$phase;
@@ -85,7 +85,7 @@ angular.module('agora-gui-common').run(function($http, $rootScope) {
 /*
 This directive will trigger a click if the user presses space or enter
  */
-angular.module('agora-gui-common').directive('ngSpaceClick', function ($timeout) {
+angular.module('common-ui').directive('ngSpaceClick', function ($timeout) {
   return function (scope, element, attrs) {
     element.bind("keydown", function (event) {
       switch (event.which) {
@@ -102,7 +102,7 @@ angular.module('agora-gui-common').directive('ngSpaceClick', function ($timeout)
 /*
 This directive allows us to pass a function in on an enter key to do what we want.
  */
-angular.module('agora-gui-common').directive('ngEnter', function () {
+angular.module('common-ui').directive('ngEnter', function () {
     return function (scope, element, attrs) {
         element.bind("keydown keypress", function (event) {
             if(event.which === 13) {
@@ -123,7 +123,7 @@ angular.module('agora-gui-common').directive('ngEnter', function () {
  * @Param end, default is "..."
  * @return string
  */
-angular.module('agora-gui-common').filter('truncate', function () {
+angular.module('common-ui').filter('truncate', function () {
         return function (text, length, end) {
             if (isNaN(length)) {
                 length = 10;
@@ -143,15 +143,15 @@ angular.module('agora-gui-common').filter('truncate', function () {
         };
     });
 
-/*globals avConfigData:false, $buo:false */
+/*globals SequentConfigData:false, $buo:false */
 /**
  * Check browser version with browser-update.org
  */
 function $buo_f() {
-  $buo(avConfigData.browserUpdate);
+  $buo(SequentConfigData.browserUpdate);
 }
 
-if (avConfigData.browserUpdate) {
+if (SequentConfigData.browserUpdate) {
   try {
     document.addEventListener("DOMContentLoaded", $buo_f, false);
   } catch (e) {

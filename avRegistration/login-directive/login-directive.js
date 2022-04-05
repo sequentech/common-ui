@@ -1,18 +1,18 @@
 /**
- * This file is part of agora-gui-common.
- * Copyright (C) 2015-2016  Agora Voting SL <agora@agoravoting.com>
+ * This file is part of common-ui.
+ * Copyright (C) 2015-2016  Sequent Tech Inc <legal@sequentech.io>
 
- * agora-gui-common is free software: you can redistribute it and/or modify
+ * common-ui is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License.
 
- * agora-gui-common  is distributed in the hope that it will be useful,
+ * common-ui  is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
 
  * You should have received a copy of the GNU Affero General Public License
- * along with agora-gui-common.  If not, see <http://www.gnu.org/licenses/>.
+ * along with common-ui.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
 angular.module('avRegistration')
@@ -118,7 +118,7 @@ angular.module('avRegistration')
             return;
           }
 
-          // obtain the data to be sent to the authapi to request
+          // obtain the data to be sent to the iam to request
           // new auth codes by filtering and validating login fields 
           // with steps == undefined or included in step 0
           var stop = false;
@@ -314,7 +314,7 @@ angular.module('avRegistration')
                   // if it's an election with children elections then show access to them
                   else if (angular.isDefined(response.data['vote-children-info']))
                   {
-                    // assumes the authapi response has the same children 
+                    // assumes the iam response has the same children 
                     var tokens = _
                       .chain(response.data['vote-children-info'])
                       .map(function (child, index) {

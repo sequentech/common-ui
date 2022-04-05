@@ -21,8 +21,8 @@
         e && e.data && e.data.substr(0, args.length) === args && (args = [ JSON.parse(e.data.substr(args.length, e.data.length)), function(khmac) {
             e.source.postMessage("avPostAuthorization:" + khmac, "*");
         } ], window[window.avRequestAuthorizationFuncName].apply(window, args));
-    }, !1), processLinks("agoravoting-voting-booth", function(funcName) {
+    }, !1), processLinks("sequent-voting-booth", function(funcName) {
         funcName = funcName.getAttribute("data-authorization-funcname");
         window.avRequestAuthorizationFuncName = funcName;
-    }), processLinks("agoravoting-ballot-locator"), processLinks("agoravoting-results");
+    }), processLinks("sequent-ballot-locator"), processLinks("sequent-results");
 }();

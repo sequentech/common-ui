@@ -1,4 +1,4 @@
-- id: "Yarn::agora-gui-booth"
+- id: "Yarn::voting-booth"
   curations:
     comment: "This package needs to be downloaded from git"
     vcs:
