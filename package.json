@@ -89,7 +89,7 @@
     "**/ws": "7.4.6",
     "**/lodash": "^4.17.21",
     "**/hosted-git-info": "3.0.8",
-    "**/minimist": "1.2.5",
+    "**/minimist": "1.2.6",
     "**/yargs-parser": "13.1.2",
     "**/cheerio": "0.12.3",
     "**/cheerio-select": "0.0.3",
