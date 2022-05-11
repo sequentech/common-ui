@@ -446,6 +446,11 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 })));
             }, scope.sendingDataTimeout = function() {
                 scope.sendingData = !1;
+            }, scope.parseAuthToken = function() {
+                var message;
+                "smart-link" === scope.method && (scope.authToken = $location.search()["auth-token"], 
+                message = "khmac:///".length, message = scope.authToken.substr(message).split("/")[1], 
+                scope.user_id = message.split(":")[0]);
             }, scope.checkCensus = function(valid) {
                 var data;
                 valid && (scope.sendingData || (scope.censusQuery = "querying", data = {
@@ -509,7 +514,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 })) : scope.resendAuthCode()));
             }, scope.apply = function(authevent) {
                 scope.hasOtpFieldsCode = Authmethod.hasOtpCodeField(authevent), scope.method = authevent.auth_method, 
-                scope.name = authevent.name, scope.registrationAllowed = "open" === authevent.census && (autheventid !== adminId || ConfigService.allowAdminRegistration), 
+                scope.name = authevent.name, scope.parseAuthToken(), scope.registrationAllowed = "open" === authevent.census && (autheventid !== adminId || ConfigService.allowAdminRegistration), 
                 scope.isCensusQuery || scope.withCode ? scope.withCode ? scope.login_fields = Authmethod.getLoginWithCode(authevent) : scope.login_fields = Authmethod.getCensusQueryFields(authevent) : scope.login_fields = Authmethod.getLoginFields(authevent), 
                 scope.hide_default_login_lookup_field = authevent.hide_default_login_lookup_field, 
                 scope.telIndex = -1, scope.emailIndex = -1, scope.telField = null, scope.allowUserResend = function() {
@@ -526,8 +531,8 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                     el.disabled = !0) : "tlf" === el.type && "sms" === scope.method ? (null !== scope.email && -1 === scope.email.indexOf("@") && (el.value = scope.email, 
                     el.disabled = !0), scope.telIndex = index + 1, scope.telField = el) : "tlf" === el.type && "sms-otp" === scope.method ? (null !== scope.email && -1 === scope.email.indexOf("@") && (el.value = scope.email, 
                     el.disabled = !0, scope.currentFormStep = 1), scope.telIndex = index + 1, scope.telField = el) : "__username" === el.name && scope.withCode ? (el.value = scope.username, 
-                    el.disabled = !0) : "user_id" === el.name && "smart-link" === scope.method && (scope.currentFormStep = 1), 
-                    el;
+                    el.disabled = !0) : "user_id" === el.name && "smart-link" === scope.method && (scope.currentFormStep = 1, 
+                    el.value = scope.user_id, el.disabled = !0), el;
                 });
                 _.filter(fields, function(el) {
                     return null !== el.value;

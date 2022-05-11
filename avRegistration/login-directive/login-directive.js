@@ -201,6 +201,18 @@ angular.module('avRegistration')
           scope.sendingData = false;
         };
 
+        scope.parseAuthToken = function () {
+          if (scope.method !== 'smart-link') {
+            return;
+          }
+          scope.authToken = $location.search()['auth-token'];
+
+          var length = 'khmac:///'.length;
+          var tails = scope.authToken.substr(length);
+          var message = tails.split('/')[1];
+          scope.user_id = message.split(':')[0];
+        };
+
         scope.checkCensus = function(valid) {
           if (!valid) {
             return;
@@ -381,6 +393,7 @@ angular.module('avRegistration')
             scope.hasOtpFieldsCode = Authmethod.hasOtpCodeField(authevent);
             scope.method = authevent['auth_method'];
             scope.name = authevent['name'];
+            scope.parseAuthToken();
             scope.registrationAllowed = (
               (authevent['census'] === 'open') &&
               (autheventid !== adminId || ConfigService.allowAdminRegistration)
@@ -455,8 +468,13 @@ angular.module('avRegistration')
                 } else if (el.name === '__username' && scope.withCode) {
                   el.value = scope.username;
                   el.disabled = true;
-                } else if (el.name === 'user_id' && scope.method === 'smart-link') {
+                } else if (
+                  el.name === 'user_id' &&
+                  scope.method === 'smart-link'
+                ) {
                   scope.currentFormStep = 1;
+                  el.value = scope.user_id;
+                  el.disabled = true;
                 }
                 return el;
               });
