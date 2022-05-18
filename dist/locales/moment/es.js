@@ -49,12 +49,15 @@
             future: "en %s",
             past: "hace %s",
             s: "unos segundos",
+            ss: "%d segundos",
             m: "un minuto",
             mm: "%d minutos",
             h: "una hora",
             hh: "%d horas",
             d: "un día",
             dd: "%d días",
+            w: "una semana",
+            ww: "%d semanas",
             M: "un mes",
             MM: "%d meses",
             y: "un año",
@@ -65,6 +68,7 @@
         week: {
             dow: 1,
             doy: 4
-        }
+        },
+        invalidDate: "Fecha inválida"
     });
 });

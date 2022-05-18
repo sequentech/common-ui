@@ -42,6 +42,7 @@
             },
             past: "hai %s",
             s: "uns segundos",
+            ss: "%d segundos",
             m: "un minuto",
             mm: "%d minutos",
             h: "unha hora",
