@@ -17,6 +17,7 @@
 
 <div 
     ng-repeat="category in childrenElectionInfo.presentation.categories"
+    ng-if="!category.hidden"
     class="row"
 >
     <div class="col-xs-12">
@@ -25,6 +26,7 @@
             ng-repeat="election in category.events" 
             class="btn btn-success btn-election"
             ng-disabled="election.disabled"
+            ng-if="!election.hidden"
             ng-class="{'selected': selectedElectionId === election.event_id}"
             data-election-id="{{election.event_id}}"
             ng-click="click(election)"

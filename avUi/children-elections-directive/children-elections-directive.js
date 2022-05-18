@@ -32,6 +32,7 @@ angular.module('avUi')
           scope.childrenElectionInfo.presentation.categories,
           function (category) 
           {
+            category.hidden = true;
             _.each(
               category.events,
               function (election) 
@@ -43,6 +44,10 @@ angular.module('avUi')
                 {
                   election.data = election.data || false;
                   election.disabled = election.disabled || false;
+                  election.hidden = election.hidden || false;
+                  if (!election.hidden) {
+                    category.hidden = false;
+                  }
                 }
               }
             );
