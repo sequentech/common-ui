@@ -918,7 +918,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                     election.disabled = election.disabled || !1);
                 });
             }), scope.click = function(election) {
-                console.log("click to election.event_id = " + election.event_id), "checkbox" === scope.mode ? election.data = !election.data : "toggle-and-callback" === scope.mode && (scope.selectedElectionId = election.event_id, 
+                console.log("click to election.event_id = " + election.event_id), election.disabled ? console.log("election disabled, so ignoring click") : "checkbox" === scope.mode ? election.data = !election.data : "toggle-and-callback" === scope.mode && (scope.selectedElectionId = election.event_id, 
                 scope.callback({
                     electionId: election.event_id
                 }));

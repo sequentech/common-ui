@@ -53,6 +53,10 @@ angular.module('avUi')
         scope.click = function (election) 
         {
           console.log("click to election.event_id = " + election.event_id);
+          if (election.disabled) {
+            console.log("election disabled, so ignoring click");
+            return;
+          }
           if (scope.mode === 'checkbox') 
           {
             election.data = !election.data;
