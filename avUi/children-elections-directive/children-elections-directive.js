@@ -32,6 +32,7 @@ angular.module('avUi')
           scope.childrenElectionInfo.presentation.categories,
           function (category) 
           {
+            category.hidden = true;
             _.each(
               category.events,
               function (election) 
@@ -43,6 +44,10 @@ angular.module('avUi')
                 {
                   election.data = election.data || false;
                   election.disabled = election.disabled || false;
+                  election.hidden = election.hidden || false;
+                  if (!election.hidden) {
+                    category.hidden = false;
+                  }
                 }
               }
             );
@@ -53,6 +58,10 @@ angular.module('avUi')
         scope.click = function (election) 
         {
           console.log("click to election.event_id = " + election.event_id);
+          if (election.disabled) {
+            console.log("election disabled, so ignoring click");
+            return;
+          }
           if (scope.mode === 'checkbox') 
           {
             election.data = !election.data;
