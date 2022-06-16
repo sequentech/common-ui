@@ -1381,11 +1381,12 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         tree = angular.element("<div>" + tree + "</div>");
         return tree.find("a").attr("target", "_blank"), angular.element("<div>").append(tree).html();
     };
-}), angular.module("avUi").filter("htmlToText", function() {
-    return function(text) {
-        return angular.element("<div>" + text + "</div>").text();
+}), angular.module("avUi").filter("htmlToText", [ "$sanitize", function($sanitize) {
+    return function(sanitizedText) {
+        sanitizedText = $sanitize(sanitizedText);
+        return angular.element("<div>" + sanitizedText + "</div>").text();
     };
-}), angular.module("avUi").config([ "$provide", function($provide) {
+} ]), angular.module("avUi").config([ "$provide", function($provide) {
     $provide.decorator("ngModelDirective", [ "$delegate", function($delegate) {
         var ngModel = $delegate[0], controller = ngModel.controller;
         return ngModel.controller = [ "$scope", "$element", "$attrs", "$injector", function(scope, element, attrs, $injector) {

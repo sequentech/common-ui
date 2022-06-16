@@ -15,9 +15,16 @@
  * along with common-ui.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
-angular.module('avUi')
-  .filter('htmlToText', function() {
-    return function(text) {
-      return angular.element('<div>'+text+'</div>').text();
-    };
-  });
+angular
+  .module('avUi')
+  .filter(
+    'htmlToText',
+    function($sanitize)
+    {
+      return function(text)
+      {
+        var sanitizedText = $sanitize(text);
+        return angular.element('<div>' + sanitizedText + '</div>').text();
+      };
+    }
+  );
