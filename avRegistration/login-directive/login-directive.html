@@ -8,6 +8,11 @@
         </h2>
         <h2
           class="tex-center"
+          ng-if="isAdmin"
+          ng-i18next="[i18next]avRegistration.adminLoginHeader">
+        </h2>
+        <h2
+          class="tex-center"
           ng-if="!isCensusQuery && method === 'openid-connect'"
           ng-i18next="[i18next]avRegistration.loginButton">
         </h2>
