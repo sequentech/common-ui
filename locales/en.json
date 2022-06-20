@@ -21,6 +21,7 @@
   },
   "avRegistration": {
     "loginHeader": "Login to vote",
+    "adminLoginHeader": "Sign In to Admin Console",
     "censusQueryHeader": "Check if you are in the census",
     "checkCensusButton": "Check census",
     "censusQuerying": "Please wait, checking census..",

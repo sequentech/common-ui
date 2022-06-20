@@ -21,6 +21,7 @@
   },
   "avRegistration": {
     "loginHeader": "Logga",
+    "adminLoginHeader": "Logga in på administratörskonsolen",
     "censusQueryHeader": "Kontrollera om du har rösträtt",
     "checkCensusButton": "Kontrollera registret över röstberättigade",
     "censusQuerying": "Vänta, registret över röstberättigade kontrolleras...",
