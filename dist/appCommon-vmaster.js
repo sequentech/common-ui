@@ -465,8 +465,10 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                     $cookies.put("auth" + postfix, tokens.data["auth-token"], options), $cookies.put("isAdmin" + postfix, scope.isAdmin, options), 
                     Authmethod.setAuth($cookies.get("auth" + postfix), scope.isAdmin, autheventid), 
                     scope.isAdmin ? Authmethod.getUserInfo().then(function(response) {
+                        var redirectUrl = $cookies.get("redirect" + postfix);
+                        redirectUrl ? $cookies.put("redirect" + postfix, "") : redirectUrl = "/admin/elections", 
                         $cookies.put("user" + postfix, response.data.email || scope.email || response.data.username, options), 
-                        $window.location.href = "/admin/elections";
+                        $window.location.href = redirectUrl;
                     }, function(response) {
                         $window.location.href = "/admin/elections";
                     }) : angular.isDefined(tokens.data["redirect-to-url"]) ? $window.location.href = tokens.data["redirect-to-url"] : angular.isDefined(tokens.data["vote-permission-token"]) ? ($window.sessionStorage.setItem("vote_permission_tokens", JSON.stringify([ {
@@ -610,11 +612,13 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         },
         templateUrl: "avRegistration/openid-connect-directive/openid-connect-directive.html"
     };
-} ]), angular.module("avRegistration").controller("LogoutController", [ "$scope", "$stateParams", "$filter", "ConfigService", "$i18next", "$state", "$cookies", "Authmethod", function($scope, $stateParams, $filter, ConfigService, $i18next, $state, $cookies, postfix) {
+} ]), angular.module("avRegistration").controller("LogoutController", [ "$scope", "$stateParams", "$filter", "ConfigService", "$i18next", "$state", "$cookies", "$location", "Authmethod", function($scope, $stateParams, $filter, ConfigService, $i18next, $state, $cookies, loginLocation, postfix) {
     ConfigService.freeAuthId;
     var authevent = postfix.getAuthevent(), postfix = "_authevent_" + authevent;
     $cookies.put("user" + postfix, ""), $cookies.put("auth" + postfix, ""), $cookies.put("authevent_" + authevent, ""), 
-    $cookies.put("userid" + postfix, ""), $cookies.put("isAdmin" + postfix, !1), authevent !== ConfigService.freeAuthId + "" && authevent ? $state.go("registration.login", {
+    $cookies.put("userid" + postfix, ""), $cookies.put("isAdmin" + postfix, !1);
+    loginLocation = loginLocation.url();
+    $cookies.put("redirect" + postfix, loginLocation), authevent !== ConfigService.freeAuthId + "" && authevent ? $state.go("registration.login", {
         id: $cookies.get("authevent_" + authevent)
     }) : $state.go("admin.login");
 } ]), angular.module("avRegistration").controller("RegisterController", [ "$scope", "$stateParams", "$filter", "ConfigService", "$i18next", function($scope, $stateParams, $filter, ConfigService, $i18next) {
