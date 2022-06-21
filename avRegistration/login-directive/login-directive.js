@@ -286,9 +286,9 @@ angular.module('avRegistration')
                     Authmethod.getUserInfo()
                       .then(
                         function onSuccess(response) {
-                          var redirectUrl = $cookies.get("redirect" + postfix);
+                          var redirectUrl = $window.sessionStorage.getItem("redirect");
                           if (redirectUrl) {
-                            $cookies.put("redirect" + postfix, '');
+                            $window.sessionStorage.removeItem("redirect");
                           } else {
                             redirectUrl = '/admin/elections';
                           }
