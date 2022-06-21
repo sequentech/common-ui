@@ -16,7 +16,7 @@
 **/
 
 angular.module('avRegistration').controller('LogoutController',
-  function($scope, $stateParams, $filter, ConfigService, $i18next, $state, $cookies, $location, Authmethod) {
+  function($scope, $stateParams, $filter, ConfigService, $i18next, $state, $cookies, Authmethod) {
     var adminId = ConfigService.freeAuthId;
     var authevent = Authmethod.getAuthevent();
     var postfix = "_authevent_" + authevent;
@@ -25,8 +25,6 @@ angular.module('avRegistration').controller('LogoutController',
     $cookies.put("authevent_" + authevent, '');
     $cookies.put("userid" + postfix, '');
     $cookies.put("isAdmin" + postfix, false);
-    var loginLocation = $location.url();
-    $cookies.put("redirect" + postfix, loginLocation);
     if (authevent === ConfigService.freeAuthId + '' || !authevent) {
         $state.go("admin.login");
     } else {
