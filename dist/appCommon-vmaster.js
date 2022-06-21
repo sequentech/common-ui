@@ -465,8 +465,8 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                     $cookies.put("auth" + postfix, tokens.data["auth-token"], options), $cookies.put("isAdmin" + postfix, scope.isAdmin, options), 
                     Authmethod.setAuth($cookies.get("auth" + postfix), scope.isAdmin, autheventid), 
                     scope.isAdmin ? Authmethod.getUserInfo().then(function(response) {
-                        var redirectUrl = $cookies.get("redirect" + postfix);
-                        redirectUrl ? $cookies.put("redirect" + postfix, "") : redirectUrl = "/admin/elections", 
+                        var redirectUrl = $window.sessionStorage.getItem("redirect");
+                        redirectUrl ? $window.sessionStorage.removeItem("redirect") : redirectUrl = "/admin/elections", 
                         $cookies.put("user" + postfix, response.data.email || scope.email || response.data.username, options), 
                         $window.location.href = redirectUrl;
                     }, function(response) {
