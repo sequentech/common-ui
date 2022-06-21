@@ -612,13 +612,11 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         },
         templateUrl: "avRegistration/openid-connect-directive/openid-connect-directive.html"
     };
-} ]), angular.module("avRegistration").controller("LogoutController", [ "$scope", "$stateParams", "$filter", "ConfigService", "$i18next", "$state", "$cookies", "$location", "Authmethod", function($scope, $stateParams, $filter, ConfigService, $i18next, $state, $cookies, loginLocation, postfix) {
+} ]), angular.module("avRegistration").controller("LogoutController", [ "$scope", "$stateParams", "$filter", "ConfigService", "$i18next", "$state", "$cookies", "Authmethod", function($scope, $stateParams, $filter, ConfigService, $i18next, $state, $cookies, postfix) {
     ConfigService.freeAuthId;
     var authevent = postfix.getAuthevent(), postfix = "_authevent_" + authevent;
     $cookies.put("user" + postfix, ""), $cookies.put("auth" + postfix, ""), $cookies.put("authevent_" + authevent, ""), 
-    $cookies.put("userid" + postfix, ""), $cookies.put("isAdmin" + postfix, !1);
-    loginLocation = loginLocation.url();
-    $cookies.put("redirect" + postfix, loginLocation), authevent !== ConfigService.freeAuthId + "" && authevent ? $state.go("registration.login", {
+    $cookies.put("userid" + postfix, ""), $cookies.put("isAdmin" + postfix, !1), authevent !== ConfigService.freeAuthId + "" && authevent ? $state.go("registration.login", {
         id: $cookies.get("authevent_" + authevent)
     }) : $state.go("admin.login");
 } ]), angular.module("avRegistration").controller("RegisterController", [ "$scope", "$stateParams", "$filter", "ConfigService", "$i18next", function($scope, $stateParams, $filter, ConfigService, $i18next) {
