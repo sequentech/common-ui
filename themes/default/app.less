@@ -65,11 +65,22 @@
 
 .btn-success {
   border: 0;
-  background-color: @av-secondary-contrast;
+  background-color: @av-primary-contrast;
 }
 
 .btn-success:hover {
-  background-color: @av-primary-contrast;
+  background-color: darken(@av-primary-contrast, 25%);
+}
+
+.btn-success-action {
+  border: 0;
+  background-color: @av-secondary-contrast;
+  color: @av-primary;
+}
+
+.btn-success-action:hover {
+  background-color: @av-secondary;
+  color: @av-primary;
 }
 
 .btn-transparent {
