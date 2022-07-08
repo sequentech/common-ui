@@ -321,6 +321,12 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             url = backendUrl + "auth-event/" + url + "/unarchive/";
             return $http.post(url, {});
         },
+        setPublicCandidates: function(url, data) {
+            url = backendUrl + "auth-event/" + url + "/set-public-candidates/", data = {
+                publicCandidates: data
+            };
+            return $http.post(url, data);
+        },
         launchTally: function(url, tallyElectionIds, data) {
             url = backendUrl + "auth-event/" + url + "/tally-status/", data = {
                 children_election_ids: tallyElectionIds,
