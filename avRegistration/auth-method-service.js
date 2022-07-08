@@ -617,6 +617,15 @@ angular.module('avRegistration')
             return $http.post(url, data);
         };
 
+
+        authmethod.setPublicCandidates = function(eid, makePublic) {
+          var url = backendUrl + 'auth-event/'+eid+'/set-public-candidates/';
+          var data = {
+            publicCandidates: makePublic
+          };
+          return $http.post(url, data);
+      };
+
         authmethod.launchTally = function(
           electionId,
           tallyElectionIds,
