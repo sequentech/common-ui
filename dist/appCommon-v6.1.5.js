@@ -1007,14 +1007,18 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             }
         });
     };
-} ]), angular.module("avUi").directive("avChangeLang", [ "$i18next", "ipCookie", "angularLoad", "amMoment", "ConfigService", function($i18next, ipCookie, angularLoad, amMoment, ConfigService) {
+} ]), angular.module("avUi").directive("avChangeLang", [ "$i18next", "ipCookie", "angularLoad", "amMoment", "ConfigService", "$window", function($i18next, ipCookie, angularLoad, amMoment, ConfigService, $window) {
     return {
         restrict: "AE",
         scope: {},
         link: function(scope, element, attrs) {
             scope.deflang = window.i18n.lng(), angular.element("#ng-app").attr("lang", scope.deflang), 
             scope.langs = $i18next.options.lngWhitelist, scope.changeLang = function(lang) {
-                $i18next.options.lng = lang, console.log("setting cookie");
+                $i18next.options.lng = lang, angular.isDefined($window.i18nOverride) && _.map($window.i18nOverride, function(i18nOverride, language) {
+                    $window.i18n.preload([ language ], function() {
+                        $window.i18n.addResources(language, "translation", i18nOverride);
+                    });
+                }), console.log("setting cookie");
                 ipCookie("lang", lang, _.extend({
                     expires: 360,
                     path: "/"

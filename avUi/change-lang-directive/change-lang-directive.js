@@ -1,6 +1,6 @@
 /**
  * This file is part of common-ui.
- * Copyright (C) 2015-2016  Sequent Tech Inc <legal@sequentech.io>
+ * Copyright (C) 2015-2022  Sequent Tech Inc <legal@sequentech.io>
 
  * common-ui is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,7 +21,14 @@
  * <li class="dropdown" av-change-lang></li>
  */
 angular.module('avUi')
-  .directive('avChangeLang', function($i18next, ipCookie, angularLoad, amMoment, ConfigService) {
+  .directive('avChangeLang', function(
+    $i18next,
+    ipCookie,
+    angularLoad,
+    amMoment,
+    ConfigService,
+    $window
+  ) {
     function link(scope, element, attrs) {
       scope.deflang = window.i18n.lng();
       angular.element('#ng-app').attr('lang', scope.deflang);
@@ -31,8 +38,32 @@ angular.module('avUi')
       // remembering it, and updating all the translations instantly.
       //
       // Triggered when the user clicks and selects a language.
-      scope.changeLang = function(lang) {
+      scope.changeLang = function(lang)
+      {
         $i18next.options.lng = lang;
+
+        // load i18n_overrides if any
+        if (angular.isDefined($window.i18nOverride))
+        {
+          _.map(
+            $window.i18nOverride,
+            function (i18nOverride, language)
+            {
+              $window.i18n.preload(
+                [language],
+                function ()
+                {
+                  $window.i18n.addResources(
+                    /* lng = */ language,
+                    /* ns = */ "translation",
+                    /* resources = */ i18nOverride
+                  );
+                }
+              );
+            }
+          );
+        }
+    
         console.log("setting cookie");
         var cookieConf = {
           expires: 360,
