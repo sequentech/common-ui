@@ -27,9 +27,11 @@ angular.module('avUi')
     angularLoad,
     amMoment,
     ConfigService,
-    $window
+    $window,
+    I18nOverride
   ) {
-    function link(scope, element, attrs) {
+    function link(scope, element, attrs)
+    {
       scope.deflang = window.i18n.lng();
       angular.element('#ng-app').attr('lang', scope.deflang);
       scope.langs =  $i18next.options.lngWhitelist;
@@ -45,25 +47,18 @@ angular.module('avUi')
         // load i18n_overrides if any
         if (angular.isDefined($window.i18nOverride))
         {
-          _.map(
-            $window.i18nOverride,
-            function (i18nOverride, language)
+          $window.i18n.preload(
+            [lang],
+            function ()
             {
-              $window.i18n.preload(
-                [language],
-                function ()
-                {
-                  $window.i18n.addResources(
-                    /* lng = */ language,
-                    /* ns = */ "translation",
-                    /* resources = */ i18nOverride
-                  );
-                }
+              I18nOverride(
+                /* overrides = */ null, // set to use the default, $window.i18nOverride
+                /* force = */ true
               );
             }
           );
         }
-    
+
         console.log("setting cookie");
         var cookieConf = {
           expires: 360,
