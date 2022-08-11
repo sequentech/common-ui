@@ -26,7 +26,7 @@ angular.module('avRegistration')
       $cookies,
       $i18next,
       $window,
-      $timeout,
+      $interval,
       ConfigService,
       Patterns)
     {
@@ -181,10 +181,10 @@ angular.module('avRegistration')
                 );
                 scope.currentFormStep = 1;
                 scope.error = null;
-                $timeout(scope.sendingDataTimeout, 3000);
+                $interval(scope.sendingDataTimeout, 3000);
               },
               function onError(response) {
-                $timeout(scope.sendingDataTimeout, 3000);
+                $interval(scope.sendingDataTimeout, 3000);
                 scope.error = $i18next('avRegistration.errorSendingAuthCode');
               }
             );

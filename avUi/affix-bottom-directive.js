@@ -29,7 +29,7 @@
  * automatically the element will be affixed.
  */
 angular.module('avUi')
-  .directive('avAffixBottom', function($window, $timeout, $parse) {
+  .directive('avAffixBottom', function($window, $interval, $parse) {
     var affixBottomClass = "affix-bottom";
     var checkPosition = function(scope, instance, el, options) {
 
@@ -84,8 +84,8 @@ angular.module('avUi')
         var timeout;
 
         function callCheckPos() {
-          timeout = $timeout(function() {
-            $timeout.cancel(timeout);
+          timeout = $interval(function() {
+            $interval.cancel(timeout);
             checkPosition(scope, instance, iElement, iAttrs);
           }, 300);
         }

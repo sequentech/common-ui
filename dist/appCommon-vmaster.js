@@ -403,7 +403,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
     $scope.event_id = $stateParams.id, $scope.code = $stateParams.code, $scope.email = $stateParams.email, 
     $scope.username = $stateParams.username, $scope.isOpenId = $stateParams.isOpenId, 
     $scope.withCode = $stateParams.withCode;
-} ]), angular.module("avRegistration").directive("avLogin", [ "Authmethod", "StateDataService", "$state", "$location", "$cookies", "$i18next", "$window", "$timeout", "ConfigService", "Patterns", function(Authmethod, StateDataService, $state, $location, $cookies, $i18next, $window, $timeout, ConfigService, Patterns) {
+} ]), angular.module("avRegistration").directive("avLogin", [ "Authmethod", "StateDataService", "$state", "$location", "$cookies", "$i18next", "$window", "$interval", "ConfigService", "Patterns", function(Authmethod, StateDataService, $state, $location, $cookies, $i18next, $window, $interval, ConfigService, Patterns) {
     return {
         restrict: "AE",
         scope: !0,
@@ -436,9 +436,9 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 })), stop || (field && (field.value = ""), scope.sendingData = !0, Authmethod.resendAuthCode(data, autheventid).then(function(response) {
                     _.each(scope.login_fields, function(element) {
                         void 0 !== element.steps && -1 === element.steps.indexOf(0) || (element.disabled = !0);
-                    }), scope.currentFormStep = 1, scope.error = null, $timeout(scope.sendingDataTimeout, 3e3);
+                    }), scope.currentFormStep = 1, scope.error = null, $interval(scope.sendingDataTimeout, 3e3);
                 }, function(response) {
-                    $timeout(scope.sendingDataTimeout, 3e3), scope.error = $i18next("avRegistration.errorSendingAuthCode");
+                    $interval(scope.sendingDataTimeout, 3e3), scope.error = $i18next("avRegistration.errorSendingAuthCode");
                 }))));
             }, scope.sendingDataTimeout = function() {
                 scope.sendingData = !1;
@@ -811,7 +811,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         },
         templateUrl: "avRegistration/fields/code-field-directive/code-field-directive.html"
     };
-} ]), angular.module("avRegistration").directive("avrTelField", [ "$state", "$timeout", function($state, $timeout) {
+} ]), angular.module("avRegistration").directive("avrTelField", [ "$state", "$interval", function($state, $interval) {
     return {
         restrict: "AE",
         scope: !0,
@@ -821,7 +821,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             $.get("https://ipinfo.io", function() {}, "jsonp").always(function(resp) {
                 ipData = resp;
                 for (var i = 0; i < ipCallbacks.length; i++) ipCallbacks[i]();
-            }), $timeout(function() {
+            }), $interval(function() {
                 var telInput = angular.element(document.getElementById("input" + scope.index));
                 telInput.intlTelInput({
                     utilsScript: "election/utils.js",
@@ -879,11 +879,11 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         scope: !0,
         templateUrl: "avRegistration/fields/textarea-field-directive/textarea-field-directive.html"
     };
-} ]), angular.module("avRegistration").directive("avrImageField", [ "$state", "$timeout", function($state, $timeout) {
+} ]), angular.module("avRegistration").directive("avrImageField", [ "$state", "$interval", function($state, $interval) {
     return {
         restrict: "AE",
         link: function(scope, element, attrs) {
-            $timeout(function() {
+            $interval(function() {
                 $("#image-field").change(function() {
                     var input, FR;
                     (input = this).files && input.files[0] && ((FR = new FileReader()).onload = function(e) {
@@ -1041,7 +1041,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         },
         templateUrl: "avUi/change-lang-directive/change-lang-directive.html"
     };
-} ]), angular.module("avUi").directive("avAffixBottom", [ "$window", "$timeout", "$parse", function($window, $timeout, $parse) {
+} ]), angular.module("avUi").directive("avAffixBottom", [ "$window", "$interval", "$parse", function($window, $interval, $parse) {
     return {
         restrict: "EAC",
         link: function(scope, iElement, iAttrs) {
@@ -1053,8 +1053,8 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 forceAffixWidth: parseInt(iAttrs.forceAffixWidth, 10)
             };
             function callCheckPos() {
-                timeout = $timeout(function() {
-                    $timeout.cancel(timeout), function(scope, instance, el) {
+                timeout = $interval(function() {
+                    $interval.cancel(timeout), function(scope, instance, el) {
                         var affix = !1, elHeight = $(el).actual("height");
                         ($("body").height() + elHeight > window.innerHeight || instance.forceAffixWidth && window.innerWidth < instance.forceAffixWidth) && (affix = "affix-bottom"), 
                         instance.affixed !== affix && (instance.affix = affix, instance.setIsAffix(scope, affix), 
@@ -1069,13 +1069,13 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             angular.element(iElement).on("resize", callCheckPos);
         }
     };
-} ]), angular.module("avUi").directive("avAutoHeight", [ "$window", "$timeout", function($window, $timeout) {
+} ]), angular.module("avUi").directive("avAutoHeight", [ "$window", "$interval", function($window, $interval) {
     return {
         link: function(scope, element, attrs) {
             var promise = null, sibling = function() {
                 return element.closest(attrs.parentSelector).find(attrs.siblingSelector);
             }, recalculate = function() {
-                promise && $timeout.cancel(promise), promise = $timeout(function() {
+                promise && $interval.cancel(promise), promise = $interval(function() {
                     var height, additionalHeight = 0;
                     attrs.additionalHeight && (additionalHeight = parseInt(attrs.additionalHeight, 10)), 
                     height = sibling().height(), element.css("max-height", height + additionalHeight + "px");
@@ -1088,7 +1088,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             }), recalculate();
         }
     };
-} ]), angular.module("avUi").directive("avAffixTopOffset", [ "$window", "$timeout", "$parse", function($window, $timeout, $parse) {
+} ]), angular.module("avUi").directive("avAffixTopOffset", [ "$window", "$interval", "$parse", function($window, $interval, $parse) {
     return {
         restrict: "EAC",
         link: function(scope, iElement, iAttrs) {
@@ -1113,14 +1113,14 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             }
             callCheckPos(), angular.element($window).on("scroll", callCheckPos), angular.element($window).on("resize", function() {
                 iElement.removeClass("affix-top"), iElement.attr("style", ""), instance.affix = !1, 
-                instance.scrollAffix = null, $timeout(function() {
+                instance.scrollAffix = null, $interval(function() {
                     instance.baseOffset = iElement.offset(), instance.baseWidth = iElement.width(), 
                     callCheckPos();
                 }, 300);
             });
         }
     };
-} ]), angular.module("avUi").directive("avAffixTop", [ "$window", "$timeout", function($window, $timeout) {
+} ]), angular.module("avUi").directive("avAffixTop", [ "$window", "$interval", function($window, $interval) {
     function updateMargin(el, options) {
         var height = parseInt(options.minHeight), height = Math.max($(el).height(), angular.isNumber(height) && !isNaN(height) ? height : 0);
         $(options.avAffixTop).css("padding-top", height + "px");
@@ -1130,8 +1130,8 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         link: function(scope, iElement, iAttrs) {
             var timeout;
             function updateMarginTimeout() {
-                timeout = $timeout(function() {
-                    $timeout.cancel(timeout), updateMargin(iElement, iAttrs);
+                timeout = $interval(function() {
+                    $interval.cancel(timeout), updateMargin(iElement, iAttrs);
                 }, 300);
             }
             updateMargin(iElement, iAttrs), void 0 === iAttrs.minHeight && (iAttrs.minHeight = "20"), 
@@ -1139,7 +1139,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             angular.element($window).bind("resize", updateMarginTimeout), $(iAttrs.avAffixTop).change(updateMarginTimeout);
         }
     };
-} ]), angular.module("avUi").directive("avCollapsing", [ "$window", "$timeout", function($window, $timeout) {
+} ]), angular.module("avUi").directive("avCollapsing", [ "$window", "$interval", function($window, $interval) {
     function select(instance, el, val) {
         val = instance.parentSelector ? el.closest(instance.parentSelector).find(val) : angular.element(val);
         return val;
@@ -1158,8 +1158,8 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 collapseSelector: iAttrs.collapseSelector
             };
             function callCheck() {
-                timeout = $timeout(function() {
-                    $timeout.cancel(timeout), function(instance, el) {
+                timeout = $interval(function() {
+                    $interval.cancel(timeout), function(instance, el) {
                         var maxHeight = select(instance, el, instance.maxHeightSelector).css("max-height"), height = angular.element(el)[0].scrollHeight, paddingTop = angular.element(el).css("padding-top");
                         -1 !== maxHeight.indexOf("px") ? (paddingTop = paddingTop && -1 !== paddingTop.indexOf("px") ? parseInt(paddingTop.replace("px", "")) : 0, 
                         (maxHeight = parseInt(maxHeight.replace("px", ""))) < height - paddingTop ? instance.isCollapsed || (instance.isCollapsed = !0, 
@@ -1195,7 +1195,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             };
         }
     };
-} ]), angular.module("avUi").directive("avDebounce", [ "$timeout", function($timeout) {
+} ]), angular.module("avUi").directive("avDebounce", [ "$interval", function($interval) {
     return {
         restrict: "A",
         require: "ngModel",
@@ -1203,7 +1203,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         link: function(scope, elm, attr, ngModelCtrl) {
             var debounce;
             "radio" !== attr.type && "checkbox" !== attr.type && (elm.unbind("input"), elm.bind("input", function() {
-                $timeout.cancel(debounce), debounce = $timeout(function() {
+                $interval.cancel(debounce), debounce = $interval(function() {
                     scope.$apply(function() {
                         ngModelCtrl.$setViewValue(elm.val());
                     });
@@ -1386,7 +1386,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             return data;
         }
     };
-} ]), angular.module("avUi").directive("avScrollToBottom", [ "$timeout", function($timeout) {
+} ]), angular.module("avUi").directive("avScrollToBottom", [ "$interval", function($interval) {
     return {
         restrict: "A",
         link: function(scope, element, attrs) {

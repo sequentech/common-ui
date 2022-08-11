@@ -17,7 +17,7 @@
 
 // source: https://gist.github.com/tommaitland/7579618#file-ng-debounce-js
 angular.module('avUi')
-  .directive('avDebounce', function($timeout) {
+  .directive('avDebounce', function($interval) {
     return {
       restrict: 'A',
       require: 'ngModel',
@@ -30,8 +30,8 @@ angular.module('avUi')
         var debounce;
 
         elm.bind('input', function() {
-          $timeout.cancel(debounce);
-          debounce = $timeout( function() {
+          $interval.cancel(debounce);
+          debounce = $interval( function() {
             scope.$apply(function() {
               ngModelCtrl.$setViewValue(elm.val());
             });

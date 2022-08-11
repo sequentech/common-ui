@@ -16,7 +16,7 @@
 **/
 
 angular.module('avRegistration')
-  .directive('avrImageField', function($state, $timeout) {
+  .directive('avrImageField', function($state, $interval) {
     function link(scope, element, attrs) {
         function readImage(input) {
             if ( input.files && input.files[0] ) {
@@ -28,7 +28,7 @@ angular.module('avRegistration')
             }
         }
 
-        $timeout(function() {
+        $interval(function() {
             $("#image-field").change(function() { readImage( this ); });
         }, 0);
     }
