@@ -98,21 +98,28 @@ angular.module('avRegistration')
           // if invalid method or already sending data, do not proceed
           if (
             scope.sendingData || 
-            !_.contains(["email", "email-otp", "sms", "sms-otp"], scope.method)
+            !(
+              scope.hasOtpFieldsCode ||
+              _.contains(["email", "email-otp", "sms", "sms-otp"], scope.method)
+            )
           ) {
               return;
           }
 
           // if telIndex or emailIndex not set when needed, do not proceed
           if (
-             (
-              _.contains(["sms", "sms-otp"], scope.method) &&
-              scope.telIndex === -1 &&
-              !scope.hide_default_login_lookup_field
-            ) || (
-              _.contains(["email", "email-otp"], scope.method) &&
-              scope.emailIndex === -1 &&
-              !scope.hide_default_login_lookup_field
+            !scope.hasOtpFieldsCode &&
+            (
+              (
+                _.contains(["sms", "sms-otp"], scope.method) &&
+                scope.telIndex === -1 &&
+                !scope.hide_default_login_lookup_field
+              ) || 
+              (
+                _.contains(["email", "email-otp"], scope.method) &&
+                scope.emailIndex === -1 &&
+                !scope.hide_default_login_lookup_field
+              )
             )
           ) {
             return;
@@ -237,7 +244,10 @@ angular.module('avRegistration')
           // loginUser
           if (
             !scope.withCode &&
-            _.contains(['sms-otp', 'email-otp'], scope.method) &&
+            (
+              scope.hasOtpFieldsCode ||
+              _.contains(['sms-otp', 'email-otp'], scope.method)
+            ) &&
             scope.currentFormStep === 0
           ) {
             scope.resendAuthCode();
@@ -368,6 +378,7 @@ angular.module('avRegistration')
         };
 
         scope.apply = function(authevent) {
+            scope.hasOtpFieldsCode = Authmethod.hasOtpCodeField(authevent);
             scope.method = authevent['auth_method'];
             scope.name = authevent['name'];
             scope.registrationAllowed = (
@@ -444,6 +455,8 @@ angular.module('avRegistration')
                 } else if (el.name === '__username' && scope.withCode) {
                   el.value = scope.username;
                   el.disabled = true;
+                } else if (el.name === 'user_id' && scope.method === 'smart-link') {
+                  scope.currentFormStep = 1;
                 }
                 return el;
               });
