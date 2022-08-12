@@ -98,21 +98,28 @@ angular.module('avRegistration')
           // if invalid method or already sending data, do not proceed
           if (
             scope.sendingData || 
-            !_.contains(["email", "email-otp", "sms", "sms-otp"], scope.method)
+            !(
+              scope.hasOtpFieldsCode ||
+              _.contains(["email", "email-otp", "sms", "sms-otp"], scope.method)
+            )
           ) {
               return;
           }
 
           // if telIndex or emailIndex not set when needed, do not proceed
           if (
-             (
-              _.contains(["sms", "sms-otp"], scope.method) &&
-              scope.telIndex === -1 &&
-              !scope.hide_default_login_lookup_field
-            ) || (
-              _.contains(["email", "email-otp"], scope.method) &&
-              scope.emailIndex === -1 &&
-              !scope.hide_default_login_lookup_field
+            !scope.hasOtpFieldsCode &&
+            (
+              (
+                _.contains(["sms", "sms-otp"], scope.method) &&
+                scope.telIndex === -1 &&
+                !scope.hide_default_login_lookup_field
+              ) || 
+              (
+                _.contains(["email", "email-otp"], scope.method) &&
+                scope.emailIndex === -1 &&
+                !scope.hide_default_login_lookup_field
+              )
             )
           ) {
             return;
@@ -194,6 +201,18 @@ angular.module('avRegistration')
           scope.sendingData = false;
         };
 
+        scope.parseAuthToken = function () {
+          if (scope.method !== 'smart-link') {
+            return;
+          }
+          scope.authToken = $location.search()['auth-token'];
+
+          var length = 'khmac:///'.length;
+          var tails = scope.authToken.substr(length);
+          var message = tails.split('/')[1];
+          scope.user_id = message.split(':')[0];
+        };
+
         scope.checkCensus = function(valid) {
           if (!valid) {
             return;
@@ -237,7 +256,10 @@ angular.module('avRegistration')
           // loginUser
           if (
             !scope.withCode &&
-            _.contains(['sms-otp', 'email-otp'], scope.method) &&
+            (
+              scope.hasOtpFieldsCode ||
+              _.contains(['sms-otp', 'email-otp'], scope.method)
+            ) &&
             scope.currentFormStep === 0
           ) {
             scope.resendAuthCode();
@@ -372,8 +394,10 @@ angular.module('avRegistration')
         };
 
         scope.apply = function(authevent) {
+            scope.hasOtpFieldsCode = Authmethod.hasOtpCodeField(authevent);
             scope.method = authevent['auth_method'];
             scope.name = authevent['name'];
+            scope.parseAuthToken();
             scope.registrationAllowed = (
               (authevent['census'] === 'open') &&
               (autheventid !== adminId || ConfigService.allowAdminRegistration)
@@ -448,14 +472,30 @@ angular.module('avRegistration')
                 } else if (el.name === '__username' && scope.withCode) {
                   el.value = scope.username;
                   el.disabled = true;
+                } else if (
+                  el.name === 'user_id' &&
+                  scope.method === 'smart-link'
+                ) {
+                  el.value = scope.user_id;
+                  el.disabled = true;
                 }
                 return el;
               });
-            var filled_fields = _.filter(fields,
-              function (el) { return el.value !== null; });
 
-            // if not all the fields all filled at this point, then we stop here
-            if (filled_fields.length !== scope.login_fields.length) {
+            // if not all the fields all filled at this point, then we stop
+            // here. otp-code or code fields do not count, because loginUser
+            // function will send the appropiate OTP code if required
+            var filledFields = _.filter(
+              fields,
+              function (el) {
+                return (
+                  el.value !== null ||
+                  el.type === 'otp-code' ||
+                  el.type === 'code'
+                );
+              }
+            );
+            if (filledFields.length !== scope.login_fields.length) {
               return;
             }
 
