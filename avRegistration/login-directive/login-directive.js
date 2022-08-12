@@ -472,17 +472,26 @@ angular.module('avRegistration')
                   el.name === 'user_id' &&
                   scope.method === 'smart-link'
                 ) {
-                  scope.currentFormStep = 1;
                   el.value = scope.user_id;
                   el.disabled = true;
                 }
                 return el;
               });
-            var filled_fields = _.filter(fields,
-              function (el) { return el.value !== null; });
 
-            // if not all the fields all filled at this point, then we stop here
-            if (filled_fields.length !== scope.login_fields.length) {
+            // if not all the fields all filled at this point, then we stop
+            // here. otp-code or code fields do not count, because loginUser
+            // function will send the appropiate OTP code if required
+            var filledFields = _.filter(
+              fields,
+              function (el) {
+                return (
+                  el.value !== null ||
+                  el.type === 'otp-code' ||
+                  el.type === 'code'
+                );
+              }
+            );
+            if (filledFields.length !== scope.login_fields.length) {
               return;
             }
 

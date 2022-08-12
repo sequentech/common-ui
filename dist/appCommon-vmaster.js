@@ -531,11 +531,11 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                     el.disabled = !0) : "tlf" === el.type && "sms" === scope.method ? (null !== scope.email && -1 === scope.email.indexOf("@") && (el.value = scope.email, 
                     el.disabled = !0), scope.telIndex = index + 1, scope.telField = el) : "tlf" === el.type && "sms-otp" === scope.method ? (null !== scope.email && -1 === scope.email.indexOf("@") && (el.value = scope.email, 
                     el.disabled = !0, scope.currentFormStep = 1), scope.telIndex = index + 1, scope.telField = el) : "__username" === el.name && scope.withCode ? (el.value = scope.username, 
-                    el.disabled = !0) : "user_id" === el.name && "smart-link" === scope.method && (scope.currentFormStep = 1, 
-                    el.value = scope.user_id, el.disabled = !0), el;
+                    el.disabled = !0) : "user_id" === el.name && "smart-link" === scope.method && (el.value = scope.user_id, 
+                    el.disabled = !0), el;
                 });
                 _.filter(fields, function(el) {
-                    return null !== el.value;
+                    return null !== el.value || "otp-code" === el.type || "code" === el.type;
                 }).length === scope.login_fields.length && "openid-connect" !== scope.method && scope.loginUser(!0);
             }, scope.view = function(id) {
                 Authmethod.viewEvent(id).then(function(response) {
