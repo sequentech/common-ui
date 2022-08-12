@@ -208,6 +208,10 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             }
             return fields;
         },
+        hasOtpCodeField: function(viewEventData) {
+            for (var fields = authmethod.getRegisterFields(viewEventData), i = 0; i < fields.length; i++) if ("otp-code" === fields[i].type) return !0;
+            return !1;
+        },
         getCensusQueryFields: function(fields) {
             fields = angular.copy(fields.extra_fields);
             return fields = _.filter(fields, function(field) {
@@ -230,13 +234,13 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             } ];
         },
         getLoginFields: function(viewEventData) {
-            var fields = authmethod.getRegisterFields(viewEventData);
+            var fields = authmethod.getRegisterFields(viewEventData), hasOtpCodeField = authmethod.hasOtpCodeField(viewEventData);
             _.contains([ "sms", "email" ], viewEventData.auth_method) ? fields.push({
                 name: "code",
                 type: "code",
                 required: !0,
                 required_on_authentication: !0
-            }) : _.contains([ "sms-otp", "email-otp" ], viewEventData.auth_method) && fields.push({
+            }) : (hasOtpCodeField || _.contains([ "sms-otp", "email-otp" ], viewEventData.auth_method)) && fields.push({
                 name: "code",
                 type: "code",
                 required: !0,
@@ -424,7 +428,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             scope.email = null, attrs.email && 0 < attrs.email.length && (scope.email = attrs.email), 
             scope.isAdmin = !1, autheventid === adminId && (scope.isAdmin = !0), scope.resendAuthCode = function(field) {
                 var stop, data;
-                !scope.sendingData && _.contains([ "email", "email-otp", "sms", "sms-otp" ], scope.method) && (_.contains([ "sms", "sms-otp" ], scope.method) && -1 === scope.telIndex && !scope.hide_default_login_lookup_field || _.contains([ "email", "email-otp" ], scope.method) && -1 === scope.emailIndex && !scope.hide_default_login_lookup_field || (stop = !1, 
+                scope.sendingData || !scope.hasOtpFieldsCode && !_.contains([ "email", "email-otp", "sms", "sms-otp" ], scope.method) || !scope.hasOtpFieldsCode && (_.contains([ "sms", "sms-otp" ], scope.method) && -1 === scope.telIndex && !scope.hide_default_login_lookup_field || _.contains([ "email", "email-otp" ], scope.method) && -1 === scope.emailIndex && !scope.hide_default_login_lookup_field) || (stop = !1, 
                 data = _.object(_.filter(scope.login_fields, function(element, index) {
                     return element.index = index, void 0 === element.steps || -1 !== element.steps.indexOf(0);
                 }).map(function(element) {
@@ -439,9 +443,14 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                     }), scope.currentFormStep = 1, scope.error = null, $timeout(scope.sendingDataTimeout, 3e3);
                 }, function(response) {
                     $timeout(scope.sendingDataTimeout, 3e3), scope.error = $i18next("avRegistration.errorSendingAuthCode");
-                }))));
+                })));
             }, scope.sendingDataTimeout = function() {
                 scope.sendingData = !1;
+            }, scope.parseAuthToken = function() {
+                var message;
+                "smart-link" === scope.method && (scope.authToken = $location.search()["auth-token"], 
+                message = "khmac:///".length, message = scope.authToken.substr(message).split("/")[1], 
+                scope.user_id = message.split(":")[0]);
             }, scope.checkCensus = function(valid) {
                 var data;
                 valid && (scope.sendingData || (scope.censusQuery = "querying", data = {
@@ -455,7 +464,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 })));
             }, scope.loginUser = function(valid) {
                 var data;
-                valid && (scope.sendingData || (scope.withCode || !_.contains([ "sms-otp", "email-otp" ], scope.method) || 0 !== scope.currentFormStep ? (data = {
+                valid && (scope.sendingData || (scope.withCode || !scope.hasOtpFieldsCode && !_.contains([ "sms-otp", "email-otp" ], scope.method) || 0 !== scope.currentFormStep ? (data = {
                     captcha_code: Authmethod.captcha_code
                 }, _.each(scope.login_fields, function(field) {
                     "email" === field.name ? scope.email = field.value : "code" === field.name && (field.value = field.value.trim().replace(/ |\n|\t|-|_/g, "").toUpperCase()), 
@@ -504,7 +513,8 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                     });
                 })) : scope.resendAuthCode()));
             }, scope.apply = function(authevent) {
-                scope.method = authevent.auth_method, scope.name = authevent.name, scope.registrationAllowed = "open" === authevent.census && (autheventid !== adminId || ConfigService.allowAdminRegistration), 
+                scope.hasOtpFieldsCode = Authmethod.hasOtpCodeField(authevent), scope.method = authevent.auth_method, 
+                scope.name = authevent.name, scope.parseAuthToken(), scope.registrationAllowed = "open" === authevent.census && (autheventid !== adminId || ConfigService.allowAdminRegistration), 
                 scope.isCensusQuery || scope.withCode ? scope.withCode ? scope.login_fields = Authmethod.getLoginWithCode(authevent) : scope.login_fields = Authmethod.getCensusQueryFields(authevent) : scope.login_fields = Authmethod.getLoginFields(authevent), 
                 scope.hide_default_login_lookup_field = authevent.hide_default_login_lookup_field, 
                 scope.telIndex = -1, scope.emailIndex = -1, scope.telField = null, scope.allowUserResend = function() {
@@ -520,11 +530,12 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                     scope.emailIndex = index) : "code" === el.type && null !== scope.code ? (el.value = scope.code.trim().replace(/ |\n|\t|-|_/g, "").toUpperCase(), 
                     el.disabled = !0) : "tlf" === el.type && "sms" === scope.method ? (null !== scope.email && -1 === scope.email.indexOf("@") && (el.value = scope.email, 
                     el.disabled = !0), scope.telIndex = index + 1, scope.telField = el) : "tlf" === el.type && "sms-otp" === scope.method ? (null !== scope.email && -1 === scope.email.indexOf("@") && (el.value = scope.email, 
-                    el.disabled = !0, scope.currentFormStep = 1), scope.telIndex = index + 1, scope.telField = el) : "__username" === el.name && scope.withCode && (el.value = scope.username, 
+                    el.disabled = !0, scope.currentFormStep = 1), scope.telIndex = index + 1, scope.telField = el) : "__username" === el.name && scope.withCode ? (el.value = scope.username, 
+                    el.disabled = !0) : "user_id" === el.name && "smart-link" === scope.method && (el.value = scope.user_id, 
                     el.disabled = !0), el;
                 });
                 _.filter(fields, function(el) {
-                    return null !== el.value;
+                    return null !== el.value || "otp-code" === el.type || "code" === el.type;
                 }).length === scope.login_fields.length && "openid-connect" !== scope.method && scope.loginUser(!0);
             }, scope.view = function(id) {
                 Authmethod.viewEvent(id).then(function(response) {
