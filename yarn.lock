@@ -2480,10 +2480,10 @@ grunt-contrib-htmlmin@~0.1:
     grunt-lib-contrib "~0.6.1"
     html-minifier "~0.5.0"
 
-grunt-contrib-imagemin@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/grunt-contrib-imagemin/-/grunt-contrib-imagemin-4.0.0.tgz#ae917feb0514aedc3d24c90579b1341d577f2cd3"
-  integrity sha512-2GYQBQFfJLjeTThJ8E7+vLgvgfOh78u0bgieIK85c2Rv9V6ssd2AvBvuF7T26mK261EN/SlNefpW5+zGWzfrVw==
+grunt-contrib-imagemin@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/grunt-contrib-imagemin/-/grunt-contrib-imagemin-3.1.0.tgz#d04b3cb057a694e2aab37d9818db4fae3908770b"
+  integrity sha512-c0duAb018eowVVfqNMN0S5Esx8mRZ1OP/hkEoKnJkOCaD9/DywKGvLuhschF+DByPSs4k1u1y38w9Bt+ihJG8A==
   dependencies:
     chalk "^2.4.1"
     imagemin "^6.0.0"
