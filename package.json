@@ -84,6 +84,7 @@
   "resolutions": {
     "**/angular": "~1.8",
     "**/async": "3.2.2",
+    "**/got": "11.8.5",
     "**/shelljs": ">=0.8.5",
     "**/json-schema": ">=0.4.0",
     "**/xmlhttprequest-ssl": "1.6.2",
