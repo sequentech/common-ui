@@ -571,7 +571,8 @@ angular.module('avRegistration')
               data.msg = election.census.config.msg;
               if ('email' === auth_method) {
                 data.subject = election.census.config.subject;
-                if (election.census.config.html_message) {
+                if (ConfigService.allowAdminRegistration &&
+                    election.census.config.html_message) {
                   data.html_message = election.census.config.html_message;
                 }
               }
