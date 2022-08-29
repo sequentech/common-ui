@@ -58,6 +58,11 @@ var SequentConfigData = {
   allowEditElectionJson: true,
 
   // For admins:
+  // Allow sending custom html in the email messages sent from the admin console.
+  // Allowed values: true|false
+  allowHtmlEmails: false,
+
+  // For admins:
   // Allow editing the election.presentation.theme_css so that any election
   // Admin can highly customize the election directly with CSS.
   // Allowed values: true|false

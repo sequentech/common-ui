@@ -571,6 +571,10 @@ angular.module('avRegistration')
               data.msg = election.census.config.msg;
               if ('email' === auth_method) {
                 data.subject = election.census.config.subject;
+                if (ConfigService.allowHtmlEmails &&
+                    election.census.config.html_message) {
+                  data.html_message = election.census.config.html_message;
+                }
               }
             }
             if (angular.isDefined(user_ids)) {

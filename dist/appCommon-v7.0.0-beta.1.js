@@ -281,7 +281,8 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         },
         sendAuthCodes: function(data, election, user_ids, auth_method, extra, filter) {
             var url = backendUrl + "auth-event/" + data + "/census/send_auth/", data = {};
-            return angular.isDefined(election) && (data.msg = election.census.config.msg, "email" === auth_method && (data.subject = election.census.config.subject)), 
+            return angular.isDefined(election) && (data.msg = election.census.config.msg, "email" === auth_method && (data.subject = election.census.config.subject, 
+            ConfigService.allowHtmlEmails && election.census.config.html_message && (data.html_message = election.census.config.html_message))), 
             angular.isDefined(user_ids) && (data["user-ids"] = user_ids), angular.isDefined(auth_method) && (data["auth-method"] = auth_method), 
             extra && (data.extra = extra), angular.isDefined(filter) && (data.filter = filter), 
             $http.post(url, data);
