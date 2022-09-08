@@ -543,7 +543,7 @@ angular.module('avRegistration')
             );
         };
 
-        authmethod.sendAuthCodes = function(eid, election, user_ids, auth_method, extra) {
+        authmethod.sendAuthCodes = function(eid, election, user_ids, auth_method, extra, filter) {
             var url = backendUrl + 'auth-event/'+eid+'/census/send_auth/';
             var data = {};
             if (angular.isDefined(election)) {
@@ -560,6 +560,9 @@ angular.module('avRegistration')
             }
             if (extra) {
               data["extra"] = extra;
+            }
+            if (angular.isDefined(filter)) {
+              data["filter"] = filter;
             }
             return $http.post(url, data);
         };
