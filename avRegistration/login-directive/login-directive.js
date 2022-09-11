@@ -337,7 +337,12 @@ angular.module('avRegistration')
                         isFirst: true
                       }])
                     );
-                    $window.location.href = '/booth/' + autheventid + '/vote';
+                    $window.sessionStorage.setItem(
+                      "show-pdf",
+                      !!response.data['show-pdf']
+                    );
+                    var extra = !!response.data['show-pdf']? '/options' : '';
+                    $window.location.href = '/booth/' + autheventid + '/vote' + extra;
                   }
                   // if it's an election with children elections then show access to them
                   else if (angular.isDefined(response.data['vote-children-info']))

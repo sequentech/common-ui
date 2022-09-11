@@ -473,7 +473,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                     data[field.name] = field.value;
                 }), "smart-link" === scope.method && (data["auth-token"] = $location.search()["auth-token"]), 
                 scope.sendingData = !0, scope.error = null, Authmethod.login(data, autheventid).then(function(tokens) {
-                    var postfix, options;
+                    var postfix, options, extra;
                     "ok" === tokens.data.status ? (postfix = "_authevent_" + autheventid, options = {}, 
                     ConfigService.cookies && ConfigService.cookies.expires && (options.expires = new Date(), 
                     options.expires.setMinutes(options.expires.getMinutes() + ConfigService.cookies.expires)), 
@@ -492,7 +492,8 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                         electionId: autheventid,
                         token: tokens.data["vote-permission-token"],
                         isFirst: !0
-                    } ])), $window.location.href = "/booth/" + autheventid + "/vote") : angular.isDefined(tokens.data["vote-children-info"]) ? (tokens = _.chain(tokens.data["vote-children-info"]).map(function(child, index) {
+                    } ])), $window.sessionStorage.setItem("show-pdf", !!tokens.data["show-pdf"]), extra = tokens.data["show-pdf"] ? "/options" : "", 
+                    $window.location.href = "/booth/" + autheventid + "/vote" + extra) : angular.isDefined(tokens.data["vote-children-info"]) ? (tokens = _.chain(tokens.data["vote-children-info"]).map(function(child, index) {
                         return {
                             electionId: child["auth-event-id"],
                             token: child["vote-permission-token"] || null,
