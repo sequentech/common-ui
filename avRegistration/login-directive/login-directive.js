@@ -341,8 +341,7 @@ angular.module('avRegistration')
                       "show-pdf",
                       !!response.data['show-pdf']
                     );
-                    var extra = !!response.data['show-pdf']? '/options' : '';
-                    $window.location.href = '/booth/' + autheventid + '/vote' + extra;
+                    $window.location.href = '/booth/' + autheventid + '/vote';
                   }
                   // if it's an election with children elections then show access to them
                   else if (angular.isDefined(response.data['vote-children-info']))
