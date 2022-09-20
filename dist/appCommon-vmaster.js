@@ -492,7 +492,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                         electionId: autheventid,
                         token: tokens.data["vote-permission-token"],
                         isFirst: !0
-                    } ])), $window.location.href = "/booth/" + autheventid + "/vote") : angular.isDefined(tokens.data["vote-children-info"]) ? (tokens = _.chain(tokens.data["vote-children-info"]).map(function(child, index) {
+                    } ])), $window.sessionStorage.setItem("show-pdf", !!tokens.data["show-pdf"]), $window.location.href = "/booth/" + autheventid + "/vote") : angular.isDefined(tokens.data["vote-children-info"]) ? (tokens = _.chain(tokens.data["vote-children-info"]).map(function(child, index) {
                         return {
                             electionId: child["auth-event-id"],
                             token: child["vote-permission-token"] || null,

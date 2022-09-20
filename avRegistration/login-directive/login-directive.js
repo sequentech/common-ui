@@ -337,6 +337,10 @@ angular.module('avRegistration')
                         isFirst: true
                       }])
                     );
+                    $window.sessionStorage.setItem(
+                      "show-pdf",
+                      !!response.data['show-pdf']
+                    );
                     $window.location.href = '/booth/' + autheventid + '/vote';
                   }
                   // if it's an election with children elections then show access to them
