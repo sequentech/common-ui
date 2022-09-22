@@ -407,6 +407,20 @@ angular.module('avRegistration')
           return fields;
         };
 
+        authmethod.hasOtpCodeField = function (viewEventData)
+        {
+          var fields = authmethod.getRegisterFields(
+            viewEventData
+          );
+          for (var i=0; i<fields.length; i++) {
+            if (fields[i]['type'] === "otp-code") {
+              return true;
+            }
+          }
+
+          return false;
+        };
+
         authmethod.getCensusQueryFields = function (viewEventData)
         {
             var fields = angular.copy(viewEventData.extra_fields);
@@ -444,6 +458,8 @@ angular.module('avRegistration')
             var fields = authmethod.getRegisterFields(
               viewEventData
             );
+            var hasOtpCodeField = authmethod.hasOtpCodeField(viewEventData);
+
             if (_.contains(["sms", "email"], viewEventData.auth_method))
             {
               fields.push({
@@ -452,8 +468,10 @@ angular.module('avRegistration')
                 "required": true,
                 "required_on_authentication": true
               });
-            } else if (_.contains(["sms-otp", "email-otp"], viewEventData.auth_method))
-            {
+            } else if (
+              hasOtpCodeField ||
+              _.contains(["sms-otp", "email-otp"], viewEventData.auth_method)
+            ) {
               fields.push({
                 "name": "code",
                 "type": "code",
@@ -463,7 +481,10 @@ angular.module('avRegistration')
               });
             }
 
-            fields = _.filter(fields, function (field) {return field.required_on_authentication;});
+            fields = _.filter(
+              fields, 
+              function (field) {return field.required_on_authentication;}
+            );
 
             // put captha the last
             for (var i=0; i<fields.length; i++) {
@@ -550,6 +571,10 @@ angular.module('avRegistration')
               data.msg = election.census.config.msg;
               if ('email' === auth_method) {
                 data.subject = election.census.config.subject;
+                if (ConfigService.allowHtmlEmails &&
+                    election.census.config.html_message) {
+                  data.html_message = election.census.config.html_message;
+                }
               }
             }
             if (angular.isDefined(user_ids)) {
