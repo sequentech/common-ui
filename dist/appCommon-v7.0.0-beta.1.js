@@ -333,6 +333,12 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             };
             return $http.post(url, data);
         },
+        setInsideOtlPeriod: function(url, data) {
+            url = backendUrl + "auth-event/" + url + "/set-authenticate-otl-period/", data = {
+                set_authenticate_otl_period: data
+            };
+            return $http.post(url, data);
+        },
         launchTally: function(url, tallyElectionIds, data) {
             url = backendUrl + "auth-event/" + url + "/tally-status/", data = {
                 children_election_ids: tallyElectionIds,
