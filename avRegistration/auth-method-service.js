@@ -564,7 +564,7 @@ angular.module('avRegistration')
             );
         };
 
-        authmethod.sendAuthCodes = function(eid, election, user_ids, auth_method, extra, filter) {
+        authmethod.sendAuthCodes = function(eid, election, user_ids, auth_method, extra, filter, force_create_otp) {
             var url = backendUrl + 'auth-event/'+eid+'/census/send_auth/';
             var data = {};
             if (angular.isDefined(election)) {
@@ -582,6 +582,9 @@ angular.module('avRegistration')
             }
             if (angular.isDefined(auth_method)) {
               data["auth-method"] = auth_method;
+            }
+            if (angular.isDefined(force_create_otp)) {
+              data["force_create_otl"] = force_create_otp;
             }
             if (extra) {
               data["extra"] = extra;
