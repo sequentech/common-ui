@@ -279,11 +279,12 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             queryIds = "", queryIds = ids ? "&ids=" + ids.join("|") : "&only_parent_elections=true";
             return page_size && (queryIds += "&n=" + page_size), $http.get(backendUrl + "auth-event/?has_perms=" + perms + queryIds + "&order=-pk&page=" + page);
         },
-        sendAuthCodes: function(data, election, user_ids, auth_method, extra, filter) {
+        sendAuthCodes: function(data, election, user_ids, auth_method, extra, filter, force_create_otp) {
             var url = backendUrl + "auth-event/" + data + "/census/send_auth/", data = {};
             return angular.isDefined(election) && (data.msg = election.census.config.msg, "email" === auth_method && (data.subject = election.census.config.subject, 
             ConfigService.allowHtmlEmails && election.census.config.html_message && (data.html_message = election.census.config.html_message))), 
             angular.isDefined(user_ids) && (data["user-ids"] = user_ids), angular.isDefined(auth_method) && (data["auth-method"] = auth_method), 
+            angular.isDefined(force_create_otp) && (data.force_create_otl = force_create_otp), 
             extra && (data.extra = extra), angular.isDefined(filter) && (data.filter = filter), 
             $http.post(url, data);
         },
