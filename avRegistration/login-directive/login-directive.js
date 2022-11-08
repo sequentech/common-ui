@@ -540,8 +540,11 @@ angular.module('avRegistration')
 
             // if all fields all filled in and it's not OpenID Connect do
             // auto-login
-            if (scope.method !== 'openid-connect' && !isOtl && !isCensusQuery)
-            {
+            if (
+              scope.method !== 'openid-connect' &&
+              !scope.isOtl &&
+              !scope.isCensusQuery
+            ) {
               scope.loginUser(true);
             }
         };

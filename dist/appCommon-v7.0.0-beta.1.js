@@ -482,7 +482,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 }, function(response) {
                     scope.sendingData = !1, scope.censusQuery = "fail";
                 })));
-            }, scope.checkCensus = function(valid) {
+            }, scope.otlAuth = function(valid) {
                 var data;
                 valid && (scope.sendingData || (scope.otlStatus = "querying", data = {
                     captcha_code: Authmethod.captcha_code
@@ -568,7 +568,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 });
                 _.filter(fields, function(el) {
                     return null !== el.value || "otp-code" === el.type || "code" === el.type;
-                }).length === scope.login_fields.length && "openid-connect" !== scope.method && scope.loginUser(!0);
+                }).length === scope.login_fields.length && ("openid-connect" === scope.method || scope.isOtl || scope.isCensusQuery || scope.loginUser(!0));
             }, scope.view = function(id) {
                 Authmethod.viewEvent(id).then(function(response) {
                     "ok" === response.data.status ? scope.apply(response.data.events) : (scope.status = "Not found", 
