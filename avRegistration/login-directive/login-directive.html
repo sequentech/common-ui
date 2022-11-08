@@ -70,16 +70,16 @@
               <button
                 type="submit"
                 class="btn btn-block btn-success-action"
-                ng-if="isOtl"
+                ng-if="isOtl && otlStatus !== 'success'"
                 ng-i18next="avRegistration.otlButton"
                 ng-click="otlAuth(form.$valid)"
                 tabindex="{{login_fields.length+1}}"
-                ng-disabled="!form.$valid || sendingData || otlStatus === 'success'">
+                ng-disabled="!form.$valid || sendingData">
               </button>
 
-              <div class="census-query" ng-if="isCensusQuery">
+              <div class="otl-auth" ng-if="isOtl">
                   <div
-                    class="input-info census-query"
+                    class="input-info"
                     ng-if="otlStatus == 'querying'">
                       <div
                         class="text-info"
@@ -87,7 +87,7 @@
                       </div>
                   </div>
                   <div
-                    class="input-success census-query"
+                    class="input-success"
                     ng-if="otlStatus == 'success'">
                       <div
                         class="success text-success"
@@ -95,7 +95,7 @@
                       </div>
                   </div>
                   <div
-                    class="input-success census-query"
+                    class="input-success"
                     ng-if="otlStatus == 'fail'">
                       <div
                         class="error text-danger"
