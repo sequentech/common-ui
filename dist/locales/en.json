@@ -23,6 +23,13 @@
 		"adminLoginHeader": "Sign In to Admin Console",
 		"censusQueryHeader": "Check if you are in the census",
 		"checkCensusButton": "Check census",
+		"otlHeader": "Obtain Authentication Code",
+		"otlButton": "Obtain Authentication Code",
+		"otlStatus": {
+			"querying": "Authenticating, please wait..",
+			"success": "Your authentication code is <strong>__code__</strong>. Please write it down somewhere, since you will need to perform login and for security reasons this is a One Time Link and won't allow you to retrieve it again. Save this authentication code and use it later when voting period is open.",
+			"fail": "There was an error in the authentication. This could be for multiple causes and for security reasons we cannot reveal which one it is:<ul><li>The OTL might have been invalidated.</li><li>You might have provided incorrect data, please check.</li><li>The OTL authentication period might be finished or not started.</li><li>Other reasons</li></ul><p>Please try again later. If this continue to happen and you think it should not, please contact with election administrators.</p>"
+		},
 		"censusQuerying": "Please wait, checking census..",
 		"censusSuccess": "Congratulations! You are inside the census and you will be able to vote.",
 		"censusFail": "Oops! We did not locate you in the census.<br>Please check that:<ul><li>You are indeed part of census. Please review documentation to see if you comply with all the requirements to be an eligible voter.</li><li>You entered all the data correctly. Please check the input data carefully.</li><ul><p>If you still think there's some kind of problem, please contact support.</p>",
