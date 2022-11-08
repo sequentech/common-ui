@@ -324,11 +324,17 @@ angular.module('avRegistration')
             return $http.post(backendUrl + 'auth-event/'+eid+'/authenticate/', data);
         };
 
-        authmethod.censusQuery = function(data, authevent) {
+        authmethod.authenticateOtl = function(data, authevent) {
             var eid = authevent || authId;
             delete data['authevent'];
-            return $http.post(backendUrl + 'auth-event/'+eid+'/census/public-query/', data);
+            return $http.post(backendUrl + 'auth-event/'+eid+'/authenticate-otl/', data);
         };
+
+        authmethod.censusQuery = function(data, authevent) {
+          var eid = authevent || authId;
+          delete data['authevent'];
+          return $http.post(backendUrl + 'auth-event/'+eid+'/census/public-query/', data);
+      };
 
         authmethod.resendAuthCode = function(data, eid) {
             return $http.post(backendUrl + 'auth-event/'+eid+'/resend_auth_code/', data);
@@ -429,6 +435,20 @@ angular.module('avRegistration')
                 fields,
                 function (field) {
                     return field.required_on_authentication;
+                }
+            );
+
+            return fields;
+        };
+
+        authmethod.getOtlFields = function (viewEventData)
+        {
+            var fields = angular.copy(viewEventData.extra_fields);
+
+            fields = _.filter(
+                fields,
+                function (field) {
+                    return field.match_against_census_on_otl_authentication;
                 }
             );
 
@@ -564,7 +584,7 @@ angular.module('avRegistration')
             );
         };
 
-        authmethod.sendAuthCodes = function(eid, election, user_ids, auth_method, extra, filter) {
+        authmethod.sendAuthCodes = function(eid, election, user_ids, auth_method, extra, filter, force_create_otp) {
             var url = backendUrl + 'auth-event/'+eid+'/census/send_auth/';
             var data = {};
             if (angular.isDefined(election)) {
@@ -582,6 +602,9 @@ angular.module('avRegistration')
             }
             if (angular.isDefined(auth_method)) {
               data["auth-method"] = auth_method;
+            }
+            if (angular.isDefined(force_create_otp)) {
+              data["force_create_otl"] = force_create_otp;
             }
             if (extra) {
               data["extra"] = extra;
@@ -645,14 +668,21 @@ angular.module('avRegistration')
             return $http.post(url, data);
         };
 
-
         authmethod.setPublicCandidates = function(eid, makePublic) {
           var url = backendUrl + 'auth-event/'+eid+'/set-public-candidates/';
           var data = {
             publicCandidates: makePublic
           };
           return $http.post(url, data);
-      };
+        };
+
+        authmethod.setInsideOtlPeriod = function(eid, insideOtlPeriod) {
+          var url = backendUrl + 'auth-event/'+eid+'/set-authenticate-otl-period/';
+          var data = {
+            set_authenticate_otl_period: insideOtlPeriod
+          };
+          return $http.post(url, data);
+        };
 
         authmethod.launchTally = function(
           electionId,
