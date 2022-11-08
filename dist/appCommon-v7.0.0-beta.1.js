@@ -485,7 +485,8 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             }, scope.otlAuth = function(valid) {
                 var data;
                 valid && (scope.sendingData || (scope.otlStatus = "querying", data = {
-                    captcha_code: Authmethod.captcha_code
+                    captcha_code: Authmethod.captcha_code,
+                    __otl_secret: scope.otlSecret
                 }, _.each(scope.login_fields, function(field) {
                     data[field.name] = field.value;
                 }), scope.sendingData = !0, Authmethod.authenticateOtl(data, autheventid).then(function(response) {

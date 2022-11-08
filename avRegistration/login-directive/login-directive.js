@@ -259,6 +259,7 @@ angular.module('avRegistration')
 
           var data = {
             'captcha_code': Authmethod.captcha_code,
+            '__otl_secret': scope.otlSecret
           };
           _.each(scope.login_fields, function (field) {
             data[field.name] = field.value;
