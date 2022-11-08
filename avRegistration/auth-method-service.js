@@ -324,11 +324,17 @@ angular.module('avRegistration')
             return $http.post(backendUrl + 'auth-event/'+eid+'/authenticate/', data);
         };
 
-        authmethod.censusQuery = function(data, authevent) {
+        authmethod.authenticateOtl = function(data, authevent) {
             var eid = authevent || authId;
             delete data['authevent'];
-            return $http.post(backendUrl + 'auth-event/'+eid+'/census/public-query/', data);
+            return $http.post(backendUrl + 'auth-event/'+eid+'/authenticate-otl/', data);
         };
+
+        authmethod.censusQuery = function(data, authevent) {
+          var eid = authevent || authId;
+          delete data['authevent'];
+          return $http.post(backendUrl + 'auth-event/'+eid+'/census/public-query/', data);
+      };
 
         authmethod.resendAuthCode = function(data, eid) {
             return $http.post(backendUrl + 'auth-event/'+eid+'/resend_auth_code/', data);
@@ -429,6 +435,20 @@ angular.module('avRegistration')
                 fields,
                 function (field) {
                     return field.required_on_authentication;
+                }
+            );
+
+            return fields;
+        };
+
+        authmethod.getOtlFields = function (viewEventData)
+        {
+            var fields = angular.copy(viewEventData.extra_fields);
+
+            fields = _.filter(
+                fields,
+                function (field) {
+                    return field.match_against_census_on_otl_authentication;
                 }
             );
 

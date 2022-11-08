@@ -3,12 +3,12 @@
     <div class="col-sm-12 loginheader">
         <h2
           class="tex-center"
-          ng-if="!isAdmin && !isCensusQuery && method !== 'openid-connect'"
+          ng-if="!isAdmin && !isOtl && !isCensusQuery && method !== 'openid-connect'"
           ng-i18next="[i18next]({name: orgName})avRegistration.loginHeader">
         </h2>
         <h2
           class="tex-center"
-          ng-if="isAdmin"
+          ng-if="isAdmin && !isOtl"
           ng-i18next="[i18next]avRegistration.adminLoginHeader">
         </h2>
         <h2
@@ -21,6 +21,11 @@
           ng-if="!!isCensusQuery"
           ng-i18next="avRegistration.censusQueryHeader">
         </h2>
+        <h2
+          class="tex-center"
+          ng-if="isOtl"
+          ng-i18next="avRegistration.otlHeader">
+        </h2>
     </div>
 
     <div class="col-sm-6" ng-if="method !== 'openid-connect'">
@@ -29,7 +34,7 @@
               ng-repeat="field in login_fields"
               avr-field
               index="{{$index+1}}"
-              ng-if="field.steps === undefined || field.steps.indexOf(currentFormStep) !== -1">
+              ng-if="field.steps === undefined || field.steps.indexOf(currentFormStep) !== -1 && otlStatus !== 'success'">
             </div>
 
           <div class="col-sm-offset-4 col-sm-8 button-group">
@@ -47,7 +52,7 @@
               <button
                 type="submit"
                 class="btn btn-block btn-success-action"
-                ng-if="!isCensusQuery"
+                ng-if="!isCensusQuery && !isOtl"
                 ng-i18next="avRegistration.loginButton"
                 ng-click="loginUser(form.$valid)"
                 tabindex="{{login_fields.length+1}}"
@@ -56,12 +61,48 @@
               <button
                 type="submit"
                 class="btn btn-block btn-success-action"
-                ng-if="!!isCensusQuery"
+                ng-if="isCensusQuery"
                 ng-i18next="avRegistration.checkCensusButton"
                 ng-click="checkCensus(form.$valid)"
                 tabindex="{{login_fields.length+1}}"
                 ng-disabled="!form.$valid || sendingData">
               </button>
+              <button
+                type="submit"
+                class="btn btn-block btn-success-action"
+                ng-if="isOtl"
+                ng-i18next="avRegistration.otlButton"
+                ng-click="otlAuth(form.$valid)"
+                tabindex="{{login_fields.length+1}}"
+                ng-disabled="!form.$valid || sendingData || otlStatus === 'success'">
+              </button>
+
+              <div class="census-query" ng-if="isCensusQuery">
+                  <div
+                    class="input-info census-query"
+                    ng-if="otlStatus == 'querying'">
+                      <div
+                        class="text-info"
+                        ng-i18next="avRegistration.otlStatus.querying">
+                      </div>
+                  </div>
+                  <div
+                    class="input-success census-query"
+                    ng-if="otlStatus == 'success'">
+                      <div
+                        class="success text-success"
+                        ng-i18next="[html:i18next]({code: otpCode})avRegistration.otlStatus.success">
+                      </div>
+                  </div>
+                  <div
+                    class="input-success census-query"
+                    ng-if="otlStatus == 'fail'">
+                      <div
+                        class="error text-danger"
+                        ng-i18next="[html]avRegistration.otlStatus.fail">
+                      </div>
+                  </div>
+              </div>
 
               <div class="census-query" ng-if="isCensusQuery">
                   <div
@@ -95,7 +136,7 @@
 
     <div
       class="col-sm-5 col-sm-offset-1 hidden-xs"
-      ng-if="registrationAllowed && !isCensusQuery  && method !== 'openid-connect'">
+      ng-if="registrationAllowed && !isCensusQuery && method !== 'openid-connect' && !isOtl">
       <h3
         class="help-h3"
         ng-i18next="avRegistration.notRegisteredYet">
