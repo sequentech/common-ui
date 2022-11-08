@@ -36,6 +36,8 @@ angular.module('avRegistration')
         scope.isCensusQuery = attrs.isCensusQuery;
         scope.withCode = attrs.withCode;
         scope.username = attrs.username;
+        scope.isOtl = attrs.isOtl;
+        scope.otlSecret = attrs.otlSecret;
         scope.error = null;
 
         // by default
@@ -245,6 +247,42 @@ angular.module('avRegistration')
             );
         };
 
+        scope.otlAuth = function(valid) {
+          if (!valid) {
+            return;
+          }
+
+          if (scope.sendingData) {
+            return;
+          }
+          scope.otlStatus = "querying";
+
+          var data = {
+            'captcha_code': Authmethod.captcha_code,
+            '__otl_secret': scope.otlSecret
+          };
+          _.each(scope.login_fields, function (field) {
+            data[field.name] = field.value;
+          });
+
+          scope.sendingData = true;
+          Authmethod.authenticateOtl(data, autheventid)
+            .then(
+              function onSuccess(response) {
+                scope.sendingData = false;
+                scope.otpCode = response.data.code;
+                scope.otlResponseData = response.data;
+                scope.otlStatus = "success";
+              },
+              function onError(_response) {
+                scope.sendingData = false;
+                scope.otpCode = undefined;
+                scope.otlResponseData = {};
+                scope.otlStatus = "fail";
+              }
+            );
+        };
+
         scope.loginUser = function(valid) {
           if (!valid) {
             return;
@@ -402,12 +440,14 @@ angular.module('avRegistration')
               (authevent['census'] === 'open') &&
               (autheventid !== adminId || ConfigService.allowAdminRegistration)
             );
-            if (!scope.isCensusQuery && !scope.withCode) {
+            if (!scope.isCensusQuery && !scope.withCode && !scope.isOtl) {
               scope.login_fields = Authmethod.getLoginFields(authevent);
             } else if (scope.withCode) {
               scope.login_fields = Authmethod.getLoginWithCode(authevent);
-            } else { // scope.isCensusQuery is true
+            } else if (scope.isCensusQuery) {
               scope.login_fields = Authmethod.getCensusQueryFields(authevent);
+            } else if (scope.isOtl) {
+              scope.login_fields = Authmethod.getOtlFields(authevent);
             }
             scope.hide_default_login_lookup_field = authevent.hide_default_login_lookup_field;
             scope.telIndex = -1;
@@ -501,11 +541,13 @@ angular.module('avRegistration')
 
             // if all fields all filled in and it's not OpenID Connect do
             // auto-login
-            if (scope.method !== 'openid-connect')
-            {
+            if (
+              scope.method !== 'openid-connect' &&
+              !scope.isOtl &&
+              !scope.isCensusQuery
+            ) {
               scope.loginUser(true);
             }
-
         };
 
         scope.view = function(id) {

@@ -1959,7 +1959,7 @@ function RNG(seed) {
     }
     function minErr(module, ErrorConstructor) {
         ErrorConstructor = ErrorConstructor || Error;
-        var url = "https://errors.angularjs.org/1.8.3/", regex = url.replace(".", "\\.") + "[\\s\\S]*", errRegExp = new RegExp(regex, "g");
+        var url = "https://errors.angularjs.org/1.8.2/", regex = url.replace(".", "\\.") + "[\\s\\S]*", errRegExp = new RegExp(regex, "g");
         return function() {
             var paramPrefix, i, code = arguments[0], template = arguments[1], message = "[" + (module ? module + ":" : "") + code + "] ", templateArgs = sliceArgs(arguments, 2).map(function(arg) {
                 return toDebugString(arg, minErrConfig.objectMaxDepth);
@@ -2491,11 +2491,11 @@ function RNG(seed) {
         }(obj, maxDepth) : obj;
     }
     var version = {
-        full: "1.8.3",
+        full: "1.8.2",
         major: 1,
         minor: 8,
-        dot: 3,
-        codeName: "ultimate-farewell"
+        dot: 2,
+        codeName: "meteoric-mining"
     };
     JQLite.expando = "ng339";
     var jqCache = JQLite.cache = {}, jqId = 1;
@@ -9490,7 +9490,7 @@ function RNG(seed) {
                 $$cookieReader: $$CookieReaderProvider
             });
         } ]).info({
-            angularVersion: "1.8.3"
+            angularVersion: "1.8.2"
         });
     }(angular), angular.module("ngLocale", [], [ "$provide", function($provide) {
         var PLURAL_CATEGORY_ONE = "one", PLURAL_CATEGORY_OTHER = "other";
