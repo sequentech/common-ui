@@ -247,7 +247,7 @@ angular.module('avRegistration')
             );
         };
 
-        scope.checkCensus = function(valid) {
+        scope.otlAuth = function(valid) {
           if (!valid) {
             return;
           }
@@ -540,11 +540,10 @@ angular.module('avRegistration')
 
             // if all fields all filled in and it's not OpenID Connect do
             // auto-login
-            if (scope.method !== 'openid-connect')
+            if (scope.method !== 'openid-connect' && !isOtl && !isCensusQuery)
             {
               scope.loginUser(true);
             }
-
         };
 
         scope.view = function(id) {
