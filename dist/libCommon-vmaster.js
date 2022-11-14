@@ -1959,7 +1959,7 @@ function RNG(seed) {
     }
     function minErr(module, ErrorConstructor) {
         ErrorConstructor = ErrorConstructor || Error;
-        var url = "https://errors.angularjs.org/1.8.2/", regex = url.replace(".", "\\.") + "[\\s\\S]*", errRegExp = new RegExp(regex, "g");
+        var url = "https://errors.angularjs.org/1.8.3/", regex = url.replace(".", "\\.") + "[\\s\\S]*", errRegExp = new RegExp(regex, "g");
         return function() {
             var paramPrefix, i, code = arguments[0], template = arguments[1], message = "[" + (module ? module + ":" : "") + code + "] ", templateArgs = sliceArgs(arguments, 2).map(function(arg) {
                 return toDebugString(arg, minErrConfig.objectMaxDepth);
@@ -2491,11 +2491,11 @@ function RNG(seed) {
         }(obj, maxDepth) : obj;
     }
     var version = {
-        full: "1.8.2",
+        full: "1.8.3",
         major: 1,
         minor: 8,
-        dot: 2,
-        codeName: "meteoric-mining"
+        dot: 3,
+        codeName: "ultimate-farewell"
     };
     JQLite.expando = "ng339";
     var jqCache = JQLite.cache = {}, jqId = 1;
@@ -9490,7 +9490,7 @@ function RNG(seed) {
                 $$cookieReader: $$CookieReaderProvider
             });
         } ]).info({
-            angularVersion: "1.8.2"
+            angularVersion: "1.8.3"
         });
     }(angular), angular.module("ngLocale", [], [ "$provide", function($provide) {
         var PLURAL_CATEGORY_ONE = "one", PLURAL_CATEGORY_OTHER = "other";
@@ -10332,7 +10332,7 @@ function(window, angular) {
         return secondStr && result.push(parseInt(secondStr, 10)), result;
     }
     function configFromRFC2822(config) {
-        var obsOffset, hm, m = rfc2822.exec(config._i.replace(/\([^)]*\)|[\n\t]/g, " ").replace(/(\s\s+)/g, " ").replace(/^\s\s*/, "").replace(/\s\s*$/, ""));
+        var obsOffset, hm, m = rfc2822.exec(config._i.replace(/\([^()]*\)|[\n\t]/g, " ").replace(/(\s\s+)/g, " ").replace(/^\s\s*/, "").replace(/\s\s*$/, ""));
         m ? (hm = extractFromRFC2822Strings(m[4], m[3], m[2], m[5], m[6], m[7]), function(weekdayStr, parsedInput, config) {
             return !weekdayStr || defaultLocaleWeekdaysShort.indexOf(weekdayStr) === new Date(parsedInput[0], parsedInput[1], parsedInput[2]).getDay() || (getParsingFlags(config).weekdayMismatch = !0, 
             void (config._isValid = !1));
@@ -11374,7 +11374,7 @@ function(window, angular) {
         config._d = new Date(1e3 * parseFloat(input));
     }), addParseToken("x", function(input, array, config) {
         config._d = new Date(toInt(input));
-    }), hooks.version = "2.29.2", hookCallback = createLocal, hooks.fn = proto, hooks.min = function() {
+    }), hooks.version = "2.29.4", hookCallback = createLocal, hooks.fn = proto, hooks.min = function() {
         return pickBy("isBefore", [].slice.call(arguments, 0));
     }, hooks.max = function() {
         return pickBy("isAfter", [].slice.call(arguments, 0));
