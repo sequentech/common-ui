@@ -1404,7 +1404,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         return ret;
     }
     return checker;
-}), angular.module("avUi").factory("ElectionCreationService", function() {
+}), angular.module("avUi").factory("ElectionCreation", function() {
     var service = {
         createAuthevent: function(el) {
             el.census.config.subject && !_.contains([ "email", "email-otp" ], el.census.auth_method) && delete el.census.config.subject;

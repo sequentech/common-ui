@@ -17,7 +17,7 @@
 
 
 angular.module('avUi')
-    .factory('ElectionCreationService', function() {
+    .factory('ElectionCreation', function() {
         var service = {
         };
 
