@@ -1404,6 +1404,46 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         return ret;
     }
     return checker;
+}), angular.module("avUi").service("ElectionCreationService", function() {
+    return {
+        createAuthevent: function(el) {
+            el.census.config.subject && !_.contains([ "email", "email-otp" ], el.census.auth_method) && delete el.census.config.subject;
+            var d = el.census.config["authentication-action"];
+            return "vote" === d.mode && (d["mode-config"] = null), d = {
+                auth_method: el.census.auth_method,
+                has_ballot_boxes: el.census.has_ballot_boxes,
+                support_otl_enabled: el.census.support_otl_enabled || !1,
+                census: el.census.census,
+                auth_method_config: el.census.config,
+                extra_fields: [],
+                admin_fields: [],
+                num_successful_logins_allowed: el.num_successful_logins_allowed,
+                allow_public_census_query: el.allow_public_census_query,
+                hide_default_login_lookup_field: el.hide_default_login_lookup_field,
+                parent_id: null,
+                children_election_info: null
+            }, el.id && (d.id = el.id), d.admin_fields = _.filter(el.census.admin_fields, function(af) {
+                return !0;
+            }), d.extra_fields = _.filter(el.census.extra_fields, function(ef) {
+                ef.must;
+                return delete ef.disabled, delete ef.must, angular.isUndefined(ef.regex) || _.contains([ "int", "text" ], ef.type) && 0 !== $.trim(ef.regex).length || delete ef.regex, 
+                _.contains([ "bool", "captcha" ], ef.type) ? (delete ef.min, delete ef.max) : (ef.min && (ef.min = parseInt(ef.min)), 
+                ef.max && (ef.max = parseInt(ef.max))), !0;
+            }), el;
+        },
+        registerElection: function(el) {
+            return console.log("registering election " + el.title), "object" == typeof el.extra_data && (el.extra_data = JSON.stringify(el.extra_data)), 
+            "object" == typeof el.tallyPipesConfig && (el.tallyPipesConfig = JSON.stringify(el.tallyPipesConfig)), 
+            "object" == typeof el.ballotBoxesResultsConfig && (el.ballotBoxesResultsConfig = JSON.stringify(el.ballotBoxesResultsConfig)), 
+            _.each(el.questions, function(q) {
+                _.each(q.answers, function(answer) {
+                    answer.urls = _.filter(answer.urls, function(url) {
+                        return 0 < $.trim(url.url).length;
+                    });
+                });
+            }), el;
+        }
+    };
 }), angular.module("avUi").service("AddDotsToIntService", function() {
     return function(number, fixedDigits) {
         var number_str = ((number = angular.isNumber(fixedDigits) && 0 <= fixedDigits ? number.toFixed(parseInt(fixedDigits)) : number) + "").replace(".", ","), ret = "", commaPos = number_str.length;
