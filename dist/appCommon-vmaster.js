@@ -1404,12 +1404,13 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         return ret;
     }
     return checker;
-}), angular.module("avUi").service("ElectionCreationService", function() {
-    return {
+}), angular.module("avUi").factory("ElectionCreationService", function() {
+    var service = {
         createAuthevent: function(el) {
             el.census.config.subject && !_.contains([ "email", "email-otp" ], el.census.auth_method) && delete el.census.config.subject;
             var d = el.census.config["authentication-action"];
-            return "vote" === d.mode && (d["mode-config"] = null), d = {
+            "vote" === d.mode && (d["mode-config"] = null);
+            d = {
                 auth_method: el.census.auth_method,
                 has_ballot_boxes: el.census.has_ballot_boxes,
                 support_otl_enabled: el.census.support_otl_enabled || !1,
@@ -1422,7 +1423,8 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 hide_default_login_lookup_field: el.hide_default_login_lookup_field,
                 parent_id: null,
                 children_election_info: null
-            }, el.id && (d.id = el.id), d.admin_fields = _.filter(el.census.admin_fields, function(af) {
+            };
+            return el.id && (d.id = el.id), d.admin_fields = _.filter(el.census.admin_fields, function(af) {
                 return !0;
             }), d.extra_fields = _.filter(el.census.extra_fields, function(ef) {
                 ef.must;
@@ -1444,6 +1446,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             }), el;
         }
     };
+    return service;
 }), angular.module("avUi").service("AddDotsToIntService", function() {
     return function(number, fixedDigits) {
         var number_str = ((number = angular.isNumber(fixedDigits) && 0 <= fixedDigits ? number.toFixed(parseInt(fixedDigits)) : number) + "").replace(".", ","), ret = "", commaPos = number_str.length;
