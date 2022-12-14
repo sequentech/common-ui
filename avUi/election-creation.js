@@ -21,7 +21,7 @@ angular.module('avUi')
         var service = {
         };
 
-        service.generateAuthevent = function (el) {
+        service.generateAutheventData = function (el) {
             // sanitize some unneeded values that might still be there. This
             // needs to be done because how we use ng-model
             if (el.census.config.subject && !_.contains(['email', 'email-otp'], el.census.auth_method)) {
@@ -81,12 +81,10 @@ angular.module('avUi')
               return true;
             });
 
-            return el;
+            return d;
         };
 
-        service.generateElection = function (el) {
-            console.log("registering election " + el.title);
-
+        service.generateElectionData = function (el) {
             if (typeof el.extra_data === 'object') {
                 el.extra_data = JSON.stringify(el.extra_data);
             }
