@@ -1406,7 +1406,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
     return checker;
 }), angular.module("avUi").factory("ElectionCreation", function() {
     var service = {
-        createAuthevent: function(el) {
+        generateAuthevent: function(el) {
             el.census.config.subject && !_.contains([ "email", "email-otp" ], el.census.auth_method) && delete el.census.config.subject;
             var d = el.census.config["authentication-action"];
             "vote" === d.mode && (d["mode-config"] = null);
@@ -1433,7 +1433,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 ef.max && (ef.max = parseInt(ef.max))), !0;
             }), el;
         },
-        registerElection: function(el) {
+        generateElection: function(el) {
             return console.log("registering election " + el.title), "object" == typeof el.extra_data && (el.extra_data = JSON.stringify(el.extra_data)), 
             "object" == typeof el.tallyPipesConfig && (el.tallyPipesConfig = JSON.stringify(el.tallyPipesConfig)), 
             "object" == typeof el.ballotBoxesResultsConfig && (el.ballotBoxesResultsConfig = JSON.stringify(el.ballotBoxesResultsConfig)), 
