@@ -1447,7 +1447,429 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         }
     };
     return service;
-}), angular.module("avUi").service("AddDotsToIntService", function() {
+}), angular.module("avRegistration").factory("ElectionCreation2", [ "$http", "$cookies", "ConfigService", "$interval", "$state", "$location", "$document", function($http, $cookies, ConfigService, $interval, $state, $location, $document) {
+    var backendUrl = ConfigService.authAPI, authId = ConfigService.freeAuthId, authmethod = {
+        testo: function(el) {
+            return el;
+        },
+        captcha_code: null,
+        captcha_image_url: "",
+        captcha_status: "",
+        admin: !1,
+        getAuthevent: function() {
+            var adminId = ConfigService.freeAuthId + "", electionsMatch = $location.path(), authevent = "", adminMatch = electionsMatch.match(/^\/admin\//), boothMatch = electionsMatch.match(/^\/booth\/([0-9]+)\//), electionsMatch = electionsMatch.match(/^\/(elections|election)\/([0-9]+)\//);
+            return _.isArray(adminMatch) ? authevent = adminId : _.isArray(boothMatch) && 2 === boothMatch.length ? authevent = boothMatch[1] : _.isArray(electionsMatch) && 3 === electionsMatch.length && (authevent = electionsMatch[2]), 
+            authevent;
+        },
+        isAdmin: function() {
+            return authmethod.isLoggedIn() && authmethod.admin;
+        },
+        isLoggedIn: function() {
+            var auth = $http.defaults.headers.common.Authorization;
+            return auth && 0 < auth.length;
+        },
+        signup: function(data, eid) {
+            eid = eid || authId;
+            return $http.post(backendUrl + "auth-event/" + eid + "/register/", data);
+        },
+        getUserInfoExtra: function() {
+            if (authmethod.isLoggedIn()) return $http.get(backendUrl + "user/extra/", {});
+            var data = {
+                then: function(onSuccess, onError) {
+                    return setTimeout(function() {
+                        onError({
+                            data: {
+                                message: "not-logged-in"
+                            }
+                        });
+                    }, 0), data;
+                }
+            };
+            return data;
+        },
+        getActivity: function(url, page, size, filterOptions, filterStr, receiver_id) {
+            var params = {}, url = backendUrl + "auth-event/" + url + "/activity/";
+            return "max" === size ? params.size = 500 : angular.isNumber(size) && 0 < size && size < 500 ? params.size = parseInt(size) : params.size = 10, 
+            angular.isNumber(page) ? params.page = parseInt(page) : params.page = 1, angular.isNumber(receiver_id) && (params.receiver_id = receiver_id), 
+            _.extend(params, filterOptions), filterStr && 0 < filterStr.length && (params.filter = filterStr), 
+            $http.get(url, {
+                params: params
+            });
+        },
+        getBallotBoxes: function(url, page, size, filterOptions, filterStr) {
+            var params = {}, url = backendUrl + "auth-event/" + url + "/ballot-box/";
+            return "max" === size ? params.size = 500 : angular.isNumber(size) && 0 < size && size < 500 ? params.size = parseInt(size) : params.size = 10, 
+            angular.isNumber(page) ? params.page = parseInt(page) : params.page = 1, _.extend(params, filterOptions), 
+            filterStr && 0 < filterStr.length && (params.filter = filterStr), $http.get(url, {
+                params: params
+            });
+        },
+        createBallotBox: function(url, params) {
+            params = {
+                name: params
+            }, url = backendUrl + "auth-event/" + url + "/ballot-box/";
+            return $http.post(url, params);
+        },
+        obtainVoterAuthCode: function(url, params) {
+            params = {
+                username: params
+            }, url = backendUrl + "auth-event/" + url + "/generate-auth-code/";
+            return $http.post(url, params);
+        },
+        resetVotersToPreRegistration: function(url, voterIds, params) {
+            params = {
+                "user-ids": voterIds,
+                comment: params
+            }, url = backendUrl + "auth-event/" + url + "/census/reset-voter/";
+            return $http.post(url, params);
+        },
+        postTallySheet: function(eid, url, data) {
+            url = backendUrl + "auth-event/" + eid + "/ballot-box/" + url + "/tally-sheet/";
+            return $http.post(url, data);
+        },
+        voteStats: function(url) {
+            url = backendUrl + "auth-event/" + url + "/vote-stats/";
+            return $http.get(url);
+        },
+        suspend: function(url) {
+            url = backendUrl + "auth-event/" + url + "/suspended/";
+            return $http.post(url);
+        },
+        resume: function(url) {
+            url = backendUrl + "auth-event/" + url + "/resumed/";
+            return $http.post(url);
+        },
+        getTallySheet: function(eid, ballot_box_id, tally_sheet_id) {
+            var url = null, url = tally_sheet_id ? backendUrl + "auth-event/" + eid + "/ballot-box/" + ballot_box_id + "/tally-sheet/" + tally_sheet_id + "/" : backendUrl + "auth-event/" + eid + "/ballot-box/" + ballot_box_id + "/tally-sheet/";
+            return $http.get(url);
+        },
+        deleteTallySheet: function(eid, ballot_box_id, url) {
+            url = backendUrl + "auth-event/" + eid + "/ballot-box/" + ballot_box_id + "/tally-sheet/" + url + "/";
+            return $http.delete(url, {});
+        },
+        deleteBallotBox: function(eid, url) {
+            url = backendUrl + "auth-event/" + eid + "/ballot-box/" + url + "/delete/";
+            return $http.delete(url, {});
+        },
+        updateUserExtra: function(extra) {
+            if (authmethod.isLoggedIn()) return $http.post(backendUrl + "user/extra/", extra);
+            var data = {
+                then: function(onSuccess, onError) {
+                    return setTimeout(function() {
+                        onError({
+                            data: {
+                                message: "not-logged-in"
+                            }
+                        });
+                    }, 0), data;
+                }
+            };
+            return data;
+        },
+        getUserInfo: function(userid) {
+            if (authmethod.isLoggedIn()) return void 0 === userid ? $http.get(backendUrl + "user/", {}) : $http.get(backendUrl + "user/%d" % userid, {});
+            var data = {
+                then: function(onSuccess, onError) {
+                    return setTimeout(function() {
+                        onError({
+                            data: {
+                                message: "not-logged-in"
+                            }
+                        });
+                    }, 0), data;
+                }
+            };
+            return data;
+        },
+        ping: function() {
+            if (authmethod.isLoggedIn()) return $http.get(backendUrl + "auth-event/" + authId + "/ping/");
+            var data = {
+                then: function(onSuccess, onError) {
+                    return setTimeout(function() {
+                        onError({
+                            data: {
+                                message: "not-logged-in"
+                            }
+                        });
+                    }, 0), data;
+                }
+            };
+            return data;
+        },
+        getImage: function(ev, uid) {
+            return $http.get(backendUrl + "auth-event/" + ev + "/census/img/" + uid + "/");
+        },
+        login: function(data, eid) {
+            eid = eid || authId;
+            return delete data.authevent, $http.post(backendUrl + "auth-event/" + eid + "/authenticate/", data);
+        },
+        authenticateOtl: function(data, eid) {
+            eid = eid || authId;
+            return delete data.authevent, $http.post(backendUrl + "auth-event/" + eid + "/authenticate-otl/", data);
+        },
+        censusQuery: function(data, eid) {
+            eid = eid || authId;
+            return delete data.authevent, $http.post(backendUrl + "auth-event/" + eid + "/census/public-query/", data);
+        },
+        resendAuthCode: function(data, eid) {
+            return $http.post(backendUrl + "auth-event/" + eid + "/resend_auth_code/", data);
+        },
+        editChildrenParent: function(data, eid) {
+            return $http.post(backendUrl + "auth-event/" + eid + "/edit-children-parent/", data);
+        },
+        getPerm: function(perm, object_type, data) {
+            data = {
+                permission: perm,
+                object_type: object_type,
+                object_id: null === data ? data : data + ""
+            };
+            return $http.post(backendUrl + "get-perms/", data);
+        },
+        viewEvent: function(id) {
+            return $http.get(backendUrl + "auth-event/" + id + "/");
+        },
+        viewEvents: function() {
+            return $http.get(backendUrl + "auth-event/");
+        },
+        createEvent: function(data) {
+            return $http.post(backendUrl + "auth-event/", data);
+        },
+        editEvent: function(id, data) {
+            return $http.post(backendUrl + "auth-event/" + id + "/", data);
+        },
+        addCensus: function(id, d, validation) {
+            d = {
+                "field-validation": validation = !angular.isDefined(validation) ? "enabled" : validation,
+                census: d
+            };
+            return $http.post(backendUrl + "auth-event/" + id + "/census/", d);
+        },
+        getCensus: function(id, params) {
+            return angular.isObject(params) ? $http.get(backendUrl + "auth-event/" + id + "/census/", {
+                params: params
+            }) : $http.get(backendUrl + "auth-event/" + id + "/census/");
+        },
+        getRegisterFields: function(viewEventData) {
+            for (var fields = (fields = _.filter(angular.copy(viewEventData.extra_fields), function(item) {
+                return !0 !== item.required_when_registered;
+            })) || [], i = 0; i < fields.length; i++) if ("captcha" === fields[i].type) {
+                var captcha = fields.splice(i, 1);
+                fields.push(captcha[0]);
+                break;
+            }
+            return fields;
+        },
+        hasOtpCodeField: function(viewEventData) {
+            for (var fields = authmethod.getRegisterFields(viewEventData), i = 0; i < fields.length; i++) if ("otp-code" === fields[i].type) return !0;
+            return !1;
+        },
+        getCensusQueryFields: function(fields) {
+            fields = angular.copy(fields.extra_fields);
+            return fields = _.filter(fields, function(field) {
+                return field.required_on_authentication;
+            });
+        },
+        getOtlFields: function(fields) {
+            fields = angular.copy(fields.extra_fields);
+            return fields = _.filter(fields, function(field) {
+                return field.match_against_census_on_otl_authentication;
+            });
+        },
+        getLoginWithCode: function(_viewEventData) {
+            return [ {
+                name: "__username",
+                type: "text",
+                required: !0,
+                min: 3,
+                max: 200,
+                required_on_authentication: !0
+            }, {
+                name: "code",
+                type: "code",
+                required: !0,
+                required_on_authentication: !0
+            } ];
+        },
+        getLoginFields: function(viewEventData) {
+            var fields = authmethod.getRegisterFields(viewEventData), hasOtpCodeField = authmethod.hasOtpCodeField(viewEventData);
+            _.contains([ "sms", "email" ], viewEventData.auth_method) ? fields.push({
+                name: "code",
+                type: "code",
+                required: !0,
+                required_on_authentication: !0
+            }) : (hasOtpCodeField || _.contains([ "sms-otp", "email-otp" ], viewEventData.auth_method)) && fields.push({
+                name: "code",
+                type: "code",
+                required: !0,
+                steps: [ 1 ],
+                required_on_authentication: !0
+            }), fields = _.filter(fields, function(field) {
+                return field.required_on_authentication;
+            });
+            for (var i = 0; i < fields.length; i++) if ("captcha" === fields[i].type) {
+                var captcha = fields.splice(i, 1);
+                fields.push(captcha[0]);
+                break;
+            }
+            return fields;
+        },
+        newCaptcha: function(message) {
+            return authmethod.captcha_status = message, $http.get(backendUrl + "captcha/new/", {}).then(function(response) {
+                console.log(response.data), null !== response.data.captcha_code ? (authmethod.captcha_code = response.data.captcha_code, 
+                authmethod.captcha_image_url = response.data.image_url) : authmethod.captcha_status = "Not found";
+            });
+        },
+        test: function() {
+            return $http.get(backendUrl);
+        },
+        setAuth: function(auth, isAdmin, autheventid) {
+            return authmethod.admin = isAdmin, $http.defaults.headers.common.Authorization = auth, 
+            authmethod.pingTimeout || ($interval.cancel(authmethod.pingTimeout), authmethod.launchPingDaemon(autheventid), 
+            authmethod.pingTimeout = $interval(function() {
+                authmethod.launchPingDaemon(autheventid);
+            }, 500 * ConfigService.timeoutSeconds)), !1;
+        },
+        electionsIds: function(page, queryIds, ids, page_size) {
+            page = page || 1;
+            var perms = "edit|view";
+            "archived" === (queryIds = queryIds || "all") && (perms = "unarchive|view-archived");
+            queryIds = "", queryIds = ids ? "&ids=" + ids.join("|") : "&only_parent_elections=true";
+            return page_size && (queryIds += "&n=" + page_size), $http.get(backendUrl + "auth-event/?has_perms=" + perms + queryIds + "&order=-pk&page=" + page);
+        },
+        sendAuthCodes: function(data, election, user_ids, auth_method, extra, filter, force_create_otp) {
+            var url = backendUrl + "auth-event/" + data + "/census/send_auth/", data = {};
+            return angular.isDefined(election) && (data.msg = election.census.config.msg, "email" === auth_method && (data.subject = election.census.config.subject, 
+            ConfigService.allowHtmlEmails && election.census.config.html_message && (data.html_message = election.census.config.html_message))), 
+            angular.isDefined(user_ids) && (data["user-ids"] = user_ids), angular.isDefined(auth_method) && (data["auth-method"] = auth_method), 
+            angular.isDefined(force_create_otp) && (data.force_create_otl = force_create_otp), 
+            extra && (data.extra = extra), angular.isDefined(filter) && (data.filter = filter), 
+            $http.post(url, data);
+        },
+        removeUsersIds: function(url, election, data, comment) {
+            url = backendUrl + "auth-event/" + url + "/census/delete/", data = {
+                "user-ids": data
+            };
+            return comment && (data.comment = comment), $http.post(url, data);
+        },
+        activateUsersIds: function(url, election, user_ids, data) {
+            url = backendUrl + "auth-event/" + url + "/census/activate/", data = {
+                "user-ids": user_ids,
+                comment: data
+            };
+            return $http.post(url, data);
+        },
+        deactivateUsersIds: function(url, election, user_ids, data) {
+            url = backendUrl + "auth-event/" + url + "/census/deactivate/", data = {
+                "user-ids": user_ids,
+                comment: data
+            };
+            return $http.post(url, data);
+        },
+        changeAuthEvent: function(eid, url, data) {
+            url = backendUrl + "auth-event/" + eid + "/" + url + "/";
+            return void 0 === data && (data = {}), $http.post(url, data);
+        },
+        allowTally: function(url) {
+            url = backendUrl + "auth-event/" + url + "/allow-tally/";
+            return $http.post(url, {});
+        },
+        unpublishResults: function(url) {
+            url = backendUrl + "auth-event/" + url + "/unpublish-results/";
+            return $http.post(url, {});
+        },
+        archive: function(url) {
+            url = backendUrl + "auth-event/" + url + "/archive/";
+            return $http.post(url, {});
+        },
+        unarchive: function(url) {
+            url = backendUrl + "auth-event/" + url + "/unarchive/";
+            return $http.post(url, {});
+        },
+        setPublicCandidates: function(url, data) {
+            url = backendUrl + "auth-event/" + url + "/set-public-candidates/", data = {
+                publicCandidates: data
+            };
+            return $http.post(url, data);
+        },
+        setInsideOtlPeriod: function(url, data) {
+            url = backendUrl + "auth-event/" + url + "/set-authenticate-otl-period/", data = {
+                set_authenticate_otl_period: data
+            };
+            return $http.post(url, data);
+        },
+        launchTally: function(url, tallyElectionIds, data) {
+            url = backendUrl + "auth-event/" + url + "/tally-status/", data = {
+                children_election_ids: tallyElectionIds,
+                force_tally: data
+            };
+            return $http.post(url, data);
+        },
+        launchPingDaemon: function(autheventid) {
+            var postfix = "_authevent_" + autheventid;
+            authmethod.admin && ("hidden" !== document.visibilityState ? authmethod.ping().then(function(response) {
+                var options = {};
+                ConfigService.cookies && ConfigService.cookies.expires && (options.expires = new Date(), 
+                options.expires.setMinutes(options.expires.getMinutes() + ConfigService.cookies.expires)), 
+                $cookies.put("auth" + postfix, response.data["auth-token"], options), $cookies.put("isAdmin" + postfix, $cookies.get("isAdmin" + postfix), options), 
+                $cookies.put("userid" + postfix, $cookies.get("userid" + postfix), options), $cookies.put("userid" + postfix, $cookies.get("userid" + postfix), options), 
+                $cookies.put("user" + postfix, $cookies.get("user" + postfix), options), authmethod.setAuth($cookies.get("auth" + postfix), $cookies.get("isAdmin" + postfix), autheventid);
+            }) : $cookies.get("auth" + postfix) || $state.go("admin.logout"));
+        },
+        getUserDraft: function() {
+            if (authmethod.isLoggedIn()) return $http.get(backendUrl + "user/draft/", {});
+            var data = {
+                then: function(onSuccess, onError) {
+                    return setTimeout(function() {
+                        onError({
+                            data: {
+                                message: "not-logged-in"
+                            }
+                        });
+                    }, 0), data;
+                }
+            };
+            return data;
+        },
+        uploadUserDraft: function(draft_data) {
+            if (!authmethod.isLoggedIn()) {
+                var data = {
+                    then: function(onSuccess, onError) {
+                        return setTimeout(function() {
+                            onError({
+                                data: {
+                                    message: "not-logged-in"
+                                }
+                            });
+                        }, 0), data;
+                    }
+                };
+                return data;
+            }
+            draft_data = {
+                draft_election: draft_data
+            };
+            return $http.post(backendUrl + "user/draft/", draft_data);
+        },
+        launchSelfTestTask: function() {
+            return $http.post(backendUrl + "tasks/launch-self-test/", {});
+        },
+        getTasks: function(params) {
+            var url = backendUrl + "tasks/";
+            return angular.isObject(params) ? $http.get(url, {
+                params: params
+            }) : $http.get(url);
+        },
+        getTask: function(url) {
+            url = backendUrl + "tasks/" + url + "/";
+            return $http.get(url);
+        },
+        cancelTask: function(url) {
+            url = backendUrl + "tasks/" + url + "/cancel/";
+            return $http.post(url, {});
+        }
+    };
+    return authmethod;
+} ]), angular.module("avUi").service("AddDotsToIntService", function() {
     return function(number, fixedDigits) {
         var number_str = ((number = angular.isNumber(fixedDigits) && 0 <= fixedDigits ? number.toFixed(parseInt(fixedDigits)) : number) + "").replace(".", ","), ret = "", commaPos = number_str.length;
         -1 !== number_str.indexOf(",") && (commaPos = number_str.indexOf(","));
