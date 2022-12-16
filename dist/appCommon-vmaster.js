@@ -1421,8 +1421,8 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 num_successful_logins_allowed: el.num_successful_logins_allowed,
                 allow_public_census_query: el.allow_public_census_query,
                 hide_default_login_lookup_field: el.hide_default_login_lookup_field,
-                parent_id: null,
-                children_election_info: null
+                parent_id: el.parent_id || null,
+                children_election_info: el.children_election_info || null
             };
             return el.id && (d.id = el.id), d.admin_fields = _.filter(el.census.admin_fields, function(af) {
                 return !0;
