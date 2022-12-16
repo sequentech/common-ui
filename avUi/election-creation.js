@@ -91,8 +91,8 @@ angular.module('avUi')
           election.tally_status = "notstarted";
           election.allow_public_census_query = false;
           election.created = "2022-12-05T15:22:34.862203%2B00:00";
-          election.based_in = null;
-          election.hide_default_login_lookup_field = false;
+          election.based_in = election.based_in || null;
+          election.hide_default_login_lookup_field = election.hide_default_login_lookup_field || false;
           election.auth_method_config.config = {
             allow_user_resend: election.auth_method_config.allow_user_resend
           };
@@ -127,12 +127,12 @@ angular.module('avUi')
         service.generateBallotBoxResponse = function (el) {
           var election = service.generateBallotBoxRequest(el);
 
-          election.ballotBoxesResultsConfig = "";
-          election.virtual = false;
+          election.ballotBoxesResultsConfig = election.ballotBoxesResultsConfig || "";
+          election.virtual = election.virtual || false;
           election.tally_allowed = false;
           election.publicCandidates = true;
-          election.virtualSubelections = [];
-          election.logo_url = "";
+          election.virtualSubelections = election.virtualSubelections || [];
+          election.logo_url = election.logo_url || "";
 
           return {
             id: election.id,
@@ -148,11 +148,11 @@ angular.module('avUi')
               };
             })),
             tallyPipesConfig: election.tallyPipesConfig,
-            ballotBoxesResultsConfig: "",
-            virtual: false,
+            ballotBoxesResultsConfig: election.ballotBoxesResultsConfig,
+            virtual: election.virtual,
             tallyAllowed: false,
             publicCandidates:true,
-            logo_url: "",
+            logo_url: election.logo_url,
             trusteeKeysState: []
           };
         };

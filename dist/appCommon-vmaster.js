@@ -1436,8 +1436,9 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         generateAuthapiResponse: function(election) {
             election = service.generateAuthapiRequest(election);
             return election.users = 0, election.tally_status = "notstarted", election.allow_public_census_query = !1, 
-            election.created = "2022-12-05T15:22:34.862203%2B00:00", election.based_in = null, 
-            election.hide_default_login_lookup_field = !1, election.auth_method_config.config = {
+            election.created = "2022-12-05T15:22:34.862203%2B00:00", election.based_in = election.based_in || null, 
+            election.hide_default_login_lookup_field = election.hide_default_login_lookup_field || !1, 
+            election.auth_method_config.config = {
                 allow_user_resend: election.auth_method_config.allow_user_resend
             }, election.openid_connect_providers = [], election.inside_authenticate_otl_period = !1, 
             election;
@@ -1457,8 +1458,9 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         },
         generateBallotBoxResponse: function(election) {
             election = service.generateBallotBoxRequest(election);
-            return election.ballotBoxesResultsConfig = "", election.virtual = !1, election.tally_allowed = !1, 
-            election.publicCandidates = !0, election.virtualSubelections = [], election.logo_url = "", 
+            return election.ballotBoxesResultsConfig = election.ballotBoxesResultsConfig || "", 
+            election.virtual = election.virtual || !1, election.tally_allowed = !1, election.publicCandidates = !0, 
+            election.virtualSubelections = election.virtualSubelections || [], election.logo_url = election.logo_url || "", 
             {
                 id: election.id,
                 configuration: election,
@@ -1472,11 +1474,11 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                     };
                 })),
                 tallyPipesConfig: election.tallyPipesConfig,
-                ballotBoxesResultsConfig: "",
-                virtual: !1,
+                ballotBoxesResultsConfig: election.ballotBoxesResultsConfig,
+                virtual: election.virtual,
                 tallyAllowed: !1,
                 publicCandidates: !0,
-                logo_url: "",
+                logo_url: election.logo_url,
                 trusteeKeysState: []
             };
         }
