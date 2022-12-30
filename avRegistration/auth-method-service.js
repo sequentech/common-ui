@@ -88,7 +88,7 @@ angular.module('avRegistration')
          */
         authmethod.highestEvent = function()
         {
-          var url = backendUrl + 'auth-event/highest';
+          var url = backendUrl + 'auth-event/highest/';
           return $http.get(url);
         };
 

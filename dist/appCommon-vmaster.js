@@ -41,7 +41,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             return data;
         },
         highestEvent: function() {
-            var url = backendUrl + "auth-event/highest";
+            var url = backendUrl + "auth-event/highest/";
             return $http.get(url);
         },
         getActivity: function(url, page, size, filterOptions, filterStr, receiver_id) {
