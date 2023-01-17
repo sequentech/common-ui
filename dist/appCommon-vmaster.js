@@ -40,6 +40,10 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             };
             return data;
         },
+        highestEvent: function() {
+            var url = backendUrl + "auth-event/highest/";
+            return $http.get(url);
+        },
         getActivity: function(url, page, size, filterOptions, filterStr, receiver_id) {
             var params = {}, url = backendUrl + "auth-event/" + url + "/activity/";
             return "max" === size ? params.size = 500 : angular.isNumber(size) && 0 < size && size < 500 ? params.size = parseInt(size) : params.size = 10, 
