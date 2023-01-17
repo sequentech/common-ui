@@ -83,6 +83,16 @@ angular.module('avRegistration')
         };
 
         /**
+         * 
+         * @returns the event with the highest id
+         */
+        authmethod.highestEvent = function()
+        {
+          var url = backendUrl + 'auth-event/highest/';
+          return $http.get(url);
+        };
+
+        /**
          * @returns an activity page
          */
         authmethod.getActivity = function(eid, page, size, filterOptions, filterStr, receiver_id)
