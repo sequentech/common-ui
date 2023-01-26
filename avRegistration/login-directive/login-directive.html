@@ -56,7 +56,7 @@
                 ng-if="!isCensusQuery && !isOtl"
                 ng-i18next="avRegistration.loginButton"
                 ng-click="loginUser(form.$valid)"
-                tabindex="{{login_fields.length+1}}"
+                tabindex="0"
                 ng-disabled="!form.$valid || sendingData">
               </button>
               <button
@@ -65,7 +65,7 @@
                 ng-if="isCensusQuery"
                 ng-i18next="avRegistration.checkCensusButton"
                 ng-click="checkCensus(form.$valid)"
-                tabindex="{{login_fields.length+1}}"
+                tabindex="0"
                 ng-disabled="!form.$valid || sendingData">
               </button>
               <button
@@ -74,7 +74,7 @@
                 ng-if="isOtl && otlStatus !== 'success'"
                 ng-i18next="avRegistration.otlButton"
                 ng-click="otlAuth(form.$valid)"
-                tabindex="{{login_fields.length+1}}"
+                tabindex="0"
                 ng-disabled="!form.$valid || sendingData">
               </button>
 
@@ -150,14 +150,14 @@
           href="/election/{{election.id}}/public/register"
           ng-i18next="avRegistration.registerHere"
           ng-click="goSignup()"
-          tabindex="{{login_fields.length+2}}">
+          tabindex="0">
         </a>
         <br/>
         <a
           ng-if="isAdmin"
           href="{{ signupLink }}"
           ng-i18next="avRegistration.registerHere"
-          tabindex="{{login_fields.length+2}}">
+          tabindex="0">
         </a>
         <br/>
         <span ng-i18next="avRegistration.fewMinutes"></span>
