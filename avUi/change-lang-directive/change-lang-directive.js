@@ -77,6 +77,7 @@ angular.module('avUi')
           .loadScript(ConfigService.base + '/locales/moment/' + lang + '.js')
           .then(function () {
             amMoment.changeLocale(lang);
+            scope.changeLanguageMenu = $i18next("avCommon.changeLanguageMenu");
           });
       };
     }
