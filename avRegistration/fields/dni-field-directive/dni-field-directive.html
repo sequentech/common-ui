@@ -2,14 +2,14 @@
   <div
     class="form-group"
     ng-class="{'has-error': fieldForm.input.$dirty && fieldForm.input.$invalid}">
-    <label for="input{{index}}" class="control-label col-sm-4">
+    <label id="label-input{{index}}" for="input{{index}}" class="control-label col-sm-4">
       <span>{{field.name}}</span>
     </label>
     <div class="col-sm-8">
       <input
         type="text"
         id="input{{index}}"
-        aria-label="input{{index}}-dni"
+        aria-labeledby="label-input{{index}}"
         class="form-control"
         minlength="{{field.min}}"
         maxlength="{{field.max}}"
