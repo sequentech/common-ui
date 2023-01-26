@@ -20,6 +20,7 @@
 	},
 	"avRegistration": {
 		"censusQueryHeader": "Consulta si formas parte del censo",
+		"changeLanguageMenu": "Cambiar idioma",
 		"checkCensusButton": "Consulta el censo",
 		"censusQuerying": "Por favor espera, comprobando el censo..",
 		"censusSuccess": "¡Enhorabuena! Formas parte del censo y podrás participar en la votación.",
@@ -101,7 +102,6 @@
 	"avCommon": {
 		"poweredBy": "Funciona con <strong><a href=\"__url__\" target=\"_blank\">__name__</a></strong>",
 		"showVersion": "Versión: __version__",
-		"changeLanguageMenu": "Cambiar idioma",
 		"showVersionModal": {
 			"mainVersion": "Versión principal",
 			"header": "Información de Versión",
