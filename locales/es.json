@@ -111,6 +111,7 @@
   "avCommon": {
     "poweredBy": "Funciona con <strong><a href=\"__url__\" target=\"_blank\">__name__</a></strong>",
     "showVersion": "Versión: __version__",
+    "changeLanguageMenu": "Cambiar idioma",
     "showVersionModal": {
       "mainVersion": "Versión principal",
       "header": "Información de Versión",
