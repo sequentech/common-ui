@@ -205,6 +205,7 @@ module.exports = function (grunt) {
         files: {
             "dist/locales/en.json": ["locales/en.json", "plugins/**/locales/en.json"],
             "dist/locales/es.json": ["locales/es.json", "plugins/**/locales/es.json"],
+            "dist/locales/fr.json": ["locales/fr.json", "plugins/**/locales/fr.json"],
             "dist/locales/gl.json": ["locales/gl.json", "plugins/**/locales/gl.json"],
             "dist/locales/sv.json": ["locales/sv.json", "plugins/**/locales/sv.json"],
             "dist/locales/fi.json": ["locales/fi.json", "plugins/**/locales/fi.json"],
@@ -235,6 +236,7 @@ module.exports = function (grunt) {
           'dist/avWidgets.js': 'avWidgets.js',
 
           "dist/locales/moment/es.js": "node_modules/moment/locale/es.js",
+          "dist/locales/moment/fr.js": "node_modules/moment/locale/fr.js",
           "dist/locales/moment/gl.js": "node_modules/moment/locale/gl.js",
           "dist/locales/moment/ca.js": "node_modules/moment/locale/ca.js"
         }
