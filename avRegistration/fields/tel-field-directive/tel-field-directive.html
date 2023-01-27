@@ -1,13 +1,13 @@
 <div class="form-group">
-    <label for="input{{index}}" class="control-label col-sm-4" ng-i18next="avRegistration.telLabel"></label>
+    <label id="label-input{{index}}" for="input{{index}}" class="control-label col-sm-4" ng-i18next="avRegistration.telLabel"></label>
     <div class="col-sm-8">
         <input
             type="tel"
             class="form-control phone-login"
-            aria-label="input{{index}}-tel"
+            aria-labeledby="label-input{{index}}"
             id="input{{index}}"
             ng-disabled="field.disabled"
-            tabindex="{{index}}"
+            tabindex="0"
             name="input{{index}}"
             required />
         <p 

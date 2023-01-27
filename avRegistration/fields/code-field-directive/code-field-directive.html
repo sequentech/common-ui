@@ -1,14 +1,14 @@
 <div class="form-group">
-    <label for="{{code_id}}" class="control-label col-sm-4" ng-i18next="avRegistration.codeLabel"></label>
+    <label id="{{code_id}}-code" for="{{code_id}}" class="control-label col-sm-4" ng-i18next="avRegistration.codeLabel"></label>
     <div class="col-sm-8">
         <input
             type="text"
             class="form-control"
-            aria-label="{{code_id}}-code"
+            aria-labeledby="{{code_id}}-code"
             id="{{code_id}}"
             ng-model="field.value"
             ng-disabled="field.disabled"
-            tabindex="{{index}}"
+            tabindex="0"
             autocomplete="off"
             value=""
             ng-class="{'filled': form[code_id].$viewValue.length > 0}"
