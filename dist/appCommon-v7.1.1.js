@@ -1074,7 +1074,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         scope: {},
         link: function(scope, element, attrs) {
             scope.deflang = window.i18n.lng(), angular.element("#ng-app").attr("lang", scope.deflang), 
-            scope.langs = $i18next.options.lngWhitelist, scope.changeLanguageMenu = $i18next("avRegistration.changeLanguageMenu"), 
+            scope.langs = $i18next.options.lngWhitelist, scope.changeLanguageMenu = $i18next("avCommon.changeLanguageMenu"), 
             scope.changeLang = function(lang) {
                 $i18next.options.lng = lang, angular.isDefined($window.i18nOverride) && $window.i18n.preload([ lang ], function() {
                     I18nOverride(null, !0);
