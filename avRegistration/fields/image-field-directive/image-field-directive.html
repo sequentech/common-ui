@@ -2,7 +2,7 @@
   <div
     class="form-group"
     ng-class="{'has-error': fieldForm.input.$dirty && fieldForm.input.$invalid}">
-    <label for="image-field" class="control-label col-sm-4">
+    <label id="label-image-field" for="image-field" class="control-label col-sm-4">
       <span>{{field.name}}</span>
     </label>
     <div class="col-sm-8">
@@ -10,10 +10,10 @@
         type="file"
         name="image"
         id="image-field"
-        aria-label="image-field{{index}}"
+        aria-labeledby="label-image-field"
         class="form-control"
         ng-disabled="field.disabled"
-        tabindex="{{index}}"
+        tabindex="0"
         ng-required={{field.required}} />
       <p
           class="help-block"
@@ -28,6 +28,7 @@
       <div class="input-error">
         <span
           class="error text-brand-danger"
+          role="alert"
           ng-show="fieldForm.input.$dirty && fieldForm.input.$invalid"
           ng-i18next="avRegistration.invalidImage"></span>
       </div>

@@ -34,12 +34,13 @@
 
           <div class="col-sm-offset-4 col-sm-8 button-group">
               <div class="input-error" ng-if="!isCensusQuery">
-                  <div class="error text-danger" ng-if="error">{{ error }}</div>
+                  <div class="error text-danger" role="alert" ng-if="error">{{ error }}</div>
               </div>
               <div class="input-warn">
                 <span
                   class="text-warning"
                   ng-if="!form.$valid || sendingData"
+                  role="alert"
                   ng-i18next>
                   avRegistration.fillValidFormText
                 </span>
@@ -50,7 +51,7 @@
                 ng-if="!isCensusQuery"
                 ng-i18next="avRegistration.loginButton"
                 ng-click="loginUser(form.$valid)"
-                tabindex="{{login_fields.length+1}}"
+                tabindex="0"
                 ng-disabled="!form.$valid || sendingData">
               </button>
               <button
@@ -59,7 +60,7 @@
                 ng-if="!!isCensusQuery"
                 ng-i18next="avRegistration.checkCensusButton"
                 ng-click="checkCensus(form.$valid)"
-                tabindex="{{login_fields.length+1}}"
+                tabindex="0"
                 ng-disabled="!form.$valid || sendingData">
               </button>
 
@@ -85,6 +86,7 @@
                     ng-if="censusQuery == 'fail'">
                       <div
                         class="error text-danger"
+                        role="alert"
                         ng-i18next="[html]avRegistration.censusFail">
                       </div>
                   </div>
@@ -106,14 +108,14 @@
           href="/election/{{election.id}}/public/register"
           ng-i18next="avRegistration.registerHere"
           ng-click="goSignup()"
-          tabindex="{{login_fields.length+2}}">
+          tabindex="0">
         </a>
         <br/>
         <a
           ng-if="isAdmin"
           href="{{ signupLink }}"
           ng-i18next="avRegistration.registerHere"
-          tabindex="{{login_fields.length+2}}">
+          tabindex="0">
         </a>
         <br/>
         <span ng-i18next="avRegistration.fewMinutes"></span>
