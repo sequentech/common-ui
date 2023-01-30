@@ -23,6 +23,7 @@
 		"adminLoginHeader": "Se connecter à la console d'administration",
 		"censusQueryHeader": "Vérifiez si vous êtes dans le recensement",
 		"checkCensusButton": "Vérifier le recensement",
+		"loginAfterRegistration": "Inscription réussi!",
 		"otlHeader": "Obtenir le code d'authentification",
 		"otlButton": "Obtenir le code d'authentification",
 		"otlStatus": {

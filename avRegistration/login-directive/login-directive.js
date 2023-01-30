@@ -22,6 +22,7 @@ angular.module('avRegistration')
       Authmethod,
       StateDataService,
       $state,
+      $stateParams,
       $location,
       $cookies,
       $i18next,
@@ -60,6 +61,7 @@ angular.module('avRegistration')
         scope.currentFormStep = 0;
 
         scope.stateData = StateDataService.getData();
+        scope.successfulRegistration = scope.stateData.successfulRegistration || false;
 
         scope.signupLink = ConfigService.signupLink;
 
