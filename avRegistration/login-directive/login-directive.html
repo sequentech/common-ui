@@ -27,10 +27,10 @@
           ng-i18next="avRegistration.otlHeader">
         </h2>
         <div
-          class="success text-success"
-          ng-if="!!successfulRegistration"
+          class="text-success"
+          ng-if="!successfulRegistration"
+          ng-i18next="[html:i18next]avRegistration.loginAfterRegistration"
           >
-          Successfully registered!
         </div>
     </div>
 
