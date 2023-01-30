@@ -447,7 +447,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             }
             autheventCookie && autheventCookie === adminId && autheventid === adminId && authCookie && ($window.location.href = "/admin/elections"), 
             scope.sendingData = !1, scope.currentFormStep = 0, scope.stateData = StateDataService.getData(), 
-            scope.successfulRegistration = $stateParams.successfulRegistration || !1, scope.signupLink = ConfigService.signupLink, 
+            scope.successfulRegistration = scope.stateData.successfulRegistration || !1, scope.signupLink = ConfigService.signupLink, 
             scope.allowUserResend = !1, scope.censusQuery = "not-sent", scope.code = null, attrs.code && 0 < attrs.code.length && (scope.code = attrs.code), 
             scope.email = null, attrs.email && 0 < attrs.email.length && (scope.email = attrs.email), 
             scope.isAdmin = !1, autheventid === adminId && (scope.isAdmin = !0), scope.resendAuthCode = function(field) {
@@ -705,7 +705,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                     data[field.name] = field.value, ("email" === field.name && _.contains([ "email", "email-otp" ], scope.method) || "tlf" === field.name && _.contains([ "sms", "sms-otp" ], scope.method)) && (scope.email = field.value);
                 }), Authmethod.signup(data, autheventid).then(function(response) {
                     details = scope.getLoginDetails(autheventid), "ok" === response.data.status ? (scope.user = response.data.user, 
-                    details.data.successfulRegistration = !0, StateDataService.go(details.path, details.data, data)) : (scope.sendingData = !1, 
+                    data.successfulRegistration = !0, StateDataService.go(details.path, details.data, data)) : (scope.sendingData = !1, 
                     scope.status = "Not found"), scope.error = response.data.msg || $sce.trustAsHtml($i18next("avRegistration.invalidRegisterData", {
                         url: $state.href(details.path, details.data)
                     }));

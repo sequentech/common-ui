@@ -61,7 +61,7 @@ angular.module('avRegistration')
         scope.currentFormStep = 0;
 
         scope.stateData = StateDataService.getData();
-        scope.successfulRegistration = $stateParams.successfulRegistration || false;
+        scope.successfulRegistration = scope.stateData.successfulRegistration || false;
 
         scope.signupLink = ConfigService.signupLink;
 

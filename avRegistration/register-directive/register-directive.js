@@ -74,7 +74,7 @@ angular.module('avRegistration')
                     details = scope.getLoginDetails(autheventid);
                     if (response.data.status === "ok") {
                         scope.user = response.data.user;
-                        details.data.successfulRegistration = true;
+                        data.successfulRegistration = true;
                         StateDataService.go(details.path, details.data, data);
                         scope.error = response.data.msg || $sce.trustAsHtml($i18next('avRegistration.invalidRegisterData', {
                           url: $state.href(details.path, details.data)
