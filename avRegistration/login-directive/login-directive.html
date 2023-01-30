@@ -26,6 +26,12 @@
           ng-if="isOtl"
           ng-i18next="avRegistration.otlHeader">
         </h2>
+        <div
+          class="success text-success"
+          ng-if="!!successfulRegistration"
+          >
+          Successfully registered!
+        </div>
     </div>
 
     <div class="col-sm-6" ng-if="method !== 'openid-connect'">
