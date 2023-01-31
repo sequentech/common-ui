@@ -18,6 +18,39 @@
     "app": {
         "name": "Sequent Tech"
     },
+    "avCommon": {
+        "poweredBy": "Powered by <strong><a href=\"__url__\" target=\"_blank\">__name__</a></strong>",
+        "showVersion": "Version : __version__",
+        "showVersionModal": {
+            "mainVersion": "Version principale",
+            "header": "Informations sur la version",
+            "body": "Informations sur la version des r\u00e9f\u00e9rentiels utilis\u00e9s dans ce d\u00e9ploiement:<br><br><ul>__versionList__</ul>",
+            "confirmButton": "Fermer"
+        },
+        "foot": {
+            "contact": "Contact",
+            "contactsupport": "Contacter le support",
+            "contactsales": "Contacter les ventes",
+            "callsales": "Ventes : ",
+            "aboutus": "A propos de nous",
+            "pricing": "Fixation des prix",
+            "technology": "Technologie",
+            "solutions": "Solutions",
+            "adminManual": "Manuel de l'administrateur",
+            "electionTypes": "Types d'\u00e9lections",
+            "primaries": "Primaires et \u00e9lections des candidats",
+            "participatoryBudgeting": "Budget participatif",
+            "referendums": "R\u00e9f\u00e9rendums et consultations",
+            "professional": "Professionnels et syndicats",
+            "universities": "Universit\u00e9s",
+            "legal": "Mentions l\u00e9gales",
+            "tos": "Dur\u00e9e de service",
+            "cookies": "Politique en mati\u00e8re de cookies",
+            "privacy": "Politique de confidentialit\u00e9",
+            "securitycontact": "Contact s\u00e9curit\u00e9",
+            "communitywebsite": "Site web communautaire"
+        }
+    },
     "avRegistration": {
         "loginHeader": "Se connecter pour voter",
         "adminLoginHeader": "Se connecter \u00e0 la console d'administration",
@@ -104,39 +137,6 @@
             "authorities": "Liste des autorit\u00e9s",
             "technical": "Description technique",
             "security_contact": "Contact s\u00e9curit\u00e9"
-        }
-    },
-    "avCommon": {
-        "poweredBy": "Powered by <strong><a href=\"__url__\" target=\"_blank\">__name__</a></strong>",
-        "showVersion": "Version : __version__",
-        "showVersionModal": {
-            "mainVersion": "Version principale",
-            "header": "Informations sur la version",
-            "body": "Informations sur la version des r\u00e9f\u00e9rentiels utilis\u00e9s dans ce d\u00e9ploiement:<br><br><ul>__versionList__</ul>",
-            "confirmButton": "Fermer"
-        },
-        "foot": {
-            "contact": "Contact",
-            "contactsupport": "Contacter le support",
-            "contactsales": "Contacter les ventes",
-            "callsales": "Ventes : ",
-            "aboutus": "A propos de nous",
-            "pricing": "Fixation des prix",
-            "technology": "Technologie",
-            "solutions": "Solutions",
-            "adminManual": "Manuel de l'administrateur",
-            "electionTypes": "Types d'\u00e9lections",
-            "primaries": "Primaires et \u00e9lections des candidats",
-            "participatoryBudgeting": "Budget participatif",
-            "referendums": "R\u00e9f\u00e9rendums et consultations",
-            "professional": "Professionnels et syndicats",
-            "universities": "Universit\u00e9s",
-            "legal": "Mentions l\u00e9gales",
-            "tos": "Dur\u00e9e de service",
-            "cookies": "Politique en mati\u00e8re de cookies",
-            "privacy": "Politique de confidentialit\u00e9",
-            "securitycontact": "Contact s\u00e9curit\u00e9",
-            "communitywebsite": "Site web communautaire"
         }
     }
 }

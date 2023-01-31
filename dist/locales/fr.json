@@ -18,6 +18,39 @@
 	"app": {
 		"name": "Sequent Tech"
 	},
+	"avCommon": {
+		"poweredBy": "Powered by <strong><a href=\"__url__\" target=\"_blank\">__name__</a></strong>",
+		"showVersion": "Version : __version__",
+		"showVersionModal": {
+			"mainVersion": "Version principale",
+			"header": "Informations sur la version",
+			"body": "Informations sur la version des référentiels utilisés dans ce déploiement:<br><br><ul>__versionList__</ul>",
+			"confirmButton": "Fermer"
+		},
+		"foot": {
+			"contact": "Contact",
+			"contactsupport": "Contacter le support",
+			"contactsales": "Contacter les ventes",
+			"callsales": "Ventes : ",
+			"aboutus": "A propos de nous",
+			"pricing": "Fixation des prix",
+			"technology": "Technologie",
+			"solutions": "Solutions",
+			"adminManual": "Manuel de l'administrateur",
+			"electionTypes": "Types d'élections",
+			"primaries": "Primaires et élections des candidats",
+			"participatoryBudgeting": "Budget participatif",
+			"referendums": "Référendums et consultations",
+			"professional": "Professionnels et syndicats",
+			"universities": "Universités",
+			"legal": "Mentions légales",
+			"tos": "Durée de service",
+			"cookies": "Politique en matière de cookies",
+			"privacy": "Politique de confidentialité",
+			"securitycontact": "Contact sécurité",
+			"communitywebsite": "Site web communautaire"
+		}
+	},
 	"avRegistration": {
 		"loginHeader": "Se connecter pour voter",
 		"adminLoginHeader": "Se connecter à la console d'administration",
@@ -104,39 +137,6 @@
 			"authorities": "Liste des autorités",
 			"technical": "Description technique",
 			"security_contact": "Contact sécurité"
-		}
-	},
-	"avCommon": {
-		"poweredBy": "Powered by <strong><a href=\"__url__\" target=\"_blank\">__name__</a></strong>",
-		"showVersion": "Version : __version__",
-		"showVersionModal": {
-			"mainVersion": "Version principale",
-			"header": "Informations sur la version",
-			"body": "Informations sur la version des référentiels utilisés dans ce déploiement:<br><br><ul>__versionList__</ul>",
-			"confirmButton": "Fermer"
-		},
-		"foot": {
-			"contact": "Contact",
-			"contactsupport": "Contacter le support",
-			"contactsales": "Contacter les ventes",
-			"callsales": "Ventes : ",
-			"aboutus": "A propos de nous",
-			"pricing": "Fixation des prix",
-			"technology": "Technologie",
-			"solutions": "Solutions",
-			"adminManual": "Manuel de l'administrateur",
-			"electionTypes": "Types d'élections",
-			"primaries": "Primaires et élections des candidats",
-			"participatoryBudgeting": "Budget participatif",
-			"referendums": "Référendums et consultations",
-			"professional": "Professionnels et syndicats",
-			"universities": "Universités",
-			"legal": "Mentions légales",
-			"tos": "Durée de service",
-			"cookies": "Politique en matière de cookies",
-			"privacy": "Politique de confidentialité",
-			"securitycontact": "Contact sécurité",
-			"communitywebsite": "Site web communautaire"
 		}
 	}
 }
