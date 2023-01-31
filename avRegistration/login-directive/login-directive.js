@@ -436,6 +436,12 @@ angular.module('avRegistration')
         scope.apply = function(authevent) {
             scope.hasOtpFieldsCode = Authmethod.hasOtpCodeField(authevent);
             scope.method = authevent['auth_method'];
+
+            if (scope.hasOtpFieldsCode ||
+              _.contains(['sms-otp', 'email-otp'], scope.method)) {
+                scope.withCode = scope.withCode || scope.successfulRegistration;
+            }
+
             scope.name = authevent['name'];
             scope.parseAuthToken();
             scope.registrationAllowed = (

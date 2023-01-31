@@ -551,6 +551,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 })) : scope.resendAuthCode()));
             }, scope.apply = function(authevent) {
                 scope.hasOtpFieldsCode = Authmethod.hasOtpCodeField(authevent), scope.method = authevent.auth_method, 
+                (scope.hasOtpFieldsCode || _.contains([ "sms-otp", "email-otp" ], scope.method)) && (scope.withCode = scope.withCode || scope.successfulRegistration), 
                 scope.name = authevent.name, scope.parseAuthToken(), scope.registrationAllowed = "open" === authevent.census && (autheventid !== adminId || ConfigService.allowAdminRegistration), 
                 scope.isCensusQuery || scope.withCode || scope.isOtl ? scope.withCode ? scope.login_fields = Authmethod.getLoginWithCode(authevent) : scope.isCensusQuery ? scope.login_fields = Authmethod.getCensusQueryFields(authevent) : scope.isOtl && (scope.login_fields = Authmethod.getOtlFields(authevent)) : scope.login_fields = Authmethod.getLoginFields(authevent), 
                 scope.hide_default_login_lookup_field = authevent.hide_default_login_lookup_field, 
