@@ -174,26 +174,34 @@ angular.module('avRegistration')
             field.value = "";
           }
 
+          function onAuthCodeSent(response) {
+            // disabling login that are from previous step
+            _.each(
+              scope.login_fields, 
+              function (element) {
+                if (
+                  element.steps === undefined || 
+                  element.steps.indexOf(0) !== -1
+                ) {
+                  element.disabled = true;
+                }
+              }
+            );
+            scope.currentFormStep = 1;
+            scope.error = null;
+            $timeout(scope.sendingDataTimeout, 3000);
+          }
+
           scope.sendingData = true;
+          if (scope.skipSendAuthCode) {
+            onAuthCodeSent();
+            scope.skipSendAuthCode = false;
+            return;
+          }
+
           Authmethod.resendAuthCode(data, autheventid)
             .then(
-              function(response) {
-                // disabling login that are from previous step
-                _.each(
-                  scope.login_fields, 
-                  function (element) {
-                    if (
-                      element.steps === undefined || 
-                      element.steps.indexOf(0) !== -1
-                    ) {
-                      element.disabled = true;
-                    }
-                  }
-                );
-                scope.currentFormStep = 1;
-                scope.error = null;
-                $timeout(scope.sendingDataTimeout, 3000);
-              },
+              onAuthCodeSent,
               function onError(response) {
                 $timeout(scope.sendingDataTimeout, 3000);
                 scope.error = $i18next('avRegistration.errorSendingAuthCode');
@@ -439,7 +447,7 @@ angular.module('avRegistration')
 
             if (scope.hasOtpFieldsCode ||
               _.contains(['sms-otp', 'email-otp'], scope.method)) {
-                scope.withCode = scope.withCode || scope.successfulRegistration;
+                scope.skipSendAuthCode = scope.successfulRegistration;
             }
 
             scope.name = authevent['name'];
