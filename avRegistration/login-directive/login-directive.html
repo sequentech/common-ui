@@ -1,11 +1,12 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-sm-12 loginheader">
-        <h2
-          class="tex-center"
+        <span class="divider"></span>
+        <span
+          class="tex-center header-text"
           ng-if="!isAdmin && !isOtl && !isCensusQuery && method !== 'openid-connect'"
           ng-i18next="[i18next]({name: orgName})avRegistration.loginHeader">
-        </h2>
+        </span>
         <h2
           class="tex-center"
           ng-if="isAdmin && !isOtl"
