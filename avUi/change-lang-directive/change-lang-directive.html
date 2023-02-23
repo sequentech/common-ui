@@ -17,6 +17,6 @@
       ng-click="changeLang(lang)"
       ng-space-click
       tabindex="0"
-    >{{lang}}</a>
+    >{{ ('avRegistration.languageName' | i18next:{lng:lang}) || lang}}</a>
   </li>
 </ul>
