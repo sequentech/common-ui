@@ -32,7 +32,15 @@ angular.module('avUi')
   ) {
     function link(scope, element, attrs)
     {
+    // ca.json	en.json	es.json	fi.json	gl.json	sv.json
+    
       scope.deflang = window.i18n.lng();
+      scope.getLangName = function (lang) {
+        if ($i18next.options.lngNames && $i18next.options.lngNames[lang]) {
+          return $i18next.options.lngName[lang];
+        }
+        return lang;
+      };
       angular.element('#ng-app').attr('lang', scope.deflang);
       scope.langs =  $i18next.options.lngWhitelist;
       scope.changeLanguageMenu = $i18next("avCommon.changeLanguageMenu") || 'Change Language';
