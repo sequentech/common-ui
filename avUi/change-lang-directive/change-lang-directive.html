@@ -4,10 +4,10 @@
   data-toggle="dropdown"
   role="button"
   aria-expanded="false"
-  aria-label="{{ changeLanguageMenu || 'Change Language' }}"
+  aria-label="{{ ('avCommon.changeLanguageMenu' | i18next) || 'Change Language' }}"
 >
   <i class="fa fa-fw fa-lg fa-language"></i>
-  <span>{{ langName || deflang }}</span>
+  <span>{{ ('avRegistration.languageName' | i18next) || deflang }}</span>
   <span class="caret"></span>
 </a>
 <ul class="dropdown-menu" role="menu">

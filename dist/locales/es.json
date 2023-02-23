@@ -1,5 +1,4 @@
 {
-	"languageName": "Español",
 	"yes": "sí",
 	"no": "no",
 	"eg": "ej.",
@@ -20,6 +19,7 @@
 		"name": "Sequent Tech"
 	},
 	"avRegistration": {
+		"languageName": "Español",
 		"censusQueryHeader": "Consulta si formas parte del censo",
 		"checkCensusButton": "Consulta el censo",
 		"censusQuerying": "Por favor espera, comprobando el censo..",

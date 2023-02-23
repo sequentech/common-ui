@@ -1,5 +1,4 @@
 {
-  "languageName": "English",
   "yes": "yes",
   "no": "no",
   "eg": "eg.",
@@ -21,6 +20,7 @@
     "name": "Sequent Tech"
   },
   "avRegistration": {
+    "languageName": "English",
     "loginHeader": "Login to vote",
     "adminLoginHeader": "Sign In to Admin Console",
     "censusQueryHeader": "Check if you are in the census",

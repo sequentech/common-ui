@@ -1,5 +1,4 @@
 {
-	"languageName": "Català",
 	"eg": "ej.",
 	"next": "Següent",
 	"done": "Fet",
@@ -18,6 +17,7 @@
 		"name": "Sequent Tech"
 	},
 	"avRegistration": {
+		"languageName": "Català",
 		"codeHelp": "Utilitzi el codi que li hem enviat per telèfon o per correu electrònic. El codi té 8 caràcters alfanumèrics.",
 		"noCodeReceivedQuestion": "Encara no has rebut el codi?",
 		"sendCodeAgain": "Tornar a enviar el codi",

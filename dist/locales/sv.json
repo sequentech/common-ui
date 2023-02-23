@@ -1,5 +1,4 @@
 {
-	"languageName": "Svenska",
 	"yes": "ja",
 	"no": "nej",
 	"eg": "t.ex.",
@@ -20,6 +19,7 @@
 		"name": "Sequent Tech"
 	},
 	"avRegistration": {
+		"languageName": "Svenska",
 		"loginHeader": "Logga",
 		"adminLoginHeader": "Logga in på administratörskonsolen",
 		"censusQueryHeader": "Kontrollera om du har rösträtt",

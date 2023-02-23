@@ -35,10 +35,8 @@ angular.module('avUi')
     // ca.json	en.json	es.json	fi.json	gl.json	sv.json
     
       scope.deflang = window.i18n.lng();
-      scope.langName = $i18next("avCommon.languageName");
       angular.element('#ng-app').attr('lang', scope.deflang);
       scope.langs =  $i18next.options.lngWhitelist;
-      scope.changeLanguageMenu = $i18next("avCommon.changeLanguageMenu");
 
       // Changes i18n to a specific language, setting also a cookie for
       // remembering it, and updating all the translations instantly.

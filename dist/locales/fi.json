@@ -1,5 +1,4 @@
 {
-	"languageName": "Suomalainen",
 	"yes": "kyllä",
 	"no": "ei",
 	"eg": "esim.",
@@ -20,6 +19,7 @@
 		"name": "Sequent Tech"
 	},
 	"avRegistration": {
+		"languageName": "Suomalainen",
 		"censusQueryHeader": "Tarkista onko sinulla äänioikeus",
 		"checkCensusButton": "Tarkista äänioikeusrekisteri",
 		"censusQuerying": "Odota, äänioikeusrekisteriä tarkistetaan..",

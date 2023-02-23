@@ -1,5 +1,4 @@
 {
-	"languageName": "Galego",
 	"eg": "ex.",
 	"next": "Seguinte",
 	"done": "Feito",
@@ -18,6 +17,7 @@
 		"name": "Sequent Tech"
 	},
 	"avRegistration": {
+		"languageName": "Galego",
 		"loginHeader": "Entrar",
 		"adminLoginHeader": "Inicia sesión na Consola de administración",
 		"helpRegisterForm": "Para poder votar, tes que rexistrarte primeiro mediante este formulario. Algúns dos campos son obrigatorios: le ben a información de axuda",

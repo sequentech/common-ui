@@ -1,5 +1,4 @@
 {
-  "languageName": "Català",
   "eg": "ej.",
   "next": "Següent",
   "done": "Fet",
@@ -20,6 +19,7 @@
   },
 
   "avRegistration": {
+    "languageName": "Català",
 
     "codeHelp": "Utilitzi el codi que li hem enviat per telèfon o per correu electrònic. El codi té 8 caràcters alfanumèrics.",
     "noCodeReceivedQuestion": "Encara no has rebut el codi?",
