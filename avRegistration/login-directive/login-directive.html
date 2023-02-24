@@ -1,12 +1,11 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-sm-12 loginheader">
-        <span class="divider"></span>
-        <span
-          class="tex-center header-text"
+        <h2
+          class="tex-center"
           ng-if="!isAdmin && !isOtl && !isCensusQuery && method !== 'openid-connect'"
           ng-i18next="[i18next]({name: orgName})avRegistration.loginHeader">
-        </span>
+        </h2>
         <h2
           class="tex-center"
           ng-if="isAdmin && !isOtl"
@@ -44,10 +43,11 @@
               </div>
               <div class="input-warn">
                 <span
-                  class="text-warning"
+                  class="warn-box"
                   ng-if="!form.$valid || sendingData"
                   role="alert"
                   ng-i18next>
+                  <span class="glyphicon glyphicon-warning-sign"></span>
                   avRegistration.fillValidFormText
                 </span>
               </div>

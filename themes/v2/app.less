@@ -17,6 +17,29 @@
 
 @import "../../external.less";
 
+
+:root {
+  --light-bg-color: #F7F9FE;
+  --light-text-color: #191D23;
+  --action-primary-color: #047857;
+  --action-primary-contrast: #000000;
+  --action-secondary-color: #ECFDF5;
+  --action-secondary-contrast: #D0D5DD;
+  --error-primary-color: #EF4444;
+  --error-darker-color: #991B1B;
+  --error-contrast-color: #FECACA;
+  --blue-primary-color: #B3D7FF;
+  --blue-contrast-color: #E7EAEE;
+  --warn-bg: #FFF7D9;
+  --warn-text: #957400;
+}
+
+.warn-box {
+  color: var(--warn-text);
+  background-color: var(--warn-bg);
+  padding: 14.5px 17px;
+}
+
 /* Global Config */
 @av-primary: #FFFFFF;
 @av-secondary: #444444;
@@ -135,18 +158,4 @@ input[type=checkbox] {
 // sets a minimum height for textareas
 textarea.form-control {
     min-height: 180px;
-}
-
-:root {
-  --light-bg-color: #F7F9FE;
-  --light-text-color: #191D23;
-  --action-primary-color: #047857;
-  --action-primary-contrast: #000000;
-  --action-secondary-color: #ECFDF5;
-  --action-secondary-contrast: #D0D5DD;
-  --warn-primary-color: #EF4444;
-  --warn-darker-color: #991B1B;
-  --warn-contrast-color: #FECACA;
-  --blue-primary-color: #B3D7FF;
-  --blue-contrast-color: #E7EAEE;
 }
