@@ -42,14 +42,14 @@
                   <div class="error text-danger" role="alert" ng-if="error">{{ error }}</div>
               </div>
               <div class="input-warn">
-                <span
-                  class="warn-box"
-                  ng-if="!form.$valid || sendingData"
-                  role="alert"
-                  ng-i18next>
+                <div class="warn-box" ng-if="!form.$valid || sendingData" >
                   <span class="glyphicon glyphicon-warning-sign"></span>
-                  avRegistration.fillValidFormText
-                </span>
+                  <span
+                    role="alert"
+                    ng-i18next>
+                    avRegistration.fillValidFormText
+                  </span>
+                </div>
               </div>
               <button
                 type="submit"
