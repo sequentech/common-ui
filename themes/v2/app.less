@@ -17,51 +17,49 @@
 
 @import "../../external.less";
 
-
-:root {
-  --light-bg-color: #F7F9FE;
-  --light-text-color: #191D23;
-  --action-primary-color: #047857;
-  --action-primary-contrast: #000000;
-  --action-secondary-color: #ECFDF5;
-  --action-secondary-contrast: #D0D5DD;
-  --error-primary-color: #EF4444;
-  --error-darker-color: #991B1B;
-  --error-contrast-color: #FECACA;
-  --blue-primary-color: #B3D7FF;
-  --blue-contrast-color: #E7EAEE;
-  --warn-bg: #FFF7D9;
-  --warn-text: #957400;
-}
-
-.warn-box {
-  color: var(--warn-text);
-  background-color: var(--warn-bg);
-  padding: 14.5px 17px;
-}
+@light-bg-color: #F7F9FE;
+@light-text-color: #191D23;
+@action-primary-color: #047857;
+@action-primary-contrast: #000000;
+@action-secondary-color: #ECFDF5;
+@action-secondary-contrast: #D0D5DD;
+@error-primary-color: #EF4444;
+@error-darker-color: #991B1B;
+@error-contrast-color: #FECACA;
+@blue-primary-color: #B3D7FF;
+@blue-contrast-color: #E7EAEE;
+@warn-bg: #FFF7D9;
+@warn-text: #957400;
 
 /* Global Config */
-@av-primary: #FFFFFF;
-@av-secondary: #444444;
-@av-primary-contrast: #757272;
-@av-secondary-contrast: #007B67;
-@brand-primary: @av-primary;
+@av-primary: @light-bg-color;
+@av-secondary: @light-text-color;
+@av-primary-contrast: @action-primary-contrast;
+@av-secondary-contrast: @action-primary-color; 
+@brand-primary: @action-secondary-color;
 @brand-success: @av-secondary;
 @link-color: @av-secondary;
 @text-success: @av-secondary-contrast;
 @state-success-text: @av-secondary;
-@av-warning-color: #4a4a4a;
+@av-warning-color: @warn-text;
 
 
 /* Admin Config */
-@av-bg: #EEE;
-@av-bg-hover: #DDD;
-@av-error-bg: #fff;
-@av-error-color: #990000;
+@av-bg: @blue-contrast-color;
+@av-bg-hover: @action-secondary-contrast;
+@av-error-bg: @warn-bg;
+@av-error-color: @error-darker-color;
 
 @imgdir: "../../img";
 
 @import "../../app.less";
+
+
+.warn-box {
+  color: @av-warning-color;
+  background-color: @av-error-bg;
+  padding: 14.5px 17px;
+}
 
 [ave-default-election] .background .top-section,
 [ave-public-view] .background .top-section {
