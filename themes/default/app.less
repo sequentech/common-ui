@@ -17,6 +17,9 @@
 
 @import "../../external.less";
 
+@warn-bg: #FFF7D9;
+@warn-text: #957400;
+
 /* Global Config */
 @av-primary: #FFFFFF;
 @av-secondary: #444444;
@@ -49,6 +52,11 @@
   .navbar, .navbar-unfixed-top, .busy-gui, .avb-content, .start-screen {
     color: @av-secondary;
   }
+}
+
+.warn-box {
+  background-color: @warn-bg !important;
+  color: @warn-text !important;
 }
 
 .modal-dialog .modal-header h4 {
