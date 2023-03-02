@@ -30,6 +30,7 @@
 @blue-contrast-color: #E7EAEE;
 @warn-bg: #FFF7D9;
 @warn-text: #957400;
+@bg-primary: #FFFFFF;
 
 /* Global Config */
 @av-primary: @light-bg-color;
@@ -68,7 +69,7 @@
     color: @av-secondary;
   }
   .navbar-unfixed-top.text-center {
-    background-color: white;
+    background-color: @bg-primary;
   }
   .wrapper-unfixed::after {
     background: none;
@@ -112,10 +113,14 @@
   color: @av-primary-contrast !important;
 
   &:hover {
-    color: white !important;
+    color: @bg-primary !important;
     background-color: @av-primary-contrast !important;
     border-color: @av-primary-contrast !important;
   }
+}
+
+.btn:focus {
+  color: @bg-primary;
 }
 
 
