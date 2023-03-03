@@ -37,7 +37,8 @@ angular.module('avUi')
       var elHeight = $(el).actual('height');
 
       if (($("body").height() + elHeight > window.innerHeight) ||
-          (instance.forceAffixWidth && window.innerWidth < instance.forceAffixWidth)) {
+          (instance.forceAffixWidth && window.innerWidth < instance.forceAffixWidth) ||
+          !instance.forceAffixWidth) {
         affix = affixBottomClass;
       }
 
