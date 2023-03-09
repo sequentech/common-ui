@@ -1099,7 +1099,8 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 getIsAffix: null,
                 setIsAffix: angular.noop,
                 defaultBottomMargin: iElement.css("margin-bottom"),
-                forceAffixWidth: parseInt(iAttrs.forceAffixWidth, 10)
+                forceAffixWidth: parseInt(iAttrs.forceAffixWidth, 10),
+                forceAffix: "true" === iAttrs.forceAffix
             };
             function callCheckPos() {
                 timeout = $timeout(function() {

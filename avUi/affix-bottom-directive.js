@@ -71,7 +71,8 @@ angular.module('avUi')
           getIsAffix: null,
           setIsAffix: angular.noop,
           defaultBottomMargin: iElement.css("margin-bottom"),
-          forceAffixWidth: parseInt(iAttrs.forceAffixWidth, 10)
+          forceAffixWidth: parseInt(iAttrs.forceAffixWidth, 10),
+          forceAffix: iAttrs.forceAffix === "true"
         };
 
 
