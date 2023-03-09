@@ -1105,7 +1105,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 timeout = $timeout(function() {
                     $timeout.cancel(timeout), function(scope, instance, el) {
                         var affix = !1, elHeight = $(el).actual("height");
-                        ($("body").height() + elHeight > window.innerHeight || instance.forceAffixWidth && window.innerWidth < instance.forceAffixWidth) && (affix = "affix-bottom"), 
+                        ($("body").height() + elHeight > window.innerHeight || instance.forceAffixWidth && window.innerWidth < instance.forceAffixWidth || instance.forceAffix) && (affix = "affix-bottom"), 
                         instance.affixed !== affix && (instance.affix = affix, instance.setIsAffix(scope, affix), 
                         el.removeClass("hidden"), affix ? (el.addClass("affix-bottom"), $(el).parent().css("margin-bottom", elHeight + "px")) : (el.removeClass("affix-bottom"), 
                         $(el).parent().css("margin-bottom", instance.defaultBottomMargin)));

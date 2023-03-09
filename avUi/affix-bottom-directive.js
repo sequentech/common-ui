@@ -1,6 +1,6 @@
 /**
  * This file is part of common-ui.
- * Copyright (C) 2015-2016  Sequent Tech Inc <legal@sequentech.io>
+ * Copyright (C) 2015-2023  Sequent Tech Inc <legal@sequentech.io>
 
  * common-ui is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -37,7 +37,8 @@ angular.module('avUi')
       var elHeight = $(el).actual('height');
 
       if (($("body").height() + elHeight > window.innerHeight) ||
-          (instance.forceAffixWidth && window.innerWidth < instance.forceAffixWidth)) {
+          (instance.forceAffixWidth && window.innerWidth < instance.forceAffixWidth) ||
+          instance.forceAffix) {
         affix = affixBottomClass;
       }
 
