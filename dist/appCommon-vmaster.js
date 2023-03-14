@@ -1208,11 +1208,12 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             function callCheck() {
                 timeout = $timeout(function() {
                     $timeout.cancel(timeout), function(instance, el) {
-                        var maxHeight = select(instance, el, instance.maxHeightSelector).css("max-height"), height = angular.element(el)[0].scrollHeight, paddingTop = angular.element(el).css("padding-top");
-                        -1 !== maxHeight.indexOf("px") ? (paddingTop = paddingTop && -1 !== paddingTop.indexOf("px") ? parseInt(paddingTop.replace("px", "")) : 0, 
+                        var height, paddingTop, maxHeight = select(instance, el, instance.maxHeightSelector).css("max-height");
+                        _.isUndefined(maxHeight) ? console.log("max-height selector not found") : (height = angular.element(el)[0].scrollHeight, 
+                        paddingTop = angular.element(el).css("padding-top"), -1 !== maxHeight.indexOf("px") ? (paddingTop = paddingTop && -1 !== paddingTop.indexOf("px") ? parseInt(paddingTop.replace("px", "")) : 0, 
                         (maxHeight = parseInt(maxHeight.replace("px", ""))) < height - paddingTop ? instance.isCollapsed || (instance.isCollapsed = !0, 
                         collapseEl(instance, el).addClass("collapsed"), select(instance, el, instance.toggleSelector).removeClass("hidden in")) : instance.isCollapsed && (instance.isCollapsed = !1, 
-                        collapseEl(instance, el).removeClass("collapsed"), select(instance, el, instance.toggleSelector).addClass("hidden"))) : console.log("invalid non-pixels max-height for " + instance.maxHeightSelector);
+                        collapseEl(instance, el).removeClass("collapsed"), select(instance, el, instance.toggleSelector).addClass("hidden"))) : console.log("invalid non-pixels max-height for " + instance.maxHeightSelector));
                     }(instance, iElement);
                 }, 500);
             }
