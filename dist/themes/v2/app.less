@@ -100,7 +100,7 @@
 
 .btn-success-action {
   border: 0;
-  background-color: @av-secondary-contrast;
+  background-color: @brand-success;
   color: @av-primary;
 }
 
@@ -122,6 +122,28 @@
 
 .btn:focus {
   color: @bg-primary;
+}
+
+.btn-opt-action {
+  color: @brand-success;
+  background-color: @bg-primary;
+  border: 1px solid @brand-success;
+
+  &:hover {
+    color: @bg-primary;
+    background: @brand-success;
+  }
+}
+
+.btn-opt-warn {
+  color: @error-primary-color;
+  background-color: @bg-primary;
+  border: 1px solid @error-primary-color;
+
+  &:hover {
+    color: @bg-primary;
+    background: @error-primary-color;
+  }
 }
 
 
