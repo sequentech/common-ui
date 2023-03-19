@@ -42,13 +42,13 @@
 @brand-success: #0F054C;
 @link-color: @av-secondary;
 @text-success: @av-secondary-contrast;
-@state-success-text: @av-secondary;
+@state-success-text: #43E3A1;
 @av-warning-color: @warn-text;
 
 
 /* Admin Config */
 @av-bg: @blue-contrast-color;
-@av-bg-hover: @action-secondary-contrast;
+@av-bg-hover: #0F054C;
 @av-error-bg: @warn-bg;
 @av-error-color: @error-darker-color;
 
@@ -143,6 +143,16 @@
   &:hover {
     color: @bg-primary;
     background: @error-primary-color;
+  }
+}
+
+.btn-next-action {
+  background-color: @state-success-text;
+  color: @av-bg-hover;
+
+  &:hover {
+    background-color: @av-bg-hover;
+    color: @bg-primary;
   }
 }
 
