@@ -103,7 +103,7 @@
   background-color: @brand-success;
   color: @av-primary;
 
-  &:hover, &:active {
+  &:hover, &:active, &:focus {
     background-color: @state-success-text;
     color: @av-bg-hover;
   }
@@ -113,7 +113,7 @@
   border-color: @av-primary-contrast !important;
   color: @av-primary-contrast !important;
 
-  &:hover, &:active {
+  &:hover, &:active, &:focus {
     color: @bg-primary !important;
     background-color: @av-primary-contrast !important;
     border-color: @av-primary-contrast !important;
@@ -129,7 +129,7 @@
   background-color: @bg-primary;
   border: 1px solid @brand-success;
 
-  &:hover, &:active {
+  &:hover, &:active, &:focus {
     color: @bg-primary;
     background: @brand-success;
   }
@@ -140,7 +140,7 @@
   background-color: @bg-primary;
   border: 1px solid @error-primary-color;
 
-  &:hover, &:active {
+  &:hover, &:active, &:focus {
     color: @bg-primary;
     background: @error-primary-color;
   }
@@ -150,7 +150,7 @@
   background-color: @state-success-text;
   color: @av-bg-hover;
 
-  &:hover, &:active {
+  &:hover, &:active, &:focus {
     background-color: @av-bg-hover;
     color: @bg-primary;
   }
@@ -178,7 +178,7 @@
 .btn-cancel {
     background-color: lighten(@av-primary-contrast, 11%);
     color: @av-primary;
-    &:hover {
+    &:hover, &:focus {
         background-color: @av-secondary-contrast !important;
         color: @av-primary;
     }
