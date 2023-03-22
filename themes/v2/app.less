@@ -103,9 +103,17 @@
   background-color: @brand-success;
   color: @av-primary;
 
-  &:hover, &:active, &:focus {
-    background-color: @state-success-text;
-    color: @av-bg-hover;
+  &:hover {
+    box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.5);
+  }
+
+  &:focus {
+    border: 2px solid @state-success-text;
+  }
+
+  &.active {
+    color: @brand-success;
+    background-color: @av-primary;
   }
 }
 
@@ -129,10 +137,22 @@
   background-color: @bg-primary;
   border: 1px solid @brand-success;
 
-  &:hover, &:active, &:focus {
+  &:hover {
+    box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.5);
+  }
+
+  &:active {
+    border: 2px solid @brand-success;
+  }
+
+  &:focus {
     color: @bg-primary;
     background: @brand-success;
   }
+}
+
+.btn-disabled {
+  opacity: 0.4;
 }
 
 .btn-opt-warn {
@@ -140,7 +160,15 @@
   background-color: @bg-primary;
   border: 1px solid @error-primary-color;
 
-  &:hover, &:active, &:focus {
+  &:hover {
+    box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.5);
+  }
+
+  &:active {
+    border: 2px solid @error-primary-color;
+  }
+
+  &:focus {
     color: @bg-primary;
     background: @error-primary-color;
   }
@@ -150,9 +178,17 @@
   background-color: @state-success-text;
   color: @av-bg-hover;
 
-  &:hover, &:active, &:focus {
+  &:hover {
+    box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.5);
+  }
+
+  &:active {
+    border: 2px solid @av-bg-hover;
+  }
+
+  &:focus {
     background-color: @av-bg-hover;
-    color: @bg-primary;
+    color: @state-success-text;
   }
 }
 
