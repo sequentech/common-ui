@@ -1075,7 +1075,9 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         link: function(scope, element, attrs) {
             scope.deflang = window.i18n.lng(), angular.element("#ng-app").attr("lang", scope.deflang), 
             scope.langs = $i18next.options.lngWhitelist, element.on("click", function() {
-                angular.element("#lang-dropdown-toggle").triggerHandler("click");
+                setTimeout(function() {
+                    angular.element("#lang-dropdown-toggle").click();
+                }, 0);
             }), scope.changeLang = function(lang) {
                 $i18next.options.lng = lang, angular.isDefined($window.i18nOverride) && $window.i18n.preload([ lang ], function() {
                     I18nOverride(null, !0);

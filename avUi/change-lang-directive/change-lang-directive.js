@@ -37,7 +37,9 @@ angular.module('avUi')
       scope.langs =  $i18next.options.lngWhitelist;
       function triggerDropdown()
       {
-        angular.element("#lang-dropdown-toggle").triggerHandler('click');
+        setTimeout(function () {
+          angular.element("#lang-dropdown-toggle").click();
+        }, 0);
       }
       element.on('click', triggerDropdown);
 
