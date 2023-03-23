@@ -113,7 +113,8 @@
   }
 
   &:active {
-    color: @brand-success;
+    color: @brand-success !important;
+    border: 1px solid @brand-success !important;
     background-color: @av-primary;
   }
 }
@@ -143,12 +144,13 @@
   }
 
   &:active {
-    border: 2px solid @brand-success;
+    color: @bg-primary;
+    background: @brand-success;
+    border: 1px solid @brand-success;
   }
 
   &:focus {
-    color: @bg-primary;
-    background: @brand-success;
+    border: 2px solid @brand-success;
   }
 }
 
@@ -167,12 +169,12 @@
   }
 
   &:active {
-    border: 2px solid @error-primary-color;
+    color: @bg-primary;
+    background: @error-primary-color;
   }
 
   &:focus {
-    color: @bg-primary;
-    background: @error-primary-color;
+    border: 2px solid @error-primary-color;
   }
 }
 
@@ -185,12 +187,12 @@
   }
 
   &:active {
-    border: 2px solid @av-bg-hover;
+    background-color: @av-bg-hover;
+    color: @state-success-text;
   }
 
   &:focus {
-    background-color: @av-bg-hover;
-    color: @state-success-text;
+    border: 2px solid @av-bg-hover;
   }
 }
 
