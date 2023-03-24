@@ -144,7 +144,7 @@
   }
 
   &:active {
-    color: @bg-primary;
+    color: @bg-primary !important;
     background: @brand-success;
     border: 1px solid @brand-success;
   }
@@ -198,6 +198,47 @@
   }
 }
 
+.btn-warning-solid {
+  background-color: @error-primary-color;
+  color: @bg-primary;
+  border: none;
+
+  &:hover {
+      box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.5);
+      color: @bg-primary;
+  }
+
+  &:focus {
+      border: 2px solid @state-success-text;
+  }
+
+  &:active {
+      color:  @error-primary-color;
+      border: 1px solid @error-primary-color;
+      background-color: @bg-primary;
+  }
+}
+
+.btn-cancel {
+  background-color: @av-bg;
+  color: @av-primary-contrast;
+
+  &:hover {
+      box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.5);
+      color: @av-primary-contrast;
+  }
+
+  &:focus {
+      border: 2px solid @state-success-text;
+  }
+
+  &:active {
+      color:  @av-bg;
+      border: 1px solid @av-bg;
+      background-color: @av-primary-contrast;
+  }
+}
+
 
 [av-plurality-at-large-results] .table-hover>tbody>tr:hover>td, [av-plurality-at-large-results] .table-hover>tbody>tr:hover>th {
     background-color: @av-primary-contrast !important;
@@ -215,15 +256,6 @@
 .btn[disabled] {
     background-color: @av-primary-contrast !important;
     opacity: 1 !important;
-}
-
-.btn-cancel {
-    background-color: lighten(@av-primary-contrast, 11%);
-    color: @av-primary;
-    &:hover, &:focus {
-        background-color: @av-secondary-contrast !important;
-        color: @av-primary;
-    }
 }
 
 input[type=checkbox] {
