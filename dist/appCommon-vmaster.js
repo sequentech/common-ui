@@ -1106,8 +1106,8 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         restrict: "AE",
         link: function(scope, _element, attrs) {
             scope.configService = ConfigService, scope.ballotHash = attrs.ballotHash || !1, 
-            scope.enableLogOut = function() {
-                var election = scope.parentElection || scope.election;
+            scope.isElectionPortal = attrs.isElectionPortal || !1, scope.enableLogOut = function() {
+                var election = !scope.isElectionPortal && scope.parentElection ? scope.parentElection : scope.election;
                 return !(election && election.presentation && election.presentation.extra_options && election.presentation.extra_options.booth_log_out__disable);
             }, scope.showVersionsModal = ShowVersionsModalService;
         },

@@ -27,8 +27,10 @@ angular
       var link = function(scope, _element, attrs) {
         scope.configService = ConfigService;
         scope.ballotHash = attrs.ballotHash || false;
+        scope.isElectionPortal = attrs.isElectionPortal || false;
         scope.enableLogOut = function () {
           var election = (
+            !scope.isElectionPortal &&
             (!!scope.parentElection) ?
             scope.parentElection :
             scope.election
