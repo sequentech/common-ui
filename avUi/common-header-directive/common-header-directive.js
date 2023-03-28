@@ -35,19 +35,12 @@ angular
             scope.election
           );
   
-          var result = (
-            !scope.isElectionPortal &&
+          return (
             !election ||
             !election.presentation ||
             !election.presentation.extra_options ||
             !election.presentation.extra_options.booth_log_out__disable
           );
-          if (result) {
-            console.log(result);
-          } else {
-            console.log("ff");
-          }
-          return result;
         };
 
         scope.showVersionsModal = ShowVersionsModalService;
