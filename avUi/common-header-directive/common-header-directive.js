@@ -47,7 +47,7 @@ angular
       return {
         restrict: 'AE',
         link: link,
-        templateUrl: 'avBooth/booth-header-directive/booth-header-directive.html'
+        templateUrl: 'avUi/common-header-directive/common-header-directive.html'
       };
     }
   );

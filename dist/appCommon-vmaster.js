@@ -1111,7 +1111,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 return !(election && election.presentation && election.presentation.extra_options && election.presentation.extra_options.booth_log_out__disable);
             }, scope.showVersionsModal = ShowVersionsModalService;
         },
-        templateUrl: "avBooth/booth-header-directive/booth-header-directive.html"
+        templateUrl: "avUi/common-header-directive/common-header-directive.html"
     };
 } ]), angular.module("avUi").directive("avAffixBottom", [ "$window", "$timeout", "$parse", function($window, $timeout, $parse) {
     return {
