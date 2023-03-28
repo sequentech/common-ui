@@ -35,13 +35,15 @@ angular
             scope.election
           );
   
-          return (
+          var ret = (
             !scope.isElectionPortal &&
             !election ||
             !election.presentation ||
             !election.presentation.extra_options ||
             !election.presentation.extra_options.booth_log_out__disable
           );
+          console.log(ret);
+          return ret;
         };
 
         scope.showVersionsModal = ShowVersionsModalService;
