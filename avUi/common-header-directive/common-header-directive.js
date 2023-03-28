@@ -1,6 +1,6 @@
 /**
  * This file is part of common-ui.
- * Copyright (C) 2023 Sequent Tech Inc <legal@sequentech.io>
+ * Copyright (C) 2015-2023 Sequent Tech Inc <legal@sequentech.io>
 
  * common-ui is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,16 +21,33 @@
 angular
   .module('avUi')
   .directive(
-    'avbCommonFooter',
-    function(ConfigService)
+    'avbCommonHeader',
+    function(ConfigService, ShowVersionsModalService)
     {
-      var link = function(scope, _element, _attrs) {
+      var link = function(scope, _element, attrs) {
         scope.configService = ConfigService;
+        scope.ballotHash = attrs.ballotHash || false;
+        scope.enableLogOut = function () {
+          var election = (
+            (!!scope.parentElection) ?
+            scope.parentElection :
+            scope.election
+          );
+  
+          return (
+            !election ||
+            !election.presentation ||
+            !election.presentation.extra_options ||
+            !election.presentation.extra_options.booth_log_out__disable
+          );
+        };
+
+        scope.showVersionsModal = ShowVersionsModalService;
       };
       return {
         restrict: 'AE',
         link: link,
-        templateUrl: 'avUi/common-footer-directive/common-footer-directive.html'
+        templateUrl: 'avBooth/booth-header-directive/booth-header-directive.html'
       };
     }
   );

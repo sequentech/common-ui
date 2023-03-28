@@ -92,7 +92,7 @@
 		}
 	},
 	"avCommon": {
-		"poweredBy": "Funciona con <strong><a href=\"__url__\" target=\"_blank\">__name__</a></strong>",
+		"poweredBy": "Funciona con <a href=\"__url__\" target=\"_blank\">__name__</a>",
 		"foot": {
 			"contact": "Contacto",
 			"contactsupport": "Contacto de soporte",
