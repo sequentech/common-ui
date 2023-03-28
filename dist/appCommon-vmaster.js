@@ -1107,8 +1107,8 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         link: function(scope, _element, attrs) {
             scope.configService = ConfigService, scope.ballotHash = attrs.ballotHash || !1, 
             scope.isElectionPortal = "true" === attrs.isElectionPortal || !1, scope.enableLogOut = function() {
-                var ret = scope.parentElection || scope.election, ret = !scope.isElectionPortal && !ret || !ret.presentation || !ret.presentation.extra_options || !ret.presentation.extra_options.booth_log_out__disable;
-                return console.log(ret), ret;
+                var result = scope.parentElection || scope.election, result = !scope.isElectionPortal && !result || !result.presentation || !result.presentation.extra_options || !result.presentation.extra_options.booth_log_out__disable;
+                return result ? console.log(result) : console.log("ff"), result;
             }, scope.showVersionsModal = ShowVersionsModalService;
         },
         templateUrl: "avUi/common-header-directive/common-header-directive.html"
