@@ -15,6 +15,24 @@
             </span>
         </div>
         <div class="col-xs-8 header-right">
+          <span
+            class="hidden-xs"
+            ng-if="!!isElectionPortal && !!buttonsInfo"
+            ng-repeat="q in buttonsInfo"
+          >
+            <a
+              href="{{ q.link }}"
+              target="_blank"
+              class="{{ q.class }}"
+            >
+              <img
+                class="social-img"
+                ng-src="{{ q.img }}"
+                alt="{{ q.network }}"
+              />
+              {{ q.button_text|truncate:25 }}
+            </a>
+          </span>
           <a
               ng-if="!!configService.mainVersion"
               target="_top"

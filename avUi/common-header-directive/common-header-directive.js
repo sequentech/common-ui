@@ -28,6 +28,7 @@ angular
         scope.configService = ConfigService;
         scope.ballotHash = attrs.ballotHash || false;
         scope.isElectionPortal = ("true" === attrs.isElectionPortal) || false;
+        scope.buttonsInfo = attrs.buttonsInfo && JSON.parse(attrs.buttonsInfo) || false;
         scope.enableLogOut = function () {
           var election = (
             (!!scope.parentElection) ?
