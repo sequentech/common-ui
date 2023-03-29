@@ -48,6 +48,9 @@ angular
       };
       return {
         restrict: 'AE',
+        scope: {
+          hashHelp: '&'
+        },
         link: link,
         templateUrl: 'avUi/common-header-directive/common-header-directive.html'
       };
