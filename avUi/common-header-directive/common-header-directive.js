@@ -49,7 +49,9 @@ angular
       return {
         restrict: 'AE',
         scope: {
-          hashHelp: '&'
+          hashHelp: '&',
+          election: '=',
+          parentElection: '='
         },
         link: link,
         templateUrl: 'avUi/common-header-directive/common-header-directive.html'
