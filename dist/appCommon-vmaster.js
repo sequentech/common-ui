@@ -1105,15 +1105,13 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
     return {
         restrict: "AE",
         scope: {
-            hashHelp: "&",
-            election: "=",
-            parentElection: "=",
-            logoutAndRedirect: "&"
+            hashHelp: "&"
         },
         link: function(scope, _element, attrs) {
-            scope.configService = ConfigService, scope.ballotHash = attrs.ballotHash || !1, 
-            scope.isElectionPortal = "true" === attrs.isElectionPortal || !1, scope.buttonsInfo = attrs.buttonsInfo && JSON.parse(attrs.buttonsInfo) || !1, 
-            scope.enableLogOut = function() {
+            scope.parentElection = scope.$parent.parentElection, scope.election = scope.$parent.election, 
+            scope.logoutAndRedirect = scope.$parent.logoutAndRedirect, scope.configService = ConfigService, 
+            scope.ballotHash = attrs.ballotHash || !1, scope.isElectionPortal = "true" === attrs.isElectionPortal || !1, 
+            scope.buttonsInfo = attrs.buttonsInfo && JSON.parse(attrs.buttonsInfo) || !1, scope.enableLogOut = function() {
                 var election = scope.parentElection || scope.election;
                 return !(election && election.presentation && election.presentation.extra_options && election.presentation.extra_options.booth_log_out__disable);
             }, scope.showVersionsModal = ShowVersionsModalService;

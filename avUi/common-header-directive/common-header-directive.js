@@ -25,6 +25,9 @@ angular
     function(ConfigService, ShowVersionsModalService)
     {
       var link = function(scope, _element, attrs) {
+        scope.parentElection = scope.$parent.parentElection;
+        scope.election = scope.$parent.election;
+        scope.logoutAndRedirect = scope.$parent.logoutAndRedirect;
         scope.configService = ConfigService;
         scope.ballotHash = attrs.ballotHash || false;
         scope.isElectionPortal = ("true" === attrs.isElectionPortal) || false;
@@ -49,10 +52,7 @@ angular
       return {
         restrict: 'AE',
         scope: {
-          hashHelp: '&',
-          election: '=',
-          parentElection: '=',
-          logoutAndRedirect: '&'
+          hashHelp: '&'
         },
         link: link,
         templateUrl: 'avUi/common-header-directive/common-header-directive.html'
