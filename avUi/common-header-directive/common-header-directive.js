@@ -27,7 +27,7 @@ angular
       var link = function(scope, _element, attrs) {
         scope.parentElection = scope.$parent.parentElection;
         scope.election = scope.$parent.election;
-        scope.logoutAndRedirect = scope.$parent.logoutAndRedirect;
+        scope.confirmLogoutModal = scope.$parent.confirmLogoutModal;
         scope.configService = ConfigService;
         scope.ballotHash = attrs.ballotHash || false;
         scope.isElectionPortal = ("true" === attrs.isElectionPortal) || false;
