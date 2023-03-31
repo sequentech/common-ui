@@ -1107,7 +1107,8 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         scope: {
             hashHelp: "&",
             election: "=",
-            parentElection: "="
+            parentElection: "=",
+            logoutAndRedirect: "&"
         },
         link: function(scope, _element, attrs) {
             scope.configService = ConfigService, scope.ballotHash = attrs.ballotHash || !1, 

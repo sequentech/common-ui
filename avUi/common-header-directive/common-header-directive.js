@@ -51,7 +51,8 @@ angular
         scope: {
           hashHelp: '&',
           election: '=',
-          parentElection: '='
+          parentElection: '=',
+          logoutAndRedirect: '&'
         },
         link: link,
         templateUrl: 'avUi/common-header-directive/common-header-directive.html'
