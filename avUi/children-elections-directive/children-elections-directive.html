@@ -14,13 +14,13 @@
       ng-click="click(election)"
   >
     <div class="text-container">
-        <h3 class="election-title">{{election.title}}</h3>
+        <h4 class="election-title">{{election.title}}</h4>
         <p class="election-description">{{election.description}}</p>
-        <div ng-if="voted">
+        <div ng-if="true" class="election-voted">
             <i class="fa-fw fa fa-check" aria-hidden="true"></i>
             <span ng-i18next="avBooth.electionChooserScreen.voted"></span>
         </div>
-        <div ng-if="not-voted">
+        <div ng-if="false" class="election-not-voted">
             <i class="fa-fw fa fa-times" aria-hidden="true"></i>
             <span ng-i18next="avBooth.electionChooserScreen.notVoted"></span>
         </div>
@@ -28,12 +28,12 @@
     <div
         class="election-status-open"
         ng-i18next="avBooth.electionChooserScreen.openElection"
-        ng-if="isOpen">
+        ng-if="true">
     </div>
     <div
         class="election-status-closed"
         ng-i18next="avBooth.electionChooserScreen.closedElection"
-        ng-if="!isOpen">
+        ng-if="false">
     </div>
     <div class="election-dates">
         <div
@@ -50,14 +50,14 @@
     <button
       id="print-btn"
       class="btn btn-lg btn-opt-action btn-plain election-results-btn"
-      ng-if="electionIsfinished"
+      ng-if="true"
       ng-click="downloadBallotTicket()"
       ng-i18next="avBooth.electionChooserScreen.electionResultsBtn">
     </button>
     <button
       id="print-btn"
       class="btn btn-lg btn-opt-action btn-plain election-results-btn"
-      ng-if="!electionIsfinished"
+      ng-if="false"
       ng-click="downloadBallotTicket()"
       ng-i18next="avBooth.electionChooserScreen.clickToVoteBtn">
     </button>

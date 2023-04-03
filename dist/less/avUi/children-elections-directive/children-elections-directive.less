@@ -1,4 +1,41 @@
 [av-children-elections] {
+    .btn-election {
+        border: 2px solid @av-bg;
+        display: flex;
+        flex-direction: row;
+        padding: 19px 38px;
+        align-items: center;
+        gap: 38px;
+    }
+
+    .text-container {
+        flex-grow: 2;
+        text-align: left;
+    }
+
+    .election-voted {
+        color: @state-success-text;
+    }
+
+    .election-not-voted {
+        color: @error-primary-color;
+    }
+
+    .election-open-date {
+        background-color: @state-success-text;
+        color: @av-primary-contrast;
+        font-weight: 700;
+        text-transform: uppercase;
+        min-width: 85px;
+    }
+    .election-closing-date {
+        background-color: @error-primary-color;
+        color: @bg-primary;
+        font-weight: 700;
+        text-transform: uppercase;
+        min-width: 85px;
+    }
+
     /*.category {
 
     }
