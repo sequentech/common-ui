@@ -18,7 +18,7 @@
 angular.module('avUi')
   .directive(
     'avChildrenElections', 
-    function(ConfigService) 
+    function(ConfigService, moment) 
     {
       // we use it as something similar to a controller here
       function link(scope, element, attrs) 
@@ -71,6 +71,10 @@ angular.module('avUi')
             scope.selectedElectionId = election.event_id;
             scope.callback({electionId: election.event_id});
           }
+        };
+
+        scope.formatDate = function (textDate) {
+          return moment(new Date(textDate)).format("D MMM, HH:mm");
         };
       }
 
