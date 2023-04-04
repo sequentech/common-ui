@@ -47,17 +47,21 @@
         >
         </div>
     </div>
-    <button
-      id="print-btn"
-      class="btn btn-lg btn-opt-action btn-plain election-results-btn"
-      ng-if="election.electionData.state !== 'started'"
-      ng-click="clickElectionResults(election)"
-      ng-i18next="avBooth.electionChooserScreen.electionResultsBtn">
-    </button>
+    <a
+        href="election/{{ election.id }}/public/home"
+        target="_blank"
+    >
+        <button
+            class="btn btn-lg btn-opt-action btn-plain election-results-btn"
+            ng-if="true || election.electionData.state !== 'started'"
+            ng-i18next="avBooth.electionChooserScreen.electionResultsBtn">
+        </button>
+    </a>
+
     <button
       id="print-btn"
       class="btn btn-lg btn-opt-action btn-plain click-to-vote-btn"
-      ng-if="election.electionData.state === 'started'"
+      ng-if="false && election.electionData.state === 'started'"
       ng-click="click(election)"
       ng-i18next="avBooth.electionChooserScreen.clickToVoteBtn">
     </button>
