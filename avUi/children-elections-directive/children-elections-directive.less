@@ -3,6 +3,8 @@
         font-size: 18px;
         margin-top: 14px;
         margin-bottom: 14px;
+        padding-right: 24px;
+        padding-left: 24px;
 
         @media(max-width: @screen-sm-max) {
             margin-top: 0;
@@ -39,22 +41,23 @@
         }
 
         &:focus {
+            color: @av-primary-contrast !important;
             border: 2px solid @brand-success;
         }
+    }
 
-        .btn-election-open {
-            border: 2px solid @state-success-text;
-            background-color: @av-primary;
+    .btn-election.btn-election-open {
+        border: 2px solid @state-success-text;
+        background-color: @av-primary;
 
-            &:hover {
-                background-color: @bg-primary;
-            }
+        &:hover {
+            background-color: @bg-primary;
+        }
 
-            &:active {
-                color: @av-primary-contrast !important;
-                background-color: @bg-primary;
-                border: 1px solid @av-bg;
-            }
+        &:active {
+            color: @av-primary-contrast !important;
+            background-color: @bg-primary;
+            border: 1px solid @av-bg;
         }
     }
 
