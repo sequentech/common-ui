@@ -48,7 +48,8 @@
         </div>
     </div>
     <a
-        href="election/{{ election.id }}/public/home"
+        href="election/{{ election.event_id }}/public/home"
+        ng-click="$event.stopPropagation();"
         target="_blank"
     >
         <button

@@ -73,11 +73,6 @@ angular.module('avUi')
           }
         };
 
-        scope.clickElectionResults = function (election)
-        {
-
-        };
-
         scope.formatDate = function (textDate) {
           return moment(new Date(textDate)).format("D MMM, HH:mm");
         };
