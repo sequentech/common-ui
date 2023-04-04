@@ -38,14 +38,12 @@
     <div class="election-dates">
         <div
             class="election-open-date"
-            ng-if="!!election.electionData && !!election.electionData.startDate"
-            ng-i18next="[html:i18next]({date: formatDate(election.electionData.startDate) || '' })avBooth.electionChooserScreen.openDate"
+            ng-i18next="[html:i18next]({date: !!election.electionData && !!election.electionData.startDate && formatDate(election.electionData.startDate) || '' })avBooth.electionChooserScreen.openDate"
         >
         </div>
         <div
             class="election-closing-date"
-            ng-if="!!election.electionData && !!election.electionData.endDate"
-            ng-i18next="[html:i18next]({date: formatDate(election.electionData.endDate) || ''})avBooth.electionChooserScreen.closingDate"
+            ng-i18next="[html:i18next]({date: !!election.electionData && !!election.electionData.endDate && formatDate(election.electionData.endDate) || ''})avBooth.electionChooserScreen.closingDate"
         >
         </div>
     </div>
