@@ -1,15 +1,36 @@
 [av-children-elections] {
+    .btn-lg {
+        font-size: 18px;
+        margin-top: 14px;
+        margin-bottom: 14px;
+
+        @media(max-width: @screen-sm-max) {
+            margin-top: 0;
+            margin-bottom: 0;
+            padding-right: 60px;
+            padding-left: 60px;
+        }
+    }
+
     .btn-election {
         border: 2px solid @av-bg;
         display: flex;
         flex-direction: row;
         padding: 19px 38px;
         align-items: center;
-        gap: 38px;
+        gap: 21px;
         color: @av-primary-contrast;
+
+        @media(max-width: @screen-sm-max) {
+            padding: 27px 18px;
+            flex-direction: column;
+            position: relative;
+            gap: 20px;
+        }
 
         &:hover {
           box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.5);
+          background-color: @av-bg;
         }
 
         &:active {
@@ -18,19 +39,33 @@
         }
 
         &:focus {
-            color: @brand-success;
             border: 2px solid @brand-success;
         }
 
-        .selected {
+        .btn-election-open {
             border: 2px solid @state-success-text;
             background-color: @av-primary;
+
+            &:hover {
+                background-color: @bg-primary;
+            }
+
+            &:active {
+                color: @av-primary-contrast !important;
+                background-color: @bg-primary;
+                border: 1px solid @av-bg;
+            }
         }
     }
 
     .text-container {
         flex-grow: 2;
         text-align: left;
+
+        @media(max-width: @screen-sm-max) {
+            width: 100%;
+            position: relative;
+        }
     }
 
     .election-voted {
@@ -41,39 +76,45 @@
         color: @error-primary-color;
     }
 
+    .election-voted, .election-not-voted {
+        @media(max-width: @screen-sm-max) {
+            position: absolute;
+            right: 0;
+            top: 10px;
+        }
+    }
+
     .election-status-open {
         background-color: @state-success-text;
         color: @av-primary-contrast;
-        font-weight: 700;
-        text-transform: uppercase;
-        min-width: 85px;
     }
 
     .election-status-closed {
         background-color: @error-primary-color;
         color: @bg-primary;
+    }
+
+    .election-status-open, .election-status-closed {
         font-weight: 700;
         text-transform: uppercase;
         min-width: 85px;
+
+        @media(max-width: @screen-sm-max) {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
     }
 
     .election-dates {
         text-align: left;
-    }
+        font-size: 16px;
+        margin-right: 35px;
 
-    /*.category {
-
-    }
-
-    .btn-election {
-        margin: 8px 8px 8px 0;
-
-        &.selected {
-            background-color: #373737;
+        @media(max-width: @screen-sm-max) {
+            display: flex;
+            gap: 20px;
+            order: 1;
         }
     }
-
-    h3 {
-        font-size: 18px;
-    }*/
 }
