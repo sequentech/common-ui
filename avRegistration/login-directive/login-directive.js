@@ -22,6 +22,7 @@ angular.module('avRegistration')
       Authmethod,
       StateDataService,
       $state,
+      $stateParams,
       $location,
       $cookies,
       $i18next,
@@ -60,6 +61,7 @@ angular.module('avRegistration')
         scope.currentFormStep = 0;
 
         scope.stateData = StateDataService.getData();
+        scope.successfulRegistration = scope.stateData.successfulRegistration || false;
 
         scope.signupLink = ConfigService.signupLink;
 
@@ -172,26 +174,34 @@ angular.module('avRegistration')
             field.value = "";
           }
 
+          function onAuthCodeSent(response) {
+            // disabling login that are from previous step
+            _.each(
+              scope.login_fields, 
+              function (element) {
+                if (
+                  element.steps === undefined || 
+                  element.steps.indexOf(0) !== -1
+                ) {
+                  element.disabled = true;
+                }
+              }
+            );
+            scope.currentFormStep = 1;
+            scope.error = null;
+            $timeout(scope.sendingDataTimeout, 3000);
+          }
+
           scope.sendingData = true;
+          if (scope.skipSendAuthCode) {
+            onAuthCodeSent();
+            scope.skipSendAuthCode = false;
+            return;
+          }
+
           Authmethod.resendAuthCode(data, autheventid)
             .then(
-              function(response) {
-                // disabling login that are from previous step
-                _.each(
-                  scope.login_fields, 
-                  function (element) {
-                    if (
-                      element.steps === undefined || 
-                      element.steps.indexOf(0) !== -1
-                    ) {
-                      element.disabled = true;
-                    }
-                  }
-                );
-                scope.currentFormStep = 1;
-                scope.error = null;
-                $timeout(scope.sendingDataTimeout, 3000);
-              },
+              onAuthCodeSent,
               function onError(response) {
                 $timeout(scope.sendingDataTimeout, 3000);
                 scope.error = $i18next('avRegistration.errorSendingAuthCode');
@@ -434,6 +444,12 @@ angular.module('avRegistration')
         scope.apply = function(authevent) {
             scope.hasOtpFieldsCode = Authmethod.hasOtpCodeField(authevent);
             scope.method = authevent['auth_method'];
+
+            if (scope.hasOtpFieldsCode ||
+              _.contains(['sms-otp', 'email-otp'], scope.method)) {
+                scope.skipSendAuthCode = scope.successfulRegistration;
+            }
+
             scope.name = authevent['name'];
             scope.parseAuthToken();
             scope.registrationAllowed = (
