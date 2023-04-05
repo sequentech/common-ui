@@ -36,13 +36,19 @@
         background-color: @av-primary;
 
         &:hover {
-            background-color: @bg-primary;
+            box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.5);
+            background-color: @av-bg;
         }
 
         &:active {
             color: @av-primary-contrast !important;
             background-color: @bg-primary;
             border: 1px solid @av-bg;
+        }
+
+        &:focus {
+            color: @av-primary-contrast !important;
+            border: 2px solid @brand-success;
         }
     }
 

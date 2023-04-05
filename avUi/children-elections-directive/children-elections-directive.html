@@ -28,7 +28,7 @@
                 <a
                     href="election/{{ election.event_id }}/public/home"
                     ng-if="checkElectionStarted(election.electionData)"
-                    ng-class="election-website-link hidden-xs"
+                    class="election-website-link hidden-xs"
                     ng-click="$event.stopPropagation();"
                     target="_blank"
                     ng-i18next="avBooth.electionChooserScreen.electionWebsite"
@@ -83,7 +83,7 @@
             <a
                 href="election/{{ election.event_id }}/public/home"
                 ng-if="checkElectionStarted(election.electionData)"
-                ng-class="election-website-link visible-xs"
+                class="election-website-link visible-xs"
                 ng-click="$event.stopPropagation();"
                 target="_blank"
                 ng-i18next="avBooth.electionChooserScreen.electionWebsite"
