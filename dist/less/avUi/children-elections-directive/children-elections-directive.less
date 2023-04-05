@@ -82,10 +82,17 @@
         color: @bg-primary;
     }
 
-    .election-status-open, .election-status-closed {
+    .election-status-scheduled {
+        background-color: @av-bg;
+        color: @av-secondary;
+    }
+
+    .election-status-open, .election-status-closed, .election-status-scheduled {
         font-weight: 700;
         text-transform: uppercase;
         min-width: 85px;
+        text-align: center;
+        padding: 0 20px;
 
         @media(max-width: @screen-sm-max) {
             position: absolute;

@@ -10,9 +10,9 @@
             class="btn-election"
             ng-disabled="election.disabled"
             ng-if="!election.hidden"
-            ng-class="{'selected': selectedElectionId === election.event_id, 'btn btn-election-open': election.electionData.state === 'started'}"
+            ng-class="{'selected': selectedElectionId === election.event_id, 'btn btn-election-open': checkElectionStarted(election.electionData) && canVote && !hasVoted}"
             data-election-id="{{election.event_id}}"
-            ng-click="click(election)"
+            ng-click="canVote && !hasVoted && click(election)"
         >
             <div class="text-container">
                 <h4 class="election-title">{{election.title}}</h4>
@@ -25,32 +25,46 @@
                     <i class="fa-fw fa fa-times" aria-hidden="true"></i>
                     <span ng-i18next="avBooth.electionChooserScreen.notVoted"></span>
                 </div>
+                <a
+                    href="election/{{ election.event_id }}/public/home"
+                    ng-if="checkElectionStarted(election.electionData)"
+                    ng-class="election-website-link hidden-xs"
+                    ng-click="$event.stopPropagation();"
+                    target="_blank"
+                    ng-i18next="avBooth.electionChooserScreen.electionWebsite"
+                >
+                </a>
             </div>
             <div
                 class="election-status-open"
                 ng-i18next="avBooth.electionChooserScreen.openElection"
-                ng-if="election.electionData.state === 'started'">
+                ng-if="checkElectionStarted(election.electionData)">
             </div>
             <div
                 class="election-status-closed"
                 ng-i18next="avBooth.electionChooserScreen.closedElection"
-                ng-if="election.electionData.state !== 'started'">
+                ng-if="checkElectionClosed(election.electionData)">
+            </div>
+            <div
+                class="election-status-scheduled"
+                ng-i18next="avBooth.electionChooserScreen.scheduledElection"
+                ng-if="checkElectionScheduled(election.electionData)">
             </div>
             <div class="election-dates">
                 <div
                     class="election-open-date"
-                    ng-i18next="[html:i18next]({date: !!election.electionData && !!election.electionData.startDate && formatDate(election.electionData.startDate) || '' })avBooth.electionChooserScreen.openDate"
+                    ng-i18next="[html:i18next]({date: !!election.electionData && !!election.electionData.startDate && formatDate(election.electionData.startDate) || '-' })avBooth.electionChooserScreen.openDate"
                 >
                 </div>
                 <div
                     class="election-closing-date"
-                    ng-i18next="[html:i18next]({date: !!election.electionData && !!election.electionData.endDate && formatDate(election.electionData.endDate) || ''})avBooth.electionChooserScreen.closingDate"
+                    ng-i18next="[html:i18next]({date: !!election.electionData && !!election.electionData.endDate && formatDate(election.electionData.endDate) || '-'})avBooth.electionChooserScreen.closingDate"
                 >
                 </div>
             </div>
             <a
                 href="election/{{ election.event_id }}/public/home"
-                ng-if="election.electionData.state !== 'started'"
+                ng-if="!checkElectionStarted(election.electionData)"
                 ng-click="$event.stopPropagation();"
                 target="_blank"
             >
@@ -61,12 +75,20 @@
             </a>
     
             <button
-            id="print-btn"
-            class="btn btn-lg btn-success-action btn-plain click-to-vote-btn"
-            ng-if="election.electionData.state === 'started'"
-            ng-click="click(election)"
-            ng-i18next="avBooth.electionChooserScreen.clickToVoteBtn">
+                class="btn btn-lg btn-success-action btn-plain click-to-vote-btn"
+                ng-if="checkElectionStarted(election.electionData)"
+                ng-click="click(election)"
+                ng-i18next="avBooth.electionChooserScreen.clickToVoteBtn">
             </button>
+            <a
+                href="election/{{ election.event_id }}/public/home"
+                ng-if="checkElectionStarted(election.electionData)"
+                ng-class="election-website-link visible-xs"
+                ng-click="$event.stopPropagation();"
+                target="_blank"
+                ng-i18next="avBooth.electionChooserScreen.electionWebsite"
+            >
+            </a>
         </div>
     </div>
 </div>
