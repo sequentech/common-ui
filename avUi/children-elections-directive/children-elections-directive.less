@@ -29,21 +29,6 @@
             position: relative;
             gap: 20px;
         }
-
-        &:hover {
-          box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.5);
-          background-color: @av-bg;
-        }
-
-        &:active {
-            color: @av-primary-contrast !important;
-            border: 1px solid @brand-success;
-        }
-
-        &:focus {
-            color: @av-primary-contrast !important;
-            border: 2px solid @brand-success;
-        }
     }
 
     .btn-election.btn-election-open {
@@ -119,5 +104,15 @@
             gap: 20px;
             order: 1;
         }
+    }
+
+    .category-elections-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+    }
+
+    h3.category-title {
+        margin: 30px 0;
     }
 }
