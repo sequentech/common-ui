@@ -74,7 +74,7 @@
         @media(max-width: @screen-sm-max) {
             position: absolute;
             right: 0;
-            top: 10px;
+            top: 0;
         }
     }
 
@@ -137,6 +137,10 @@
 
     h4.election-title {
         margin-top: 0;
+
+        @media(max-width: @screen-sm-max) {
+            margin-right: 60px;
+        }
     }
 
     .election-website-link {
