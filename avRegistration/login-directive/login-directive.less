@@ -34,7 +34,8 @@
   .warn-box {
     background-color: @av-error-bg;
     padding: 14.5px 17px;
-    display: flex;
+    // display: flex;
+    display: none;
     flex-direction: row;
     gap: 8px;
   }
@@ -46,6 +47,19 @@
   .container-login {
     border: 2px solid rgba(0, 0, 0, 0.05);
     padding: 80px;
+
+    @media(max-width: @screen-sm-max) {
+      padding: 60px;
+    }
+    @media(max-width: @screen-xs-max) {
+      padding: 40px;
+    }
+
+  }
+
+  h3.login-header-text {
+    margin-top: 0;
+    margin-bottom: 0;
   }
 }
 

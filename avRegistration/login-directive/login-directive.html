@@ -1,31 +1,31 @@
 <div class="container-login">
   <div class="row">
     <div class="col-sm-12 loginheader">
-        <h2
-          class="tex-center"
+        <h3
+          class="tex-center login-header-text"
           ng-if="!isAdmin && !isOtl && !isCensusQuery && method !== 'openid-connect'"
           ng-i18next="[i18next]({name: orgName})avRegistration.loginHeader">
-        </h2>
-        <h2
-          class="tex-center"
+        </h3>
+        <h3
+          class="tex-center login-header-text"
           ng-if="isAdmin && !isOtl"
           ng-i18next="[i18next]avRegistration.adminLoginHeader">
-        </h2>
-        <h2
-          class="tex-center"
+        </h3>
+        <h3
+          class="tex-center login-header-text"
           ng-if="!isCensusQuery && method === 'openid-connect'"
           ng-i18next="[i18next]avRegistration.loginButton">
-        </h2>
-        <h2
-          class="tex-center"
+        </h3>
+        <h3
+          class="tex-center login-header-text"
           ng-if="!!isCensusQuery"
           ng-i18next="avRegistration.censusQueryHeader">
-        </h2>
-        <h2
-          class="tex-center"
+        </h3>
+        <h3
+          class="tex-center login-header-text"
           ng-if="isOtl"
           ng-i18next="avRegistration.otlHeader">
-        </h2>
+        </h3>
     </div>
 
     <div class="col-sm-12" ng-if="method !== 'openid-connect'">
