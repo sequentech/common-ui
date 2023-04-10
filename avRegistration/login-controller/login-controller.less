@@ -21,5 +21,13 @@
 
     .pad {
         max-width: 562px;
+        margin-top: 80px;
+
+        @media(max-width: @screen-sm-max) {
+            margin-top: 60px;
+        }
+        @media(max-width: @screen-xs-max) {
+            margin-top: 40px;
+        }
     }
 }
