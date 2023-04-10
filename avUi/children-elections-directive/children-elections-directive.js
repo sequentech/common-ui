@@ -18,7 +18,7 @@
 angular.module('avUi')
   .directive(
     'avChildrenElections', 
-    function(ConfigService, moment) 
+    function(ConfigService) 
     {
       // we use it as something similar to a controller here
       function link(scope, element, attrs) 
@@ -57,12 +57,6 @@ angular.module('avUi')
         // add a processElection function
         scope.click = function (election) 
         {
-          if (!scope.canVote) {
-            console.log("user cannot vote, so ignoring click");
-          }
-          if (scope.hasVoted) {
-            console.log("user has already voted, so ignoring click");
-          }
           console.log("click to election.event_id = " + election.event_id);
           if (election.disabled) {
             console.log("election disabled, so ignoring click");
@@ -78,24 +72,6 @@ angular.module('avUi')
             scope.callback({electionId: election.event_id});
           }
         };
-
-        scope.formatDate = function (textDate) {
-          return moment(new Date(textDate)).format("D MMM, HH:mm");
-        };
-
-        scope.checkElectionStarted = function (election) {
-          return ["started", "resumed"].includes(election.state);
-        };
-  
-        scope.checkElectionScheduled = function (election) {
-          return !scope.checkElectionStarted(election) &&
-            !!election.startDate &&
-            new Date(election.startDate) > new Date();
-        };
-  
-        scope.checkElectionClosed = function (election) {
-          return !scope.checkElectionScheduled(election) && !scope.checkElectionStarted(election);
-        };
       }
 
       return {
@@ -104,11 +80,7 @@ angular.module('avUi')
           mode: '@',
           callback: '&?',
           parentElectionId: '@?',
-          childrenElectionInfo: '=',
-          canVote: '=',
-          hasVoted: '=',
-          skippedElections: '=',
-          showSkippedElections: '='
+          childrenElectionInfo: '='
         },
         link: link,
         templateUrl: 'avUi/children-elections-directive/children-elections-directive.html'
