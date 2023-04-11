@@ -555,7 +555,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 scope.isCensusQuery || scope.withCode || scope.isOtl ? scope.withCode ? scope.login_fields = Authmethod.getLoginWithCode(authevent) : scope.isCensusQuery ? scope.login_fields = Authmethod.getCensusQueryFields(authevent) : scope.isOtl && (scope.login_fields = Authmethod.getOtlFields(authevent)) : scope.login_fields = Authmethod.getLoginFields(authevent), 
                 scope.login_fields.sort(function(a, b) {
                     var initialFields = [ "tlf", "email", "code", "otp-code" ];
-                    return initialFields.includes(a.type) && !initialFields.includes(a.type) ? -1 : !initialFields.includes(a.type) && initialFields.includes(a.type) ? 1 : 0;
+                    return initialFields.includes(a.type) && !initialFields.includes(b.type) ? -1 : !initialFields.includes(a.type) && initialFields.includes(b.type) ? 1 : 0;
                 }), scope.hide_default_login_lookup_field = authevent.hide_default_login_lookup_field, 
                 scope.telIndex = -1, scope.emailIndex = -1, scope.telField = null, scope.allowUserResend = function() {
                     if (scope.withCode) return !1;

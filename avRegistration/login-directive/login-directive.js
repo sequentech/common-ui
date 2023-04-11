@@ -455,10 +455,10 @@ angular.module('avRegistration')
               var initialFields = [
                 "tlf", "email", "code", "otp-code"
               ];
-              if (initialFields.includes(a.type) && !initialFields.includes(a.type)) {
+              if (initialFields.includes(a.type) && !initialFields.includes(b.type)) {
                 return -1;
               }
-              if (!initialFields.includes(a.type) && initialFields.includes(a.type)) {
+              if (!initialFields.includes(a.type) && initialFields.includes(b.type)) {
                 return 1;
               }
               return 0;
