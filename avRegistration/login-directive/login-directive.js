@@ -310,7 +310,7 @@ angular.module('avRegistration')
             if (field.name === 'email') {
               scope.email = field.value;
             } else if ('code' === field.name) {
-              field.value = field.value.trim().replace(/ |\n|\t|-|_/g,'').toUpperCase();
+              field.value = field.value && field.value.trim().replace(/ |\n|\t|-|_/g,'').toUpperCase();
             }
             data[field.name] = field.value;
           });
