@@ -1,8 +1,27 @@
 [avr-bool-field] {
+  .form-group {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
   input[type="checkbox"] {
     text-align: right;
     width: auto;
     float: right;
-    margin-top: -10px;
+    margin-top: 0;
+    accent-color: @brand-success;
+  }
+
+  label {
+    margin-right: 18px;
+  }
+
+  .bool-text-content {
+    color: @av-secondary;
+
+    a { 
+      color: @brand-success;
+    }
   }
 }
