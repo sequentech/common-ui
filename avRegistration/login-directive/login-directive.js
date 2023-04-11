@@ -449,6 +449,20 @@ angular.module('avRegistration')
             } else if (scope.isOtl) {
               scope.login_fields = Authmethod.getOtlFields(authevent);
             }
+
+            // show some fields first
+            scope.login_fields.sort(function (a, b) {
+              var initialFields = [
+                "tlf", "email", "code", "otp-code"
+              ];
+              if (initialFields.includes(a.type) && !initialFields.includes(a.type)) {
+                return -1;
+              }
+              if (!initialFields.includes(a.type) && initialFields.includes(a.type)) {
+                return 1;
+              }
+              return 0;
+            });
             scope.hide_default_login_lookup_field = authevent.hide_default_login_lookup_field;
             scope.telIndex = -1;
             scope.emailIndex = -1;
