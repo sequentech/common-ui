@@ -21,7 +21,7 @@
   },
   "avRegistration": {
     "languageName": "English",
-    "loginHeader": "Login to vote",
+    "loginHeader": "Authenticate to vote",
     "adminLoginHeader": "Sign In to Admin Console",
     "censusQueryHeader": "Check if you are in the census",
     "checkCensusButton": "Check census",

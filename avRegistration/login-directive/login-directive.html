@@ -53,7 +53,7 @@
               </div>
               <button
                 type="submit"
-                class="btn btn-block btn-success-action"
+                class="btn btn-block btn-lg btn-success-action"
                 ng-if="!isCensusQuery && !isOtl"
                 ng-i18next="avRegistration.loginButton"
                 ng-click="loginUser(form.$valid)"
@@ -62,7 +62,7 @@
               </button>
               <button
                 type="submit"
-                class="btn btn-block btn-success-action"
+                class="btn btn-block btn-lg btn-success-action"
                 ng-if="isCensusQuery"
                 ng-i18next="avRegistration.checkCensusButton"
                 ng-click="checkCensus(form.$valid)"
@@ -71,7 +71,7 @@
               </button>
               <button
                 type="submit"
-                class="btn btn-block btn-success-action"
+                class="btn btn-block btn-lg btn-success-action"
                 ng-if="isOtl && otlStatus !== 'success'"
                 ng-i18next="avRegistration.otlButton"
                 ng-click="otlAuth(form.$valid)"
@@ -170,7 +170,7 @@
           <a
             ng-click="openidConnectAuth(provider)"
             alt="{{provider.description}}"
-            class="btn btn-primary btn-login">
+            class="btn btn-lg btn-primary btn-login">
             <img
               ng-if="!!provider.icon"
               alt="{{provider.description}}"
