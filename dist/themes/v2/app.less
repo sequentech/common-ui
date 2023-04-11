@@ -42,7 +42,7 @@
 @av-secondary-contrast: @action-primary-color; 
 @brand-primary: @action-secondary-color;
 @brand-success: #0F054C;
-@link-color: @av-secondary;
+@link-color: @brand-success;
 @text-success: @av-secondary-contrast;
 @state-success-text: #43E3A1;
 @av-warning-color: @warn-text;
@@ -246,6 +246,10 @@
   &:hover {
     text-decoration: none;
   }
+}
+
+input[type="text"]::placeholder, input[type="password"]::placeholder {
+  color: @text-description;
 }
 
 input[type=checkbox] {
