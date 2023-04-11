@@ -50,6 +50,15 @@
 
   .container-login {
     border: 2px solid rgba(0, 0, 0, 0.05);
+    padding: 80px;
+
+    @media(max-width: @screen-sm-max) {
+      padding: 60px;
+    }
+    @media(max-width: @screen-xs-max) {
+      padding: 40px;
+    }
+
   }
 
   h3.login-header-text {
