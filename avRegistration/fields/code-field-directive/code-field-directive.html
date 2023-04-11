@@ -28,8 +28,8 @@
             ng-if="!!field.help && field.help.length > 0"
             ng-bind-html="field.help | addTargetBlank"
         ></p>
-        <p class="help-block code-help">
-          <span ng-if="allowUserResend && showResendAuthCode() && !sendingData && ((method !== 'sms' && method !== 'sms-otp') || isValidTel)">
+        <p class="help-block code-help" ng-if="allowUserResend && showResendAuthCode() && !sendingData && ((method !== 'sms' && method !== 'sms-otp') || isValidTel)">
+          <span>
             <b ng-i18next="avRegistration.noCodeReceivedQuestion"></b>
             <a
               ng-click="resendAuthCode(field)"
