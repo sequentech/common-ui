@@ -267,3 +267,23 @@ input[type=checkbox] {
 textarea.form-control {
     min-height: 180px;
 }
+
+.form-control {
+  box-shadow: unset;
+}
+
+@theme-font-path: "../../themes/v2";
+
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Manrope-Medium'), url('@{theme-font-path}/Manrope-VariableFont_wght.ttf') format('ttf');
+}
+
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Manrope-Bold'), url('@{theme-font-path}/Manrope-VariableFont_wght.ttf') format('ttf');
+}
