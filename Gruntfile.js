@@ -274,10 +274,8 @@ module.exports = function (grunt) {
             dest: 'dist/themes/fonts/'
           },
           {
-            expand: true,
-            cwd: 'node_modules/bootstrap/fonts/',
-            src: ['**'],
-            dest: 'dist/themes/fonts/'
+            src: ['fonts/Manrope-VariableFont_wght.ttf'],
+            dest: 'dist/fonts/Manrope-VariableFont_wght.ttf'
           },
           {
             expand: true,
