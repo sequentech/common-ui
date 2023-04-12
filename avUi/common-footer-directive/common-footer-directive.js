@@ -29,6 +29,9 @@ angular
       };
       return {
         restrict: 'AE',
+        scope:  {
+          float: '='
+        },
         link: link,
         templateUrl: 'avUi/common-footer-directive/common-footer-directive.html'
       };
