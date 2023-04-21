@@ -504,7 +504,10 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 valid && (scope.sendingData || (scope.withCode || !scope.hasOtpFieldsCode && !_.contains([ "sms-otp", "email-otp" ], scope.method) || 0 !== scope.currentFormStep ? (data = {
                     captcha_code: Authmethod.captcha_code
                 }, _.each(scope.login_fields, function(field) {
-                    "email" === field.name ? scope.email = field.value : "code" === field.name && (field.value = field.value && field.value.trim().replace(/ |\n|\t|-|_/g, "").toUpperCase()), 
+                    if ("email" === field.name) scope.email = field.value; else if ("code" === field.name) {
+                        if (null === field.value) return;
+                        field.value = field.value && field.value.trim().replace(/ |\n|\t|-|_/g, "").toUpperCase();
+                    }
                     data[field.name] = field.value;
                 }), "smart-link" === scope.method && (data["auth-token"] = $location.search()["auth-token"]), 
                 scope.sendingData = !0, scope.error = null, Authmethod.login(data, autheventid).then(function(tokens) {
@@ -575,7 +578,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                     el.disabled = !0), el;
                 });
                 _.filter(fields, function(el) {
-                    return null !== el.value || "otp-code" === el.type || "code" === el.type;
+                    return null !== el.value || "otp-code" === el.type;
                 }).length === scope.login_fields.length && ("openid-connect" === scope.method || scope.isOtl || scope.isCensusQuery || scope.loginUser(!0));
             }, scope.view = function(id) {
                 Authmethod.viewEvent(id).then(function(response) {
