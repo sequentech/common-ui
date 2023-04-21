@@ -310,6 +310,9 @@ angular.module('avRegistration')
             if (field.name === 'email') {
               scope.email = field.value;
             } else if ('code' === field.name) {
+              if (null === field.value) {
+                return;
+              }
               field.value = field.value && field.value.trim().replace(/ |\n|\t|-|_/g,'').toUpperCase();
             }
             data[field.name] = field.value;
@@ -537,15 +540,14 @@ angular.module('avRegistration')
               });
 
             // if not all the fields all filled at this point, then we stop
-            // here. otp-code or code fields do not count, because loginUser
+            // here. otp-code fields do not count, because loginUser
             // function will send the appropiate OTP code if required
             var filledFields = _.filter(
               fields,
               function (el) {
                 return (
                   el.value !== null ||
-                  el.type === 'otp-code' ||
-                  el.type === 'code'
+                  el.type === 'otp-code'
                 );
               }
             );
