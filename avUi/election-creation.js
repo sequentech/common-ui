@@ -57,9 +57,9 @@ angular.module('avUi')
             });
 
             d.extra_fields = _.filter(el.census.extra_fields, function(ef) {
-              var must = ef.must;
               delete ef.disabled;
               delete ef.must;
+              delete ef.value;
 
               // only add regex if it's filled and it's a text field
               if (!angular.isUndefined(ef.regex) &&

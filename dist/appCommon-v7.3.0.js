@@ -1441,8 +1441,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             return el.id && (d.id = el.id), d.admin_fields = _.filter(el.census.admin_fields, function(af) {
                 return !0;
             }), d.extra_fields = _.filter(el.census.extra_fields, function(ef) {
-                ef.must;
-                return delete ef.disabled, delete ef.must, angular.isUndefined(ef.regex) || _.contains([ "int", "text" ], ef.type) && 0 !== $.trim(ef.regex).length || delete ef.regex, 
+                return delete ef.disabled, delete ef.must, delete ef.value, angular.isUndefined(ef.regex) || _.contains([ "int", "text" ], ef.type) && 0 !== $.trim(ef.regex).length || delete ef.regex, 
                 _.contains([ "bool", "captcha" ], ef.type) ? (delete ef.min, delete ef.max) : (ef.min && (ef.min = parseInt(ef.min)), 
                 ef.max && (ef.max = parseInt(ef.max))), !0;
             }), d;
