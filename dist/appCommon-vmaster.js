@@ -354,10 +354,11 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             };
             return $http.post(url, data);
         },
-        launchTally: function(url, tallyElectionIds, data) {
+        launchTally: function(url, tallyElectionIds, forceTally, data) {
             url = backendUrl + "auth-event/" + url + "/tally-status/", data = {
                 children_election_ids: tallyElectionIds,
-                force_tally: data
+                force_tally: forceTally,
+                mode: data
             };
             return $http.post(url, data);
         },
