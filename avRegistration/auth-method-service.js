@@ -697,12 +697,14 @@ angular.module('avRegistration')
         authmethod.launchTally = function(
           electionId,
           tallyElectionIds,
-          forceTally
+          forceTally,
+          mode
         ) {
             var url = backendUrl + 'auth-event/' + electionId + '/tally-status/';
             var data = {
               children_election_ids: tallyElectionIds,
-              force_tally: forceTally
+              force_tally: forceTally,
+              mode: mode
             };
             return $http.post(url, data);
         };
