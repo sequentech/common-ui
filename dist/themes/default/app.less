@@ -17,35 +17,50 @@
 
 @import "../../external.less";
 
+@light-bg-color: #F7F9FE;
+@light-text-color: #191D23;
+@action-primary-color: #047857;
+@action-primary-contrast: #000000;
+@action-secondary-color: #ECFDF5;
+@action-secondary-contrast: #D0D5DD;
+@error-darker-color: #991B1B;
+@error-contrast-color: #FECACA;
+@blue-primary-color: #B3D7FF;
+@blue-contrast-color: #E7EAEE;
 @warn-bg: #FFF7D9;
 @warn-text: #957400;
 
-/* Global Config */
-@av-primary: #FFFFFF;
-@av-secondary: #444444;
-@av-primary-contrast: #757272;
-@av-secondary-contrast: #007B67;
-@brand-primary: @av-primary;
-@brand-success: @av-secondary;
-@link-color: @av-secondary;
-@text-success: @av-secondary-contrast;
-@state-success-text: @av-secondary;
-@av-warning-color: #4a4a4a;
-
 @bg-primary: #FFFFFF;
-@error-primary-color: #EF4444;
+@error-primary-color: #DC2626;
 @grey-darker: #757575;
 @text-description: #64748B;
 
+/* Global Config */
+@av-primary: @light-bg-color;
+@av-secondary: @light-text-color;
+@av-primary-contrast: @action-primary-contrast;
+@av-secondary-contrast: @action-primary-color; 
+@brand-primary: @action-secondary-color;
+@brand-success: #0F054C;
+@link-color: @brand-success;
+@text-success: @av-secondary-contrast;
+@state-success-text: #43E3A1;
+@av-warning-color: @warn-text;
+
+
 /* Admin Config */
-@av-bg: #EEE;
-@av-bg-hover: #DDD;
-@av-error-bg: #fff;
-@av-error-color: #990000;
+@av-bg: @blue-contrast-color;
+@av-bg-hover: #0F054C;
+@av-error-bg: @warn-bg;
+@av-error-color: @error-darker-color;
 
 @imgdir: "../../img";
 
 @import "../../app.less";
+
+.warn-box {
+  color: @av-warning-color;
+}
 
 [ave-default-election] .background .top-section,
 [ave-public-view] .background .top-section {
@@ -56,11 +71,12 @@
   .navbar, .navbar-unfixed-top, .busy-gui, .avb-content, .start-screen {
     color: @av-secondary;
   }
-}
-
-.warn-box {
-  background-color: @warn-bg !important;
-  color: @warn-text !important;
+  .navbar-unfixed-top.text-center {
+    background-color: @bg-primary;
+  }
+  .wrapper-unfixed::after {
+    background: none;
+  }
 }
 
 .modal-dialog .modal-header h4 {
@@ -75,34 +91,146 @@
   color: #000;
 }
 
-.btn-success {
+.btn.btn-success, .btn-success-action {
   border: 0;
-  background-color: @av-primary-contrast;
-}
+  background-color: @brand-success;
+  color: @bg-primary;
 
-.btn-success:hover {
-  background-color: darken(@av-primary-contrast, 25%);
-}
+  &:hover {
+    box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.5);
+    color: @bg-primary;
+    background-color: @brand-success;
+  }
 
-.btn-success-action {
-  border: 0;
-  background-color: @av-secondary-contrast;
-  color: @av-primary;
-}
+  &:focus {
+    border: 2px solid @state-success-text;
+    background-color: @brand-success;
+  }
 
-.btn-success-action:hover {
-  background-color: @av-secondary;
-  color: @av-primary;
+  &:active {
+    color: @brand-success !important;
+    border: 1px solid @brand-success !important;
+    background-color: @av-primary !important;
+  }
 }
 
 .btn-transparent {
   border-color: @av-primary-contrast !important;
   color: @av-primary-contrast !important;
 
-  &:hover {
-    color: white !important;
+  &:hover, &:active, &:focus {
+    color: @bg-primary !important;
     background-color: @av-primary-contrast !important;
     border-color: @av-primary-contrast !important;
+  }
+}
+
+.btn:focus {
+  color: @bg-primary;
+}
+
+.btn-opt-action {
+  color: @brand-success;
+  background-color: @bg-primary;
+  border: 1px solid @brand-success;
+
+  &:hover {
+    box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.5);
+  }
+
+  &:active {
+    color: @bg-primary !important;
+    background: @brand-success;
+    border: 1px solid @brand-success;
+  }
+
+  &:focus {
+    color: @brand-success;
+    border: 2px solid @brand-success;
+  }
+}
+
+.btn[disabled] {
+  opacity: 0.4;
+}
+
+.btn-opt-warn {
+  color: @error-primary-color;
+  background-color: @bg-primary;
+  border: 1px solid @error-primary-color;
+
+  &:hover {
+    box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.5);
+    color: @error-primary-color;
+  }
+
+  &:active {
+    color: @bg-primary !important;
+    background: @error-primary-color;
+  }
+
+  &:focus {
+    color: @error-primary-color;
+    border: 2px solid @error-primary-color;
+  }
+}
+
+.btn-next-action {
+  background-color: @state-success-text;
+  color: @av-bg-hover;
+
+  &:hover {
+    box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.5);
+  }
+
+  &:active {
+    background-color: @av-bg-hover;
+    color: @state-success-text;
+  }
+
+  &:focus {
+    border: 2px solid @av-bg-hover;
+  }
+}
+
+.btn-warning-solid {
+  background-color: @error-primary-color;
+  color: @bg-primary;
+  border: none;
+
+  &:hover {
+      box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.5);
+      color: @bg-primary;
+  }
+
+  &:focus {
+      border: 2px solid @state-success-text;
+  }
+
+  &:active {
+      color:  @error-primary-color;
+      border: 1px solid @error-primary-color;
+      background-color: @bg-primary;
+  }
+}
+
+.btn-cancel {
+  background-color: @av-bg;
+  color: @av-primary-contrast;
+
+  &:hover {
+      box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.5);
+      color: @av-primary-contrast;
+  }
+
+  &:focus {
+      border: 2px solid @state-success-text;
+      color: @av-primary-contrast;
+  }
+
+  &:active {
+      color: @av-primary-contrast;
+      background-color: darken(@bg-primary, 27%);
   }
 }
 
@@ -120,17 +248,8 @@
   }
 }
 
-.btn[disabled] {
-    background-color: @av-primary-contrast !important;
-    opacity: 1 !important;
-}
-
-.btn-cancel {
-    background-color: lighten(@av-primary-contrast, 11%);
-    color: @av-primary;
-    &:hover {
-        background-color: darken(@av-primary-contrast, 10%) !important;
-    }
+input[type="text"]::placeholder, input[type="password"]::placeholder {
+  color: @text-description;
 }
 
 input[type=checkbox] {
@@ -147,4 +266,28 @@ input[type=checkbox] {
 // sets a minimum height for textareas
 textarea.form-control {
     min-height: 180px;
+}
+
+.form-control {
+  box-shadow: unset;
+}
+
+@theme-font-path: "../../fonts";
+
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Manrope-Medium'), url('@{theme-font-path}/Manrope-VariableFont_wght.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Manrope-Bold'), url('@{theme-font-path}/Manrope-VariableFont_wght.ttf') format('truetype');
+}
+
+body {
+  font-family: 'Manrope';
 }
