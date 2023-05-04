@@ -178,8 +178,11 @@
 
 [av-booth] .navbar-unfixed-top a,
 [ave-default-election] .background .top-section p.election-description a {
-  color: white !important;
   text-decoration: underline !important;
+
+  &:hover {
+    text-decoration: none !important;
+  }
 }
 
 [ave-default-election] .background.first .top-section .election-description {
@@ -299,6 +302,7 @@ body {
   .navbar-unfixed-top.text-center {
       background-color: unset;
       color: unset;
+      padding-top: 0 !important;
   }
 
   [avb-voting-step] .step-separator {
@@ -376,7 +380,8 @@ body {
   color: @av-primary-contrast;
 }
 
-[avb-common-header] .logo-img-container.default-logo {
+[avb-common-header] .logo-img-container.default-logo .logo-img {
   background-color: white;
-  padding: 4px;
+  padding: 2px;
 }
+
