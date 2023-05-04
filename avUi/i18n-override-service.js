@@ -62,17 +62,18 @@ angular
             {
               _.map(
                 $window.i18nOverride,
-                function (i18nOverride, language)
+                function (overrideData, language)
                 {
+                  console.log("overriding lang " + language);
                   $window.i18n.addResources(
                     /* lng = */ language,
                     /* ns = */ "translation",
-                    /* resources = */ i18nOverride
+                    /* resources = */ overrideData
                   );
 
                   // force-refresh cached translations to override
                   _.each(
-                    _.keys(i18nOverride),
+                    _.keys(overrideData),
                     function (i18nString)
                     {
                       $i18next(i18nString, {});
