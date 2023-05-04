@@ -32,6 +32,7 @@ angular
         scope.ballotHash = attrs.ballotHash || false;
         scope.isElectionPortal = ("true" === attrs.isElectionPortal) || false;
         scope.buttonsInfo = attrs.buttonsInfo && JSON.parse(attrs.buttonsInfo) || false;
+        scope.defaultLogo = "/img/sequent_voting_logo_100.png";
         scope.enableLogOut = function () {
           var election = (
             (!!scope.parentElection) ?

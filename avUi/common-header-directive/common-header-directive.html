@@ -6,11 +6,11 @@
 >
     <div class="header-container container">
         <div class="col-xs-4 header-left">
-            <span ng-if="election.logo_url">
+            <span>
               <img
                 alt="{{election.title}}"
                 class="logo-img" 
-                ng-src="{{election.logo_url}}"
+                ng-src="{{election.logo_url || defaultLogo}}"
               />
             </span>
         </div>
