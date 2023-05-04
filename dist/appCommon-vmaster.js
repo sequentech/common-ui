@@ -1114,14 +1114,14 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
     return {
         restrict: "AE",
         scope: {
-            hashHelp: "&"
+            hashHelp: "&",
+            ballotHash: "="
         },
         link: function(scope, _element, attrs) {
             scope.parentElection = scope.$parent.parentElection, scope.election = scope.$parent.election, 
             scope.confirmLogoutModal = scope.$parent.confirmLogoutModal, scope.configService = ConfigService, 
-            scope.ballotHash = attrs.ballotHash || !1, scope.isElectionPortal = "true" === attrs.isElectionPortal || !1, 
-            scope.buttonsInfo = attrs.buttonsInfo && JSON.parse(attrs.buttonsInfo) || !1, scope.defaultLogo = "/img/sequent_voting_logo_100.png", 
-            scope.enableLogOut = function() {
+            scope.isElectionPortal = "true" === attrs.isElectionPortal || !1, scope.buttonsInfo = attrs.buttonsInfo && JSON.parse(attrs.buttonsInfo) || !1, 
+            scope.defaultLogo = "/img/sequent_voting_logo_100.png", scope.enableLogOut = function() {
                 var election = scope.parentElection || scope.election;
                 return !(election && election.presentation && election.presentation.extra_options && election.presentation.extra_options.booth_log_out__disable);
             }, scope.showVersionsModal = ShowVersionsModalService;

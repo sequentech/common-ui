@@ -29,7 +29,6 @@ angular
         scope.election = scope.$parent.election;
         scope.confirmLogoutModal = scope.$parent.confirmLogoutModal;
         scope.configService = ConfigService;
-        scope.ballotHash = attrs.ballotHash || false;
         scope.isElectionPortal = ("true" === attrs.isElectionPortal) || false;
         scope.buttonsInfo = attrs.buttonsInfo && JSON.parse(attrs.buttonsInfo) || false;
         scope.defaultLogo = "/img/sequent_voting_logo_100.png";
@@ -53,7 +52,8 @@ angular
       return {
         restrict: 'AE',
         scope: {
-          hashHelp: '&'
+          hashHelp: '&',
+          ballotHash: '='
         },
         link: link,
         templateUrl: 'avUi/common-header-directive/common-header-directive.html'
