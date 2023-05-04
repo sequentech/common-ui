@@ -29,9 +29,10 @@ angular
         scope.election = scope.$parent.election;
         scope.confirmLogoutModal = scope.$parent.confirmLogoutModal;
         scope.configService = ConfigService;
+        scope.ballotHash = attrs.ballotHash && attrs.ballotHash !== 'false'  || false;
         scope.isElectionPortal = ("true" === attrs.isElectionPortal) || false;
         scope.buttonsInfo = attrs.buttonsInfo && JSON.parse(attrs.buttonsInfo) || false;
-        scope.defaultLogo = "/img/sequent_voting_logo_100.png";
+        scope.defaultLogo = "/booth/img/sequent_voting_logo_100.png";
         scope.enableLogOut = function () {
           var election = (
             (!!scope.parentElection) ?
@@ -52,8 +53,7 @@ angular
       return {
         restrict: 'AE',
         scope: {
-          hashHelp: '&',
-          ballotHash: '='
+          hashHelp: '&'
         },
         link: link,
         templateUrl: 'avUi/common-header-directive/common-header-directive.html'
