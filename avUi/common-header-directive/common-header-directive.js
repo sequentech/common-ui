@@ -29,7 +29,7 @@ angular
         scope.election = scope.$parent.election;
         scope.confirmLogoutModal = scope.$parent.confirmLogoutModal;
         scope.configService = ConfigService;
-        scope.ballotHash = attrs.ballotHash && attrs.ballotHash !== 'false'  || false;
+        scope.ballotHash = attrs.ballotHash !== 'false' && attrs.ballotHash  || false;
         scope.isElectionPortal = ("true" === attrs.isElectionPortal) || false;
         scope.buttonsInfo = attrs.buttonsInfo && JSON.parse(attrs.buttonsInfo) || false;
         scope.defaultLogo = "/booth/img/sequent_voting_logo_100.png";

@@ -1119,7 +1119,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         link: function(scope, _element, attrs) {
             scope.parentElection = scope.$parent.parentElection, scope.election = scope.$parent.election, 
             scope.confirmLogoutModal = scope.$parent.confirmLogoutModal, scope.configService = ConfigService, 
-            scope.ballotHash = attrs.ballotHash && "false" !== attrs.ballotHash || !1, scope.isElectionPortal = "true" === attrs.isElectionPortal || !1, 
+            scope.ballotHash = "false" !== attrs.ballotHash && attrs.ballotHash || !1, scope.isElectionPortal = "true" === attrs.isElectionPortal || !1, 
             scope.buttonsInfo = attrs.buttonsInfo && JSON.parse(attrs.buttonsInfo) || !1, scope.defaultLogo = "/booth/img/sequent_voting_logo_100.png", 
             scope.enableLogOut = function() {
                 var election = scope.parentElection || scope.election;
