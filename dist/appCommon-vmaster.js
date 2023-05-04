@@ -1067,9 +1067,8 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         var performOverrides = !1;
         (overrides = null === overrides ? $window.i18nOverride : overrides) && (performOverrides = force || JSON.stringify(overrides) !== JSON.stringify($window.i18nOverride), 
         $window.i18nOverride = overrides), performOverrides && $window.i18n.preload(_.keys($window.i18nOverride), function() {
-            _.map($window.i18nOverride, function(overrideData, language) {
-                console.log("overriding lang " + language), $window.i18n.addResources(language, "translation", overrideData), 
-                _.each(_.keys(overrideData), function(i18nString) {
+            _.map($window.i18nOverride, function(i18nOverride, language) {
+                $window.i18n.addResources(language, "translation", i18nOverride), _.each(_.keys(i18nOverride), function(i18nString) {
                     $i18next(i18nString, {});
                 });
             }), $rootScope.$broadcast("i18nextLanguageChange", $window.i18n.lng());
