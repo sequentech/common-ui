@@ -289,15 +289,18 @@ body {
 
 /* changes for v2 */
 
-[av-booth] {
+[av-booth], [ave-default-election] {
   [avb-common-header] a, [avb-common-header] .header-container [av-change-lang]:hover, a.log-out-button {
-      color: @bg-primary;
+    color: @bg-primary;
 
-      &:hover {
-          background-color: #d0d0d7 !important;
-          color: @av-primary;
-      }
+    &:hover {
+        background-color: #d0d0d7 !important;
+        color: @av-primary;
+    }
   }
+}
+
+[av-booth] {
 
   .navbar-unfixed-top.text-center {
       background-color: unset;
@@ -387,4 +390,24 @@ body {
 
 [av-login] .loginheader {
   color: #000;
+}
+
+[ave-default-election] {
+  .container-fluid.background.first {
+    padding-top: 0px;
+
+    .container .row .col-xs-12.top-section {
+      margin-top: 0px;
+      margin-bottom: 0px;
+    }
+  }
+
+  .container-fluid.background.second {
+    [av-login] .container-login {
+      margin-top: 0px;
+      margin-bottom: 0px;
+      padding-top: 40px;
+      padding-bottom: 40px;
+    }
+  }
 }
