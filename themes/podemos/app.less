@@ -364,6 +364,16 @@ body {
   .ballot-tracker-container .fa-question-circle {
       color: @av-primary-contrast;
   }
+
+  [avb-simultaneous-questions-v2-screen], [avb-review-ballot-v2], [avb-simultaneous-question-answer-v2] {
+    .invalid-vote-col .opt .vertilize {
+      background-color: #F7F9FE !important;
+    }
+  }
+
+  [avb-simultaneous-questions-category-v2] {
+    background-color: #F7F9FE !important;
+  }
 }
 
 .dialog-wrapper.invalid-answers-controller .close.pull-right {
