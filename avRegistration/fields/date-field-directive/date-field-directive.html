@@ -1,14 +1,12 @@
 <div class="form-group">
    <label 
       ng-if="!label"
-      class="control-label col-sm-4"
    >{{field.name}}</label>
    <label
-      class="control-label col-sm-4"
       ng-if="label"
       ng-bind="label"
    ></label>
-   <div class="col-sm-8">
+   <div>
       <select 
          aria-label="{{field.name}}-year"
          ng-model="date.year" 

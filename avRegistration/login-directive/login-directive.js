@@ -320,7 +320,10 @@ angular.module('avRegistration')
             if (field.name === 'email') {
               scope.email = field.value;
             } else if ('code' === field.name) {
-              field.value = field.value.trim().replace(/ |\n|\t|-|_/g,'').toUpperCase();
+              if (null === field.value) {
+                return;
+              }
+              field.value = field.value && field.value.trim().replace(/ |\n|\t|-|_/g,'').toUpperCase();
             }
             data[field.name] = field.value;
           });
@@ -465,6 +468,20 @@ angular.module('avRegistration')
             } else if (scope.isOtl) {
               scope.login_fields = Authmethod.getOtlFields(authevent);
             }
+
+            // show some fields first
+            scope.login_fields.sort(function (a, b) {
+              var initialFields = [
+                "tlf", "email", "code", "otp-code"
+              ];
+              if (initialFields.includes(a.type) && !initialFields.includes(b.type)) {
+                return -1;
+              }
+              if (!initialFields.includes(a.type) && initialFields.includes(b.type)) {
+                return 1;
+              }
+              return 0;
+            });
             scope.hide_default_login_lookup_field = authevent.hide_default_login_lookup_field;
             scope.telIndex = -1;
             scope.emailIndex = -1;
@@ -539,15 +556,14 @@ angular.module('avRegistration')
               });
 
             // if not all the fields all filled at this point, then we stop
-            // here. otp-code or code fields do not count, because loginUser
+            // here. otp-code fields do not count, because loginUser
             // function will send the appropiate OTP code if required
             var filledFields = _.filter(
               fields,
               function (el) {
                 return (
                   el.value !== null ||
-                  el.type === 'otp-code' ||
-                  el.type === 'code'
+                  el.type === 'otp-code'
                 );
               }
             );

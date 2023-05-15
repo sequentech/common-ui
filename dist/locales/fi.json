@@ -19,6 +19,7 @@
 		"name": "Sequent Tech"
 	},
 	"avRegistration": {
+		"languageName": "Suomalainen",
 		"censusQueryHeader": "Tarkista onko sinulla äänioikeus",
 		"checkCensusButton": "Tarkista äänioikeusrekisteri",
 		"censusQuerying": "Odota, äänioikeusrekisteriä tarkistetaan..",
@@ -97,7 +98,7 @@
 		}
 	},
 	"avCommon": {
-		"poweredBy": "Powered by <strong><a href=\"__url__\" target=\"_blank\">__name__</a></strong>",
+		"poweredBy": "Powered by <a href=\"__url__\" target=\"_blank\">__name__</a>",
 		"foot": {
 			"contact": "Ota yhteyttä",
 			"contactsupport": "Ota yhteyttä",

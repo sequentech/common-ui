@@ -58,6 +58,10 @@ angular.module('avUi')
 
     var checkCollapse = function(instance, el, options) {
       var maxHeight = select(instance, el, instance.maxHeightSelector).css("max-height");
+      if (_.isUndefined(maxHeight)) {
+        console.log("max-height selector not found");
+        return;
+      }
       var height = angular.element(el)[0].scrollHeight;
 
       // we want to remove padding-top in the calculation

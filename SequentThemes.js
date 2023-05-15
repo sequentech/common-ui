@@ -20,7 +20,7 @@
     SequentThemes.current = 'default';
 
     SequentThemes.change = function(theme) {
-        var base = $("#theme").get('base');
+        var base = $("#theme")[0].getAttribute('data-base');
         $("#theme").attr("href", base + "themes/"+theme+"/app.min.css");
     };
 }).call(this);

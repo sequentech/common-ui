@@ -1,10 +1,21 @@
 [av-login] {
-  padding-bottom: 40px;
+  min-height: calc(100vh - 190px);
+  display: flex;
+  align-items: center;
+
+  @media(max-width: @screen-xs-max) {
+    min-height: calc(100vh - 149px);
+  }
 
   .loginheader {
     margin-bottom: 30px;
     color: @av-secondary;
     text-align: center;
+    position: relative;
+  }
+
+  label {
+    font-weight: normal;
   }
 
   .error.text-danger.ng-binding.ng-scope {
@@ -16,8 +27,9 @@
   }
 
   .input-warn {
-    display: block;
-    min-height: 38px;
+    //display: block;
+    display: none;
+    min-height: 69px;
   }
 
   .text-success {
@@ -30,6 +42,46 @@
     &:hover {
       text-decoration: none;
     }
+  }
+
+  .warn-box {
+    background-color: @av-error-bg;
+    padding: 14.5px 17px;
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+  }
+
+  .glyphicon-warning-sign {
+    margin-top: 4px;
+  }
+
+  .container-login {
+    border: 2px solid rgba(0, 0, 0, 0.05);
+    padding: 80px;
+
+    @media(max-width: @screen-sm-max) {
+      padding: 60px;
+    }
+    @media(max-width: @screen-xs-max) {
+      padding: 40px;
+    }
+
+  }
+
+  h3.login-header-text {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+}
+
+[ave-default-election] [av-login] .container-login {
+  margin-top: 30px;
+  margin-bottom: 30px;
+  background-color: @bg-primary;
+
+  .not-registered-yet {
+    display: none;
   }
 }
 
@@ -45,7 +97,7 @@
     }
   }
   .input-error {
-    min-height: 20px;
+    // min-height: 20px;
   }
 
   .census-query, .otl-auth {

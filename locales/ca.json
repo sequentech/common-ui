@@ -19,6 +19,7 @@
   },
 
   "avRegistration": {
+    "languageName": "Català",
 
     "codeHelp": "Utilitzi el codi que li hem enviat per telèfon o per correu electrònic. El codi té 8 caràcters alfanumèrics.",
     "noCodeReceivedQuestion": "Encara no has rebut el codi?",
@@ -101,7 +102,7 @@
   },
   
   "avCommon": {
-    "poweredBy": "Funciona amb <strong>__name__</strong>",
+    "poweredBy": "Funciona amb <a href=\"__url__\" target=\"_blank\">__name__</a>",
     "foot": {
         "contact": "Contacte",
         "contactsupport": "Contacte de suport",

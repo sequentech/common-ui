@@ -31,11 +31,17 @@ angular.module('avUi')
     I18nOverride
   ) {
     function link(scope, element, attrs)
-    {
+    {    
       scope.deflang = window.i18n.lng();
       angular.element('#ng-app').attr('lang', scope.deflang);
       scope.langs =  $i18next.options.lngWhitelist;
-      scope.changeLanguageMenu = $i18next("avCommon.changeLanguageMenu") || 'Change Language';
+      function triggerDropdown()
+      {
+        setTimeout(function () {
+          angular.element("#lang-dropdown-toggle").click();
+        }, 0);
+      }
+      element.on('click', triggerDropdown);
 
       // Changes i18n to a specific language, setting also a cookie for
       // remembering it, and updating all the translations instantly.

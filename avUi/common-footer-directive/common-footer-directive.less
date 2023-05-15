@@ -1,0 +1,78 @@
+/**
+ * This file is part of common-ui.
+ * Copyright (C) 2023 Sequent Tech Inc <legal@sequentech.io>
+
+ * ommon-ui is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License.
+
+ * ommon-ui  is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+
+ * You should have received a copy of the GNU Affero General Public License
+ * along with ommon-ui.  If not, see <http://www.gnu.org/licenses/>.
+**/
+[avb-common-footer] {
+    color: @av-secondary;
+    a {
+        color: @av-secondary;
+    }
+
+    [av-affix-bottom].affix-bottom {
+        background-color: @av-primary;
+        display: flex;
+        justify-content: center;
+    }
+
+    [av-affix-bottom] {
+        z-index: 10;
+    }
+
+    .footer-wrapper {
+        z-index: 10;
+        background-color: @av-primary;
+        display: flex;
+        justify-content: center;
+    }
+
+    .footer-container {
+        padding-top: 24.5px;
+        padding-bottom: 24.5px;
+        text-align: center;
+        font-size: 16px;
+        line-height: 21px;
+
+        @media(max-width: @screen-sm-max) {
+            padding-top: 15px;
+            padding-bottom: 15px;
+        }
+    }
+
+    .powered-by {
+        display: flex;
+        justify-content: center;
+    }
+
+    .version {
+        display: flex;
+        justify-content: right;
+        padding-right: 0;
+
+        @media(max-width: @screen-xs-max) {
+            justify-content: center;
+        }
+    }
+
+    .container-fluid {
+        flex-grow: 2;
+    }
+
+    .row {
+        margin-right: unset;
+        margin-left: unset;
+    }
+
+
+}

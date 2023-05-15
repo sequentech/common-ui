@@ -20,7 +20,8 @@
     "name": "Sequent Tech"
   },
   "avRegistration": {
-    "loginHeader": "Login to vote",
+    "languageName": "English",
+    "loginHeader": "Authenticate to vote",
     "adminLoginHeader": "Sign In to Admin Console",
     "censusQueryHeader": "Check if you are in the census",
     "checkCensusButton": "Check census",
@@ -117,7 +118,7 @@
   },
 
   "avCommon": {
-    "poweredBy": "Powered by <strong><a href=\"__url__\" target=\"_blank\">__name__</a></strong>",
+    "poweredBy": "Powered by <a href=\"__url__\" target=\"_blank\">__name__</a>",
     "showVersion": "Version: __version__",
     "changeLanguageMenu": "Change Language",
     "showVersionModal": {

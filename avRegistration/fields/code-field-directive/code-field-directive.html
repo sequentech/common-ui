@@ -1,6 +1,6 @@
 <div class="form-group">
-    <label id="{{code_id}}-code" for="{{code_id}}" class="control-label col-sm-4" ng-i18next="avRegistration.codeLabel"></label>
-    <div class="col-sm-8">
+    <label id="{{code_id}}-code" for="{{code_id}}" ng-i18next="avRegistration.codeLabel"></label>
+    <div>
         <input
             type="text"
             class="form-control"
@@ -28,8 +28,8 @@
             ng-if="!!field.help && field.help.length > 0"
             ng-bind-html="field.help | addTargetBlank"
         ></p>
-        <p class="help-block code-help">
-          <span ng-if="allowUserResend && showResendAuthCode() && !sendingData && ((method !== 'sms' && method !== 'sms-otp') || isValidTel)">
+        <p class="help-block code-help" ng-if="allowUserResend && showResendAuthCode() && !sendingData && ((method !== 'sms' && method !== 'sms-otp') || isValidTel)">
+          <span>
             <b ng-i18next="avRegistration.noCodeReceivedQuestion"></b>
             <a
               ng-click="resendAuthCode(field)"
