@@ -479,7 +479,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 scope.sendingData = !1;
             }, scope.parseAuthToken = function() {
                 var message;
-                "smart-link" === scope.method && (scope.authToken = $location.search()["auth-token"], 
+                "smart-link" !== scope.method || scope.withCode || (scope.authToken = $location.search()["auth-token"], 
                 message = "khmac:///".length, message = scope.authToken.substr(message).split("/")[1], 
                 scope.user_id = message.split(":")[0]);
             }, scope.checkCensus = function(valid) {
@@ -507,16 +507,13 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                     scope.sendingData = !1, scope.otpCode = void 0, scope.otlResponseData = {}, scope.otlStatus = "fail";
                 })));
             }, scope.loginUser = function(valid) {
-                var data;
+                var data, hasEmptyCode;
                 valid && (scope.sendingData || (scope.withCode || !scope.hasOtpFieldsCode && !_.contains([ "sms-otp", "email-otp" ], scope.method) || 0 !== scope.currentFormStep ? (data = {
                     captcha_code: Authmethod.captcha_code
-                }, _.each(scope.login_fields, function(field) {
-                    if ("email" === field.name) scope.email = field.value; else if ("code" === field.name) {
-                        if (null === field.value) return;
-                        field.value = field.value && field.value.trim().replace(/ |\n|\t|-|_/g, "").toUpperCase();
-                    }
-                    data[field.name] = field.value;
-                }), "smart-link" === scope.method && (data["auth-token"] = $location.search()["auth-token"]), 
+                }, hasEmptyCode = !1, _.each(scope.login_fields, function(field) {
+                    angular.isUndefined(field.value) && (data[field.name] = ""), "email" === field.type ? scope.email = field.value : _.contains([ "code", "otp-code" ], field.type) && (angular.isString(field.value) || (hasEmptyCode = !0), 
+                    field.value = field.value.trim().replace(/ |\n|\t|-|_/g, "").toUpperCase()), data[field.name] = field.value;
+                }), hasEmptyCode || ("smart-link" !== scope.method || scope.withCode || (data["auth-token"] = $location.search()["auth-token"]), 
                 scope.sendingData = !0, scope.error = null, Authmethod.login(data, autheventid).then(function(tokens) {
                     var postfix, options;
                     "ok" === tokens.data.status ? (postfix = "_authevent_" + autheventid, options = {}, 
@@ -558,7 +555,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                     scope.error = $i18next("avRegistration.invalidCredentials", {
                         support: ConfigService.contact.email
                     });
-                })) : scope.resendAuthCode()));
+                }))) : scope.resendAuthCode()));
             }, scope.apply = function(authevent) {
                 scope.hasOtpFieldsCode = Authmethod.hasOtpCodeField(authevent), scope.method = authevent.auth_method, 
                 (scope.hasOtpFieldsCode || _.contains([ "sms-otp", "email-otp" ], scope.method)) && (scope.skipSendAuthCode = scope.successfulRegistration), 
@@ -587,7 +584,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 });
                 _.filter(fields, function(el) {
                     return null !== el.value || "otp-code" === el.type;
-                }).length === scope.login_fields.length && ("openid-connect" === scope.method || scope.isOtl || scope.isCensusQuery || scope.loginUser(!0));
+                }).length === scope.login_fields.length && ("openid-connect" === scope.method || scope.isOtl || scope.isCensusQuery || scope.withCode || scope.loginUser(!0));
             }, scope.view = function(id) {
                 Authmethod.viewEvent(id).then(function(response) {
                     "ok" === response.data.status ? scope.apply(response.data.events) : (scope.status = "Not found", 
