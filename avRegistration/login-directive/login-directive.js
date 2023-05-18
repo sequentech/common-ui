@@ -214,7 +214,7 @@ angular.module('avRegistration')
         };
 
         scope.parseAuthToken = function () {
-          if (scope.method !== 'smart-link') {
+          if (scope.method !== 'smart-link' || scope.withCode) {
             return;
           }
           scope.authToken = $location.search()['auth-token'];
@@ -316,18 +316,32 @@ angular.module('avRegistration')
           var data = {
             'captcha_code': Authmethod.captcha_code,
           };
+          var hasEmptyCode = false;
           _.each(scope.login_fields, function (field) {
-            if (field.name === 'email') {
+            if (angular.isUndefined(field.value)) {
+              data[field.name] = '';
+            }
+            if (field.type === 'email') {
               scope.email = field.value;
-            } else if ('code' === field.name) {
+            } else if (_.contains(['code', 'otp-code'], field.type)) {
+              if (!angular.isString(field.value)) {
+                // This will stop the login process
+                hasEmptyCode = true;
+              }
               field.value = field.value.trim().replace(/ |\n|\t|-|_/g,'').toUpperCase();
             }
             data[field.name] = field.value;
           });
 
+          // This happens in non sms-otp or email-otp that have a code/otp-code
+          // field empty
+          if (hasEmptyCode) {
+            return;
+          }
+
           // Get the smart link authentication token and set it in the data if
           // this is an auth event with smart-link auth method
-          if (scope.method === 'smart-link')
+          if (scope.method === 'smart-link' && !scope.withCode)
           {
             data['auth-token'] = $location.search()['auth-token'];
           }
@@ -560,7 +574,8 @@ angular.module('avRegistration')
             if (
               scope.method !== 'openid-connect' &&
               !scope.isOtl &&
-              !scope.isCensusQuery
+              !scope.isCensusQuery &&
+              !scope.withCode
             ) {
               scope.loginUser(true);
             }
