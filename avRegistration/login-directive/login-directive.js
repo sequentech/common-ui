@@ -214,7 +214,7 @@ angular.module('avRegistration')
         };
 
         scope.parseAuthToken = function () {
-          if (scope.method !== 'smart-link') {
+          if (scope.method !== 'smart-link' || scope.withCode) {
             return;
           }
           scope.authToken = $location.search()['auth-token'];
@@ -317,9 +317,12 @@ angular.module('avRegistration')
             'captcha_code': Authmethod.captcha_code,
           };
           _.each(scope.login_fields, function (field) {
+            if (angular.isUndefined(field.value)) {
+              data[field.name] = '';
+            }
             if (field.name === 'email') {
               scope.email = field.value;
-            } else if ('code' === field.name) {
+            } else if ('code' === field.name && angular.isString(field.value)) {
               field.value = field.value.trim().replace(/ |\n|\t|-|_/g,'').toUpperCase();
             }
             data[field.name] = field.value;
@@ -327,7 +330,7 @@ angular.module('avRegistration')
 
           // Get the smart link authentication token and set it in the data if
           // this is an auth event with smart-link auth method
-          if (scope.method === 'smart-link')
+          if (scope.method === 'smart-link' && !scope.withCode)
           {
             data['auth-token'] = $location.search()['auth-token'];
           }
@@ -560,7 +563,8 @@ angular.module('avRegistration')
             if (
               scope.method !== 'openid-connect' &&
               !scope.isOtl &&
-              !scope.isCensusQuery
+              !scope.isCensusQuery &&
+              !scope.withCode
             ) {
               scope.loginUser(true);
             }
