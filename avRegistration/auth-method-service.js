@@ -103,11 +103,11 @@ angular.module('avRegistration')
             // 1. initialize GET params
 
             if (size === 'max') {
-              params.size = 500;
+              params.n = 500;
             } else if (angular.isNumber(size) && size > 0 && size < 500) {
-              params.size = parseInt(size);
+              params.n = parseInt(size);
             } else {
-              params.size = 10;
+              params.n = 50;
             }
 
             if (!angular.isNumber(page)) {
@@ -141,11 +141,11 @@ angular.module('avRegistration')
             // 1. initialize GET params
 
             if (size === 'max') {
-              params.size = 500;
+              params.n = 500;
             } else if (angular.isNumber(size) && size > 0 && size < 500) {
-              params.size = parseInt(size);
+              params.n = parseInt(size);
             } else {
-              params.size = 10;
+              params.n = 50;
             }
 
             if (!angular.isNumber(page)) {

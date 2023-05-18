@@ -46,7 +46,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         },
         getActivity: function(url, page, size, filterOptions, filterStr, receiver_id) {
             var params = {}, url = backendUrl + "auth-event/" + url + "/activity/";
-            return "max" === size ? params.size = 500 : angular.isNumber(size) && 0 < size && size < 500 ? params.size = parseInt(size) : params.size = 10, 
+            return "max" === size ? params.n = 500 : angular.isNumber(size) && 0 < size && size < 500 ? params.n = parseInt(size) : params.n = 50, 
             angular.isNumber(page) ? params.page = parseInt(page) : params.page = 1, angular.isNumber(receiver_id) && (params.receiver_id = receiver_id), 
             _.extend(params, filterOptions), filterStr && 0 < filterStr.length && (params.filter = filterStr), 
             $http.get(url, {
@@ -55,7 +55,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         },
         getBallotBoxes: function(url, page, size, filterOptions, filterStr) {
             var params = {}, url = backendUrl + "auth-event/" + url + "/ballot-box/";
-            return "max" === size ? params.size = 500 : angular.isNumber(size) && 0 < size && size < 500 ? params.size = parseInt(size) : params.size = 10, 
+            return "max" === size ? params.n = 500 : angular.isNumber(size) && 0 < size && size < 500 ? params.n = parseInt(size) : params.n = 50, 
             angular.isNumber(page) ? params.page = parseInt(page) : params.page = 1, _.extend(params, filterOptions), 
             filterStr && 0 < filterStr.length && (params.filter = filterStr), $http.get(url, {
                 params: params
