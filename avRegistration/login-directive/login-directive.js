@@ -40,8 +40,14 @@ angular.module('avRegistration')
         scope.isOtl = attrs.isOtl;
         scope.otlSecret = attrs.otlSecret;
         scope.error = null;
-        scope.current_alt_auth_method_id = null;
+        scope.current_alt_auth_method_id = undefined;
         scope.alternative_auth_methods = null;
+
+        if (!attrs.withAltMethod || !attrs.selectedAltMethod) {
+          scope.selectedAltMethod = null;
+        } else {
+          scope.selectedAltMethod = attrs.selectedAltMethod;
+        }
 
         // by default
         scope.hide_default_login_lookup_field = false;
@@ -320,7 +326,7 @@ angular.module('avRegistration')
           };
 
           // set alternative auth method id
-          if (scope.current_alt_auth_method_id) {
+          if (scope.current_alt_auth_method_id) {
             data.alt_auth_method_id = scope.current_alt_auth_method_id;
           }
           var hasEmptyCode = false;
@@ -668,9 +674,8 @@ angular.module('avRegistration')
                   function onSuccess(response) {
                     if (response.data.status === "ok") {
                       scope.base_authevent = angular.copy(response.data.events);
-                      scope.current_alt_auth_method_id = null;
                       scope.alternative_auth_methods = scope.base_authevent.alternative_auth_methods;
-                      scope.apply(response.data.events);
+                      scope.setCurrentAltAuthMethod(scope.selectedAltMethod);
                     } else {
                         scope.status = 'Not found';
                         document.querySelector(".input-error").style.display = "block";
