@@ -680,7 +680,7 @@ angular.module('avRegistration')
                         function (altAuthMethod) {
                           return altAuthMethod.id === scope.selectedAltMethod; 
                         }
-                      );
+                      ) || null;
                       scope.setCurrentAltAuthMethod(altAuthMethod);
                     } else {
                         scope.status = 'Not found';

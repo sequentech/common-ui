@@ -610,7 +610,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                     scope.alternative_auth_methods = scope.base_authevent.alternative_auth_methods, 
                     altAuthMethod = _.find(scope.alternative_auth_methods, function(altAuthMethod) {
                         return altAuthMethod.id === scope.selectedAltMethod;
-                    }), scope.setCurrentAltAuthMethod(altAuthMethod)) : (scope.status = "Not found", 
+                    }) || null, scope.setCurrentAltAuthMethod(altAuthMethod)) : (scope.status = "Not found", 
                     document.querySelector(".input-error").style.display = "block");
                 }, function(response) {
                     scope.status = "Scan error: " + response.data.message, document.querySelector(".input-error").style.display = "block";
