@@ -487,9 +487,9 @@ angular.module('avRegistration')
           if (altAuthMethod === null) {
             scope.current_alt_auth_method_id = null;
           } else {
-            scope.current_alt_auth_method_id = altAuthMethod.auth_method_name;
+            scope.current_alt_auth_method_id = altAuthMethod.id;
             authevent.extra_fields = altAuthMethod.extra_fields;
-            authevent.auth_method = auth_method_name;
+            authevent.auth_method = altAuthMethod.auth_method_name;
           }
           scope.apply(authevent);
         };
@@ -638,7 +638,7 @@ angular.module('avRegistration')
                 .then(
                   function onSuccess(response) {
                     if (response.data.status === "ok") {
-                      scope.base_authevent = angular.copy(authevent);
+                      scope.base_authevent = angular.copy(response.data.events);
                       scope.current_alt_auth_method_id = null;
                       scope.alternative_auth_methods = scope.base_authevent.alternative_auth_methods;
                       scope.apply(response.data.events);
