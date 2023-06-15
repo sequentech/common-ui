@@ -561,7 +561,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 var params = $window.location.href, paramName2 = paramName2.replace(/[\[\]]/g, "\\$&"), params = new RegExp("[?&]" + paramName2 + "(=([^&#]*)|&|#|$)").exec(params);
                 return params ? params[2] ? decodeURIComponent(params[2].replace(/\+/g, " ")) || void 0 : "" : null;
             }, scope.getAltAuthMethodName = function(altAuthMethod) {
-                var langCode = $i18next.lng();
+                var langCode = $window.i18n.lng();
                 return altAuthMethod.public_name_i18n && altAuthMethod.public_name_i18n[langCode] ? altAuthMethod.public_name_i18n[langCode] : altAuthMethod.public_name;
             }, scope.setCurrentAltAuthMethod = function(altAuthMethod) {
                 var authevent;
