@@ -605,10 +605,12 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                     return null !== el.value || "otp-code" === el.type;
                 }).length === scope.login_fields.length && ("openid-connect" === scope.method || scope.isOtl || scope.isCensusQuery || scope.withCode || scope.loginUser(!0));
             }, scope.view = function(id) {
-                Authmethod.viewEvent(id).then(function(response) {
-                    "ok" === response.data.status ? (scope.base_authevent = angular.copy(response.data.events), 
+                Authmethod.viewEvent(id).then(function(altAuthMethod) {
+                    "ok" === altAuthMethod.data.status ? (scope.base_authevent = angular.copy(altAuthMethod.data.events), 
                     scope.alternative_auth_methods = scope.base_authevent.alternative_auth_methods, 
-                    scope.setCurrentAltAuthMethod(scope.selectedAltMethod)) : (scope.status = "Not found", 
+                    altAuthMethod = _.find(scope.alternative_auth_methods, function(altAuthMethod) {
+                        return altAuthMethod.id === scope.selectedAltMethod;
+                    }), scope.setCurrentAltAuthMethod(altAuthMethod)) : (scope.status = "Not found", 
                     document.querySelector(".input-error").style.display = "block");
                 }, function(response) {
                     scope.status = "Scan error: " + response.data.message, document.querySelector(".input-error").style.display = "block";

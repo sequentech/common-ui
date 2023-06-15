@@ -675,7 +675,13 @@ angular.module('avRegistration')
                     if (response.data.status === "ok") {
                       scope.base_authevent = angular.copy(response.data.events);
                       scope.alternative_auth_methods = scope.base_authevent.alternative_auth_methods;
-                      scope.setCurrentAltAuthMethod(scope.selectedAltMethod);
+                      var altAuthMethod = _.find(
+                        scope.alternative_auth_methods,
+                        function (altAuthMethod) {
+                          return altAuthMethod.id === scope.selectedAltMethod; 
+                        }
+                      );
+                      scope.setCurrentAltAuthMethod(altAuthMethod);
                     } else {
                         scope.status = 'Not found';
                         document.querySelector(".input-error").style.display = "block";
