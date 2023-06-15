@@ -45,7 +45,7 @@ angular.module('avUi')
                 hide_default_login_lookup_field: el.hide_default_login_lookup_field,
                 parent_id: el.parent_id || null,
                 children_election_info: el.children_election_info || null,
-                alternative_auth_methods: el.alternative_auth_methods || null
+                alternative_auth_methods: el.census.alternative_auth_methods || null
             };
 
             // Set election id if existing in election configuration
