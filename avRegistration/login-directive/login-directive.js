@@ -457,6 +457,24 @@ angular.module('avRegistration')
           );
         };
 
+        scope.getUriParam = function (paramName) {
+          var uri = $window.location.href;
+          var paramName2 = paramName.replace(/[\[\]]/g, '\\$&');
+          var rx = new RegExp('[?&]' + paramName2 + '(=([^&#]*)|&|#|$)');
+          var params = rx.exec(uri);
+
+          if (!params)
+          {
+              return null;
+          }
+
+          if (!params[2])
+          {
+              return '';
+          }
+          return decodeURIComponent(params[2].replace(/\+/g, ' ')) || undefined;
+        };
+
         /**
          * Returns the translated name of the given alternative authentication
          * method.
@@ -562,8 +580,14 @@ angular.module('avRegistration')
                   el.value = scope.stateData[el.name];
                   el.disabled = true;
                 } else {
-                  el.value = null;
-                  el.disabled = false;
+                  var uriValue = scope.getUriParam(el.name);
+                  if (angular.isString(uriValue)) {
+                    el.value = uriValue;
+                    el.disabled = true;
+                  } else {
+                    el.value = null;
+                    el.disabled = false;
+                  }
                 }
                 if (el.type === "email") {
                   if (scope.email !== null) {

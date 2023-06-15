@@ -557,6 +557,9 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                         support: ConfigService.contact.email
                     });
                 }))) : scope.resendAuthCode()));
+            }, scope.getUriParam = function(paramName2) {
+                var params = $window.location.href, paramName2 = paramName2.replace(/[\[\]]/g, "\\$&"), params = new RegExp("[?&]" + paramName2 + "(=([^&#]*)|&|#|$)").exec(params);
+                return params ? params[2] ? decodeURIComponent(params[2].replace(/\+/g, " ")) || void 0 : "" : null;
             }, scope.getAltAuthMethodName = function(altAuthMethod) {
                 var langCode = $i18next.lng();
                 return altAuthMethod.public_name_i18n && altAuthMethod.public_name_i18n[langCode] ? altAuthMethod.public_name_i18n[langCode] : altAuthMethod.public_name;
@@ -582,8 +585,10 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                     ret;
                 }();
                 var fields = _.map(scope.login_fields, function(el, index) {
-                    return scope.stateData[el.name] ? (el.value = scope.stateData[el.name], el.disabled = !0) : (el.value = null, 
-                    el.disabled = !1), "email" === el.type ? (null !== scope.email && (el.value = scope.email, 
+                    var uriValue;
+                    return scope.stateData[el.name] ? (el.value = scope.stateData[el.name], el.disabled = !0) : (uriValue = scope.getUriParam(el.name), 
+                    angular.isString(uriValue) ? (el.value = uriValue, el.disabled = !0) : (el.value = null, 
+                    el.disabled = !1)), "email" === el.type ? (null !== scope.email && (el.value = scope.email, 
                     el.disabled = !0, "email-otp" === scope.method && (scope.currentFormStep = 1)), 
                     scope.emailIndex = index) : "code" === el.type && null !== scope.code ? (el.value = scope.code.trim().replace(/ |\n|\t|-|_/g, "").toUpperCase(), 
                     el.disabled = !0) : "tlf" === el.type && "sms" === scope.method ? (null !== scope.email && -1 === scope.email.indexOf("@") && (el.value = scope.email, 
