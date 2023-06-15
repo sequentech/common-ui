@@ -40,6 +40,8 @@ angular.module('avRegistration')
         scope.isOtl = attrs.isOtl;
         scope.otlSecret = attrs.otlSecret;
         scope.error = null;
+        scope.current_alt_auth_method_id = null;
+        scope.alternative_auth_methods = null;
 
         // by default
         scope.hide_default_login_lookup_field = false;
@@ -455,6 +457,43 @@ angular.module('avRegistration')
           );
         };
 
+        /**
+         * Returns the translated name of the given alternative authentication
+         * method.
+         * @param {*} altAuthMethod altAuthMethod object
+         */
+        scope.getAltAuthMethodName = function(altAuthMethod) {
+          var langCode = $i18next.lng();
+          if (
+            altAuthMethod.public_name_i18n &&
+            altAuthMethod.public_name_i18n[langCode]
+          ) {
+            return altAuthMethod.public_name_i18n[langCode];
+          } else {
+            return altAuthMethod.public_name;
+          }
+        };
+
+        /**
+         * Sets the current alt auth method
+         * @param {*} altAuthMethod altAuthMethod object
+         */
+        scope.setCurrentAltAuthMethod = function(altAuthMethod) {
+          if (altAuthMethod === scope.current_alt_auth_method_id) {
+            return;
+          }
+
+          var authevent = angular.copy(scope.base_authevent);
+          if (altAuthMethod === null) {
+            scope.current_alt_auth_method_id = null;
+          } else {
+            scope.current_alt_auth_method_id = altAuthMethod.auth_method_name;
+            authevent.extra_fields = altAuthMethod.extra_fields;
+            authevent.auth_method = auth_method_name;
+          }
+          scope.apply(authevent);
+        };
+
         scope.apply = function(authevent) {
             scope.hasOtpFieldsCode = Authmethod.hasOtpCodeField(authevent);
             scope.method = authevent['auth_method'];
@@ -599,7 +638,10 @@ angular.module('avRegistration')
                 .then(
                   function onSuccess(response) {
                     if (response.data.status === "ok") {
-                        scope.apply(response.data.events);
+                      scope.base_authevent = angular.copy(authevent);
+                      scope.current_alt_auth_method_id = null;
+                      scope.alternative_auth_methods = scope.base_authevent.alternative_auth_methods;
+                      scope.apply(response.data.events);
                     } else {
                         scope.status = 'Not found';
                         document.querySelector(".input-error").style.display = "block";

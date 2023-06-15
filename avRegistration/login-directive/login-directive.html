@@ -33,6 +33,34 @@
           >
         </div>
     </div>
+    
+    <!-- Shows the alternative auth method tabs in case there's any -->
+    <div class="col-sm-12 alternative-auth-methods-tabs" ng-if="alternative_auth_methods">
+      <ul class="nav nav-tabs">
+        <li 
+          ng-class="{'active': current_alt_auth_method_id == null}"
+        >
+          <a
+            ng-click="setCurrentAltAuthMethod(null)"
+            ng-i18next="avRegistration.defaultAuthMethod"
+          >
+            <i class="fa fa-square"></i>
+            {{getAltAuthMethodName(alt_auth_method)}}
+          </a>
+        </li>
+        <li
+          ng-repeat="alt_auth_method in alternative_auth_methods"
+          ng-class="{'active': current_alt_auth_method_id == alt_auth_method.id}"
+        >
+          <a ng-click="setCurrentAltAuthMethod(alt_auth_method)">
+            <i
+              ng-if="alt_auth_method.icon"
+              class="{{alt_auth_method.icon}}"
+            ></i>
+            {{getAltAuthMethodName(alt_auth_method)}}</a>
+        </li>
+      </ul>
+    </div>
 
     <div class="col-sm-12" ng-if="method !== 'openid-connect'">
         <form name="form" id="loginForm" role="form" class="form-horizontal">
