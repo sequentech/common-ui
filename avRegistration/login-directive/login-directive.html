@@ -42,10 +42,9 @@
         >
           <a
             ng-click="setCurrentAltAuthMethod(null)"
-            ng-i18next="avRegistration.defaultAuthMethod"
           >
             <i class="fa fa-square"></i>
-            {{getAltAuthMethodName(alt_auth_method)}}
+            <span ng-i18next="avRegistration.defaultAuthMethod"></span>
           </a>
         </li>
         <li
@@ -56,8 +55,11 @@
             <i
               ng-if="alt_auth_method.icon"
               class="{{alt_auth_method.icon}}"
-            ></i>
-            {{getAltAuthMethodName(alt_auth_method)}}</a>
+              ></i>
+            <span>
+              {{getAltAuthMethodName(alt_auth_method)}}
+            </span>
+          </a>
         </li>
       </ul>
     </div>
