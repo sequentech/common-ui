@@ -318,6 +318,11 @@ angular.module('avRegistration')
           var data = {
             'captcha_code': Authmethod.captcha_code,
           };
+
+          // set alternative auth method id
+          if (scope.current_alt_auth_method_id) {
+            data.alt_auth_method_id = scope.current_alt_auth_method_id;
+          }
           var hasEmptyCode = false;
           _.each(scope.login_fields, function (field) {
             if (angular.isUndefined(field.value)) {

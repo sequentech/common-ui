@@ -511,7 +511,8 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 var data, hasEmptyCode;
                 valid && (scope.sendingData || (scope.withCode || !scope.hasOtpFieldsCode && !_.contains([ "sms-otp", "email-otp" ], scope.method) || 0 !== scope.currentFormStep ? (data = {
                     captcha_code: Authmethod.captcha_code
-                }, hasEmptyCode = !1, _.each(scope.login_fields, function(field) {
+                }, scope.current_alt_auth_method_id && (data.alt_auth_method_id = scope.current_alt_auth_method_id), 
+                hasEmptyCode = !1, _.each(scope.login_fields, function(field) {
                     angular.isUndefined(field.value) && (data[field.name] = ""), "email" === field.type ? scope.email = field.value : _.contains([ "code", "otp-code" ], field.type) && (angular.isString(field.value) || (hasEmptyCode = !0), 
                     field.value = field.value.trim().replace(/ |\n|\t|-|_/g, "").toUpperCase()), data[field.name] = field.value;
                 }), hasEmptyCode || ("smart-link" !== scope.method || scope.withCode || (data["auth-token"] = $location.search()["auth-token"]), 
