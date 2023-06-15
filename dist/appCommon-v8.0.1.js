@@ -1483,7 +1483,8 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 allow_public_census_query: el.allow_public_census_query,
                 hide_default_login_lookup_field: el.hide_default_login_lookup_field,
                 parent_id: el.parent_id || null,
-                children_election_info: el.children_election_info || null
+                children_election_info: el.children_election_info || null,
+                alternative_auth_methods: el.alternative_auth_methods || null
             };
             return el.id && (d.id = el.id), d.admin_fields = _.filter(el.census.admin_fields, function(af) {
                 return !0;
