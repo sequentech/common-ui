@@ -19,6 +19,7 @@
 		"name": "Sequent Tech"
 	},
 	"avRegistration": {
+		"defaultAuthMethod": "Default",
 		"languageName": "English",
 		"loginHeader": "Authenticate to vote",
 		"adminLoginHeader": "Sign In to Admin Console",
