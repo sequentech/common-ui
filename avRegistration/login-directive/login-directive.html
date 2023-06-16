@@ -38,12 +38,13 @@
     <div class="col-sm-12 alternative-auth-methods-tabs" ng-if="alternative_auth_methods">
       <ul class="nav nav-tabs">
         <li 
+          class="default-auth-method"
           ng-class="{'active': current_alt_auth_method_id == null}"
         >
           <a
             ng-click="setCurrentAltAuthMethod(null)"
           >
-            <i class="fa fa-square-o"></i>
+            <i class="fa fa-user-o"></i>
             <span ng-i18next="avRegistration.defaultAuthMethod"></span>
           </a>
         </li>
