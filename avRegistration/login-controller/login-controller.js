@@ -28,6 +28,8 @@ angular.module('avRegistration')
       $scope.username = $stateParams.username;
       $scope.isOpenId = $stateParams.isOpenId;
       $scope.withCode = $stateParams.withCode;
+      $scope.withAltMethod = $stateParams.withAltMethod;
+      $scope.selectedAltMethod = $stateParams.altmethod;
       $scope.isOtl = $stateParams.isOtl;
       $scope.otlSecret = $stateParams.otlSecret;
     }
