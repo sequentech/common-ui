@@ -64,6 +64,12 @@
               tabindex="0"
               class="log-out-button"
               ng-click="confirmLogoutModal()"
+              data-toggle="tooltip"
+              data-html="true"
+              data-title="
+                  <b>Your session is going to expire.</b>
+                  <p>You have X minutes left to cast your vote</p>
+              "
             >
               <div class="logout-bar"></div>
               <span class="glyphicon glyphicon-off"></span>
