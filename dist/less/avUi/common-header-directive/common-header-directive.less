@@ -113,6 +113,16 @@
 
     .logout-container {
         position: relative;
+
+        .custom-tooltip {
+            display: none;
+        }
+
+        &:hover {
+            .custom-tooltip {
+                display: block;
+            }
+        }
     }
 
     .logout-container .custom-tooltip {
@@ -121,12 +131,17 @@
         right: 40px;
         z-index: -1;
         width: 231px;
+
         .fa-caret-up {
             color: #CCE5FF;
             font-size: 34px;
             height: 14px;
             line-height: 10px;
+            width: 100%;
+            text-align: right;
+            padding-right: 20px;
         }
+
         .tooltip-inner {
             background-color: #CCE5FF;
             margin-top: -9px;
@@ -138,6 +153,7 @@
             flex-direction: column;
             text-align: justify;
             color: black;
+            max-width: unset;
             b {
                 color: #0F054C;
             }
