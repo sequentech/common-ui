@@ -58,23 +58,28 @@
                 av-change-lang
             >
             </span>
-            <a
-              ng-if="enableLogOut() && !isElectionPortal"
-              target="_top"
-              tabindex="0"
-              class="log-out-button"
-              ng-click="confirmLogoutModal()"
-              data-toggle="tooltip"
-              data-html="true"
-              data-title="
+            <span class="logout-container" ng-if="enableLogOut() && !isElectionPortal">
+              <a
+                target="_top"
+                tabindex="0"
+                class="log-out-button"
+                ng-click="confirmLogoutModal()"
+                data-toggle="tooltip"
+                data-html="true"
+                data-title="something something"
+              >
+                <div class="logout-bar"></div>
+                <span class="glyphicon glyphicon-off"></span>
+                <span class="logout-text hidden-xs" ng-i18next>avBooth.logout</span>
+              </a>
+              <div class="custom-tooltip">
+                <div class="tooltip-arrow" style="left: 50%;"></div>
+                <div class="tooltip-inner">
                   <b>Your session is going to expire.</b>
                   <p>You have X minutes left to cast your vote</p>
-              "
-            >
-              <div class="logout-bar"></div>
-              <span class="glyphicon glyphicon-off"></span>
-              <span class="logout-text hidden-xs" ng-i18next>avBooth.logout</span>
-            </a>
+                </div>
+              </div>
+            </span>
         </div>
     </div>
 </nav>
