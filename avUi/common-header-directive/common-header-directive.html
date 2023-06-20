@@ -72,8 +72,8 @@
               <div class="custom-tooltip">
                 <i class="fa fa-fw fa-lg fa-caret-up"></i>
                 <div class="tooltip-inner">
-                  <b>Your session is going to expire.</b>
-                  <p>You have X minutes left to cast your vote</p>
+                  <b ng-i18next>avBooth.countdownTooltip.title</b>
+                  <p ng-i18next="[i18next]({mins: 15})avBooth.countdownTooltip.contentMins"></p>
                 </div>
               </div>
             </span>
