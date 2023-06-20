@@ -1163,7 +1163,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 var initialTimeMs, election = scope.parentElection || scope.election;
                 ConfigService.cookies.expires && election && election.presentation && _.isNumber(election.presentation.booth_log_out__countdown_seconds) && (scope.showCountdown = !1, 
                 scope.countdownSecs = 0, scope.countdownMins = 0, scope.countdownPercent = "100%", 
-                initialTimeMs = Date.now(), scope.elapsedCountdownMs = 1e3 * (election.presentation.booth_log_out__countdown_seconds || 60 * ConfigService.cookies.expires), 
+                initialTimeMs = Date.now(), scope.elapsedCountdownMs = 1e3 * (0 < election.presentation.booth_log_out__countdown_seconds ? election.presentation.booth_log_out__countdown_seconds : 60 * ConfigService.cookies.expires), 
                 scope.logoutTimeMs = initialTimeMs + 60 * ConfigService.cookies.expires * 1e3, scope.countdownStartTimeMs = scope.logoutTimeMs - scope.elapsedCountdownMs, 
                 setTimeout(updateTimedown, 0 < election.presentation.booth_log_out__countdown_seconds ? scope.countdownStartTimeMs - Date.now() : 0));
             }();

@@ -93,7 +93,11 @@ angular
             scope.countdownPercent = '100%';
 
             var initialTimeMs = Date.now();
-            scope.elapsedCountdownMs = (election.presentation.booth_log_out__countdown_seconds || ConfigService.cookies.expires * 60) * 1000;
+            scope.elapsedCountdownMs = (
+              election.presentation.booth_log_out__countdown_seconds > 0?
+              election.presentation.booth_log_out__countdown_seconds :
+              ConfigService.cookies.expires * 60
+            ) * 1000;
             scope.logoutTimeMs = initialTimeMs + ConfigService.cookies.expires * 60 * 1000;
             scope.countdownStartTimeMs = scope.logoutTimeMs - scope.elapsedCountdownMs;
             
