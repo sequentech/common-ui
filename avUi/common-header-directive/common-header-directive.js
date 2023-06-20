@@ -66,9 +66,6 @@ angular
             scope.countdownMins > 0?  1 * 1000 : 1000
           );
         }
-
-        scope.getCountdownMins = function() { return scope.countdownMins; };
-        scope.getCountdownSecs = function() { return scope.countdownSecs; };
       
         // Show countdown on logout button based on cookies
         function enableLogoutCountdown() {

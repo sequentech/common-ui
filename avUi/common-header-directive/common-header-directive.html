@@ -77,13 +77,13 @@
                 <div class="tooltip-inner">
                   <b ng-i18next>avBooth.countdownTooltip.title</b>
                   <p
-                    ng-if="getCountdownMins() === 0"
-                    ng-i18next="[i18next]({mins: getCountdownMins()})avBooth.countdownTooltip.contentMins"
+                    ng-if="countdownMins === 0"
+                    ng-i18next="[i18next]({mins: countdownMins})avBooth.countdownTooltip.contentMins"
                   >
                   </p>
                   <p
-                    ng-if="getCountdownSecs() > 0"
-                    ng-i18next="[i18next]({secs: getCountdownSecs()})avBooth.countdownTooltip.contentSecs"
+                    ng-if="countdownSecs > 0"
+                    ng-i18next="[i18next]({secs: countdownSecs})avBooth.countdownTooltip.contentSecs"
                   >
                   </p>
                 </div>
