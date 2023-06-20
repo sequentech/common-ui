@@ -1159,8 +1159,8 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             }, scope.showVersionsModal = ShowVersionsModalService, function() {
                 scope.showCountdown = !1, scope.isDemo || scope.isPreview;
                 var initialTimeMs, election = scope.parentElection || scope.election;
-                ConfigService.cookies.expires && election && election.presentation && election.presentation.extra_options && _.isNumber(election.presentation.extra_options.booth_log_out__countdown_seconds) && (scope.showCountdown = !1, 
-                scope.countdownSecs = 0, scope.countdownMins = 0, initialTimeMs = Date.now(), scope.elapsedCountdownMs = 1e3 * (election.presentation.extra_options.booth_log_out__countdown_seconds || -1), 
+                ConfigService.cookies.expires && election && election.presentation && _.isNumber(election.presentation.booth_log_out__countdown_seconds) && (scope.showCountdown = !1, 
+                scope.countdownSecs = 0, scope.countdownMins = 0, initialTimeMs = Date.now(), scope.elapsedCountdownMs = 1e3 * (election.presentation.booth_log_out__countdown_seconds || -1), 
                 scope.logoutTimeMs = initialTimeMs + 60 * (ConfigService.cookies.expires || 6e5) * 1e3, 
                 scope.countdownStartTimeMs = scope.logoutTimeMs - scope.elapsedCountdownMs, setTimeout(updateTimedown, 0 < scope.elapsedCountdownMs ? scope.countdownStartTimeMs - Date.now() : 0));
             }();

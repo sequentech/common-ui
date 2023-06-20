@@ -82,8 +82,7 @@ angular
             (
               election &&
               election.presentation &&
-              election.presentation.extra_options &&
-              _.isNumber(election.presentation.extra_options.booth_log_out__countdown_seconds)
+              _.isNumber(election.presentation.booth_log_out__countdown_seconds)
             )
           ) {
             scope.showCountdown = false;
@@ -91,7 +90,7 @@ angular
             scope.countdownMins = 0;
 
             var initialTimeMs = Date.now();
-            scope.elapsedCountdownMs = (election.presentation.extra_options.booth_log_out__countdown_seconds || -1) * 1000;
+            scope.elapsedCountdownMs = (election.presentation.booth_log_out__countdown_seconds || -1) * 1000;
             scope.logoutTimeMs = initialTimeMs + (ConfigService.cookies.expires || 10*60*1000) * 60 * 1000;
             scope.countdownStartTimeMs = scope.logoutTimeMs - scope.elapsedCountdownMs;
             
