@@ -62,7 +62,7 @@ angular
           }
           setTimeout(
             updateTimedown,
-            scope.countdownMins > 0?  60 * 1000 : 1000
+            scope.countdownMins > 0?  1 * 1000 : 1000
           );
         }
 
