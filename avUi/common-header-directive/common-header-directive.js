@@ -57,6 +57,7 @@ angular
           var ratio = (scope.logoutTimeMs - Date.now())/(scope.logoutTimeMs - scope.countdownStartTimeMs);
           scope.countdownPercent = (Math.round(10000*ratio)/100) + '%';
           $(".logout-bar")[0].style.setProperty('width', scope.countdownPercent);
+          scope.$apply();
           if (scope.countdownSecs <= 1) {
             return;
           }

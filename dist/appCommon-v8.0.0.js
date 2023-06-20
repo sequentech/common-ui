@@ -1150,7 +1150,8 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 scope.countdownMins = Math.round((scope.logoutTimeMs - Date.now()) / 6e4);
                 var ratio = (scope.logoutTimeMs - Date.now()) / (scope.logoutTimeMs - scope.countdownStartTimeMs);
                 scope.countdownPercent = Math.round(1e4 * ratio) / 100 + "%", $(".logout-bar")[0].style.setProperty("width", scope.countdownPercent), 
-                scope.countdownSecs <= 1 || setTimeout(updateTimedown, (scope.countdownMins, 1e3));
+                scope.$apply(), scope.countdownSecs <= 1 || setTimeout(updateTimedown, (scope.countdownMins, 
+                1e3));
             }
             scope.parentElection = scope.$parent.parentElection, scope.election = scope.$parent.election, 
             scope.confirmLogoutModal = scope.$parent.confirmLogoutModal, scope.configService = ConfigService, 
