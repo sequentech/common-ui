@@ -52,10 +52,10 @@ angular
 
         function updateTimedown() {
           scope.showCountdown = true;
-          scope.countdownSecs = Math.floor((scope.logoutTimeMs - Date.now()) / 1000);
-          scope.countdownMins = Math.floor((scope.logoutTimeMs - Date.now()) / (60 * 1000));
+          scope.countdownSecs = Math.round((scope.logoutTimeMs - Date.now()) / 1000);
+          scope.countdownMins = Math.round((scope.logoutTimeMs - Date.now()) / (60 * 1000));
           var ratio = (scope.logoutTimeMs - Date.now())/(scope.logoutTimeMs - scope.countdownStartTimeMs);
-          scope.countdownPercent = (Math.floor(10000*ratio)/100) + '%';
+          scope.countdownPercent = (Math.round(10000*ratio)/100) + '%';
           if (scope.countdownSecs <= 1) {
             return;
           }
