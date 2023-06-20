@@ -1163,7 +1163,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 return scope.countdownMins;
             }, scope.getCountdownSecs = function() {
                 return scope.countdownSecs;
-            }, function() {
+            }, setTimeout(function() {
                 scope.showCountdown = !1, scope.isDemo || scope.isPreview;
                 var initialTimeMs, election = scope.parentElection || scope.election;
                 ConfigService.cookies.expires && election && election.presentation && _.isNumber(election.presentation.booth_log_out__countdown_seconds) && (scope.showCountdown = !1, 
@@ -1172,7 +1172,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 scope.elapsedCountdownMs = 1e3 * (0 < election.presentation.booth_log_out__countdown_seconds ? election.presentation.booth_log_out__countdown_seconds : 60 * ConfigService.cookies.expires), 
                 scope.logoutTimeMs = initialTimeMs + 60 * ConfigService.cookies.expires * 1e3, scope.countdownStartTimeMs = scope.logoutTimeMs - scope.elapsedCountdownMs, 
                 setTimeout(updateTimedown, 0 < election.presentation.booth_log_out__countdown_seconds ? scope.countdownStartTimeMs - Date.now() : 0));
-            }();
+            }, 0);
         },
         templateUrl: "avUi/common-header-directive/common-header-directive.html"
     };

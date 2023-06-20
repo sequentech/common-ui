@@ -113,7 +113,7 @@ angular
 
           }
         }
-        enableLogoutCountdown();
+        setTimeout(enableLogoutCountdown, 0);
       };
       return {
         restrict: 'AE',
