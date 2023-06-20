@@ -54,6 +54,8 @@ angular
           scope.showCountdown = true;
           scope.countdownSecs = Math.floor((scope.logoutTimeMs - Date.now()) / 1000);
           scope.countdownMins = Math.floor((scope.logoutTimeMs - Date.now()) / (60 * 1000));
+          var ratio = (scope.logoutTimeMs - Date.now())/(scope.logoutTimeMs - scope.countdownStartTimeMs);
+          scope.countdownPercent = (Math.floor(10000*ratio)/100) + '%';
           if (scope.countdownSecs <= 1) {
             return;
           }
@@ -88,15 +90,16 @@ angular
             scope.showCountdown = false;
             scope.countdownSecs = 0;
             scope.countdownMins = 0;
+            scope.countdownPercent = '100%';
 
             var initialTimeMs = Date.now();
-            scope.elapsedCountdownMs = (election.presentation.booth_log_out__countdown_seconds || -1) * 1000;
-            scope.logoutTimeMs = initialTimeMs + (ConfigService.cookies.expires || 10*60*1000) * 60 * 1000;
+            scope.elapsedCountdownMs = (election.presentation.booth_log_out__countdown_seconds || ConfigService.cookies.expires * 60) * 1000;
+            scope.logoutTimeMs = initialTimeMs + ConfigService.cookies.expires * 60 * 1000;
             scope.countdownStartTimeMs = scope.logoutTimeMs - scope.elapsedCountdownMs;
             
             setTimeout(
               updateTimedown,
-              scope.elapsedCountdownMs > 0?  scope.countdownStartTimeMs - Date.now() : 0
+              election.presentation.booth_log_out__countdown_seconds > 0?  scope.countdownStartTimeMs - Date.now() : 0
             );
 
           }
