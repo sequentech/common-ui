@@ -114,8 +114,14 @@
     .logout-container {
         position: relative;
 
-        .custom-tooltip {
+        .custom-tooltip, .logout-bar {
             display: none;
+        }
+    }
+
+    .logout-container.countdown {
+        .logout-bar {
+            display: block;
         }
 
         &:hover {

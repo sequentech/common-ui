@@ -50,6 +50,18 @@ angular
 
         scope.showVersionsModal = ShowVersionsModalService;
 
+        function updateTimedown() {
+          scope.showCountdown = true;
+          scope.countdownSecs = Math.floor((Date.now() - scope.logoutTimeMs) / 1000);
+          scope.countdownMins = Math.floor((Date.now() - scope.logoutTimeMs) / (60 * 1000));
+          if (scope.countdownSecs <= 1) {
+            return;
+          }
+          setTimeout(
+            updateTimedown,
+            scope.countdownMins > 0?  60 * 1000 : 1000
+          );
+        }
       
         // Show countdown on logout button based on cookies
         function enableLogoutCountdown() {
@@ -79,31 +91,18 @@ angular
             scope.countdownMins = 0;
 
             var initialTimeMs = Date.now();
-            var elapsedCountdownMs = (election.presentation.extra_options.booth_log_out__countdown_seconds || -1) * 1000;
-            var logoutTimeMs = initialTimeMs + (ConfigService.cookies.expires || 15*60*1000) * 60 * 1000;
-            var countdownStartTimeMs = logoutTimeMs - elapsedCountdownMs;
-
-            function updateTimedown() {
-              scope.showCountdown = true;
-              scope.countdownSecs = Math.floor((Date.now() - logoutTimeMs) / 1000);
-              scope.countdownMins = Math.floor((Date.now() - logoutTimeMs) / (60 * 1000));
-              if (scope.countdownSecs <= 1) {
-                return;
-              }
-              setTimeout(
-                updateTimedown,
-                scope.countdownMins > 0?  60 * 1000 : 1000
-              );
-            }
+            scope.elapsedCountdownMs = (election.presentation.extra_options.booth_log_out__countdown_seconds || -1) * 1000;
+            scope.logoutTimeMs = initialTimeMs + (ConfigService.cookies.expires || 10*60*1000) * 60 * 1000;
+            scope.countdownStartTimeMs = scope.logoutTimeMs - scope.elapsedCountdownMs;
             
             setTimeout(
               updateTimedown,
-              elapsedCountdownMs > 0?  countdownStartTimeMs - Date.now() : 0
+              scope.elapsedCountdownMs > 0?  scope.countdownStartTimeMs - Date.now() : 0
             );
 
           }
         }
-        enableLogoutCountdown()
+        enableLogoutCountdown();
       };
       return {
         restrict: 'AE',
