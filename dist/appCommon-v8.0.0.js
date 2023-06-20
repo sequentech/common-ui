@@ -1158,13 +1158,11 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 return !(election && election.presentation && election.presentation.extra_options && election.presentation.extra_options.booth_log_out__disable);
             }, scope.showVersionsModal = ShowVersionsModalService, function() {
                 scope.showCountdown = !1, scope.isDemo || scope.isPreview;
-                var election = scope.parentElection || scope.election;
-                ConfigService.cookies.expires && election && election.presentation && election.presentation.extra_options && _.isNumber(election.presentation.extra_options.booth_log_out__countdown_seconds), 
-                scope.showCountdown = !1, scope.countdownSecs = 0, scope.countdownMins = 0;
-                var initialTimeMs = Date.now();
-                scope.elapsedCountdownMs = 1e3 * (election.presentation.extra_options.booth_log_out__countdown_seconds || -1), 
+                var initialTimeMs, election = scope.parentElection || scope.election;
+                ConfigService.cookies.expires && election && election.presentation && election.presentation.extra_options && _.isNumber(election.presentation.extra_options.booth_log_out__countdown_seconds) && (scope.showCountdown = !1, 
+                scope.countdownSecs = 0, scope.countdownMins = 0, initialTimeMs = Date.now(), scope.elapsedCountdownMs = 1e3 * (election.presentation.extra_options.booth_log_out__countdown_seconds || -1), 
                 scope.logoutTimeMs = initialTimeMs + 60 * (ConfigService.cookies.expires || 6e5) * 1e3, 
-                scope.countdownStartTimeMs = scope.logoutTimeMs - scope.elapsedCountdownMs, setTimeout(updateTimedown, 0 < scope.elapsedCountdownMs ? scope.countdownStartTimeMs - Date.now() : 0);
+                scope.countdownStartTimeMs = scope.logoutTimeMs - scope.elapsedCountdownMs, setTimeout(updateTimedown, 0 < scope.elapsedCountdownMs ? scope.countdownStartTimeMs - Date.now() : 0));
             }();
         },
         templateUrl: "avUi/common-header-directive/common-header-directive.html"

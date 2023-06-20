@@ -84,7 +84,7 @@ angular
               election.presentation &&
               election.presentation.extra_options &&
               _.isNumber(election.presentation.extra_options.booth_log_out__countdown_seconds)
-            ) || true
+            )
           ) {
             scope.showCountdown = false;
             scope.countdownSecs = 0;
