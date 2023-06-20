@@ -50,6 +50,7 @@ angular
 
         scope.showVersionsModal = ShowVersionsModalService;
 
+        // helper function for enableLogoutCountdown()
         function updateTimedown() {
           scope.showCountdown = true;
           scope.countdownSecs = Math.round((scope.logoutTimeMs - Date.now()) / 1000);
@@ -63,17 +64,13 @@ angular
           }
           setTimeout(
             updateTimedown,
-            scope.countdownMins > 0?  1 * 1000 : 1000
+            scope.countdownMins > 0?  60 * 1000 : 1000
           );
         }
       
         // Show countdown on logout button based on cookies
         function enableLogoutCountdown() {
           scope.showCountdown = false;
-          // demo and live preview don't need to expire
-          if (scope.isDemo || scope.isPreview) {
-            //return;
-          }
   
           var election = (
             (!!scope.parentElection) ?
