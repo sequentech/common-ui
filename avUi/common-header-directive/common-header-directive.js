@@ -56,6 +56,7 @@ angular
           scope.countdownMins = Math.round((scope.logoutTimeMs - Date.now()) / (60 * 1000));
           var ratio = (scope.logoutTimeMs - Date.now())/(scope.logoutTimeMs - scope.countdownStartTimeMs);
           scope.countdownPercent = (Math.round(10000*ratio)/100) + '%';
+          $(".logout-bar")[0].style.setProperty('width', scope.countdownPercent);
           if (scope.countdownSecs <= 1) {
             return;
           }
@@ -64,6 +65,9 @@ angular
             scope.countdownMins > 0?  60 * 1000 : 1000
           );
         }
+
+        scope.getCountdownMins = function() { return scope.countdownMins; };
+        scope.getCountdownSecs = function() { return scope.countdownSecs; };
       
         // Show countdown on logout button based on cookies
         function enableLogoutCountdown() {
@@ -91,6 +95,7 @@ angular
             scope.countdownSecs = 0;
             scope.countdownMins = 0;
             scope.countdownPercent = '100%';
+            $(".logout-bar")[0].style.setProperty('width', scope.countdownPercent);
 
             var initialTimeMs = Date.now();
             scope.elapsedCountdownMs = (

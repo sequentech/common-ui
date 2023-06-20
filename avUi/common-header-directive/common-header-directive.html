@@ -68,10 +68,7 @@
                 class="log-out-button"
                 ng-click="confirmLogoutModal()"
               >
-                <div
-                  class="logout-bar"
-                  ng-style="{'width': '{{ countdownPercent }}'}"
-                ></div>
+                <div class="logout-bar"></div>
                 <span class="glyphicon glyphicon-off"></span>
                 <span class="logout-text hidden-xs" ng-i18next>avBooth.logout</span>
               </a>
@@ -80,13 +77,13 @@
                 <div class="tooltip-inner">
                   <b ng-i18next>avBooth.countdownTooltip.title</b>
                   <p
-                    ng-if="countdownMins > 0"
-                    ng-i18next="[i18next]({mins: countdownMins})avBooth.countdownTooltip.contentMins"
+                    ng-if="getCountdownMins() === 0"
+                    ng-i18next="[i18next]({mins: getCountdownMins()})avBooth.countdownTooltip.contentMins"
                   >
                   </p>
                   <p
-                    ng-if="countdownMins === 0"
-                    ng-i18next="[i18next]({mins: countdownSecs})avBooth.countdownTooltip.contentSecs"
+                    ng-if="getCountdownSecs() > 0"
+                    ng-i18next="[i18next]({mins: getCountdownSecs()})avBooth.countdownTooltip.contentSecs"
                   >
                   </p>
                 </div>
