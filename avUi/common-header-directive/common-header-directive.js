@@ -49,6 +49,61 @@ angular
         };
 
         scope.showVersionsModal = ShowVersionsModalService;
+
+      
+        // Show countdown on logout button based on cookies
+        function enableLogoutCountdown() {
+          scope.showCountdown = false;
+          // demo and live preview don't need to expire
+          if (scope.isDemo || scope.isPreview) {
+            //return;
+          }
+  
+          var election = (
+            (!!scope.parentElection) ?
+            scope.parentElection :
+            scope.election
+          );
+  
+          if (
+            ConfigService.cookies.expires &&
+            (
+              election &&
+              election.presentation &&
+              election.presentation.extra_options &&
+              _.isNumber(election.presentation.extra_options.booth_log_out__countdown_seconds)
+            ) || true
+          ) {
+            scope.showCountdown = false;
+            scope.countdownSecs = 0;
+            scope.countdownMins = 0;
+
+            var initialTimeMs = Date.now();
+            var elapsedCountdownMs = (election.presentation.extra_options.booth_log_out__countdown_seconds || -1) * 1000;
+            var logoutTimeMs = initialTimeMs + (ConfigService.cookies.expires || 15*60*1000) * 60 * 1000;
+            var countdownStartTimeMs = logoutTimeMs - elapsedCountdownMs;
+
+            function updateTimedown() {
+              scope.showCountdown = true;
+              scope.countdownSecs = Math.floor((Date.now() - logoutTimeMs) / 1000);
+              scope.countdownMins = Math.floor((Date.now() - logoutTimeMs) / (60 * 1000));
+              if (scope.countdownSecs <= 1) {
+                return;
+              }
+              setTimeout(
+                updateTimedown,
+                scope.countdownMins > 0?  60 * 1000 : 1000
+              );
+            }
+            
+            setTimeout(
+              updateTimedown,
+              elapsedCountdownMs > 0?  countdownStartTimeMs - Date.now() : 0
+            );
+
+          }
+        }
+        enableLogoutCountdown()
       };
       return {
         restrict: 'AE',

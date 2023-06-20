@@ -58,7 +58,10 @@
                 av-change-lang
             >
             </span>
-            <span class="logout-container" ng-if="enableLogOut() && !isElectionPortal">
+            <span class="logout-container"
+              ng-if="enableLogOut() && !isElectionPortal"
+              ng-class="{ 'countdown': showCountdown}"
+            >
               <a
                 target="_top"
                 tabindex="0"
@@ -73,7 +76,16 @@
                 <i class="fa fa-fw fa-lg fa-caret-up"></i>
                 <div class="tooltip-inner">
                   <b ng-i18next>avBooth.countdownTooltip.title</b>
-                  <p ng-i18next="[i18next]({mins: 15})avBooth.countdownTooltip.contentMins"></p>
+                  <p
+                    ng-if="countdownMins > 0"
+                    ng-i18next="[i18next]({mins: countdownMins})avBooth.countdownTooltip.contentMins"
+                  >
+                  </p>
+                  <p
+                    ng-if="countdownMins === 0"
+                    ng-i18next="[i18next]({mins: countdownSecs})avBooth.countdownTooltip.contentSecs"
+                  >
+                  </p>
                 </div>
               </div>
             </span>
