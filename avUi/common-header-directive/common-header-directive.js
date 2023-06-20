@@ -52,8 +52,8 @@ angular
 
         function updateTimedown() {
           scope.showCountdown = true;
-          scope.countdownSecs = Math.floor((Date.now() - scope.logoutTimeMs) / 1000);
-          scope.countdownMins = Math.floor((Date.now() - scope.logoutTimeMs) / (60 * 1000));
+          scope.countdownSecs = Math.floor((scope.logoutTimeMs - Date.now()) / 1000);
+          scope.countdownMins = Math.floor((scope.logoutTimeMs - Date.now()) / (60 * 1000));
           if (scope.countdownSecs <= 1) {
             return;
           }

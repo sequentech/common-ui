@@ -1146,8 +1146,8 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         },
         link: function(scope, _element, attrs) {
             function updateTimedown() {
-                scope.showCountdown = !0, scope.countdownSecs = Math.floor((Date.now() - scope.logoutTimeMs) / 1e3), 
-                scope.countdownMins = Math.floor((Date.now() - scope.logoutTimeMs) / 6e4), scope.countdownSecs <= 1 || setTimeout(updateTimedown, 0 < scope.countdownMins ? 6e4 : 1e3);
+                scope.showCountdown = !0, scope.countdownSecs = Math.floor((scope.logoutTimeMs - Date.now()) / 1e3), 
+                scope.countdownMins = Math.floor((scope.logoutTimeMs - Date.now()) / 6e4), scope.countdownSecs <= 1 || setTimeout(updateTimedown, 0 < scope.countdownMins ? 6e4 : 1e3);
             }
             scope.parentElection = scope.$parent.parentElection, scope.election = scope.$parent.election, 
             scope.confirmLogoutModal = scope.$parent.confirmLogoutModal, scope.configService = ConfigService, 
