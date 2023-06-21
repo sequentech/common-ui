@@ -361,6 +361,8 @@ angular.module('avRegistration')
 
           scope.sendingData = true;
           scope.error = null;
+
+          var sessionStartedAtMs = Date.now();
           Authmethod
             .login(data, autheventid)
             .then(
@@ -409,7 +411,8 @@ angular.module('avRegistration')
                       JSON.stringify([{
                         electionId: autheventid,
                         token: response.data['vote-permission-token'],
-                        isFirst: true
+                        isFirst: true,
+                        sessionStartedAtMs: sessionStartedAtMs
                       }])
                     );
                     $window.sessionStorage.setItem(
@@ -432,7 +435,8 @@ angular.module('avRegistration')
                           voted: false,
                           numSuccessfulLoginsAllowed: child['num-successful-logins-allowed'],
                           numSuccessfulLogins: child['num-successful-logins'],
-                          isFirst: index === 0
+                          isFirst: index === 0,
+                          sessionStartedAtMs: sessionStartedAtMs
                         };
                       })
                       .value();

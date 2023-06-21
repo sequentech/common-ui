@@ -97,7 +97,7 @@ angular
             scope.countdownSecs = 0;
             scope.countdownMins = 0;
 
-            var initialTimeMs = scope.$parent.initialTimeMs || Date.now();
+            var initialTimeMs = scope.$parent.getSessionStartTime();
             scope.elapsedCountdownMs = (
               election.presentation.booth_log_out__countdown_seconds > 0?
               election.presentation.booth_log_out__countdown_seconds :
@@ -107,6 +107,10 @@ angular
             scope.countdownStartTimeMs = scope.logoutTimeMs - scope.elapsedCountdownMs;
             scope.countdownPercent = calculateCountdownPercent();
             $(".logout-bar")[0].style.setProperty('width', scope.countdownPercent);
+
+            if (scope.isDemo || scope.isPreview) {
+              return;
+            }
             
             setTimeout(
               updateTimedown,

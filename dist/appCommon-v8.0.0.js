@@ -511,7 +511,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                     scope.sendingData = !1, scope.otpCode = void 0, scope.otlResponseData = {}, scope.otlStatus = "fail";
                 })));
             }, scope.loginUser = function(valid) {
-                var data, hasEmptyCode;
+                var data, hasEmptyCode, sessionStartedAtMs;
                 valid && (scope.sendingData || (scope.withCode || !scope.hasOtpFieldsCode && !_.contains([ "sms-otp", "email-otp" ], scope.method) || 0 !== scope.currentFormStep ? (data = {
                     captcha_code: Authmethod.captcha_code
                 }, scope.current_alt_auth_method_id && (data.alt_auth_method_id = scope.current_alt_auth_method_id), 
@@ -519,7 +519,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                     angular.isUndefined(field.value) && (data[field.name] = ""), "email" === field.type ? scope.email = field.value : _.contains([ "code", "otp-code" ], field.type) && (angular.isString(field.value) || (hasEmptyCode = !0), 
                     field.value = field.value.trim().replace(/ |\n|\t|-|_/g, "").toUpperCase()), data[field.name] = field.value;
                 }), hasEmptyCode || ("smart-link" !== scope.method || scope.withCode || (data["auth-token"] = $location.search()["auth-token"]), 
-                scope.sendingData = !0, scope.error = null, Authmethod.login(data, autheventid).then(function(tokens) {
+                scope.sendingData = !0, scope.error = null, sessionStartedAtMs = Date.now(), Authmethod.login(data, autheventid).then(function(tokens) {
                     var postfix, options;
                     "ok" === tokens.data.status ? (postfix = "_authevent_" + autheventid, options = {}, 
                     ConfigService.cookies && ConfigService.cookies.expires && (options.expires = new Date(), 
@@ -538,7 +538,8 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                     }) : angular.isDefined(tokens.data["redirect-to-url"]) ? $window.location.href = tokens.data["redirect-to-url"] : angular.isDefined(tokens.data["vote-permission-token"]) ? ($window.sessionStorage.setItem("vote_permission_tokens", JSON.stringify([ {
                         electionId: autheventid,
                         token: tokens.data["vote-permission-token"],
-                        isFirst: !0
+                        isFirst: !0,
+                        sessionStartedAtMs: sessionStartedAtMs
                     } ])), $window.sessionStorage.setItem("show-pdf", !!tokens.data["show-pdf"]), $window.location.href = "/booth/" + autheventid + "/vote") : angular.isDefined(tokens.data["vote-children-info"]) ? (tokens = _.chain(tokens.data["vote-children-info"]).map(function(child, index) {
                         return {
                             electionId: child["auth-event-id"],
@@ -547,7 +548,8 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                             voted: !1,
                             numSuccessfulLoginsAllowed: child["num-successful-logins-allowed"],
                             numSuccessfulLogins: child["num-successful-logins"],
-                            isFirst: 0 === index
+                            isFirst: 0 === index,
+                            sessionStartedAtMs: sessionStartedAtMs
                         };
                     }).value(), $window.sessionStorage.setItem("vote_permission_tokens", JSON.stringify(tokens)), 
                     $window.location.href = "/booth/" + autheventid + "/vote") : scope.error = $i18next("avRegistration.invalidCredentials", {
@@ -1169,11 +1171,11 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 scope.showCountdown = !1;
                 var initialTimeMs, election = scope.parentElection || scope.election;
                 ConfigService.cookies.expires && election && election.presentation && _.isNumber(election.presentation.booth_log_out__countdown_seconds) && (scope.showCountdown = !1, 
-                scope.countdownSecs = 0, scope.countdownMins = 0, initialTimeMs = scope.$parent.initialTimeMs || Date.now(), 
+                scope.countdownSecs = 0, scope.countdownMins = 0, initialTimeMs = scope.$parent.getSessionStartTime(), 
                 scope.elapsedCountdownMs = 1e3 * (0 < election.presentation.booth_log_out__countdown_seconds ? election.presentation.booth_log_out__countdown_seconds : 60 * ConfigService.cookies.expires), 
                 scope.logoutTimeMs = initialTimeMs + 60 * ConfigService.cookies.expires * 1e3, scope.countdownStartTimeMs = scope.logoutTimeMs - scope.elapsedCountdownMs, 
                 scope.countdownPercent = calculateCountdownPercent(), $(".logout-bar")[0].style.setProperty("width", scope.countdownPercent), 
-                setTimeout(updateTimedown, 0 < election.presentation.booth_log_out__countdown_seconds ? scope.countdownStartTimeMs - Date.now() : 0));
+                scope.isDemo || scope.isPreview || setTimeout(updateTimedown, 0 < election.presentation.booth_log_out__countdown_seconds ? scope.countdownStartTimeMs - Date.now() : 0));
             }, 0);
         },
         templateUrl: "avUi/common-header-directive/common-header-directive.html"
