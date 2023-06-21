@@ -1145,12 +1145,15 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             hashHelp: "&"
         },
         link: function(scope, _element, attrs) {
+            function calculateCountdownPercent() {
+                var ratio = (scope.logoutTimeMs - Date.now()) / (scope.logoutTimeMs - scope.countdownStartTimeMs);
+                return Math.min(100, Math.round(1e4 * ratio) / 100) + "%";
+            }
             function updateTimedown() {
                 scope.showCountdown = !0, scope.countdownSecs = Math.round((scope.logoutTimeMs - Date.now()) / 1e3), 
-                scope.countdownMins = Math.round((scope.logoutTimeMs - Date.now()) / 6e4);
-                var ratio = (scope.logoutTimeMs - Date.now()) / (scope.logoutTimeMs - scope.countdownStartTimeMs);
-                scope.countdownPercent = Math.round(1e4 * ratio) / 100 + "%", $(".logout-bar")[0].style.setProperty("width", scope.countdownPercent), 
-                scope.$apply(), scope.countdownSecs <= 1 || setTimeout(updateTimedown, 0 < scope.countdownMins ? 6e4 : 1e3);
+                scope.countdownMins = Math.round((scope.logoutTimeMs - Date.now()) / 6e4), scope.countdownPercent = calculateCountdownPercent(), 
+                $(".logout-bar")[0].style.setProperty("width", scope.countdownPercent), scope.$apply(), 
+                scope.countdownSecs <= 1 || setTimeout(updateTimedown, 0 < scope.countdownMins ? 6e4 : 1e3);
             }
             scope.parentElection = scope.$parent.parentElection, scope.election = scope.$parent.election, 
             scope.confirmLogoutModal = scope.$parent.confirmLogoutModal, scope.configService = ConfigService, 
@@ -1163,10 +1166,10 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 scope.showCountdown = !1;
                 var initialTimeMs, election = scope.parentElection || scope.election;
                 ConfigService.cookies.expires && election && election.presentation && _.isNumber(election.presentation.booth_log_out__countdown_seconds) && (scope.showCountdown = !1, 
-                scope.countdownSecs = 0, scope.countdownMins = 0, scope.countdownPercent = "100%", 
-                $(".logout-bar")[0].style.setProperty("width", scope.countdownPercent), initialTimeMs = Date.now(), 
+                scope.countdownSecs = 0, scope.countdownMins = 0, initialTimeMs = scope.initialTimeMs || Date.now(), 
                 scope.elapsedCountdownMs = 1e3 * (0 < election.presentation.booth_log_out__countdown_seconds ? election.presentation.booth_log_out__countdown_seconds : 60 * ConfigService.cookies.expires), 
                 scope.logoutTimeMs = initialTimeMs + 60 * ConfigService.cookies.expires * 1e3, scope.countdownStartTimeMs = scope.logoutTimeMs - scope.elapsedCountdownMs, 
+                scope.countdownPercent = calculateCountdownPercent(), $(".logout-bar")[0].style.setProperty("width", scope.countdownPercent), 
                 setTimeout(updateTimedown, 0 < election.presentation.booth_log_out__countdown_seconds ? scope.countdownStartTimeMs - Date.now() : 0));
             }, 0);
         },

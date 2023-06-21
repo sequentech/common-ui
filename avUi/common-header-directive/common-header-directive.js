@@ -50,13 +50,17 @@ angular
 
         scope.showVersionsModal = ShowVersionsModalService;
 
+        function calculateCountdownPercent() {
+          var ratio = (scope.logoutTimeMs - Date.now())/(scope.logoutTimeMs - scope.countdownStartTimeMs);
+          return Math.min(100, Math.round(10000*ratio)/100) + '%';
+        }
+
         // helper function for enableLogoutCountdown()
         function updateTimedown() {
           scope.showCountdown = true;
           scope.countdownSecs = Math.round((scope.logoutTimeMs - Date.now()) / 1000);
           scope.countdownMins = Math.round((scope.logoutTimeMs - Date.now()) / (60 * 1000));
-          var ratio = (scope.logoutTimeMs - Date.now())/(scope.logoutTimeMs - scope.countdownStartTimeMs);
-          scope.countdownPercent = (Math.round(10000*ratio)/100) + '%';
+          scope.countdownPercent = calculateCountdownPercent();
           $(".logout-bar")[0].style.setProperty('width', scope.countdownPercent);
           scope.$apply();
           if (scope.countdownSecs <= 1) {
@@ -89,10 +93,8 @@ angular
             scope.showCountdown = false;
             scope.countdownSecs = 0;
             scope.countdownMins = 0;
-            scope.countdownPercent = '100%';
-            $(".logout-bar")[0].style.setProperty('width', scope.countdownPercent);
 
-            var initialTimeMs = Date.now();
+            var initialTimeMs = scope.initialTimeMs || Date.now();
             scope.elapsedCountdownMs = (
               election.presentation.booth_log_out__countdown_seconds > 0?
               election.presentation.booth_log_out__countdown_seconds :
@@ -100,6 +102,8 @@ angular
             ) * 1000;
             scope.logoutTimeMs = initialTimeMs + ConfigService.cookies.expires * 60 * 1000;
             scope.countdownStartTimeMs = scope.logoutTimeMs - scope.elapsedCountdownMs;
+            scope.countdownPercent = calculateCountdownPercent();
+            $(".logout-bar")[0].style.setProperty('width', scope.countdownPercent);
             
             setTimeout(
               updateTimedown,
