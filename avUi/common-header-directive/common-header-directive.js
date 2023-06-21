@@ -66,9 +66,12 @@ angular
           if (scope.countdownSecs <= 1) {
             return;
           }
+          var targetMins = Math.floor((scope.logoutTimeMs - Date.now()) / (60 * 1000));
+          var targetNextTime = scope.logoutTimeMs - targetMins * 60 * 1000;
+          var targetElapsedTime = targetNextTime - Date.now();
           setTimeout(
             updateTimedown,
-            scope.countdownMins > 0?  60 * 1000 : 1000
+            scope.countdownMins > 0?  targetElapsedTime : 1000
           );
         }
       
@@ -94,7 +97,7 @@ angular
             scope.countdownSecs = 0;
             scope.countdownMins = 0;
 
-            var initialTimeMs = scope.initialTimeMs || Date.now();
+            var initialTimeMs = scope.$parent.initialTimeMs || Date.now();
             scope.elapsedCountdownMs = (
               election.presentation.booth_log_out__countdown_seconds > 0?
               election.presentation.booth_log_out__countdown_seconds :
