@@ -86,7 +86,7 @@ angular
           );
   
           if (
-            ConfigService.cookies.expires &&
+            ConfigService.authTokenExpirationSeconds &&
             (
               election &&
               election.presentation &&
@@ -97,13 +97,13 @@ angular
             scope.countdownSecs = 0;
             scope.countdownMins = 0;
 
-            var initialTimeMs = scope.$parent.getSessionStartTime();
+            var initialTimeMs = scope.$parent.getSessionStartTime && scope.$parent.getSessionStartTime() || Date.now();
             scope.elapsedCountdownMs = (
               election.presentation.booth_log_out__countdown_seconds > 0?
               election.presentation.booth_log_out__countdown_seconds :
-              ConfigService.cookies.expires * 60
+              ConfigService.authTokenExpirationSeconds
             ) * 1000;
-            scope.logoutTimeMs = initialTimeMs + ConfigService.cookies.expires * 60 * 1000;
+            scope.logoutTimeMs = initialTimeMs + ConfigService.authTokenExpirationSeconds * 1000;
             scope.countdownStartTimeMs = scope.logoutTimeMs - scope.elapsedCountdownMs;
             scope.countdownPercent = calculateCountdownPercent();
             $(".logout-bar")[0].style.setProperty('width', scope.countdownPercent);
