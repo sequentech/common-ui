@@ -1151,12 +1151,15 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 var ratio = (scope.logoutTimeMs - Date.now()) / (scope.logoutTimeMs - scope.countdownStartTimeMs);
                 return Math.min(100, Math.round(1e4 * ratio) / 100) + "%";
             }
+            function updateProgressBar(percent) {
+                var element = $(".logout-bar")[0];
+                element && element.style.setProperty("width", percent);
+            }
             function updateTimedown() {
                 var targetElapsedTime;
                 scope.showCountdown = !0, scope.countdownSecs = Math.round((scope.logoutTimeMs - Date.now()) / 1e3), 
                 scope.countdownMins = Math.round((scope.logoutTimeMs - Date.now()) / 6e4), scope.countdownPercent = calculateCountdownPercent(), 
-                $(".logout-bar")[0].style.setProperty("width", scope.countdownPercent), scope.$apply(), 
-                scope.countdownSecs <= 1 || (targetElapsedTime = Math.floor((scope.logoutTimeMs - Date.now()) / 6e4), 
+                updateProgressBar(scope.countdownPercent), scope.$apply(), scope.countdownSecs <= 1 || (targetElapsedTime = Math.floor((scope.logoutTimeMs - Date.now()) / 6e4), 
                 targetElapsedTime = scope.logoutTimeMs - 60 * targetElapsedTime * 1e3 - Date.now(), 
                 setTimeout(updateTimedown, 0 < scope.countdownMins ? targetElapsedTime : 1e3));
             }
@@ -1175,7 +1178,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 scope.elapsedCountdownMs = 1e3 * (0 < election.presentation.booth_log_out__countdown_seconds ? election.presentation.booth_log_out__countdown_seconds : ConfigService.authTokenExpirationSeconds), 
                 scope.logoutTimeMs = initialTimeMs + 1e3 * ConfigService.authTokenExpirationSeconds, 
                 scope.countdownStartTimeMs = scope.logoutTimeMs - scope.elapsedCountdownMs, scope.countdownPercent = calculateCountdownPercent(), 
-                $(".logout-bar")[0].style.setProperty("width", scope.countdownPercent), scope.isDemo || scope.isPreview || setTimeout(updateTimedown, 0 < election.presentation.booth_log_out__countdown_seconds ? scope.countdownStartTimeMs - Date.now() : 0));
+                updateProgressBar(scope.countdownPercent), scope.isDemo || scope.isPreview || setTimeout(updateTimedown, 0 < election.presentation.booth_log_out__countdown_seconds ? scope.countdownStartTimeMs - Date.now() : 0));
             }, 0);
         },
         templateUrl: "avUi/common-header-directive/common-header-directive.html"

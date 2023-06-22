@@ -55,13 +55,23 @@ angular
           return Math.min(100, Math.round(10000*ratio)/100) + '%';
         }
 
+        // find progress bar and update its width
+        function updateProgressBar(percent) {
+          var element = $(".logout-bar")[0];
+          if (!element) {
+            // There's no logout on the login page
+            return;
+          }
+          element.style.setProperty('width', percent);
+        }
+
         // helper function for enableLogoutCountdown()
         function updateTimedown() {
           scope.showCountdown = true;
           scope.countdownSecs = Math.round((scope.logoutTimeMs - Date.now()) / 1000);
           scope.countdownMins = Math.round((scope.logoutTimeMs - Date.now()) / (60 * 1000));
           scope.countdownPercent = calculateCountdownPercent();
-          $(".logout-bar")[0].style.setProperty('width', scope.countdownPercent);
+          updateProgressBar(scope.countdownPercent);
           scope.$apply();
           if (scope.countdownSecs <= 1) {
             return;
@@ -106,8 +116,9 @@ angular
             scope.logoutTimeMs = initialTimeMs + ConfigService.authTokenExpirationSeconds * 1000;
             scope.countdownStartTimeMs = scope.logoutTimeMs - scope.elapsedCountdownMs;
             scope.countdownPercent = calculateCountdownPercent();
-            $(".logout-bar")[0].style.setProperty('width', scope.countdownPercent);
+            updateProgressBar(scope.countdownPercent);
 
+            // If we're on a demo/live preview, the bar is fixed at 100%
             if (scope.isDemo || scope.isPreview) {
               return;
             }
