@@ -1,0 +1,235 @@
+/**
+ * This file is part of common-ui.
+ * Copyright (C) 2015-2023 Sequent Tech Inc <legal@sequentech.io>
+
+ * common-ui is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License.
+
+ * common-ui  is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+
+ * You should have received a copy of the GNU Affero General Public License
+ * along with common-ui.  If not, see <http://www.gnu.org/licenses/>.
+**/
+
+[avb-common-header] {
+    top: -24px;
+    position: sticky;
+    z-index: 10;
+    transition: all 0.3s ease;
+    background-color: @bg-primary;
+
+    @media(max-width: @screen-xs-max) {
+        top: -24px;
+    }
+
+
+    .header-navbar {
+        height: 79px;
+        display: flex;
+        position: sticky;
+        align-items: center;
+        background-color: @av-primary;
+        top: -24px;
+
+        @media(max-width: @screen-xs-max) {
+            height: 79px;
+            top: -24px;
+        }
+    }
+
+    .header-container {
+        flex-direction: row;
+        align-items: center;
+        display: flex;
+        height: 55px;
+        position: sticky;
+        top: 0;
+        padding-top: 4px;
+        padding-bottom: 4px;
+
+        @media(max-width: @screen-xs-max) {
+            width: 100%;
+        }
+
+        .col-xs-6.header-left {
+            padding-top: 8px;
+            padding-bottom: 8px;
+        }
+
+        .dropdown, .log-out-button {
+            padding: 8px;
+        }
+
+        [av-change-lang]:hover, .log-out-button:hover {
+            background-color: @av-secondary-contrast;
+
+            span, .fa.fa-language, .logout-text, .glyphicon.glyphicon-off {
+                color: @av-primary;
+            }
+        }
+
+        a.log-out-button:hover, a.log-out-button:focus {
+            text-decoration: none;
+        }
+    }
+
+    .header-left {
+        padding-left: 0;
+    }
+
+    .header-right {
+        display: flex;
+        flex-direction: row;
+        justify-content: right;
+        align-items: center;
+        gap: 12px;
+        padding-right: 0;
+
+        @media(max-width: @screen-sm-max) {
+            gap: 8px;
+        }
+    }
+
+    .log-out-button {
+        display: flex;
+        align-items: center;
+    }
+
+    .logout-text {
+        padding-left: 10px;
+    }
+
+    .glyphicon-off {
+        line-height: 27px;
+        font-size: 25px;
+        vertical-align: -20%;
+        margin-right: 10px;
+        color: @av-secondary;
+
+        @media(max-width: @screen-xs-max) {
+            margin-right: 0;
+        }
+    }
+
+    .bottom-absolute {
+        max-width: 700px;
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translate(-50%, 50%);
+
+        @media(max-width: @screen-lg-min) {
+            position: unset;
+            bottom: unset;
+            left: unset;
+            transform: unset;
+            margin-right: auto;
+            margin-left: auto;
+        }
+    }
+
+    .input-warn.warning-demo {
+        margin-bottom: 0;
+        margin-top: 0;
+    }
+
+    .ballot-hash {
+        max-width: 700px;
+        margin-right: auto;
+        margin-left: auto;
+        .hash-box {
+            color: @av-secondary-contrast;
+            background-color: @brand-primary;
+            padding: 10px 22px;
+            display: flex;
+            flex-direction: row;
+            gap: 8px;
+            border-radius: 4px;
+            border: 1px solid @av-secondary-contrast;
+            align-items: center;
+        }
+
+        .hash-text {
+            overflow-wrap: anywhere;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .fa-check {
+            margin-top: 3px;
+        }
+
+        .fa-question-circle {
+            color: @av-secondary;
+        }
+    }
+
+    .btn-twitter {
+        background-color: #1da1f2;
+
+        &:hover {
+        background-color: darken(#1da1f2, 20%);
+        }
+    }
+
+    .btn-facebook {
+        background-color: #3b579d;
+
+        &:hover {
+        background-color: darken(#3b579d, 20%);
+        }
+    }
+
+    .social-img {
+      max-height: 20px;
+      max-width: 50px;
+      width: auto;
+    }
+
+    .logo-img {
+      max-height: 47px;
+      max-width: 400px;
+      width: auto;
+  
+      @media(max-width: @screen-xs-max) {
+        max-height: 37px;
+        max-width: 150px;
+      }
+    }
+
+    .social-container {
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+    }
+
+    .config-version {
+        padding: 8px;
+        min-height: 43px;
+        display: flex;
+        align-items: center;
+
+        &:hover {
+            color: @bg-primary;
+            background-color: @av-secondary-contrast;
+            text-decoration: none;
+        }
+
+        &:focus {
+            text-decoration: none;
+        }
+    }
+}
+
+[avb-booth-header].hash-margin {
+    margin-bottom: 28px;
+
+    @media(max-width: @screen-md-min) {
+        margin-bottom: 0;
+    }
+}

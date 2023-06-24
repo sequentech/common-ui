@@ -44,7 +44,8 @@ angular.module('avUi')
                 allow_public_census_query: el.allow_public_census_query,
                 hide_default_login_lookup_field: el.hide_default_login_lookup_field,
                 parent_id: el.parent_id || null,
-                children_election_info: el.children_election_info || null
+                children_election_info: el.children_election_info || null,
+                alternative_auth_methods: el.census.alternative_auth_methods || null
             };
 
             // Set election id if existing in election configuration
@@ -57,9 +58,9 @@ angular.module('avUi')
             });
 
             d.extra_fields = _.filter(el.census.extra_fields, function(ef) {
-              var must = ef.must;
               delete ef.disabled;
               delete ef.must;
+              delete ef.value;
 
               // only add regex if it's filled and it's a text field
               if (!angular.isUndefined(ef.regex) &&

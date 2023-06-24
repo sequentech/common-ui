@@ -2,21 +2,21 @@
     <div class="col-sm-8 col-sm-offset-4">
         <img ng-src={{authMethod.captcha_image_url}} style="width:161px;height:65px">
     </div>
-    <label for="{{index}}Text" class="control-label col-sm-4">
+    <label id="label-{{index}}Text" for="{{index}}Text">
         <span>{{field.name}}</span>
     </label>
-    <div class="col-sm-8">
+    <div>
         <input
             type="text"
             class="form-control"
-            aria-label="input{{index}}-captcha"
+            aria-labeledby="label-{{index}}Text"
             id="{{index}}Text"
             minlength={{field.min}}
             maxlength={{field.max}}
             ng-model="field.value"
             ng-disabled="field.disabled"
             autocomplete="off"
-            tabindex="{{index}}"
+            tabindex="0"
             required />
         <p class="help-block" ng-if="field.help" ng-bind-html="field.help | addTargetBlank">
         </p>

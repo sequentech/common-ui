@@ -19,12 +19,15 @@
 		"name": "Sequent Tech"
 	},
 	"avRegistration": {
-		"loginHeader": "Login to vote",
+		"defaultAuthMethod": "Default",
+		"languageName": "English",
+		"loginHeader": "Authenticate to vote",
 		"adminLoginHeader": "Sign In to Admin Console",
 		"censusQueryHeader": "Check if you are in the census",
 		"checkCensusButton": "Check census",
 		"otlHeader": "Obtain Authentication Code",
 		"otlButton": "Obtain Authentication Code",
+		"loginAfterRegistration": "Registration successful!",
 		"otlStatus": {
 			"querying": "Authenticating, please wait..",
 			"success": "Your authentication code is <strong>__code__</strong>. Please write it down somewhere, since you will need to perform login and for security reasons this is a One Time Link and won't allow you to retrieve it again. Save this authentication code and use it later when voting period is open.",
@@ -106,8 +109,9 @@
 		}
 	},
 	"avCommon": {
-		"poweredBy": "Powered by <strong><a href=\"__url__\" target=\"_blank\">__name__</a></strong>",
+		"poweredBy": "Powered by <a href=\"__url__\" target=\"_blank\">__name__</a>",
 		"showVersion": "Version: __version__",
+		"changeLanguageMenu": "Change Language",
 		"showVersionModal": {
 			"mainVersion": "Main Version",
 			"header": "Version Information",

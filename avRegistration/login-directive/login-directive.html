@@ -1,34 +1,71 @@
-<div class="container-fluid">
+<div class="container-login">
   <div class="row">
     <div class="col-sm-12 loginheader">
-        <h2
-          class="tex-center"
+        <h3
+          class="tex-center login-header-text"
           ng-if="!isAdmin && !isOtl && !isCensusQuery && method !== 'openid-connect'"
           ng-i18next="[i18next]({name: orgName})avRegistration.loginHeader">
-        </h2>
-        <h2
-          class="tex-center"
+        </h3>
+        <h3
+          class="tex-center login-header-text"
           ng-if="isAdmin && !isOtl"
           ng-i18next="[i18next]avRegistration.adminLoginHeader">
-        </h2>
-        <h2
-          class="tex-center"
+        </h3>
+        <h3
+          class="tex-center login-header-text"
           ng-if="!isCensusQuery && method === 'openid-connect'"
           ng-i18next="[i18next]avRegistration.loginButton">
-        </h2>
-        <h2
-          class="tex-center"
+        </h3>
+        <h3
+          class="tex-center login-header-text"
           ng-if="!!isCensusQuery"
           ng-i18next="avRegistration.censusQueryHeader">
-        </h2>
-        <h2
-          class="tex-center"
+        </h3>
+        <h3
+          class="tex-center login-header-text"
           ng-if="isOtl"
           ng-i18next="avRegistration.otlHeader">
-        </h2>
+        </h3>
+        <div
+          class="text-success"
+          ng-if="!!successfulRegistration"
+          ng-i18next="[html:i18next]avRegistration.loginAfterRegistration"
+          >
+        </div>
+    </div>
+    
+    <!-- Shows the alternative auth method tabs in case there's any -->
+    <div class="col-sm-12 alternative-auth-methods-tabs" ng-if="alternative_auth_methods">
+      <ul class="nav nav-tabs">
+        <li 
+          class="default-auth-method"
+          ng-class="{'active': current_alt_auth_method_id == null}"
+        >
+          <a
+            ng-click="setCurrentAltAuthMethod(null)"
+          >
+            <i class="fa fa-user"></i>
+            <span ng-i18next="avRegistration.defaultAuthMethod"></span>
+          </a>
+        </li>
+        <li
+          ng-repeat="alt_auth_method in alternative_auth_methods"
+          ng-class="{'active': current_alt_auth_method_id == alt_auth_method.id}"
+        >
+          <a ng-click="setCurrentAltAuthMethod(alt_auth_method)">
+            <i
+              ng-if="alt_auth_method.icon"
+              class="{{alt_auth_method.icon}}"
+              ></i>
+            <span>
+              {{getAltAuthMethodName(alt_auth_method)}}
+            </span>
+          </a>
+        </li>
+      </ul>
     </div>
 
-    <div class="col-sm-6" ng-if="method !== 'openid-connect'">
+    <div class="col-sm-12" ng-if="method !== 'openid-connect'">
         <form name="form" id="loginForm" role="form" class="form-horizontal">
             <div
               ng-repeat="field in login_fields"
@@ -37,43 +74,45 @@
               ng-if="(field.steps === undefined || field.steps.indexOf(currentFormStep) !== -1) && otlStatus !== 'success'">
             </div>
 
-          <div class="col-sm-offset-4 col-sm-8 button-group">
+          <div class="button-group">
               <div class="input-error" ng-if="!isCensusQuery">
-                  <div class="error text-danger" ng-if="error">{{ error }}</div>
+                  <div class="error text-danger" role="alert" ng-if="error">{{ error }}</div>
               </div>
               <div class="input-warn">
-                <span
-                  class="text-warning"
-                  ng-if="!form.$valid || sendingData"
-                  ng-i18next>
-                  avRegistration.fillValidFormText
-                </span>
+                <div class="warn-box" ng-if="!form.$valid || sendingData" >
+                  <span class="glyphicon glyphicon-warning-sign"></span>
+                  <div
+                    role="alert"
+                    ng-i18next>
+                    avRegistration.fillValidFormText
+                  </div>
+                </div>
               </div>
               <button
                 type="submit"
-                class="btn btn-block btn-success-action"
+                class="btn btn-block btn-lg btn-success-action"
                 ng-if="!isCensusQuery && !isOtl"
                 ng-i18next="avRegistration.loginButton"
                 ng-click="loginUser(form.$valid)"
-                tabindex="{{login_fields.length+1}}"
+                tabindex="0"
                 ng-disabled="!form.$valid || sendingData">
               </button>
               <button
                 type="submit"
-                class="btn btn-block btn-success-action"
+                class="btn btn-block btn-lg btn-success-action"
                 ng-if="isCensusQuery"
                 ng-i18next="avRegistration.checkCensusButton"
                 ng-click="checkCensus(form.$valid)"
-                tabindex="{{login_fields.length+1}}"
+                tabindex="0"
                 ng-disabled="!form.$valid || sendingData">
               </button>
               <button
                 type="submit"
-                class="btn btn-block btn-success-action"
+                class="btn btn-block btn-lg btn-success-action"
                 ng-if="isOtl && otlStatus !== 'success'"
                 ng-i18next="avRegistration.otlButton"
                 ng-click="otlAuth(form.$valid)"
-                tabindex="{{login_fields.length+1}}"
+                tabindex="0"
                 ng-disabled="!form.$valid || sendingData">
               </button>
 
@@ -99,6 +138,7 @@
                     ng-if="otlStatus == 'fail'">
                       <div
                         class="error text-danger"
+                        role="alert"
                         ng-i18next="[html]avRegistration.otlStatus.fail">
                       </div>
                   </div>
@@ -126,6 +166,7 @@
                     ng-if="censusQuery == 'fail'">
                       <div
                         class="error text-danger"
+                        role="alert"
                         ng-i18next="[html]avRegistration.censusFail">
                       </div>
                   </div>
@@ -135,7 +176,7 @@
     </div>
 
     <div
-      class="col-sm-5 col-sm-offset-1 hidden-xs"
+      class="col-sm-5 col-sm-offset-1 hidden-xs not-registered-yet"
       ng-if="registrationAllowed && !isCensusQuery && method !== 'openid-connect' && !isOtl">
       <h3
         class="help-h3"
@@ -147,14 +188,14 @@
           href="/election/{{election.id}}/public/register"
           ng-i18next="avRegistration.registerHere"
           ng-click="goSignup()"
-          tabindex="{{login_fields.length+2}}">
+          tabindex="0">
         </a>
         <br/>
         <a
           ng-if="isAdmin"
           href="{{ signupLink }}"
           ng-i18next="avRegistration.registerHere"
-          tabindex="{{login_fields.length+2}}">
+          tabindex="0">
         </a>
         <br/>
         <span ng-i18next="avRegistration.fewMinutes"></span>
@@ -166,7 +207,7 @@
           <a
             ng-click="openidConnectAuth(provider)"
             alt="{{provider.description}}"
-            class="btn btn-primary btn-login">
+            class="btn btn-lg btn-primary btn-login">
             <img
               ng-if="!!provider.icon"
               alt="{{provider.description}}"

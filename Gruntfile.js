@@ -19,7 +19,7 @@
 'use strict';
 
 var pkg = require('./package.json');
-var SEQUENT_CONFIG_VERSION = 'master';
+var SEQUENT_CONFIG_VERSION = '8.0.0';
 
 //Using exclusion patterns slows down Grunt significantly
 //instead of creating a set of patterns like '**/*.js' and '!**/node_modules/**'
@@ -165,10 +165,10 @@ module.exports = function (grunt) {
         options: {
           remove: ['script[data-remove!="false"]','link[data-remove!="false"]'],
           append: [
-            {selector:'body',html:'<script src="/libnocompat-vmaster.js"></script>'},
+            {selector:'body',html:'<script src="/libnocompat-v8.0.0.js"></script>'},
             {selector:'body',html:'<!--All the source code of this program under copyright. Take a look at the license details at https://github.com/sequent/sequent-core-common/blob/master/README.md -->'},
-            {selector:'body',html:'<script src="/appCommon-vmaster.js"></script>'},
-            {selector:'body',html:'<script src="/SequentPlugins-vmaster.js"></script>'},
+            {selector:'body',html:'<script src="/appCommon-v8.0.0.js"></script>'},
+            {selector:'body',html:'<script src="/SequentPlugins-v8.0.0.js"></script>'},
             {selector:'head',html:'<link rel="stylesheet" id="theme" href="/themes/default/app.min.css">'}
           ]
         },
@@ -194,9 +194,9 @@ module.exports = function (grunt) {
           'temp/libnocompat.js': ['<%= dom_munger.data.libnocompatjs %>'],
           'temp/lib.js': ['<%= dom_munger.data.libjs %>'],
           'temp/app.js': ['<%= dom_munger.data.appjs %>','<%= ngtemplates.main.dest %>'],
-          'dist/SequentConfig-vmaster.js': ['SequentConfig.js'],
-          'dist/SequentThemes-vmaster.js': ['SequentThemes.js'],
-          'dist/SequentPlugins-vmaster.js': ['plugins/**/*.js']
+          'dist/SequentConfig-v8.0.0.js': ['SequentConfig.js'],
+          'dist/SequentThemes-v8.0.0.js': ['SequentThemes.js'],
+          'dist/SequentPlugins-v8.0.0.js': ['plugins/**/*.js']
         }
       }
     },
@@ -205,6 +205,7 @@ module.exports = function (grunt) {
         files: {
             "dist/locales/en.json": ["locales/en.json", "plugins/**/locales/en.json"],
             "dist/locales/es.json": ["locales/es.json", "plugins/**/locales/es.json"],
+            "dist/locales/fr.json": ["locales/fr.json", "plugins/**/locales/fr.json"],
             "dist/locales/gl.json": ["locales/gl.json", "plugins/**/locales/gl.json"],
             "dist/locales/sv.json": ["locales/sv.json", "plugins/**/locales/sv.json"],
             "dist/locales/fi.json": ["locales/fi.json", "plugins/**/locales/fi.json"],
@@ -229,12 +230,13 @@ module.exports = function (grunt) {
           beautify: true
         },
         files: {
-          'dist/appCommon-vmaster.js': 'temp/app.js',
-          'dist/libCommon-vmaster.js': 'temp/lib.js',
-          'dist/libnocompat-vmaster.js': 'temp/libnocompat.js',
+          'dist/appCommon-v8.0.0.js': 'temp/app.js',
+          'dist/libCommon-v8.0.0.js': 'temp/lib.js',
+          'dist/libnocompat-v8.0.0.js': 'temp/libnocompat.js',
           'dist/avWidgets.js': 'avWidgets.js',
 
           "dist/locales/moment/es.js": "node_modules/moment/locale/es.js",
+          "dist/locales/moment/fr.js": "node_modules/moment/locale/fr.js",
           "dist/locales/moment/gl.js": "node_modules/moment/locale/gl.js",
           "dist/locales/moment/ca.js": "node_modules/moment/locale/ca.js"
         }
@@ -274,10 +276,8 @@ module.exports = function (grunt) {
             dest: 'dist/themes/fonts/'
           },
           {
-            expand: true,
-            cwd: 'node_modules/bootstrap/fonts/',
-            src: ['**'],
-            dest: 'dist/themes/fonts/'
+            src: ['fonts/Manrope-VariableFont_wght.ttf'],
+            dest: 'dist/fonts/Manrope-VariableFont_wght.ttf'
           },
           {
             expand: true,

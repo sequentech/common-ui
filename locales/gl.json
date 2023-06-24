@@ -18,6 +18,7 @@
     "name": "Sequent Tech"
   },
   "avRegistration": {
+    "languageName": "Galego",
     "loginHeader": "Entrar",
     "adminLoginHeader": "Inicia sesión na Consola de administración",
     "helpRegisterForm": "Para poder votar, tes que rexistrarte primeiro mediante este formulario. Algúns dos campos son obrigatorios: le ben a información de axuda",
@@ -101,7 +102,7 @@
   },
   
   "avCommon": {
-    "poweredBy": "Funciona con <strong><a href=\"__url__\" target=\"_blank\">__name__</a></strong>",
+    "poweredBy": "Funciona con <a href=\"__url__\" target=\"_blank\">__name__</a>",
     "foot": {
         "contact": "Contacto",
         "contactsupport": "Contacto de soporte",

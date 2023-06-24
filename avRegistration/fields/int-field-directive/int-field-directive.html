@@ -2,15 +2,15 @@
   <div
     class="form-group"
     ng-class="{'has-error': fieldForm.input.$dirty && fieldForm.input.$invalid}">
-      <label for="input{{index}}" class="control-label col-sm-4">
+      <label id="label-input{{index}}" for="input{{index}}">
           <span>{{field.name}}</span>
       </label>
-      <div class="col-sm-8">
+      <div>
           <input
               type="number"
               class="form-control"
               id="input{{index}}"
-              aria-label="input{{index}}-int"
+              aria-labeledby="label-input{{index}}"
               name="input"
               min="{{field.min}}"
               autocomplete="off"
@@ -19,7 +19,7 @@
               ng-model-options="{debounce: 500}"
               ng-disabled="field.disabled"
               ng-pattern="re"
-              tabindex="{{index}}"
+              tabindex="0"
               ng-required="{{field.required}}" />
 
           <p

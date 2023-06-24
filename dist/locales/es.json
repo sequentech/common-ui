@@ -19,12 +19,14 @@
 		"name": "Sequent Tech"
 	},
 	"avRegistration": {
+		"languageName": "Español",
 		"censusQueryHeader": "Consulta si formas parte del censo",
 		"checkCensusButton": "Consulta el censo",
 		"censusQuerying": "Por favor espera, comprobando el censo..",
 		"censusSuccess": "¡Enhorabuena! Formas parte del censo y podrás participar en la votación.",
 		"censusFail": "¡Vaya! No te hemos encontrado en el censo. <br> Por favor, comprueba que: <ul> <li> Forma parte del censo. Revisa la documentación para ver si cumples los requisitos para ser elector.</li> <li> Ingresaste todos los datos correctamente. Comprueba minuciosamente los datos de entrada. </li> <ul> <p> Si aún crees que hay algún tipo de problema, ponte en contacto con el soporte técnico.</p>",
 		"loginHeader": "Autentícate para votar",
+		"loginAfterRegistration": "Registro exitoso!",
 		"adminLoginHeader": "Iniciar sesión en la Consola de Administración",
 		"helpRegisterForm": "Para poder votar, tienes que registrarte primero mediante este formulario. Algunos de los campos son obligatorios: lee bien la información de ayuda",
 		"helpAdminRegisterForm": "Para poder crear votaciones tienes que registrarte primero mediante este formulario. Lee bien la información de ayuda",
@@ -99,7 +101,8 @@
 		}
 	},
 	"avCommon": {
-		"poweredBy": "Funciona con <strong><a href=\"__url__\" target=\"_blank\">__name__</a></strong>",
+		"poweredBy": "Funciona con <a href=\"__url__\" target=\"_blank\">__name__</a>",
+		"changeLanguageMenu": "Cambiar idioma",
 		"showVersion": "Versión: __version__",
 		"showVersionModal": {
 			"mainVersion": "Versión principal",

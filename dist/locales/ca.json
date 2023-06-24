@@ -17,10 +17,12 @@
 		"name": "Sequent Tech"
 	},
 	"avRegistration": {
+		"languageName": "Català",
 		"codeHelp": "Utilitzi el codi que li hem enviat per telèfon o per correu electrònic. El codi té 8 caràcters alfanumèrics.",
 		"noCodeReceivedQuestion": "Encara no has rebut el codi?",
 		"sendCodeAgain": "Tornar a enviar el codi",
 		"loginHeader": "Per entrar a la pàgina de votació:",
+		"loginAfterRegistration": "Inscripció correcta!",
 		"adminLoginHeader": "Inicieu la sessió a la Consola d'administració",
 		"helpRegisterForm": "Per poder votar, heu de registrar-vos abans mitjançant aquest formulari. Alguns dels camps són obligatoris: llegiu bé la informació d'ajuda",
 		"helpAdminRegisterForm": "Per poder votar, heu de registrar-vos abans mitjançant aquest formulari. Alguns dels camps són obligatoris. Llegiu bé la informació d'ajuda",
@@ -90,7 +92,7 @@
 		}
 	},
 	"avCommon": {
-		"poweredBy": "Funciona amb <strong>__name__</strong>",
+		"poweredBy": "Funciona amb <a href=\"__url__\" target=\"_blank\">__name__</a>",
 		"foot": {
 			"contact": "Contacte",
 			"contactsupport": "Contacte de suport",

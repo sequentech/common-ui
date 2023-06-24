@@ -4,18 +4,19 @@
 >
     <label
         for="emailText"
-        class="control-label col-sm-4"
+        id="label-emailText"
         ng-i18next="avRegistration.emailLabel"
     ></label>
-    <div class="col-sm-8">
+    <div>
         <input
             type="text"
             class="form-control"
             ng-model="field.value"
             name="emailText"
             id="emailText"
+            aria-labelledby="label-emailText"
             ng-i18next="[placeholder]avRegistration.emailPlaceholder"
-            tabindex="{{index}}"
+            tabindex="0"
             autocomplete="off"
             ng-pattern="emailRe"
             required
@@ -35,6 +36,7 @@
         <div class="input-error">
             <small
                 class="error text-danger"
+                role="alert"
                 ng-show="form.emailText.$dirty && form.emailText.$invalid"
                 ng-i18next="avRegistration.emailError"
             ></small>

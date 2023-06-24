@@ -1,17 +1,17 @@
 <div class="form-group">
-    <label class="control-label col-sm-4">
+    <label>
         <input
             type="checkbox"
             class="form-control"
-            aria-label="input{{index}}-bool"
+            aria-labeledby="label-{{index}}Text"
             id="{{index}}Text"
             ng-model="field.value"
             ng-disabled="field.disabled"
-            tabindex="{{index}}"
+            tabindex="0"
             ng-required={{field.required}} />
     </label>
-    <div class="col-sm-8">
-        <label class="text-left" for="{{index}}Text">
+    <div class="bool-text-content">
+        <label class="text-left" for="{{index}}Text" id="label-{{index}}Text">
           <span ng-bind-html="field.name | addTargetBlank"></span>
         </label>
         <p class="help-block" ng-if="field.help" ng-bind-html="field.help | addTargetBlank">

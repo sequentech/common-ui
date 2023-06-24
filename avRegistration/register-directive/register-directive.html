@@ -18,9 +18,9 @@
             <div ng-repeat="field in register_fields" avr-field index="{{$index+1}}">
             </div>
 
-          <div class="col-sm-offset-4 col-sm-8 button-group">
+          <div class="col-sm-12 button-group">
               <div class="input-error">
-                  <div class="error text-danger" ng-if="error" ng-bind-html="error"></div>
+                  <div class="error text-danger" role="alert" ng-if="error" ng-bind-html="error"></div>
               </div>
               <div class="input-warn">
                 <span
@@ -35,7 +35,7 @@
                 class="btn btn-block btn-success"
                 ng-i18next="avRegistration.registerButton"
                 ng-click="signUp(form.$valid)"
-                tabindex="{{register_fields.length+1}}"
+                tabindex="0"
                 ng-disabled="!form.$valid || sendingData">
               </button>
           </div>

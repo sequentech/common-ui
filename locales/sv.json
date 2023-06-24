@@ -20,6 +20,7 @@
     "name": "Sequent Tech"
   },
   "avRegistration": {
+    "languageName": "Svenska",
     "loginHeader": "Logga",
     "adminLoginHeader": "Logga in på administratörskonsolen",
     "censusQueryHeader": "Kontrollera om du har rösträtt",
@@ -109,7 +110,7 @@
   },
 
   "avCommon": {
-    "poweredBy": "Powered by <strong><a href=\"__url__\" target=\"_blank\">__name__</a></strong>",
+    "poweredBy": "Powered by <a href=\"__url__\" target=\"_blank\">__name__</a>",
     "foot": {
         "contact": "Ta kontakt",
         "contactsupport": "Ta kontakt",

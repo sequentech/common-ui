@@ -95,7 +95,15 @@ a:hover, a:active {
   // for some reason the cursor needs to be reset or otherwise it will be
   // "pointer" by default when the modal is being shown
   cursor: initial;
-  margin-top: 10%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100%;
+  margin: auto;
+
+  .modal-content {
+    max-width: 500px;
+  }
 
   .close {
     opacity: .8;
@@ -113,7 +121,7 @@ a:hover, a:active {
     color: @av-primary-contrast;
 
     .title {
-      padding-left: 15px;
+      padding-left: 10px;
     }
   }
 }
@@ -131,7 +139,7 @@ a:hover, a:active {
 }
 
 #no-js {
-  color: lighten(@gray-light, 10%);
+  color: black;
   text-align: center;
   padding: 5%;
 }
@@ -156,3 +164,16 @@ a:hover, a:active {
   -ms-user-select: none;
   user-select: none;
 }
+
+.col-container {
+  margin-right: -15px;
+  margin-left: -15px;
+}
+
+.affix-bottom {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
