@@ -370,9 +370,8 @@ angular.module('avRegistration')
                 if (response.data.status === "ok") {
                   var postfix = "_authevent_" + autheventid;
                   var options = {};
-                  if (ConfigService.cookies && ConfigService.cookies.expires) {
-                    options.expires = new Date();
-                    options.expires.setMinutes(options.expires.getMinutes() + ConfigService.cookies.expires);
+                  if (ConfigService.authTokenExpirationSeconds) {
+                    options.expires = new Date(Date.now() + 1000 * ConfigService.authTokenExpirationSeconds);
                   }
                   $cookies.put("authevent_" + autheventid, autheventid, options);
                   $cookies.put("userid" + postfix, response.data.username, options);

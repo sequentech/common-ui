@@ -554,7 +554,7 @@ angular.module('avRegistration')
                 authmethod.launchPingDaemon(autheventid);
                 authmethod.pingTimeout = $interval(
                         function() { authmethod.launchPingDaemon(autheventid); },
-                        ConfigService.timeoutSeconds*500 // ms * 500 mean seconds * 1/2
+                        ConfigService.authTokenExpirationSeconds*500 // renew token when 50% of the expiration time has passed
                 );
             }
             return false;
@@ -727,9 +727,8 @@ angular.module('avRegistration')
           authmethod.ping()
             .then(function(response) {
                 var options = {};
-                if (ConfigService.cookies && ConfigService.cookies.expires) {
-                  options.expires = new Date();
-                  options.expires.setMinutes(options.expires.getMinutes() + ConfigService.cookies.expires);
+                if (ConfigService.authTokenExpirationSeconds) {
+                  options.expires = new Date(Date.now() + 1000 * ConfigService.authTokenExpirationSeconds);
                 }
                 // update cookies expiration
                 $cookies.put(

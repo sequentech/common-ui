@@ -284,7 +284,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             authmethod.pingTimeout || ($interval.cancel(authmethod.pingTimeout), authmethod.launchPingDaemon(autheventid), 
             authmethod.pingTimeout = $interval(function() {
                 authmethod.launchPingDaemon(autheventid);
-            }, 500 * ConfigService.timeoutSeconds)), !1;
+            }, 500 * ConfigService.authTokenExpirationSeconds)), !1;
         },
         electionsIds: function(page, queryIds, ids, page_size) {
             page = page || 1;
@@ -366,8 +366,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             var postfix = "_authevent_" + autheventid;
             authmethod.admin && ("hidden" !== document.visibilityState ? authmethod.ping().then(function(response) {
                 var options = {};
-                ConfigService.cookies && ConfigService.cookies.expires && (options.expires = new Date(), 
-                options.expires.setMinutes(options.expires.getMinutes() + ConfigService.cookies.expires)), 
+                ConfigService.authTokenExpirationSeconds && (options.expires = new Date(Date.now() + 1e3 * ConfigService.authTokenExpirationSeconds)), 
                 $cookies.put("auth" + postfix, response.data["auth-token"], options), $cookies.put("isAdmin" + postfix, $cookies.get("isAdmin" + postfix), options), 
                 $cookies.put("userid" + postfix, $cookies.get("userid" + postfix), options), $cookies.put("userid" + postfix, $cookies.get("userid" + postfix), options), 
                 $cookies.put("user" + postfix, $cookies.get("user" + postfix), options), authmethod.setAuth($cookies.get("auth" + postfix), $cookies.get("isAdmin" + postfix), autheventid);
@@ -522,8 +521,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 scope.sendingData = !0, scope.error = null, sessionStartedAtMs = Date.now(), Authmethod.login(data, autheventid).then(function(tokens) {
                     var postfix, options;
                     "ok" === tokens.data.status ? (postfix = "_authevent_" + autheventid, options = {}, 
-                    ConfigService.cookies && ConfigService.cookies.expires && (options.expires = new Date(), 
-                    options.expires.setMinutes(options.expires.getMinutes() + ConfigService.cookies.expires)), 
+                    ConfigService.authTokenExpirationSeconds && (options.expires = new Date(Date.now() + 1e3 * ConfigService.authTokenExpirationSeconds)), 
                     $cookies.put("authevent_" + autheventid, autheventid, options), $cookies.put("userid" + postfix, tokens.data.username, options), 
                     $cookies.put("user" + postfix, scope.email || tokens.data.username || tokens.data.email, options), 
                     $cookies.put("auth" + postfix, tokens.data["auth-token"], options), $cookies.put("isAdmin" + postfix, scope.isAdmin, options), 
@@ -682,8 +680,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                     provider: scope.csrf.providerId,
                     nonce: scope.csrf.randomNonce
                 }, options = {};
-                ConfigService.cookies && ConfigService.cookies.expires && (options.expires = new Date(), 
-                options.expires.setMinutes(options.expires.getMinutes() + ConfigService.cookies.expires));
+                ConfigService.authTokenExpirationSeconds && (options.expires = new Date(Date.now() + 1e3 * ConfigService.authTokenExpirationSeconds));
                 var postfix = "_authevent_" + scope.csrf.eventId;
                 $cookies.put("id_token_" + postfix, data.id_token, options), Authmethod.login(data, scope.csrf.eventId).then(function(response) {
                     var postfix;
