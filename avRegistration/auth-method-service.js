@@ -550,8 +550,11 @@ angular.module('avRegistration')
             authmethod.admin = isAdmin;
             $http.defaults.headers.common.Authorization = auth;
             if (!authmethod.pingTimeout) {
+                console.log("setAuth cancelling pingTimeout");
                 $interval.cancel(authmethod.pingTimeout);
+                console.log("setAuth calls launchPingDaemon");
                 authmethod.launchPingDaemon(autheventid);
+                console.log("setAuth starts interval for secs: " + ConfigService.authTokenExpirationSeconds);
                 authmethod.pingTimeout = $interval(
                         function() { authmethod.launchPingDaemon(autheventid); },
                         ConfigService.authTokenExpirationSeconds*500 // renew token when 50% of the expiration time has passed
@@ -711,24 +714,30 @@ angular.module('avRegistration')
 
         authmethod.launchPingDaemon = function(autheventid) {
           var postfix = "_authevent_" + autheventid;
+          console.log("launchPingDaemon started");
 
           // ping daemon is not active for normal users
           if (!authmethod.admin) {
+            console.log("launchPingDaemon aborted: not an admin");
             return;
           }
           // if document is hidden, then do not update the cookie, and redirect
           // to admin logout if cookie expired
           if (document.visibilityState === 'hidden') {
             if (!$cookies.get("auth" + postfix)) {
+              console.log("launchPingDaemon logout: cookie expired");
               $state.go("admin.logout");
             }
             return;
           }
+          var now = Date.now();
+          console.log("launchPingDaemon going to call ping");
           authmethod.ping()
             .then(function(response) {
+              console.log("launchPingDaemon ping successful");
                 var options = {};
                 if (ConfigService.authTokenExpirationSeconds) {
-                  options.expires = new Date(Date.now() + 1000 * ConfigService.authTokenExpirationSeconds);
+                  options.expires = new Date(now + 1000 * ConfigService.authTokenExpirationSeconds);
                 }
                 // update cookies expiration
                 $cookies.put(
