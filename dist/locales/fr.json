@@ -55,6 +55,7 @@
 		"loginHeader": "Se connecter pour voter",
 		"adminLoginHeader": "Se connecter à la console d'administration",
 		"censusQueryHeader": "Vérifiez si vous êtes dans le recensement",
+		"languageName": "Français",
 		"checkCensusButton": "Vérifier le recensement",
 		"loginAfterRegistration": "Inscription réussi!",
 		"otlHeader": "Obtenir le code d'authentification",
