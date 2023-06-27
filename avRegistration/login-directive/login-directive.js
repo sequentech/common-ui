@@ -444,14 +444,14 @@ angular.module('avRegistration')
                     $window.location.href = '/booth/' + autheventid + '/vote';
                   } else {
                     scope.error = $i18next(
-                      'avRegistration.loginError.' + authevent.auth_method + '.unrecognizedServerResponse', 
+                      'avRegistration.loginError.' + scope.method + '.unrecognizedServerResponse', 
                       {support: ConfigService.contact.email}
                     );
                   }
                 } else {
                   scope.sendingData = false;
                   scope.error = $i18next(
-                    'avRegistration.loginError.' + authevent.auth_method + '.invalidServerResponse', 
+                    'avRegistration.loginError.' + scope.method + '.invalidServerResponse', 
                     {support: ConfigService.contact.email}
                   );
                 }
@@ -460,7 +460,7 @@ angular.module('avRegistration')
               scope.sendingData = false;
               var codename = response.data.error_codename;
               scope.error = $i18next(
-                'avRegistration.loginError.' + authevent.auth_method + '.' + codename, 
+                'avRegistration.loginError.' + scope.method + '.' + codename, 
                 {support: ConfigService.contact.email}
               );
             }

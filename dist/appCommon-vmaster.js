@@ -550,15 +550,15 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                             isFirst: 0 === index
                         };
                     }).value(), $window.sessionStorage.setItem("vote_permission_tokens", JSON.stringify(tokens)), 
-                    $window.location.href = "/booth/" + autheventid + "/vote") : scope.error = $i18next("avRegistration.loginError." + authevent.auth_method + ".unrecognizedServerResponse", {
+                    $window.location.href = "/booth/" + autheventid + "/vote") : scope.error = $i18next("avRegistration.loginError." + scope.method + ".unrecognizedServerResponse", {
                         support: ConfigService.contact.email
-                    })) : (scope.sendingData = !1, scope.error = $i18next("avRegistration.loginError." + authevent.auth_method + ".invalidServerResponse", {
+                    })) : (scope.sendingData = !1, scope.error = $i18next("avRegistration.loginError." + scope.method + ".invalidServerResponse", {
                         support: ConfigService.contact.email
                     }));
                 }, function(codename) {
                     scope.sendingData = !1;
                     codename = codename.data.error_codename;
-                    scope.error = $i18next("avRegistration.loginError." + authevent.auth_method + "." + codename, {
+                    scope.error = $i18next("avRegistration.loginError." + scope.method + "." + codename, {
                         support: ConfigService.contact.email
                     });
                 }))) : scope.resendAuthCode()));
