@@ -550,14 +550,15 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                             isFirst: 0 === index
                         };
                     }).value(), $window.sessionStorage.setItem("vote_permission_tokens", JSON.stringify(tokens)), 
-                    $window.location.href = "/booth/" + autheventid + "/vote") : scope.error = $i18next("avRegistration.invalidCredentials", {
+                    $window.location.href = "/booth/" + autheventid + "/vote") : scope.error = $i18next("avRegistration.loginError." + authevent.auth_method + ".unrecognizedServerResponse", {
                         support: ConfigService.contact.email
-                    })) : (scope.sendingData = !1, scope.status = "Not found", scope.error = $i18next("avRegistration.invalidCredentials", {
+                    })) : (scope.sendingData = !1, scope.error = $i18next("avRegistration.loginError." + authevent.auth_method + ".invalidServerResponse", {
                         support: ConfigService.contact.email
                     }));
-                }, function(response) {
-                    scope.sendingData = !1, scope.status = "Registration error: " + response.data.message, 
-                    scope.error = $i18next("avRegistration.invalidCredentials", {
+                }, function(codename) {
+                    scope.sendingData = !1;
+                    codename = codename.data.error_codename;
+                    scope.error = $i18next("avRegistration.loginError." + authevent.auth_method + "." + codename, {
                         support: ConfigService.contact.email
                     });
                 }))) : scope.resendAuthCode()));
@@ -610,10 +611,9 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                     scope.alternative_auth_methods = scope.base_authevent.alternative_auth_methods, 
                     altAuthMethod = _.find(scope.alternative_auth_methods, function(altAuthMethod) {
                         return altAuthMethod.id === scope.selectedAltMethod;
-                    }) || null, scope.setCurrentAltAuthMethod(altAuthMethod)) : (scope.status = "Not found", 
-                    document.querySelector(".input-error").style.display = "block");
+                    }) || null, scope.setCurrentAltAuthMethod(altAuthMethod)) : document.querySelector(".input-error").style.display = "block";
                 }, function(response) {
-                    scope.status = "Scan error: " + response.data.message, document.querySelector(".input-error").style.display = "block";
+                    document.querySelector(".input-error").style.display = "block";
                 });
             }, scope.view(autheventid), scope.goSignup = function() {
                 $state.go("registration.register", {
