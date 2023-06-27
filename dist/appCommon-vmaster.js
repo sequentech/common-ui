@@ -551,15 +551,15 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                         };
                     }).value(), $window.sessionStorage.setItem("vote_permission_tokens", JSON.stringify(tokens)), 
                     $window.location.href = "/booth/" + autheventid + "/vote") : scope.error = $i18next("avRegistration.loginError." + scope.method + ".unrecognizedServerResponse", {
-                        support: '<a href="mailto:' + ConfigService.contact.email + ' target="_blank">' + ConfigService.contact.email + "</a>"
+                        support: '<a href="mailto:' + ConfigService.contact.email + '" target="_blank">' + ConfigService.contact.email + "</a>"
                     })) : (scope.sendingData = !1, scope.error = $i18next("avRegistration.loginError." + scope.method + ".invalidServerResponse", {
-                        support: '<a href="mailto:' + ConfigService.contact.email + ' target="_blank">' + ConfigService.contact.email + "</a>"
+                        support: '<a href="mailto:' + ConfigService.contact.email + '" target="_blank">' + ConfigService.contact.email + "</a>"
                     }));
                 }, function(codename) {
                     scope.sendingData = !1;
                     codename = codename.data.error_codename;
                     scope.error = $i18next("avRegistration.loginError." + scope.method + "." + codename, {
-                        support: '<a href="mailto:' + ConfigService.contact.email + ' target="_blank">' + ConfigService.contact.email + "</a>"
+                        support: '<a href="mailto:' + ConfigService.contact.email + '" target="_blank">' + ConfigService.contact.email + "</a>"
                     });
                 }))) : scope.resendAuthCode()));
             }, scope.getUriParam = function(paramName2) {
