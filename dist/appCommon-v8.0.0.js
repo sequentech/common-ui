@@ -281,9 +281,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         },
         setAuth: function(auth, isAdmin, autheventid) {
             return authmethod.admin = isAdmin, $http.defaults.headers.common.Authorization = auth, 
-            authmethod.pingTimeout || (console.log("setAuth cancelling pingTimeout"), $interval.cancel(authmethod.pingTimeout), 
-            console.log("setAuth calls launchPingDaemon"), authmethod.launchPingDaemon(autheventid), 
-            console.log("setAuth starts interval for secs: " + ConfigService.authTokenExpirationSeconds), 
+            authmethod.pingTimeout || ($interval.cancel(authmethod.pingTimeout), authmethod.launchPingDaemon(autheventid), 
             authmethod.pingTimeout = $interval(function() {
                 authmethod.launchPingDaemon(autheventid);
             }, 500 * ConfigService.authTokenExpirationSeconds)), !1;
@@ -366,16 +364,14 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         },
         launchPingDaemon: function(autheventid) {
             var now, postfix = "_authevent_" + autheventid;
-            console.log("launchPingDaemon started"), authmethod.admin ? "hidden" !== document.visibilityState ? (now = Date.now(), 
-            console.log("launchPingDaemon going to call ping"), authmethod.ping().then(function(response) {
-                console.log("launchPingDaemon ping successful");
+            authmethod.admin && ("hidden" !== document.visibilityState ? (now = Date.now(), 
+            authmethod.ping().then(function(response) {
                 var options = {};
                 ConfigService.authTokenExpirationSeconds && (options.expires = new Date(now + 1e3 * ConfigService.authTokenExpirationSeconds)), 
                 $cookies.put("auth" + postfix, response.data["auth-token"], options), $cookies.put("isAdmin" + postfix, $cookies.get("isAdmin" + postfix), options), 
                 $cookies.put("userid" + postfix, $cookies.get("userid" + postfix), options), $cookies.put("userid" + postfix, $cookies.get("userid" + postfix), options), 
                 $cookies.put("user" + postfix, $cookies.get("user" + postfix), options), authmethod.setAuth($cookies.get("auth" + postfix), $cookies.get("isAdmin" + postfix), autheventid);
-            })) : $cookies.get("auth" + postfix) || (console.log("launchPingDaemon logout: cookie expired"), 
-            $state.go("admin.logout")) : console.log("launchPingDaemon aborted: not an admin");
+            })) : $cookies.get("auth" + postfix) || $state.go("admin.logout"));
         },
         getUserDraft: function() {
             if (authmethod.isLoggedIn()) return $http.get(backendUrl + "user/draft/", {});
