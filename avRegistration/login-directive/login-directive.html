@@ -76,7 +76,9 @@
 
           <div class="button-group">
               <div class="input-error" ng-if="!isCensusQuery">
-                  <div class="error text-danger" role="alert" ng-if="error">{{ error }}</div>
+                <div class="error text-danger" role="alert" ng-if="error">
+                  {{ error }}
+                </div>
               </div>
               <div class="input-warn">
                 <div class="warn-box" ng-if="!form.$valid || sendingData" >

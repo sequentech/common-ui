@@ -444,24 +444,23 @@ angular.module('avRegistration')
                     $window.location.href = '/booth/' + autheventid + '/vote';
                   } else {
                     scope.error = $i18next(
-                      'avRegistration.invalidCredentials', 
+                      'avRegistration.loginError.' + authevent.auth_method + '.unrecognizedServerResponse', 
                       {support: ConfigService.contact.email}
                     );
                   }
                 } else {
                   scope.sendingData = false;
-                  scope.status = 'Not found';
                   scope.error = $i18next(
-                    'avRegistration.invalidCredentials', 
+                    'avRegistration.loginError.' + authevent.auth_method + '.invalidServerResponse', 
                     {support: ConfigService.contact.email}
                   );
                 }
             },
             function onError(response) {
               scope.sendingData = false;
-              scope.status = 'Registration error: ' + response.data.message;
+              var codename = response.data.error_codename;
               scope.error = $i18next(
-                'avRegistration.invalidCredentials', 
+                'avRegistration.loginError.' + authevent.auth_method + '.' + codename, 
                 {support: ConfigService.contact.email}
               );
             }
@@ -683,12 +682,10 @@ angular.module('avRegistration')
                       ) || null;
                       scope.setCurrentAltAuthMethod(altAuthMethod);
                     } else {
-                        scope.status = 'Not found';
                         document.querySelector(".input-error").style.display = "block";
                     }
                   },
                   function onError(response) {
-                    scope.status = 'Scan error: ' + response.data.message;
                     document.querySelector(".input-error").style.display = "block";
                   }
                 );
