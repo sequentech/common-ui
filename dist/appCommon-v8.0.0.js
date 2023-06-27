@@ -1154,12 +1154,12 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 element && element.style.setProperty("width", percent);
             }
             function updateTimedown() {
-                var targetElapsedTime;
-                scope.showCountdown = !0, scope.countdownSecs = Math.round((scope.logoutTimeMs - Date.now()) / 1e3), 
-                scope.countdownMins = Math.round((scope.logoutTimeMs - Date.now()) / 6e4), scope.countdownPercent = calculateCountdownPercent(), 
-                updateProgressBar(scope.countdownPercent), scope.$apply(), scope.countdownSecs <= 1 || (targetElapsedTime = Math.floor((scope.logoutTimeMs - Date.now()) / 6e4), 
-                targetElapsedTime = scope.logoutTimeMs - 60 * targetElapsedTime * 1e3 - Date.now(), 
-                setTimeout(updateTimedown, 0 < scope.countdownMins ? targetElapsedTime : 1e3));
+                scope.showCountdown = !0;
+                var targetMins, targetNextTime, now = Date.now();
+                scope.countdownSecs = Math.round((scope.logoutTimeMs - now) / 1e3), scope.countdownMins = Math.round((scope.logoutTimeMs - now) / 6e4), 
+                scope.countdownPercent = calculateCountdownPercent(), updateProgressBar(scope.countdownPercent), 
+                scope.$apply(), scope.countdownSecs <= 1 || (targetMins = Math.floor((scope.logoutTimeMs - now) / 6e4), 
+                targetNextTime = scope.logoutTimeMs - 60 * targetMins * 1e3, setTimeout(updateTimedown, 0 < targetMins ? targetNextTime - now : 1e3));
             }
             scope.parentElection = scope.$parent.parentElection, scope.election = scope.$parent.election, 
             scope.confirmLogoutModal = scope.$parent.confirmLogoutModal, scope.configService = ConfigService, 

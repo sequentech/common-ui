@@ -68,20 +68,21 @@ angular
         // helper function for enableLogoutCountdown()
         function updateTimedown() {
           scope.showCountdown = true;
-          scope.countdownSecs = Math.round((scope.logoutTimeMs - Date.now()) / 1000);
-          scope.countdownMins = Math.round((scope.logoutTimeMs - Date.now()) / (60 * 1000));
+          var now = Date.now();
+          scope.countdownSecs = Math.round((scope.logoutTimeMs - now) / 1000);
+          scope.countdownMins = Math.round((scope.logoutTimeMs - now) / (60 * 1000));
           scope.countdownPercent = calculateCountdownPercent();
           updateProgressBar(scope.countdownPercent);
           scope.$apply();
           if (scope.countdownSecs <= 1) {
             return;
           }
-          var targetMins = Math.floor((scope.logoutTimeMs - Date.now()) / (60 * 1000));
+          var targetMins = Math.floor((scope.logoutTimeMs - now) / (60 * 1000));
           var targetNextTime = scope.logoutTimeMs - targetMins * 60 * 1000;
-          var targetElapsedTime = targetNextTime - Date.now();
+          var targetElapsedTime = targetNextTime - now;
           setTimeout(
             updateTimedown,
-            scope.countdownMins > 0?  targetElapsedTime : 1000
+            targetMins > 0?  targetElapsedTime : 1000
           );
         }
       
