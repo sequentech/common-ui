@@ -445,14 +445,14 @@ angular.module('avRegistration')
                   } else {
                     scope.error = $i18next(
                       'avRegistration.loginError.' + scope.method + '.unrecognizedServerResponse', 
-                      {support: ConfigService.contact.email}
+                      {support: '<a href="mailto:' + ConfigService.contact.email + ' target="_blank">' + ConfigService.contact.email + "</a>"}
                     );
                   }
                 } else {
                   scope.sendingData = false;
                   scope.error = $i18next(
                     'avRegistration.loginError.' + scope.method + '.invalidServerResponse', 
-                    {support: ConfigService.contact.email}
+                    {support: '<a href="mailto:' + ConfigService.contact.email + ' target="_blank">' + ConfigService.contact.email + "</a>"}
                   );
                 }
             },
@@ -460,8 +460,8 @@ angular.module('avRegistration')
               scope.sendingData = false;
               var codename = response.data.error_codename;
               scope.error = $i18next(
-                'avRegistration.loginError.' + scope.method + '.' + codename, 
-                {support: ConfigService.contact.email}
+                'avRegistration.loginError.' + scope.method + '.' + codename,
+                {support: '<a href="mailto:' + ConfigService.contact.email + ' target="_blank">' + ConfigService.contact.email + "</a>"}
               );
             }
           );
