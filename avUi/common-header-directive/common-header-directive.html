@@ -58,16 +58,37 @@
                 av-change-lang
             >
             </span>
-            <a
+            <span class="logout-container"
               ng-if="enableLogOut() && !isElectionPortal"
-              target="_top"
-              tabindex="0"
-              class="log-out-button"
-              ng-click="confirmLogoutModal()"
+              ng-class="{ 'countdown': showCountdown}"
             >
-              <span class="glyphicon glyphicon-off"></span>
-              <span class="logout-text hidden-xs" ng-i18next>avBooth.logout</span>
-            </a>
+              <a
+                target="_top"
+                tabindex="0"
+                class="log-out-button"
+                ng-click="confirmLogoutModal()"
+              >
+                <div class="logout-bar"></div>
+                <span class="glyphicon glyphicon-off"></span>
+                <span class="logout-text hidden-xs" ng-i18next>avBooth.logout</span>
+              </a>
+              <div class="custom-tooltip">
+                <i class="fa fa-fw fa-lg fa-caret-up"></i>
+                <div class="tooltip-inner">
+                  <b ng-i18next>avBooth.countdownTooltip.title</b>
+                  <p
+                    ng-if="countdownSecs >= 60"
+                    ng-i18next="[i18next]({mins: countdownMins})avBooth.countdownTooltip.contentMins"
+                  >
+                  </p>
+                  <p
+                    ng-if="countdownSecs < 60"
+                    ng-i18next="[i18next]({secs: countdownSecs})avBooth.countdownTooltip.contentSecs"
+                  >
+                  </p>
+                </div>
+              </div>
+            </span>
         </div>
     </div>
 </nav>

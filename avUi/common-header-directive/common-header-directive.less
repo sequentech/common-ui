@@ -101,6 +101,80 @@
     .log-out-button {
         display: flex;
         align-items: center;
+        position: relative;
+    }
+
+    .logout-bar {
+        position: absolute;
+        background-color: #CCE5FF;
+        border-bottom: 2px solid #0F054C;
+        border-radius: 4px 0px 0px 4px;
+        z-index: -1;
+        height: 100%;
+        left: 0;
+    }
+
+    .logout-container {
+        position: relative;
+
+        .custom-tooltip, .logout-bar {
+            display: none;
+        }
+    }
+
+    .logout-container.countdown {
+        .logout-bar {
+            display: block;
+        }
+
+        &:hover {
+            .custom-tooltip {
+                display: block;
+            }
+        }
+    }
+
+    .logout-container .custom-tooltip {
+        position: absolute;
+        top: 120%;
+        right: 40px;
+        z-index: -1;
+        width: 231px;
+
+        @media(max-width: @screen-xs-max) {
+            right: 0;
+
+            .fa-caret-up {
+                padding-right: 12px !important;
+            }
+        }
+
+        .fa-caret-up {
+            color: #CCE5FF;
+            font-size: 34px;
+            height: 14px;
+            line-height: 10px;
+            width: 100%;
+            text-align: right;
+            padding-right: 20px;
+        }
+
+        .tooltip-inner {
+            background-color: #CCE5FF;
+            margin-top: -9px;
+            font-size: 12px;
+            line-height: 15px;
+            padding: 16px;
+            gap: 8px;
+            display: flex;
+            flex-direction: column;
+            text-align: justify;
+            color: black;
+            max-width: unset;
+            b {
+                color: #0F054C;
+            }
+        }
     }
 
     .logout-text {

@@ -284,7 +284,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             authmethod.pingTimeout || ($interval.cancel(authmethod.pingTimeout), authmethod.launchPingDaemon(autheventid), 
             authmethod.pingTimeout = $interval(function() {
                 authmethod.launchPingDaemon(autheventid);
-            }, 500 * ConfigService.timeoutSeconds)), !1;
+            }, 500 * ConfigService.authTokenExpirationSeconds)), !1;
         },
         electionsIds: function(page, queryIds, ids, page_size) {
             page = page || 1;
@@ -363,15 +363,15 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             return $http.post(url, data);
         },
         launchPingDaemon: function(autheventid) {
-            var postfix = "_authevent_" + autheventid;
-            authmethod.admin && ("hidden" !== document.visibilityState ? authmethod.ping().then(function(response) {
+            var now, postfix = "_authevent_" + autheventid;
+            authmethod.admin && ("hidden" !== document.visibilityState ? (now = Date.now(), 
+            authmethod.ping().then(function(response) {
                 var options = {};
-                ConfigService.cookies && ConfigService.cookies.expires && (options.expires = new Date(), 
-                options.expires.setMinutes(options.expires.getMinutes() + ConfigService.cookies.expires)), 
+                ConfigService.authTokenExpirationSeconds && (options.expires = new Date(now + 1e3 * ConfigService.authTokenExpirationSeconds)), 
                 $cookies.put("auth" + postfix, response.data["auth-token"], options), $cookies.put("isAdmin" + postfix, $cookies.get("isAdmin" + postfix), options), 
                 $cookies.put("userid" + postfix, $cookies.get("userid" + postfix), options), $cookies.put("userid" + postfix, $cookies.get("userid" + postfix), options), 
                 $cookies.put("user" + postfix, $cookies.get("user" + postfix), options), authmethod.setAuth($cookies.get("auth" + postfix), $cookies.get("isAdmin" + postfix), autheventid);
-            }) : $cookies.get("auth" + postfix) || $state.go("admin.logout"));
+            })) : $cookies.get("auth" + postfix) || $state.go("admin.logout"));
         },
         getUserDraft: function() {
             if (authmethod.isLoggedIn()) return $http.get(backendUrl + "user/draft/", {});
@@ -511,7 +511,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                     scope.sendingData = !1, scope.otpCode = void 0, scope.otlResponseData = {}, scope.otlStatus = "fail";
                 })));
             }, scope.loginUser = function(valid) {
-                var data, hasEmptyCode;
+                var data, hasEmptyCode, sessionStartedAtMs;
                 valid && (scope.sendingData || (scope.withCode || !scope.hasOtpFieldsCode && !_.contains([ "sms-otp", "email-otp" ], scope.method) || 0 !== scope.currentFormStep ? (data = {
                     captcha_code: Authmethod.captcha_code
                 }, scope.current_alt_auth_method_id && (data.alt_auth_method_id = scope.current_alt_auth_method_id), 
@@ -519,11 +519,10 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                     angular.isUndefined(field.value) && (data[field.name] = ""), "email" === field.type ? scope.email = field.value : _.contains([ "code", "otp-code" ], field.type) && (angular.isString(field.value) || (hasEmptyCode = !0), 
                     field.value = field.value.trim().replace(/ |\n|\t|-|_/g, "").toUpperCase()), data[field.name] = field.value;
                 }), hasEmptyCode || ("smart-link" !== scope.method || scope.withCode || (data["auth-token"] = $location.search()["auth-token"]), 
-                scope.sendingData = !0, scope.error = null, Authmethod.login(data, autheventid).then(function(tokens) {
+                scope.sendingData = !0, scope.error = null, sessionStartedAtMs = Date.now(), Authmethod.login(data, autheventid).then(function(tokens) {
                     var postfix, options;
                     "ok" === tokens.data.status ? (postfix = "_authevent_" + autheventid, options = {}, 
-                    ConfigService.cookies && ConfigService.cookies.expires && (options.expires = new Date(), 
-                    options.expires.setMinutes(options.expires.getMinutes() + ConfigService.cookies.expires)), 
+                    ConfigService.authTokenExpirationSeconds && (options.expires = new Date(Date.now() + 1e3 * ConfigService.authTokenExpirationSeconds)), 
                     $cookies.put("authevent_" + autheventid, autheventid, options), $cookies.put("userid" + postfix, tokens.data.username, options), 
                     $cookies.put("user" + postfix, scope.email || tokens.data.username || tokens.data.email, options), 
                     $cookies.put("auth" + postfix, tokens.data["auth-token"], options), $cookies.put("isAdmin" + postfix, scope.isAdmin, options), 
@@ -538,7 +537,8 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                     }) : angular.isDefined(tokens.data["redirect-to-url"]) ? $window.location.href = tokens.data["redirect-to-url"] : angular.isDefined(tokens.data["vote-permission-token"]) ? ($window.sessionStorage.setItem("vote_permission_tokens", JSON.stringify([ {
                         electionId: autheventid,
                         token: tokens.data["vote-permission-token"],
-                        isFirst: !0
+                        isFirst: !0,
+                        sessionStartedAtMs: sessionStartedAtMs
                     } ])), $window.sessionStorage.setItem("show-pdf", !!tokens.data["show-pdf"]), $window.location.href = "/booth/" + autheventid + "/vote") : angular.isDefined(tokens.data["vote-children-info"]) ? (tokens = _.chain(tokens.data["vote-children-info"]).map(function(child, index) {
                         return {
                             electionId: child["auth-event-id"],
@@ -547,7 +547,8 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                             voted: !1,
                             numSuccessfulLoginsAllowed: child["num-successful-logins-allowed"],
                             numSuccessfulLogins: child["num-successful-logins"],
-                            isFirst: 0 === index
+                            isFirst: 0 === index,
+                            sessionStartedAtMs: sessionStartedAtMs
                         };
                     }).value(), $window.sessionStorage.setItem("vote_permission_tokens", JSON.stringify(tokens)), 
                     $window.location.href = "/booth/" + autheventid + "/vote") : scope.error = $i18next("avRegistration.loginError." + scope.method + ".unrecognizedServerResponse", {
@@ -680,8 +681,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                     provider: scope.csrf.providerId,
                     nonce: scope.csrf.randomNonce
                 }, options = {};
-                ConfigService.cookies && ConfigService.cookies.expires && (options.expires = new Date(), 
-                options.expires.setMinutes(options.expires.getMinutes() + ConfigService.cookies.expires));
+                ConfigService.authTokenExpirationSeconds && (options.expires = new Date(Date.now() + 1e3 * ConfigService.authTokenExpirationSeconds));
                 var postfix = "_authevent_" + scope.csrf.eventId;
                 $cookies.put("id_token_" + postfix, data.id_token, options), Authmethod.login(data, scope.csrf.eventId).then(function(response) {
                     var postfix;
@@ -1145,6 +1145,22 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             hashHelp: "&"
         },
         link: function(scope, _element, attrs) {
+            function calculateCountdownPercent() {
+                var ratio = (scope.logoutTimeMs - Date.now()) / (scope.logoutTimeMs - scope.countdownStartTimeMs);
+                return Math.min(100, Math.round(1e4 * ratio) / 100) + "%";
+            }
+            function updateProgressBar(percent) {
+                var element = $(".logout-bar")[0];
+                element && element.style.setProperty("width", percent);
+            }
+            function updateTimedown() {
+                scope.showCountdown = !0;
+                var targetMins, targetNextTime, now = Date.now();
+                scope.countdownSecs = Math.round((scope.logoutTimeMs - now) / 1e3), scope.countdownMins = Math.round((scope.logoutTimeMs - now) / 6e4), 
+                scope.countdownPercent = calculateCountdownPercent(), updateProgressBar(scope.countdownPercent), 
+                scope.$apply(), scope.countdownSecs <= 1 || (targetMins = Math.floor((scope.logoutTimeMs - now) / 6e4), 
+                targetNextTime = scope.logoutTimeMs - 60 * targetMins * 1e3, setTimeout(updateTimedown, 0 < targetMins ? targetNextTime - now : 1e3));
+            }
             scope.parentElection = scope.$parent.parentElection, scope.election = scope.$parent.election, 
             scope.confirmLogoutModal = scope.$parent.confirmLogoutModal, scope.configService = ConfigService, 
             scope.ballotHash = "false" !== attrs.ballotHash && attrs.ballotHash || !1, scope.isElectionPortal = "true" === attrs.isElectionPortal || !1, 
@@ -1152,7 +1168,16 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             scope.enableLogOut = function() {
                 var election = scope.parentElection || scope.election;
                 return !(election && election.presentation && election.presentation.extra_options && election.presentation.extra_options.booth_log_out__disable);
-            }, scope.showVersionsModal = ShowVersionsModalService;
+            }, scope.showVersionsModal = ShowVersionsModalService, setTimeout(function() {
+                scope.showCountdown = !1;
+                var initialTimeMs, election = scope.parentElection || scope.election;
+                ConfigService.authTokenExpirationSeconds && election && election.presentation && _.isNumber(election.presentation.booth_log_out__countdown_seconds) && (scope.showCountdown = !1, 
+                scope.countdownSecs = 0, scope.countdownMins = 0, initialTimeMs = scope.$parent.getSessionStartTime && scope.$parent.getSessionStartTime() || Date.now(), 
+                scope.elapsedCountdownMs = 1e3 * (0 < election.presentation.booth_log_out__countdown_seconds ? election.presentation.booth_log_out__countdown_seconds : ConfigService.authTokenExpirationSeconds), 
+                scope.logoutTimeMs = initialTimeMs + 1e3 * ConfigService.authTokenExpirationSeconds, 
+                scope.countdownStartTimeMs = scope.logoutTimeMs - scope.elapsedCountdownMs, scope.countdownPercent = calculateCountdownPercent(), 
+                updateProgressBar(scope.countdownPercent), scope.isDemo || scope.isPreview || setTimeout(updateTimedown, 0 < election.presentation.booth_log_out__countdown_seconds ? scope.countdownStartTimeMs - Date.now() : 0));
+            }, 0);
         },
         templateUrl: "avUi/common-header-directive/common-header-directive.html"
     };
@@ -1733,7 +1758,7 @@ angular.module("avTest", []), angular.module("avTest").controller("UnitTestE2ECo
     $templateCache.put("avUi/change-lang-directive/change-lang-directive.html", '<a href="#" class="dropdown-toggle" data-toggle="dropdown" id="lang-dropdown-toggle" role="button" aria-expanded="false" aria-label="{{ (\'avCommon.changeLanguageMenu\' | i18next) || \'Change Language\' }}"><i class="fa fa-fw fa-lg fa-language"></i> <span class="selected-lang hidden-xs">{{ (\'avRegistration.languageName\' | i18next) || deflang }}</span> <span class="caret"></span></a><ul class="dropdown-menu" role="menu"><li ng-repeat="lang in langs"><a role="menuitem" ng-click="changeLang(lang)" ng-space-click tabindex="0">{{ (\'avRegistration.languageName\' | i18next:{lng:lang}) || lang}}</a></li></ul>'), 
     $templateCache.put("avUi/children-elections-directive/children-elections-directive.html", '<div class="row" ng-if="mode === \'toggle-and-callback\' && !hideParent"><div class="col-xs-12"><div class="btn btn-success btn-election" ng-class="{\'selected\': selectedElectionId === parentElectionId}" ng-click="click({event_id: parentElectionId})"><span ng-i18next>avAdmin.childrenElections.main</span></div></div></div><div ng-repeat="category in childrenElectionInfo.presentation.categories" ng-if="!category.hidden" class="row"><div class="col-xs-12"><h3>{{category.title}}</h3><div ng-repeat="election in category.events" class="btn btn-success btn-election" ng-disabled="election.disabled" ng-if="!election.hidden" ng-class="{\'selected\': selectedElectionId === election.event_id}" data-election-id="{{election.event_id}}" ng-click="click(election)"><i ng-if="mode === \'checkbox\'" class="fa-fw fa" ng-class="{\'fa-square-o\': !election.data, \'fa-check-square-o\': !!election.data}" aria-hidden="true"></i> {{election.title}}</div></div></div>'), 
     $templateCache.put("avUi/common-footer-directive/common-footer-directive.html", '<div class="hidden" ng-cloak av-affix-bottom ng-if="!float" class="footer-wrapper"><div class="container footer-container row"><i ng-i18next="[html:i18next]({url: configService.organization.orgUrl, name: configService.organization.orgName})avCommon.poweredBy"></i></div></div><div ng-if="!!float" class="footer-wrapper"><div class="container footer-container row"><i ng-i18next="[html:i18next]({url: configService.organization.orgUrl, name: configService.organization.orgName})avCommon.poweredBy"></i></div></div>'), 
-    $templateCache.put("avUi/common-header-directive/common-header-directive.html", '\x3c!-- top navbar --\x3e<nav class="header-navbar" av-affix-top=".navbar-unfixed-top" role="navigation"><div class="header-container container"><div class="col-xs-4 header-left"><span class="logo-img-container" ng-class="{\'default-logo\': !election.logo_url}"><img alt="{{election.title}}" class="logo-img" ng-src="{{election.logo_url || defaultLogo}}"></span></div><div class="col-xs-8 header-right"><div class="hidden-xs social-container" ng-if="!!isElectionPortal && !!buttonsInfo"><span ng-repeat="q in buttonsInfo"><a href="{{ q.link }}" target="_blank" class="{{ q.class }}"><img class="social-img" ng-src="{{ q.img }}" alt="{{ q.network }}"> {{ q.button_text|truncate:25 }}</a></span></div><a ng-if="!!configService.mainVersion" target="_top" tabindex="0" class="config-version" ng-click="showVersionsModal()"><span class="hidden-xs" ng-i18next="[i18next]({version: configService.mainVersion})avCommon.showVersion"></span> <span class="visible-xs-block">{{configService.mainVersion}} </span></a><span class="dropdown" role="menuitem" av-change-lang></span> <a ng-if="enableLogOut() && !isElectionPortal" target="_top" tabindex="0" class="log-out-button" ng-click="confirmLogoutModal()"><span class="glyphicon glyphicon-off"></span> <span class="logout-text hidden-xs" ng-i18next>avBooth.logout</span></a></div></div></nav><div id="avb-toggle" class="text-center item-block hidden"><span class="glyphicon glyphicon-play"></span></div><div class="bottom-absolute" ng-if="ballotHash"><div class="ballot-hash"><div class="hash-box"><i class="fa fa-check" aria-hidden="true"></i><div class="hash-text" ng-i18next="[i18next]({hash: ballotHash})avBooth.reviewScreen.ballotIdMessage"></div><i class="pull-right fa fa-lg fa-question-circle" ng-click="hashHelp()"></i></div></div></div>'), 
+    $templateCache.put("avUi/common-header-directive/common-header-directive.html", '\x3c!-- top navbar --\x3e<nav class="header-navbar" av-affix-top=".navbar-unfixed-top" role="navigation"><div class="header-container container"><div class="col-xs-4 header-left"><span class="logo-img-container" ng-class="{\'default-logo\': !election.logo_url}"><img alt="{{election.title}}" class="logo-img" ng-src="{{election.logo_url || defaultLogo}}"></span></div><div class="col-xs-8 header-right"><div class="hidden-xs social-container" ng-if="!!isElectionPortal && !!buttonsInfo"><span ng-repeat="q in buttonsInfo"><a href="{{ q.link }}" target="_blank" class="{{ q.class }}"><img class="social-img" ng-src="{{ q.img }}" alt="{{ q.network }}"> {{ q.button_text|truncate:25 }}</a></span></div><a ng-if="!!configService.mainVersion" target="_top" tabindex="0" class="config-version" ng-click="showVersionsModal()"><span class="hidden-xs" ng-i18next="[i18next]({version: configService.mainVersion})avCommon.showVersion"></span> <span class="visible-xs-block">{{configService.mainVersion}} </span></a><span class="dropdown" role="menuitem" av-change-lang></span> <span class="logout-container" ng-if="enableLogOut() && !isElectionPortal" ng-class="{ \'countdown\': showCountdown}"><a target="_top" tabindex="0" class="log-out-button" ng-click="confirmLogoutModal()"><div class="logout-bar"></div><span class="glyphicon glyphicon-off"></span> <span class="logout-text hidden-xs" ng-i18next>avBooth.logout</span></a><div class="custom-tooltip"><i class="fa fa-fw fa-lg fa-caret-up"></i><div class="tooltip-inner"><b ng-i18next>avBooth.countdownTooltip.title</b><p ng-if="countdownSecs >= 60" ng-i18next="[i18next]({mins: countdownMins})avBooth.countdownTooltip.contentMins"></p><p ng-if="countdownSecs < 60" ng-i18next="[i18next]({secs: countdownSecs})avBooth.countdownTooltip.contentSecs"></p></div></div></span></div></div></nav><div id="avb-toggle" class="text-center item-block hidden"><span class="glyphicon glyphicon-play"></span></div><div class="bottom-absolute" ng-if="ballotHash"><div class="ballot-hash"><div class="hash-box"><i class="fa fa-check" aria-hidden="true"></i><div class="hash-text" ng-i18next="[i18next]({hash: ballotHash})avBooth.reviewScreen.ballotIdMessage"></div><i class="pull-right fa fa-lg fa-question-circle" ng-click="hashHelp()"></i></div></div></div>'), 
     $templateCache.put("avUi/confirm-modal-controller/confirm-modal-controller.html", '<div class="confirm-modal-controller"><div class="modal-header dialog-header-warning"><h4 class="modal-title"><span class="glyphicon glyphicon-warning-sign"></span> <span class="title" ng-bind-html="data.i18n.header"></span> <button type="button" class="close pull-right" ng-click="cancel()"><i class="fa fa-times-circle"></i></button></h4></div><div class="modal-body"><p><span class="body-data" ng-bind-html="data.i18n.body"></span></p></div><div class="modal-footer"><button class="btn btn-success" ng-click="ok()">{{ data.i18n.confirmButton }}</button> <button class="btn btn-cancel" ng-click="cancel()" ng-if="!data.hideCancelButton" ng-i18next="avCommon.cancel">avCommon.cancel</button></div></div>'), 
     $templateCache.put("avUi/documentation-directive/documentation-directive.html", '<div><h2 class="text-center text-av-secondary" ng-i18next="avDocumentation.documentation.title"></h2><p ng-i18next="avDocumentation.documentation.first_line"></p><ul class="docu-ul"><li ng-if="!!documentation.faq"><a href="{{documentation.faq}}" target="_blank" ng-i18next="avDocumentation.documentation.faq"></a></li><li ng-if="!!documentation.overview"><a href="{{documentation.overview}}" target="_blank" ng-i18next="avDocumentation.documentation.overview"></a></li><li><a href="{{auths_url}}" target="_blank" ng-i18next="avDocumentation.documentation.authorities"></a></li><li ng-if="!!documentation.technical"><a href="{{documentation.technical}}" target="_blank" ng-i18next="avDocumentation.documentation.technical"></a></li><li ng-if="!!documentation.security_contact"><a href="{{documentation.security_contact}}" target="_blank" ng-i18next="avDocumentation.documentation.security_contact"></a></li></ul><div class="documentation-html-include" av-plugin-html ng-bind-html="documentation_html_include"></div></div>'), 
     $templateCache.put("avUi/foot-directive/foot-directive.html", '<div class="commonfoot"><div class="social" style="text-align: center;"><span class="powered-by pull-left" ng-i18next="[html:i18next]({url: organization.orgUrl, name: organization.orgName})avCommon.poweredBy"></span> <a href="{{social.facebook}}" target="_blank" ng-if="!!social.facebook" aria-label="Facebook"><i class="fa fa-fw fa-lg fa-facebook"></i></a> <a href="{{social.twitter}}" target="_blank" ng-if="!!social.twitter" aria-label="Twitter"><i class="fa fa-fw fa-lg fa-twitter"></i></a> <a href="{{social.googleplus}}" target="_blank" ng-if="!!social.googleplus" aria-label="Google Plus"><i class="fa fa-fw fa-lg fa-google-plus"></i></a> <a href="{{social.youtube}}" target="_blank" ng-if="!!social.youtube" aria-label="Youtube"><i class="fa fa-fw fa-lg fa-youtube-play"></i></a> <a href="{{social.github}}" target="_blank" ng-if="!!social.github" aria-label="Github"><i class="fa fa-fw fa-lg fa-github"></i></a></div></div>'), 

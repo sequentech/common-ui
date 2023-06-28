@@ -206,9 +206,8 @@ angular.module('avRegistration')
             };
 
             var options = {};
-            if (ConfigService.cookies && ConfigService.cookies.expires) {
-              options.expires = new Date();
-              options.expires.setMinutes(options.expires.getMinutes() + ConfigService.cookies.expires);
+            if (ConfigService.authTokenExpirationSeconds) {
+              options.expires = new Date(Date.now() + 1000 * ConfigService.authTokenExpirationSeconds);
             }
 
             var postfix = "_authevent_" + scope.csrf.eventId;

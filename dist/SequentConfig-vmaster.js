@@ -143,8 +143,6 @@ var SequentConfigData = {
   // Default: '/admin/login'
   defaultRoute: '/admin/login',
 
-  timeoutSeconds: 3600,
-
   publicURL: "https://sequent/elections/public/",
 
   // if we are in debug mode or not
@@ -233,7 +231,10 @@ var SequentConfigData = {
   },
 
   mainVersion: "master",
-  repoVersions: []
+  repoVersions: [],
+
+  // Number of seconds after which an authentication token expires.
+  authTokenExpirationSeconds: 600
 };
 
 angular.module('SequentConfig', [])

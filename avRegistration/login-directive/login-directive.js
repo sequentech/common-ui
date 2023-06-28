@@ -361,6 +361,8 @@ angular.module('avRegistration')
 
           scope.sendingData = true;
           scope.error = null;
+
+          var sessionStartedAtMs = Date.now();
           Authmethod
             .login(data, autheventid)
             .then(
@@ -368,9 +370,8 @@ angular.module('avRegistration')
                 if (response.data.status === "ok") {
                   var postfix = "_authevent_" + autheventid;
                   var options = {};
-                  if (ConfigService.cookies && ConfigService.cookies.expires) {
-                    options.expires = new Date();
-                    options.expires.setMinutes(options.expires.getMinutes() + ConfigService.cookies.expires);
+                  if (ConfigService.authTokenExpirationSeconds) {
+                    options.expires = new Date(Date.now() + 1000 * ConfigService.authTokenExpirationSeconds);
                   }
                   $cookies.put("authevent_" + autheventid, autheventid, options);
                   $cookies.put("userid" + postfix, response.data.username, options);
@@ -409,7 +410,8 @@ angular.module('avRegistration')
                       JSON.stringify([{
                         electionId: autheventid,
                         token: response.data['vote-permission-token'],
-                        isFirst: true
+                        isFirst: true,
+                        sessionStartedAtMs: sessionStartedAtMs
                       }])
                     );
                     $window.sessionStorage.setItem(
@@ -432,7 +434,8 @@ angular.module('avRegistration')
                           voted: false,
                           numSuccessfulLoginsAllowed: child['num-successful-logins-allowed'],
                           numSuccessfulLogins: child['num-successful-logins'],
-                          isFirst: index === 0
+                          isFirst: index === 0,
+                          sessionStartedAtMs: sessionStartedAtMs
                         };
                       })
                       .value();
