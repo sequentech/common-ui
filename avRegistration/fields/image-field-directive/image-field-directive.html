@@ -3,7 +3,7 @@
     class="form-group"
     ng-class="{'has-error': fieldForm.input.$dirty && fieldForm.input.$invalid}">
     <label id="label-image-field" for="image-field">
-      <span>{{field.name}}</span>
+      <span>{{field | customI18n : 'name'}}</span>
     </label>
     <div >
       <input
@@ -23,7 +23,7 @@
       <p
           class="help-block"
           ng-if="!!field.help && field.help.length > 0"
-          ng-bind-html="field.help | addTargetBlank"
+          ng-bind-html="(field | customI18n : 'help') | addTargetBlank"
       ></p>
       <div class="input-error">
         <span
