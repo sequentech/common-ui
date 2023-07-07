@@ -392,7 +392,7 @@ angular.module('avRegistration')
             return $http({
               method : "POST",
               url : url,
-              timeout: 10 * 60 * 1000,
+              timeout: ConfigService.serverTimeoutSeconds * 1000,
               data: d
             });
         };

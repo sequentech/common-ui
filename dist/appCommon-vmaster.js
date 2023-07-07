@@ -194,15 +194,16 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         editEvent: function(id, data) {
             return $http.post(backendUrl + "auth-event/" + id + "/", data);
         },
-        addCensus: function(id, data, validation) {
-            return angular.isDefined(validation) || (validation = "enabled"), $http({
+        addCensus: function(id, d, validation) {
+            d = {
+                "field-validation": validation = !angular.isDefined(validation) ? "enabled" : validation,
+                census: d
+            };
+            return $http({
                 method: "POST",
                 url: backendUrl + "auth-event/" + id + "/census/",
-                timeout: 6e5,
-                data: {
-                    "field-validation": validation,
-                    census: data
-                }
+                timeout: 1e3 * ConfigService.serverTimeoutSeconds,
+                data: d
             });
         },
         getCensus: function(id, params) {
