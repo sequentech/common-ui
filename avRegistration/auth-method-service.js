@@ -372,7 +372,12 @@ angular.module('avRegistration')
         };
 
         authmethod.createEvent = function(data) {
-            return $http.post(backendUrl + 'auth-event/', data);
+            return $http({
+              method : "POST",
+              url : backendUrl + 'auth-event/',
+              timeout: 10 * 60 * 1000,
+              data: data
+            });
         };
 
         authmethod.editEvent = function(id, data) {

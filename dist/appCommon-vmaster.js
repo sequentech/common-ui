@@ -189,7 +189,12 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             return $http.get(backendUrl + "auth-event/");
         },
         createEvent: function(data) {
-            return $http.post(backendUrl + "auth-event/", data);
+            return $http({
+                method: "POST",
+                url: backendUrl + "auth-event/",
+                timeout: 6e5,
+                data: data
+            });
         },
         editEvent: function(id, data) {
             return $http.post(backendUrl + "auth-event/" + id + "/", data);
