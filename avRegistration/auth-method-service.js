@@ -372,12 +372,7 @@ angular.module('avRegistration')
         };
 
         authmethod.createEvent = function(data) {
-            return $http({
-              method : "POST",
-              url : backendUrl + 'auth-event/',
-              timeout: 10 * 60 * 1000,
-              data: data
-            });
+            return $http.post(backendUrl + 'auth-event/', data);
         };
 
         authmethod.editEvent = function(id, data) {
@@ -392,7 +387,14 @@ angular.module('avRegistration')
                 "field-validation": validation,
                 "census": data
             };
-            return $http.post(backendUrl + 'auth-event/' + id + '/census/', d);
+            var url = backendUrl + 'auth-event/' + id + '/census/';
+
+            return $http({
+              method : "POST",
+              url : url,
+              timeout: 10 * 60 * 1000,
+              data: d
+            });
         };
 
         authmethod.getCensus = function(id, params) {

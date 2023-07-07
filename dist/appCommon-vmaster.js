@@ -189,22 +189,21 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             return $http.get(backendUrl + "auth-event/");
         },
         createEvent: function(data) {
-            return $http({
-                method: "POST",
-                url: backendUrl + "auth-event/",
-                timeout: 6e5,
-                data: data
-            });
+            return $http.post(backendUrl + "auth-event/", data);
         },
         editEvent: function(id, data) {
             return $http.post(backendUrl + "auth-event/" + id + "/", data);
         },
-        addCensus: function(id, d, validation) {
-            d = {
-                "field-validation": validation = !angular.isDefined(validation) ? "enabled" : validation,
-                census: d
-            };
-            return $http.post(backendUrl + "auth-event/" + id + "/census/", d);
+        addCensus: function(id, data, validation) {
+            return angular.isDefined(validation) || (validation = "enabled"), $http({
+                method: "POST",
+                url: backendUrl + "auth-event/" + id + "/census/",
+                timeout: 6e5,
+                data: {
+                    "field-validation": validation,
+                    census: data
+                }
+            });
         },
         getCensus: function(id, params) {
             return angular.isObject(params) ? $http.get(backendUrl + "auth-event/" + id + "/census/", {
