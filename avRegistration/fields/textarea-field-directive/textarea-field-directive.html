@@ -3,8 +3,8 @@
         <textarea aria-label="{{index}}Text" id="{{index}}Text" rows="5" cols="60" tabindex="0" readonly>{{field.name}}</textarea>
         <p
             class="help-block"
-            ng-if="field.help"
-            ng-bind-html="field.help | addTargetBlank">
+            ng-if="field.help || field.help_i18n"
+            ng-bind-html="field | customI18n : 'help' | addTargetBlank">
         </p>
     </div>
 </div>

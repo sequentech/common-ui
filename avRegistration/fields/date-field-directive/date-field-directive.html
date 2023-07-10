@@ -1,7 +1,7 @@
 <div class="form-group">
    <label 
       ng-if="!label"
-   >{{field.name}}</label>
+   >{{field | customI18n : 'name'}}</label>
    <label
       ng-if="label"
       ng-bind="label"
@@ -46,7 +46,7 @@
          >{{item}}</option>
       </select>
 
-      <p class="help-block" ng-if="field.help" ng-bind-html="field.help | addTargetBlank">
+      <p class="help-block" ng-if="field.help" ng-bind-html="(field | customI18n : 'help') | addTargetBlank">
       </p>
    </div>
 </div>

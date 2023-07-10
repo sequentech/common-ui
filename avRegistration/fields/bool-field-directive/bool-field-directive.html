@@ -12,9 +12,9 @@
     </label>
     <div class="bool-text-content">
         <label class="text-left" for="{{index}}Text" id="label-{{index}}Text">
-          <span ng-bind-html="field.name | addTargetBlank"></span>
+          <span ng-bind-html="(field | customI18n : 'name') | addTargetBlank"></span>
         </label>
-        <p class="help-block" ng-if="field.help" ng-bind-html="field.help | addTargetBlank">
+        <p class="help-block" ng-if="field.help" ng-bind-html="(field | customI18n : 'help') | addTargetBlank">
         </p>
         <div class="input-error">
         </div>
