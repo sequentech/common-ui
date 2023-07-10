@@ -3,7 +3,7 @@
         <img ng-src={{authMethod.captcha_image_url}} style="width:161px;height:65px">
     </div>
     <label id="label-{{index}}Text" for="{{index}}Text">
-        <span>{{field.name}}</span>
+        <span>{{field | customI18n : 'name'}}</span>
     </label>
     <div>
         <input
@@ -18,7 +18,7 @@
             autocomplete="off"
             tabindex="0"
             required />
-        <p class="help-block" ng-if="field.help" ng-bind-html="field.help | addTargetBlank">
+        <p class="help-block" ng-if="field.help" ng-bind-html="(field | customI18n : 'help') | addTargetBlank">
         </p>
         <div class="input-error"> {{authMethod.captcha_status}}
         </div>

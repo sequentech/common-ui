@@ -10,7 +10,7 @@
       <span 
         ng-if="field.name != 'username' && field.name != '__username'"
       >
-        {{field.name}}
+        {{field | customI18n : 'name'}}
       </span>
     </label>
     <div>
@@ -31,8 +31,8 @@
         ng-required={{field.required}} />
       <p
         class="help-block"
-        ng-if="field.help"
-        ng-bind-html="field.help | addTargetBlank">
+        ng-if="field.help || field.help_i18n"
+        ng-bind-html="field | customI18n : 'help' | addTargetBlank">
       </p>
       <div class="input-error">
         <span
