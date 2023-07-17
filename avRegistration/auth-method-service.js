@@ -660,6 +660,12 @@ angular.module('avRegistration')
             return $http.post(url, data);
         };
 
+        authmethod.forceTally = function(eid) {
+            var url = backendUrl + 'auth-event/'+eid+'/force-tally/';
+            var data = {};
+            return $http.post(url, data);
+        };
+
         authmethod.unpublishResults = function(eid) {
             var url = backendUrl + 'auth-event/'+eid+'/unpublish-results/';
             var data = {};

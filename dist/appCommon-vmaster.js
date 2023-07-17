@@ -330,6 +330,10 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             url = backendUrl + "auth-event/" + url + "/allow-tally/";
             return $http.post(url, {});
         },
+        forceTally: function(url) {
+            url = backendUrl + "auth-event/" + url + "/force-tally/";
+            return $http.post(url, {});
+        },
         unpublishResults: function(url) {
             url = backendUrl + "auth-event/" + url + "/unpublish-results/";
             return $http.post(url, {});
