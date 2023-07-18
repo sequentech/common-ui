@@ -56,10 +56,10 @@ angular
         // load i18n_overrides if any
         if (performOverrides)
         {
-          $window.i18n.preload(
+          /*$window.i18n.preload(
             _.keys($window.i18nOverride),
             function ()
-            {
+            {*/
               _.map(
                 $window.i18nOverride,
                 function (i18nOverride, language)
@@ -80,12 +80,12 @@ angular
                   );
                 }
               );
-              /*$rootScope.$broadcast(
+              $rootScope.$broadcast(
                 'i18nextLanguageChange',
                 $window.i18n.lng()
-              );*/
-            }
-          );
+              );
+            //}
+          //);
         }
       };
     }
