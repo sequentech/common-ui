@@ -56,35 +56,29 @@ angular
         // load i18n_overrides if any
         if (performOverrides)
         {
-          $window.i18n.preload(
-            _.keys($window.i18nOverride),
-            function ()
+          _.map(
+            $window.i18nOverride,
+            function (i18nOverride, language)
             {
-              _.map(
-                $window.i18nOverride,
-                function (i18nOverride, language)
-                {
-                  $window.i18n.addResources(
-                    /* lng = */ language,
-                    /* ns = */ "translation",
-                    /* resources = */ i18nOverride
-                  );
+              $window.i18n.addResources(
+                /* lng = */ language,
+                /* ns = */ "translation",
+                /* resources = */ i18nOverride
+              );
 
-                  // force-refresh cached translations to override
-                  _.each(
-                    _.keys(i18nOverride),
-                    function (i18nString)
-                    {
-                      $i18next(i18nString, {});
-                    }
-                  );
+              // force-refresh cached translations to override
+              _.each(
+                _.keys(i18nOverride),
+                function (i18nString)
+                {
+                  $i18next(i18nString, {});
                 }
               );
-              $rootScope.$broadcast(
-                'i18nextLanguageChange',
-                $window.i18n.lng()
-              );
             }
+          );
+          $rootScope.$broadcast(
+            'i18nextLanguageChange',
+            $window.i18n.lng()
           );
         }
       };
