@@ -80,10 +80,10 @@ angular
                   );
                 }
               );
-              $rootScope.$broadcast(
+              /*$rootScope.$broadcast(
                 'i18nextLanguageChange',
                 $window.i18n.lng()
-              );
+              );*/
             }
           );
         }

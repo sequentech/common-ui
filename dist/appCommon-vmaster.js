@@ -1099,7 +1099,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 $window.i18n.addResources(language, "translation", i18nOverride), _.each(_.keys(i18nOverride), function(i18nString) {
                     $i18next(i18nString, {});
                 });
-            }), $rootScope.$broadcast("i18nextLanguageChange", $window.i18n.lng());
+            });
         });
     };
 } ]), angular.module("avUi").directive("avChangeLang", [ "$i18next", "ipCookie", "angularLoad", "amMoment", "ConfigService", "$window", "I18nOverride", function($i18next, ipCookie, angularLoad, amMoment, ConfigService, $window, I18nOverride) {
