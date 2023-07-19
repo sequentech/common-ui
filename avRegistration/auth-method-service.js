@@ -24,7 +24,8 @@ angular.module('avRegistration')
       $interval,
       $state,
       $location,
-      $document
+      $document,
+      $q
     ) {
         var backendUrl = ConfigService.authAPI;
         var authId = ConfigService.freeAuthId;
@@ -387,7 +388,14 @@ angular.module('avRegistration')
                 "field-validation": validation,
                 "census": data
             };
-            return $http.post(backendUrl + 'auth-event/' + id + '/census/', d);
+            var url = backendUrl + 'auth-event/' + id + '/census/';
+
+            return $http({
+              method : "POST",
+              url : url,
+              timeout: ConfigService.serverTimeoutSeconds * 1000,
+              data: d
+            });
         };
 
         authmethod.getCensus = function(id, params) {
@@ -710,11 +718,13 @@ angular.module('avRegistration')
         };
 
         authmethod.launchPingDaemon = function(autheventid) {
+          var deferred = $q.defer();
           var postfix = "_authevent_" + autheventid;
 
           // ping daemon is not active for normal users
           if (!authmethod.admin) {
-            return;
+            deferred.reject("not an admin");
+            return deferred.promise;
           }
           // if document is hidden, then do not update the cookie, and redirect
           // to admin logout if cookie expired
@@ -722,10 +732,11 @@ angular.module('avRegistration')
             if (!$cookies.get("auth" + postfix)) {
               $state.go("admin.logout");
             }
-            return;
+            deferred.reject("tab not focused");
+            return deferred.promise;
           }
           var now = Date.now();
-          authmethod.ping()
+          return authmethod.ping()
             .then(function(response) {
                 var options = {};
                 if (ConfigService.authTokenExpirationSeconds) {
