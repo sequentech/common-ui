@@ -3,7 +3,7 @@ function $buo_f() {
 }
 
 if (angular.module("avRegistration", [ "ui.bootstrap", "ui.utils", "ui.router" ]), 
-angular.module("avRegistration").config(function() {}), angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "ConfigService", "$interval", "$state", "$location", "$document", function($http, $cookies, ConfigService, $interval, $state, $location, $document) {
+angular.module("avRegistration").config(function() {}), angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "ConfigService", "$interval", "$state", "$location", "$document", "$q", function($http, $cookies, ConfigService, $interval, $state, $location, $document, $q) {
     var backendUrl = ConfigService.authAPI, authId = ConfigService.freeAuthId, authmethod = {
         captcha_code: null,
         captcha_image_url: "",
@@ -199,7 +199,12 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 "field-validation": validation = !angular.isDefined(validation) ? "enabled" : validation,
                 census: d
             };
-            return $http.post(backendUrl + "auth-event/" + id + "/census/", d);
+            return $http({
+                method: "POST",
+                url: backendUrl + "auth-event/" + id + "/census/",
+                timeout: 1e3 * ConfigService.serverTimeoutSeconds,
+                data: d
+            });
         },
         getCensus: function(id, params) {
             return angular.isObject(params) ? $http.get(backendUrl + "auth-event/" + id + "/census/", {
@@ -363,15 +368,18 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             return $http.post(url, data);
         },
         launchPingDaemon: function(autheventid) {
-            var now, postfix = "_authevent_" + autheventid;
-            authmethod.admin && ("hidden" !== document.visibilityState ? (now = Date.now(), 
-            authmethod.ping().then(function(response) {
+            var deferred = $q.defer(), postfix = "_authevent_" + autheventid;
+            if (!authmethod.admin) return deferred.reject("not an admin"), deferred.promise;
+            if ("hidden" === document.visibilityState) return $cookies.get("auth" + postfix) || $state.go("admin.logout"), 
+            deferred.reject("tab not focused"), deferred.promise;
+            var now = Date.now();
+            return authmethod.ping().then(function(response) {
                 var options = {};
                 ConfigService.authTokenExpirationSeconds && (options.expires = new Date(now + 1e3 * ConfigService.authTokenExpirationSeconds)), 
                 $cookies.put("auth" + postfix, response.data["auth-token"], options), $cookies.put("isAdmin" + postfix, $cookies.get("isAdmin" + postfix), options), 
                 $cookies.put("userid" + postfix, $cookies.get("userid" + postfix), options), $cookies.put("userid" + postfix, $cookies.get("userid" + postfix), options), 
                 $cookies.put("user" + postfix, $cookies.get("user" + postfix), options), authmethod.setAuth($cookies.get("auth" + postfix), $cookies.get("isAdmin" + postfix), autheventid);
-            })) : $cookies.get("auth" + postfix) || $state.go("admin.logout"));
+            });
         },
         getUserDraft: function() {
             if (authmethod.isLoggedIn()) return $http.get(backendUrl + "user/draft/", {});
