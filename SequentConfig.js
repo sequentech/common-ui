@@ -151,6 +151,12 @@ var SequentConfigData = {
   // Information regarding OpenID Connect authentication
   openIDConnectProviders: [],
 
+  //Minimum loading time (milliseconds)
+  minLoadingTime: 12000,
+
+  // Server timeout (seconds)
+  serverTimeoutSeconds: 200,
+
   // contact data where users can reach to a human when they need it
   contact: {
     // Support contact email displayed in the footer links
