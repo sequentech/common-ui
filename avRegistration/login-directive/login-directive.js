@@ -510,14 +510,14 @@ angular.module('avRegistration')
          * @param {*} altAuthMethod altAuthMethod object
          */
         scope.setCurrentAltAuthMethod = function(altAuthMethod) {
-          if (altAuthMethod === scope.current_alt_auth_method_id) {
+          if (altAuthMethod.id === scope.current_alt_auth_method_id) {
             return;
           }
 
           // smart link cannot be enabled if it doesn't come from the url
           if (
             scope.selectedAltMethod !== 'smart-link' &&
-            altAuthMethod === 'smart-link'
+            altAuthMethod.auth_method_name === 'smart-link'
           ) {
             return;
           }
