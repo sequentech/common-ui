@@ -1,101 +1,103 @@
 <!-- top navbar -->
-<nav 
-  class="header-navbar"
-  av-affix-top=".navbar-unfixed-top"
-  role="navigation"
->
-    <div class="header-container container">
-        <div class="col-xs-4 header-left">
-            <span class="logo-img-container" ng-class="{'default-logo': !election.logo_url}">
-              <img
-                alt="{{election.title}}"
-                class="logo-img" 
-                ng-src="{{election.logo_url || defaultLogo}}"
-              />
-            </span>
-        </div>
-        <div class="col-xs-8 header-right">
-          <div
-            class="hidden-xs social-container"
-            ng-if="!!isElectionPortal && !!buttonsInfo"
-          >
-            <span
-              ng-repeat="q in buttonsInfo"
-            >
-              <a
-                href="{{ q.link }}"
-                target="_blank"
-                class="{{ q.class }}"
-              >
+<div class="header-wrapper">
+  <nav 
+    class="header-navbar"
+    av-affix-top=".navbar-unfixed-top"
+    role="navigation"
+  >
+      <div class="header-container container">
+          <div class="col-xs-4 header-left">
+              <span class="logo-img-container" ng-class="{'default-logo': !election.logo_url}">
                 <img
-                  class="social-img"
-                  ng-src="{{ q.img }}"
-                  alt="{{ q.network }}"
+                  alt="{{election.title}}"
+                  class="logo-img" 
+                  ng-src="{{election.logo_url || defaultLogo}}"
                 />
-                {{ q.button_text|truncate:25 }}
-              </a>
-            </span>
+              </span>
           </div>
-          <a
-              ng-if="!!configService.mainVersion"
-              target="_top"
-              tabindex="0"
-              class="config-version"
-              ng-click="showVersionsModal()"
-          >
-            <span
-              class="hidden-xs"
-              ng-i18next="[i18next]({version: configService.mainVersion})avCommon.showVersion"
+          <div class="col-xs-8 header-right">
+            <div
+              class="hidden-xs social-container"
+              ng-if="!!isElectionPortal && !!buttonsInfo"
             >
-            </span>
-            <span class="visible-xs-block">
-              {{configService.mainVersion}}
-            </span>
-          </a>
-            <span
-                class="dropdown"
-                role="menuitem"
-                av-change-lang
-            >
-            </span>
-            <span class="logout-container"
-              ng-if="enableLogOut() && !isElectionPortal"
-              ng-class="{ 'countdown': showCountdown}"
-            >
-              <a
+              <span
+                ng-repeat="q in buttonsInfo"
+              >
+                <a
+                  href="{{ q.link }}"
+                  target="_blank"
+                  class="{{ q.class }}"
+                >
+                  <img
+                    class="social-img"
+                    ng-src="{{ q.img }}"
+                    alt="{{ q.network }}"
+                  />
+                  {{ q.button_text|truncate:25 }}
+                </a>
+              </span>
+            </div>
+            <a
+                ng-if="!!configService.mainVersion"
                 target="_top"
                 tabindex="0"
-                class="log-out-button"
-                ng-click="confirmLogoutModal()"
+                class="config-version"
+                ng-click="showVersionsModal()"
+            >
+              <span
+                class="hidden-xs"
+                ng-i18next="[i18next]({version: configService.mainVersion})avCommon.showVersion"
               >
-                <div class="logout-bottom"></div>
-                <div class="logout-bar"></div>
-                <span class="glyphicon glyphicon-off"></span>
-                <span class="logout-text hidden-xs" ng-i18next>avBooth.logout</span>
-              </a>
-              <div class="custom-tooltip">
-                <i class="fa fa-fw fa-lg fa-caret-up"></i>
-                <div class="tooltip-inner">
-                  <b ng-i18next>avBooth.countdownTooltip.title</b>
-                  <p
-                    ng-if="countdownSecs >= 60"
-                    ng-i18next="[i18next]({mins: countdownMins})avBooth.countdownTooltip.contentMins"
-                  >
-                  </p>
-                  <p
-                    ng-if="countdownSecs < 60"
-                    ng-i18next="[i18next]({secs: countdownSecs})avBooth.countdownTooltip.contentSecs"
-                  >
-                  </p>
+              </span>
+              <span class="visible-xs-block">
+                {{configService.mainVersion}}
+              </span>
+            </a>
+              <span
+                  class="dropdown"
+                  role="menuitem"
+                  av-change-lang
+              >
+              </span>
+              <span class="logout-container"
+                ng-if="enableLogOut() && !isElectionPortal"
+                ng-class="{ 'countdown': showCountdown}"
+              >
+                <a
+                  target="_top"
+                  tabindex="0"
+                  class="log-out-button"
+                  ng-click="confirmLogoutModal()"
+                >
+                  <div class="logout-bottom"></div>
+                  <div class="logout-bar"></div>
+                  <span class="glyphicon glyphicon-off"></span>
+                  <span class="logout-text hidden-xs" ng-i18next>avBooth.logout</span>
+                </a>
+                <div class="custom-tooltip">
+                  <i class="fa fa-fw fa-lg fa-caret-up"></i>
+                  <div class="tooltip-inner">
+                    <b ng-i18next>avBooth.countdownTooltip.title</b>
+                    <p
+                      ng-if="countdownSecs >= 60"
+                      ng-i18next="[i18next]({mins: countdownMins})avBooth.countdownTooltip.contentMins"
+                    >
+                    </p>
+                    <p
+                      ng-if="countdownSecs < 60"
+                      ng-i18next="[i18next]({secs: countdownSecs})avBooth.countdownTooltip.contentSecs"
+                    >
+                    </p>
+                  </div>
                 </div>
-              </div>
-            </span>
-        </div>
-    </div>
-</nav>
+              </span>
+          </div>
+      </div>
+  </nav>
 
-<div id="avb-toggle" class="text-center item-block hidden">
-  <span class="glyphicon glyphicon-play"></span>
+  <div id="avb-toggle" class="text-center item-block hidden">
+    <span class="glyphicon glyphicon-play"></span>
+  </div>
 </div>
 
 <div

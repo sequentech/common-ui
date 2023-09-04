@@ -16,14 +16,16 @@
 **/
 
 [avb-common-header] {
-    top: -24px;
-    position: sticky;
-    z-index: 10;
-    transition: all 0.3s ease;
-    background-color: @bg-primary;
-
-    @media(max-width: @screen-xs-max) {
+    .header-wrapper {
         top: -24px;
+        position: sticky;
+        z-index: 10;
+        transition: all 0.3s ease;
+        background-color: @bg-primary;
+
+        @media(max-width: @screen-xs-max) {
+            top: -24px;
+        }
     }
 
 
