@@ -516,8 +516,8 @@ angular.module('avRegistration')
 
           // smart link cannot be enabled if it doesn't come from the url
           if (
-            scope.selectedAltMethod !== 'smart-link'
-            && altAuthMethod === 'smart-link'
+            scope.selectedAltMethod !== 'smart-link' &&
+            altAuthMethod === 'smart-link'
           ) {
             return;
           }
