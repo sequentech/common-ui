@@ -52,8 +52,7 @@
           because it doesn't work -->
         <li
           ng-repeat="alt_auth_method in alternative_auth_methods"
-          ng-enabled="selectedAltMethod === 'smart-link' || alt_auth_method.auth_method_name !== 'smart-link'"
-          ng-class="{'active': current_alt_auth_method_id == alt_auth_method.id}"
+          ng-class="{'active': current_alt_auth_method_id == alt_auth_method.id, 'disabled': selectedAltMethod !== 'smart-link' && alt_auth_method.auth_method_name === 'smart-link'}"
         >
           <a ng-click="setCurrentAltAuthMethod(alt_auth_method)">
             <i

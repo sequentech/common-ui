@@ -510,8 +510,8 @@ angular.module('avRegistration')
          * @param {*} altAuthMethod altAuthMethod object
          */
         scope.setCurrentAltAuthMethod = function(altAuthMethod) {
+          var authevent = angular.copy(scope.base_authevent);
           if (altAuthMethod === null) {
-            var authevent = angular.copy(scope.base_authevent);
             scope.current_alt_auth_method_id = null;
             scope.apply(authevent);
             return;
@@ -528,7 +528,6 @@ angular.module('avRegistration')
             return;
           }
 
-          var authevent = angular.copy(scope.base_authevent);
           scope.current_alt_auth_method_id = altAuthMethod.id;
           authevent.extra_fields = altAuthMethod.extra_fields;
           authevent.auth_method = altAuthMethod.auth_method_name;
