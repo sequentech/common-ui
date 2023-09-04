@@ -510,7 +510,10 @@ angular.module('avRegistration')
          * @param {*} altAuthMethod altAuthMethod object
          */
         scope.setCurrentAltAuthMethod = function(altAuthMethod) {
-          if (altAuthMethod.id === scope.current_alt_auth_method_id) {
+          if (
+            !altAuthMethod ||
+            altAuthMethod.id === scope.current_alt_auth_method_id
+          ) {
             return;
           }
 
