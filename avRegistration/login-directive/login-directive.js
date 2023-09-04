@@ -514,6 +514,14 @@ angular.module('avRegistration')
             return;
           }
 
+          // smart link cannot be enabled if it doesn't come from the url
+          if (
+            scope.selectedAltMethod !== 'smart-link'
+            && altAuthMethod === 'smart-link'
+          ) {
+            return;
+          }
+
           var authevent = angular.copy(scope.base_authevent);
           if (altAuthMethod === null) {
             scope.current_alt_auth_method_id = null;
