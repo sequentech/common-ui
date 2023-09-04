@@ -570,11 +570,13 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 var langCode = $window.i18n.lng();
                 return altAuthMethod.public_name_i18n && altAuthMethod.public_name_i18n[langCode] ? altAuthMethod.public_name_i18n[langCode] : altAuthMethod.public_name;
             }, scope.setCurrentAltAuthMethod = function(altAuthMethod) {
-                var authevent;
-                altAuthMethod && altAuthMethod.id !== scope.current_alt_auth_method_id && ("smart-link" !== scope.selectedAltMethod && "smart-link" === altAuthMethod.auth_method_name || (authevent = angular.copy(scope.base_authevent), 
-                null === altAuthMethod ? scope.current_alt_auth_method_id = null : (scope.current_alt_auth_method_id = altAuthMethod.id, 
-                authevent.extra_fields = altAuthMethod.extra_fields, authevent.auth_method = altAuthMethod.auth_method_name), 
-                scope.apply(authevent)));
+                if (null === altAuthMethod) {
+                    var authevent = angular.copy(scope.base_authevent);
+                    return scope.current_alt_auth_method_id = null, void scope.apply(authevent);
+                }
+                altAuthMethod.id !== scope.current_alt_auth_method_id && ("smart-link" !== scope.selectedAltMethod && "smart-link" === altAuthMethod.auth_method_name || (authevent = angular.copy(scope.base_authevent), 
+                scope.current_alt_auth_method_id = altAuthMethod.id, authevent.extra_fields = altAuthMethod.extra_fields, 
+                authevent.auth_method = altAuthMethod.auth_method_name));
             }, scope.apply = function(authevent) {
                 scope.hasOtpFieldsCode = Authmethod.hasOtpCodeField(authevent), scope.method = authevent.auth_method, 
                 (scope.hasOtpFieldsCode || _.contains([ "sms-otp", "email-otp" ], scope.method)) && (scope.skipSendAuthCode = scope.successfulRegistration), 

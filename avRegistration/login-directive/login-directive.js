@@ -510,10 +510,13 @@ angular.module('avRegistration')
          * @param {*} altAuthMethod altAuthMethod object
          */
         scope.setCurrentAltAuthMethod = function(altAuthMethod) {
-          if (
-            !altAuthMethod ||
-            altAuthMethod.id === scope.current_alt_auth_method_id
-          ) {
+          if (altAuthMethod === null) {
+            var authevent = angular.copy(scope.base_authevent);
+            scope.current_alt_auth_method_id = null;
+            scope.apply(authevent);
+            return;
+          }
+          if (altAuthMethod.id === scope.current_alt_auth_method_id) {
             return;
           }
 
@@ -526,14 +529,9 @@ angular.module('avRegistration')
           }
 
           var authevent = angular.copy(scope.base_authevent);
-          if (altAuthMethod === null) {
-            scope.current_alt_auth_method_id = null;
-          } else {
-            scope.current_alt_auth_method_id = altAuthMethod.id;
-            authevent.extra_fields = altAuthMethod.extra_fields;
-            authevent.auth_method = altAuthMethod.auth_method_name;
-          }
-          scope.apply(authevent);
+          scope.current_alt_auth_method_id = altAuthMethod.id;
+          authevent.extra_fields = altAuthMethod.extra_fields;
+          authevent.auth_method = altAuthMethod.auth_method_name;
         };
 
         scope.apply = function(authevent) {
