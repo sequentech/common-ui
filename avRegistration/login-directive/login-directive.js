@@ -226,6 +226,9 @@ angular.module('avRegistration')
             return;
           }
           scope.authToken = $location.search()['auth-token'];
+          if (scope.authToken === undefined) {
+            return;
+          }
 
           var length = 'khmac:///'.length;
           var tails = scope.authToken.substr(length);
@@ -531,6 +534,7 @@ angular.module('avRegistration')
           scope.current_alt_auth_method_id = altAuthMethod.id;
           authevent.extra_fields = altAuthMethod.extra_fields;
           authevent.auth_method = altAuthMethod.auth_method_name;
+          scope.apply(authevent);
         };
 
         scope.apply = function(authevent) {

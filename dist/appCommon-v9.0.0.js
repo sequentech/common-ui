@@ -484,8 +484,8 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             }, scope.parseAuthToken = function() {
                 var message;
                 "smart-link" !== scope.method || scope.withCode || (scope.authToken = $location.search()["auth-token"], 
-                message = "khmac:///".length, message = scope.authToken.substr(message).split("/")[1], 
-                scope.user_id = message.split(":")[0]);
+                void 0 !== scope.authToken && (message = "khmac:///".length, message = scope.authToken.substr(message).split("/")[1], 
+                scope.user_id = message.split(":")[0]));
             }, scope.checkCensus = function(valid) {
                 var data;
                 valid && (scope.sendingData || (scope.censusQuery = "querying", data = {
@@ -573,7 +573,8 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 var authevent = angular.copy(scope.base_authevent);
                 if (null === altAuthMethod) return scope.current_alt_auth_method_id = null, void scope.apply(authevent);
                 altAuthMethod.id !== scope.current_alt_auth_method_id && ("smart-link" !== scope.selectedAltMethod && "smart-link" === altAuthMethod.auth_method_name || (scope.current_alt_auth_method_id = altAuthMethod.id, 
-                authevent.extra_fields = altAuthMethod.extra_fields, authevent.auth_method = altAuthMethod.auth_method_name));
+                authevent.extra_fields = altAuthMethod.extra_fields, authevent.auth_method = altAuthMethod.auth_method_name, 
+                scope.apply(authevent)));
             }, scope.apply = function(authevent) {
                 scope.hasOtpFieldsCode = Authmethod.hasOtpCodeField(authevent), scope.method = authevent.auth_method, 
                 (scope.hasOtpFieldsCode || _.contains([ "sms-otp", "email-otp" ], scope.method)) && (scope.skipSendAuthCode = scope.successfulRegistration), 
