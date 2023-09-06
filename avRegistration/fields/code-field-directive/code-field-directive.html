@@ -26,7 +26,7 @@
         <p
             class="help-block"
             ng-if="!!field.help && field.help.length > 0"
-            ng-bind-html="field.help | addTargetBlank"
+            ng-bind-html="(field | customI18n : 'help') | addTargetBlank"
         ></p>
         <p class="help-block code-help" ng-if="allowUserResend && showResendAuthCode() && !sendingData && ((method !== 'sms' && method !== 'sms-otp') || isValidTel)">
           <span>
