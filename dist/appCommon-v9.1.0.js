@@ -1523,6 +1523,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 extra_fields: [],
                 admin_fields: [],
                 num_successful_logins_allowed: el.num_successful_logins_allowed,
+                scheduled_events: el.scheduled_events || null,
                 allow_public_census_query: el.allow_public_census_query,
                 hide_default_login_lookup_field: el.hide_default_login_lookup_field,
                 parent_id: el.parent_id || null,
