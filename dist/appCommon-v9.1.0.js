@@ -96,6 +96,10 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             url = backendUrl + "auth-event/" + url + "/resumed/";
             return $http.post(url);
         },
+        scheduledEvents: function(url, scheduledEvents) {
+            url = backendUrl + "auth-event/" + url + "/scheduled-events/";
+            return $http.post(url, scheduledEvents);
+        },
         getTallySheet: function(eid, ballot_box_id, tally_sheet_id) {
             var url = null, url = tally_sheet_id ? backendUrl + "auth-event/" + eid + "/ballot-box/" + ballot_box_id + "/tally-sheet/" + tally_sheet_id + "/" : backendUrl + "auth-event/" + eid + "/ballot-box/" + ballot_box_id + "/tally-sheet/";
             return $http.get(url);
