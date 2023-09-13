@@ -84,7 +84,7 @@
 		"invalidImage": "Immagine non valida",
 		"invalidRegisterDNI": "Non siamo riusciti a registrarti con i dati che hai fornito. <strong>Hai inserito un numero ID non valido</strong>. Per favore, controlla.",
 		"invalidRegisterData": "Si è verificato un errore durante la registrazione con i dati forniti. <strong>Molto probabilmente sei già registrato, <a href=\"__url__\">accedi con le tue credenziali cliccando qui</a></strong>. È possibile che le elezioni siano finite. Controlla tutto quanto sopra e, se continui ad avere problemi con la registrazione, controlla i dati che hai fornito o contatta gli amministratori delle elezioni,",
-		"languageName": "Inglese",
+		"languageName": "Italiano",
 		"loadingRegistration": "Caricamento",
 		"loginAfterRegistration": "Registrazione effettuata!",
 		"loginButton": "Entra",
