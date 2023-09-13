@@ -28,7 +28,7 @@
 			"universities": "Università"
 		},
 		"poweredBy": "Offerto da <strong><a href=\"__url__\" target=\"_blank\">__name__</a></strong>",
-		"showVersion": "Versione: __versione__",
+		"showVersion": "Versione: __version__",
 		"showVersionModal": {
 			"body": "Informazioni sulla versione dei repository utilizzati in questa distribuzione:<br><br><ul>__versionList__</ul>",
 			"confirmButton": "Chiudi",
