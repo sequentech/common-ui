@@ -244,6 +244,15 @@ angular.module('avRegistration')
         /**
          * @returns the http request
          */
+        authmethod.scheduledEvents = function(eid, scheduledEvents)
+        {
+          var url = backendUrl + 'auth-event/' + eid + '/scheduled-events/';
+          return $http.post(url, scheduledEvents);
+        };
+
+        /**
+         * @returns the http request
+         */
         authmethod.getTallySheet = function(eid, ballot_box_id, tally_sheet_id)
         {
             var url = null;
