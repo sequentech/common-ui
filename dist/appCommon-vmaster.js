@@ -96,6 +96,10 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             url = backendUrl + "auth-event/" + url + "/resumed/";
             return $http.post(url);
         },
+        scheduledEvents: function(url, scheduledEvents) {
+            url = backendUrl + "auth-event/" + url + "/scheduled-events/";
+            return $http.post(url, scheduledEvents);
+        },
         getTallySheet: function(eid, ballot_box_id, tally_sheet_id) {
             var url = null, url = tally_sheet_id ? backendUrl + "auth-event/" + eid + "/ballot-box/" + ballot_box_id + "/tally-sheet/" + tally_sheet_id + "/" : backendUrl + "auth-event/" + eid + "/ballot-box/" + ballot_box_id + "/tally-sheet/";
             return $http.get(url);
@@ -1523,6 +1527,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 extra_fields: [],
                 admin_fields: [],
                 num_successful_logins_allowed: el.num_successful_logins_allowed,
+                scheduled_events: el.scheduled_events || null,
                 allow_public_census_query: el.allow_public_census_query,
                 hide_default_login_lookup_field: el.hide_default_login_lookup_field,
                 parent_id: el.parent_id || null,
