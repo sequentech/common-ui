@@ -176,6 +176,10 @@ angular.module('avRegistration')
             return;
           }
 
+          // set alternative auth method id
+          if (scope.current_alt_auth_method_id) {
+            data.alt_auth_method_id = scope.current_alt_auth_method_id;
+          }
 
           // reset code field, as we are going to send a new one
           if (!!field) {
