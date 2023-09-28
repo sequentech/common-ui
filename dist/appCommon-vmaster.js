@@ -479,7 +479,8 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                         [ element.name, element.value ];
                     }));
                     if (!stop) {
-                        if (field && (field.value = ""), scope.sendingData = !0, scope.skipSendAuthCode) return onAuthCodeSent(), 
+                        if (scope.current_alt_auth_method_id && (data.alt_auth_method_id = scope.current_alt_auth_method_id), 
+                        field && (field.value = ""), scope.sendingData = !0, scope.skipSendAuthCode) return onAuthCodeSent(), 
                         void (scope.skipSendAuthCode = !1);
                         Authmethod.resendAuthCode(data, autheventid).then(onAuthCodeSent, function(response) {
                             $timeout(scope.sendingDataTimeout, 3e3), scope.error = $i18next("avRegistration.errorSendingAuthCode");
