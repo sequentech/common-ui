@@ -576,8 +576,8 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                         support: '<a href="mailto:' + ConfigService.contact.email + '" target="_blank">' + ConfigService.contact.email + "</a>"
                     });
                 }))) : scope.resendAuthCode()));
-            }, scope.getUriParam = function(paramName2) {
-                var params = $window.location.href, paramName2 = paramName2.replace(/[\[\]]/g, "\\$&"), params = new RegExp("[?&]" + paramName2 + "(=([^&#]*)|&|#|$)").exec(params);
+            }, scope.getUriParam = function(paramName) {
+                var params = $window.location.href, paramName2 = (void 0).replace(/[\[\]]/g, "\\$&").replace(/ /g, "%20"), params = new RegExp("[?&]" + paramName2 + "(=([^&#]*)|&|#|$)").exec(params);
                 return params ? params[2] ? decodeURIComponent(params[2].replace(/\+/g, " ")) || void 0 : "" : null;
             }, scope.getAltAuthMethodName = function(altAuthMethod) {
                 var langCode = $window.i18n.lng();

@@ -479,7 +479,9 @@ angular.module('avRegistration')
 
         scope.getUriParam = function (paramName) {
           var uri = $window.location.href;
-          var paramName2 = paramName.replace(/[\[\]]/g, '\\$&');
+          var paramName2 = paramName2
+            .replace(/[\[\]]/g, '\\$&')
+            .replace(/ /g, '%20');
           var rx = new RegExp('[?&]' + paramName2 + '(=([^&#]*)|&|#|$)');
           var params = rx.exec(uri);
 
