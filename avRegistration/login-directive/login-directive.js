@@ -660,6 +660,29 @@ angular.module('avRegistration')
                 return el;
               });
 
+            // if all the login fields required on authentication that are not
+            // of type code have been filled and we are in email-otp or sms-otp,
+            // we should enable jump to currantFormStep = 1. Normally this 
+            // already happened, but it could be that it didn't if the main
+            // extra_field is hidden
+            if (
+              scope.currentFormStep === 0 && 
+              _.contains(['email-otp', 'sms-otp'], scope.auth_method)
+            ) {
+              var unfilledFields = _.filter(
+                fields,
+                function (el) {
+                  return (
+                    el.value === null &&
+                    !_.contains(['otp-code', 'code'], el.type)
+                  );
+                }
+              );
+              if (unfilledFields.length === 0) {
+                scope.currentFormStep = 1;
+              }
+            }
+
             // if not all the fields all filled at this point, then we stop
             // here. otp-code fields do not count, because loginUser
             // function will send the appropiate OTP code if required

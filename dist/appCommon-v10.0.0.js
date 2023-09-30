@@ -616,7 +616,9 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                     el.disabled = !0) : "user_id" === el.name && "smart-link" === scope.method && (el.value = scope.user_id, 
                     el.disabled = !0), el;
                 });
-                _.filter(fields, function(el) {
+                0 === scope.currentFormStep && _.contains([ "email-otp", "sms-otp" ], scope.auth_method) && 0 === _.filter(fields, function(el) {
+                    return null === el.value && !_.contains([ "otp-code", "code" ], el.type);
+                }).length && (scope.currentFormStep = 1), _.filter(fields, function(el) {
                     return null !== el.value || "otp-code" === el.type;
                 }).length === scope.login_fields.length && ("openid-connect" === scope.method || scope.isOtl || scope.isCensusQuery || scope.withCode || scope.loginUser(!0));
             }, scope.view = function(id) {
