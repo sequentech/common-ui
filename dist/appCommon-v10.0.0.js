@@ -577,7 +577,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                     });
                 }))) : scope.resendAuthCode()));
             }, scope.getUriParam = function(paramName2) {
-                var params = $window.location.href, paramName2 = paramName2.replace(/[\[\]]/g, "\\$&"), params = new RegExp("[?&]" + paramName2 + "(=([^&#]*)|&|#|$)").exec(params);
+                var params = $window.location.href, paramName2 = paramName2.replace(/[\[\]]/g, "\\$&").replace(/ /g, "%20"), params = new RegExp("[?&]" + paramName2 + "(=([^&#]*)|&|#|$)").exec(params);
                 return params ? params[2] ? decodeURIComponent(params[2].replace(/\+/g, " ")) || void 0 : "" : null;
             }, scope.getAltAuthMethodName = function(altAuthMethod) {
                 var langCode = $window.i18n.lng();
@@ -616,7 +616,9 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                     el.disabled = !0) : "user_id" === el.name && "smart-link" === scope.method && (el.value = scope.user_id, 
                     el.disabled = !0), el;
                 });
-                _.filter(fields, function(el) {
+                0 === scope.currentFormStep && _.contains([ "email-otp", "sms-otp" ], scope.auth_method) && 0 === _.filter(fields, function(el) {
+                    return null === el.value && !_.contains([ "otp-code", "code" ], el.type);
+                }).length && (scope.currentFormStep = 1), _.filter(fields, function(el) {
                     return null !== el.value || "otp-code" === el.type;
                 }).length === scope.login_fields.length && ("openid-connect" === scope.method || scope.isOtl || scope.isCensusQuery || scope.withCode || scope.loginUser(!0));
             }, scope.view = function(id) {
