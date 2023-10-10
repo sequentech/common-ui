@@ -1401,7 +1401,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         return "over-valid-votes" === (over = null == over ? question.answer_total_votes_percentage : over) || "over-total-valid-votes" === over ? base = question.totals.valid_votes : "over-total-valid-points" === over && void 0 !== question.totals.valid_points && (base = question.totals.valid_points), 
         print(100 * total_votes / base);
     };
-}), angular.module("avUi").service("CheckerService", function() {
+}), angular.module("avUi").service("CheckerService", [ "$filter", function($filter) {
     function checker(d) {
         function evalValue(code, $value) {
             return angular.isString(code) ? eval(code) : code;
@@ -1515,7 +1515,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         return ret;
     }
     return checker;
-}), angular.module("avUi").factory("ElectionCreation", function() {
+} ]), angular.module("avUi").factory("ElectionCreation", function() {
     var service = {
         generateAuthapiRequest: function(el) {
             el.census.config.subject && !_.contains([ "email", "email-otp" ], el.census.auth_method) && delete el.census.config.subject;
