@@ -68,7 +68,7 @@
         });
  */
 angular.module('avUi')
-  .service('CheckerService', function() {
+  .service('CheckerService', function($filter) {
     function checker(d) {
 
       /*
