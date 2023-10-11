@@ -89,6 +89,10 @@ angular
         // Show countdown on logout button based on cookies
         function enableLogoutCountdown() {
           scope.showCountdown = false;
+
+          if (scope.$parent.isStateCompatibleWithCountdown && !scope.$parent.isStateCompatibleWithCountdown()) {
+            return;
+          }
   
           var election = (
             (!!scope.parentElection) ?
