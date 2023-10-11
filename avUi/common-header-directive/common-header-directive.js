@@ -90,10 +90,6 @@ angular
         function enableLogoutCountdown() {
           scope.showCountdown = false;
 
-          if (scope.isStateCompatibleWithCountdown && !scope.isStateCompatibleWithCountdown()) {
-            return;
-          }
-
           if (scope.$parent.isStateCompatibleWithCountdown && !scope.$parent.isStateCompatibleWithCountdown()) {
             return;
           }

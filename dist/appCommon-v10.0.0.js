@@ -1183,7 +1183,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 return !(election && election.presentation && election.presentation.extra_options && election.presentation.extra_options.booth_log_out__disable);
             }, scope.showVersionsModal = ShowVersionsModalService, setTimeout(function() {
                 var election, initialTimeMs;
-                scope.showCountdown = !1, scope.isStateCompatibleWithCountdown && !scope.isStateCompatibleWithCountdown() || scope.$parent.isStateCompatibleWithCountdown && !scope.$parent.isStateCompatibleWithCountdown() || (election = scope.parentElection || scope.election, 
+                scope.showCountdown = !1, scope.$parent.isStateCompatibleWithCountdown && !scope.$parent.isStateCompatibleWithCountdown() || (election = scope.parentElection || scope.election, 
                 ConfigService.authTokenExpirationSeconds && election && election.presentation && _.isNumber(election.presentation.booth_log_out__countdown_seconds) && (scope.showCountdown = !1, 
                 scope.countdownSecs = 0, scope.countdownMins = 0, initialTimeMs = scope.$parent.getSessionStartTime && scope.$parent.getSessionStartTime() || Date.now(), 
                 scope.elapsedCountdownMs = 1e3 * (0 < election.presentation.booth_log_out__countdown_seconds ? election.presentation.booth_log_out__countdown_seconds : ConfigService.authTokenExpirationSeconds), 
