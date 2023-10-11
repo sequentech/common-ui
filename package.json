@@ -71,14 +71,14 @@
     "ng-autofocus": "~0.0.1",
     "ng-file-upload": "3.0.7",
     "papaparse": "~5.2.0",
-    "postcss": "^8.2.13",
+    "postcss": "^8.4.31",
     "rng-js": "~1.0.1",
     "underscore": "1.12.1",
     "ws": "7.4.6",
     "yarn": "^1.22.0"
   },
   "dependencies": {
-    "browser-update": "^3.3.28",
+    "browser-update": "^3.3.44",
     "karma-ng-html2js-preprocessor": "^1.0.0"
   },
   "resolutions": {
