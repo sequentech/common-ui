@@ -19598,23 +19598,23 @@ mod.directive("infiniteScroll", [ "$rootScope", "$window", "$interval", "THROTTL
 
 var $bu_ = new function() {
     var s = this;
-    this.version = "3.3.28", this.vsakt = {
-        c: "89",
-        f: 86,
-        s: "13.1.2",
-        e: 89,
-        i: 12,
-        ios: "13.3",
-        samsung: "13.0.1",
-        o: 74,
-        e_a: "46.01.2.5140",
-        o_a: 61,
-        y: "21.2.3",
-        v: 3.6,
-        uc: "13.3.8"
+    this.version = "3.3.44npm", this.vsakt = {
+        c: "106",
+        f: "105",
+        s: "15.6",
+        e: "106",
+        i: "12",
+        ios: "15.6",
+        samsung: "17.0.7",
+        o: "89",
+        e_a: "104",
+        o_a: "70",
+        y: "22.7.0",
+        v: "5.4",
+        uc: "13.4.0"
     }, this.vsinsecure_below = {
-        c: "88.0.4324.150",
-        f: 76,
+        c: "100.0.5195.102",
+        f: "100.3",
         s: "11.1.1",
         e: 16,
         i: 11,
@@ -19668,14 +19668,14 @@ var $bu_ = new function() {
         function ignore(reason, pattern) {
             return !!new RegExp(pattern, "i").test(ua) && reason;
         }
-        r.other = ignore("bot", "Pagespeed|pingdom|Preview|ktxn|dynatrace|Ruxit|PhantomJS|Headless|Lighthouse|bot|spider|archiver|transcoder|crawl|checker|monitoring|prerender|screenshot|python-|php|uptime|validator|fetcher|facebook|slurp|google|yahoo|node|mail.ru|github|cloudflare|addthis|thumb|proxy|feed|fetch|favicon|link|http|scrape|seo|page|search console|AOLBuild|Teoma|Expeditor") || ignore("TV", "SMART-TV|SmartTV") || ignore("niche browser", "OculusBrowser|Falkon|Brave|Classic Browser|Dorado|LBBROWSER|Focus|waterfox|Firefox/56.2|Firefox/56.3|Whale|MIDP|k-meleon|sparrow|wii|Chromium|Puffin|Opera Mini|maxthon|maxton|dolfin|dolphin|seamonkey|opera mini|netfront|moblin|maemo|arora|kazehakase|epiphany|konqueror|rekonq|symbian|webos|PaleMoon|Basilisk|QupZilla|Otter|Midori|qutebrowser|slimjet") || ignore("mobile without upgrade path or landing page", "OPR/44.12.2246|cros|kindle|tizen|silk|blackberry|bb10|RIM|PlayBook|meego|nokia|ucweb|ZuneWP7|537.85.10"), 
+        r.other = ignore("bot", "Pagespeed|pingdom|Preview|ktxn|dynatrace|Ruxit|PhantomJS|Headless|Lighthouse|bot|spider|archiver|transcoder|crawl|checker|monitoring|prerender|screenshot|python-|php|uptime|validator|fetcher|facebook|slurp|google|yahoo|node|mail.ru|github|cloudflare|addthis|thumb|proxy|feed|fetch|favicon|link|http|scrape|seo|page|search console|AOLBuild|Teoma|Expeditor") || ignore("TV", "SMART-TV|SmartTV") || ignore("niche browser", "motorola edge|Comodo.Dragon|OculusBrowser|Falkon|Brave|Classic Browser|Dorado|LBBROWSER|Focus|waterfox|Firefox/56.2|Firefox/56.3|Whale|MIDP|k-meleon|sparrow|wii|Chromium|Puffin|Opera Mini|maxthon|maxton|dolfin|dolphin|seamonkey|opera mini|netfront|moblin|maemo|arora|kazehakase|epiphany|konqueror|rekonq|symbian|webos|PaleMoon|Basilisk|QupZilla|Otter|Midori|qutebrowser|slimjet") || ignore("mobile without upgrade path or landing page", "OPR/44.12.2246|cros|kindle|tizen|silk|blackberry|bb10|RIM|PlayBook|meego|nokia|ucweb|ZuneWP7|537.85.10"), 
         r.embedded = /"QtWebEngine|Teams|Electron/i.test(ua), r.mobile = /iphone|ipod|ipad|android|mobile|phone|ios|iemobile/i.test(ua), 
         r.discontinued = /netscape|greenbrowser|camino|flot|fennec|galeon|coolnovo/i.test(ua);
-        for (var av, pats = [ [ "CriOS.VV", "c", "ios" ], [ "FxiOS.VV", "f", "ios" ], [ "Trident.*rv:VV", "i", "i" ], [ "Trident.VV", "io", "i" ], [ "UCBrowser.VV", "uc", "c" ], [ "MSIE.VV", "i", "i" ], [ "Edge.VV", "e", "e" ], [ "Edg.VV", "e", "c" ], [ "EdgA.VV", "e_a", "c" ], [ "Vivaldi.VV", "v", "c" ], [ "Android.*OPR.VV", "o_a", "c" ], [ "OPR.VV", "o", "c" ], [ "YaBrowser.VV", "y", "c" ], [ "SamsungBrowser.VV", "samsung", "c" ], [ "Silk.VV", "silk", "c" ], [ "Chrome.VV", "c", "c" ], [ "Firefox.VV", "f", "f" ], [ " OS.VV.*Safari", "ios", "ios" ], [ "Version.VV.*Safari", "s", "s" ], [ "Safari.VV", "so", "s" ], [ "Opera.*Version.VV", "o" ], [ "Opera.VV", "o" ] ], VV = "(\\d+\\.?\\d+\\.?\\d*\\.?\\d*)", i = 0; i < pats.length; i++) if (ua.match(new RegExp(pats[i][0].replace("VV", VV), "i"))) {
+        for (var av, pats = [ [ "CriOS.VV", "c", "ios" ], [ "FxiOS.VV", "f", "ios" ], [ "Trident.*rv:VV", "i", "i" ], [ "Trident.VV", "i", "i" ], [ "UCBrowser.VV", "uc", "c" ], [ "MSIE.VV", "i", "i" ], [ "Edge.VV", "e", "e" ], [ "Edg.VV", "e", "c" ], [ "EdgA.VV", "e_a", "c" ], [ "Vivaldi.VV", "v", "c" ], [ "Android.*OPR.VV", "o_a", "c" ], [ "OPR.VV", "o", "c" ], [ "YaBrowser.VV", "y", "c" ], [ "SamsungBrowser.VV", "samsung", "c" ], [ "Silk.VV", "silk", "c" ], [ "Chrome.VV", "c", "c" ], [ "Firefox.VV", "f", "f" ], [ " OS.VV.*Safari", "ios", "ios" ], [ "Version.VV.*Safari", "s", "s" ], [ "Safari.VV", "s", "s" ], [ "Opera.*Version.VV", "o" ], [ "Opera.VV", "o" ] ], VV = "(\\d+\\.?\\d+\\.?\\d*\\.?\\d*)", i = 0; i < pats.length; i++) if (ua.match(new RegExp(pats[i][0].replace("VV", VV), "i"))) {
             r.n = pats[i][1], r.engine = pats[i][2];
             break;
         }
-        r.fullv = RegExp.$1, r.v = parseFloat(r.fullv), /windows.nt.5.0|windows.nt.4.0|windows.95|windows.98|os x 10.2|os x 10.3|os x 10.4|os x 10.5/i.test(ua) && (r.no_device_update = !0, 
+        r.fullv = RegExp.$1, r.v = parseFloat(r.fullv), /windows.nt.5|windows.nt.4|windows.nt.6.0|windows.95|windows.98|os x 10.2|os x 10.3|os x 10.4|os x 10.5/i.test(ua) && (r.no_device_update = !0, 
         r.available = {}), "MacIntel" === navigator.platform && 1 < navigator.maxTouchPoints && (r.n = "ios", 
         r.engine = "ios", r.fullv = r.v = 13, r.no_device_update = !0), /iphone|ipod|ipad|ios/i.test(ua) && (ua.match(new RegExp("OS." + VV, "i")), 
         r.n = "ios", r.fullv = RegExp.$1, r.v = parseFloat(r.fullv), r.engine = "ios", (av = s.available_ios(ua, r.v)) < 12 && 11 === Math.round(r.v) && (av = 12), 
@@ -19684,7 +19684,7 @@ var $bu_ = new function() {
         }, parseFloat(r.available.ios) < 11 && (r.no_device_update = !0)), /windows.nt.5.1|windows.nt.5.2|windows.nt.6.0/i.test(ua) && (r.available = {
             c: 49.9,
             f: 52.9
-        }), /os x 10.6/i.test(ua) && (r.available = {
+        }, r.no_device_update = !0), /os x 10.6/i.test(ua) && (r.available = {
             s: "5.1.10",
             c: 49.9,
             f: 48
@@ -19694,11 +19694,10 @@ var $bu_ = new function() {
             f: 48
         }, r.no_device_update = !0), /os x 10.9/i.test(ua) && (r.available.s = "9.1.3"), 
         /os x 10.10/i.test(ua) && (r.available.s = "10.1.2"), -1 < ua.indexOf("Android") && "s" === r.n && ((releases_per_year = parseInt((/WebKit\/([0-9]+)/i.exec(ua) || 0)[1], 10) || 2e3) <= 534 && (r.n = "a", 
-        r.fullv = r.v = releases_per_year, r.is_insecure = !0)), "so" === r.n && (r.v = r.fullv = 4, 
-        r.n = "s"), "io" === r.n && (r.n = "i", 6 < r.v ? r.v = 11 : 5 < r.v ? r.v = 10 : 4 < r.v ? r.v = 9 : 3.1 < r.v ? r.v = 8 : 3 < r.v ? r.v = 7 : r.v = 9, 
-        r.fullv = r.v), r.t = s.names[r.n] + " " + r.v, r.is_supported = r.is_latest = s.vsakt[r.n] ? s.less(r.fullv, s.vsakt[r.n]) <= 0 : void 0, 
+        r.fullv = r.v = releases_per_year, r.is_insecure = !0)), r.t = s.names[r.n] + " " + r.v, 
+        r.is_supported = r.is_latest = s.vsakt[r.n] ? s.less(r.fullv, s.vsakt[r.n]) <= 0 : void 0, 
         r.vmaj = Math.round(r.v), r.is_insecure = r.is_insecure || !s.vsinsecure_below[r.n] ? void 0 : 1 === s.less(r.fullv, s.vsinsecure_below[r.n]), 
-        ("f" === r.n && 78 === r.vmaj || "i" === r.n && 11 === r.vmaj) && (r.is_supported = !0, 
+        ("f" === r.n && 102 === r.vmaj || "i" === r.n && 11 === r.vmaj) && (r.is_supported = !0, 
         r.is_insecure = !1, "f" === r.n && (r.esr = !0)), "ios" === r.n && 10.3 < r.v && (r.is_supported = !0), 
         "a" !== r.n && "x" !== r.n || (r.t = s.names[r.n]), "e" === r.n && (r.t = s.names[r.n] + " " + r.vmaj, 
         r.is_supported = 1 != s.less(r.fullv, "18.15063")), r.n in [ "c", "f", "o", "e" ] && s.less(r.fullv, parseFloat(s.vsakt[r.n]) - 1) <= 0 && (r.is_supported = !0);
@@ -19734,7 +19733,7 @@ var $bu_ = new function() {
         }
     }, this.available_ios = function(ua, v) {
         var h = Math.max(window.screen.height, window.screen.width), pr = window.devicePixelRatio;
-        return /ipad/i.test(ua) ? 1024 == h && 2 == pr ? 10 : 1112 == h || 1366 == h ? 15 : 1024 == h && v < 6 ? 5 : 9 : 1 == pr ? 6 : 812 == h ? 15 : 736 == h || 667 == h ? 12 : 568 == h ? 10 : 480 == h ? 7 : 6;
+        return /ipad/i.test(ua) ? 1024 == h && 2 == pr ? 10 : 1112 == h || 1366 == h ? 15 : 1024 == h && v < 6 ? 5 : 9 : 1 == pr ? 6 : 3 == pr || 812 == h || 736 == h || 667 == h ? 15 : 568 == h ? 10 : 480 == h ? 7 : 6;
     };
 }();
 
@@ -19752,9 +19751,9 @@ var $buo = function(op, e) {
         s: 8,
         c: 30
     } : {}, vs = op.notify || op.vs || {};
-    vs.e = vs.e || vs.i, vs.i = vs.i || vs.e;
+    0 !== vs.e && (vs.e = vs.e || vs.i), vs.i = vs.i || vs.e;
     var required = op.required || {};
-    for (b in required.e = required.e || required.i, required.i || (required.i = required.e, 
+    for (b in 0 !== required.e && (required.e = required.e || required.i), required.i || (required.i = required.e, 
     $bu_.vsakt.i = $bu_.vsakt.e), $bu_.vsdefault) vs[b] && (0 <= $bu_.less(vs[b], 0) ? required[b] = parseFloat($bu_.vsakt[b]) + parseFloat(vs[b]) + .01 : required[b] = parseFloat(vs[b]) + .01), 
     b in required && null != required[b] || (required[b] = $bu_.vsdefault[b]), 0 <= $bu_.less(required[b], 0) && (required[b] = parseFloat($bu_.vsakt[b]) + parseFloat(required[b])), 
     required_min[b] && 1 === $bu_.less(required[b], required_min[b]) && (required[b] = required_min[b]);
@@ -19775,7 +19774,7 @@ var $buo = function(op, e) {
         op.unsupported && !bb.is_supported && op.reasons.push("no vendor support"), !(0 < op.hide_reasons.length) && 0 < op.reasons.length;
     }(op), op.already_shown = -1 < document.cookie.indexOf("browserupdateorg=pause") && !op.ignorecookie, 
     (op.test || op.notified && !op.already_shown) && (op.setCookie = function(hours) {
-        document.cookie = "browserupdateorg=pause; expires=" + new Date(new Date().getTime() + 36e5 * hours).toGMTString() + "; path=/; SameSite=Lax" + /https:/.test(location.href) ? "; Secure" : "";
+        document.cookie = "browserupdateorg=pause; expires=" + new Date(new Date().getTime() + 36e5 * hours).toGMTString() + "; path=/; SameSite=Lax" + (/https:/.test(location.href) ? "; Secure" : "");
     }, op.already_shown && (op.ignorecookie || op.test) && op.setCookie(-10), 0 < op.reminder && op.setCookie(op.reminder), 
     op.nomessage ? op.onshow(op) : ((e = document.createElement("script")).src = op.jsshowurl || op.domain + "/update.show.min.js", 
     document.body.appendChild(e)));
