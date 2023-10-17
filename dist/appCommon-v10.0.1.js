@@ -1127,7 +1127,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 }, 0);
             }), scope.changeLang = function(lang) {
                 $i18next.options.lng = lang, angular.isDefined($window.i18nOverride) && $window.i18n.preload([ lang ], function() {
-                    I18nOverride(null, !0);
+                    I18nOverride($window.i18nOverride, !0);
                 }), console.log("setting cookie");
                 ipCookie("lang", lang, _.extend({
                     expires: 360,

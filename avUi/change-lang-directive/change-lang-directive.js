@@ -59,7 +59,7 @@ angular.module('avUi')
             function ()
             {
               I18nOverride(
-                /* overrides = */ null, // set to use the default, $window.i18nOverride
+                /* overrides = */ $window.i18nOverride, // set to use the default, $window.i18nOverride
                 /* force = */ true
               );
             }
