@@ -84,7 +84,6 @@ angular.module('avUi')
           .then(function () {
             amMoment.changeLocale(lang);
           });*/
-        amMoment.changeLocale(lang);
       };
     }
 
