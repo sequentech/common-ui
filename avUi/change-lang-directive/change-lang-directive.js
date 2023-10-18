@@ -54,15 +54,19 @@ angular.module('avUi')
         // load i18n_overrides if any
         if (angular.isDefined($window.i18nOverride))
         {
-          $window.i18n.preload(
-            [lang],
-            function ()
-            {
-              I18nOverride(
-                /* overrides = */ $window.i18nOverride, // set to use the default, $window.i18nOverride
-                /* force = */ true
-              );
-            }
+          // $window.i18n.preload(
+          //   [lang],
+          //   function ()
+          //   {
+          //     I18nOverride(
+          //       /* overrides = */ $window.i18nOverride, // set to use the default, $window.i18nOverride
+          //       /* force = */ true
+          //     );
+          //   }
+          // );
+          I18nOverride(
+            /* overrides = */ $window.i18nOverride, // set to use the default, $window.i18nOverride
+            /* force = */ true
           );
         }
 
