@@ -1126,11 +1126,10 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                     angular.element("#lang-dropdown-toggle").click();
                 }, 0);
             }), scope.changeLang = function(lang, count) {
-                $i18next.options.lng = lang, count = count || 0, angular.isDefined($window.i18nOverride) && $window.i18n.preload([ lang ], function() {
-                    I18nOverride($window.i18nOverride, !0), count || setTimeout(function() {
-                        scope.changeLang(lang, count + 1);
-                    }, 1e3);
-                }), 0 < count || (console.log("setting cookie"), ipCookie("lang", lang, _.extend({
+                $i18next.options.lng = lang, count = count || 0, angular.isDefined($window.i18nOverride) && ($i18next.options.useLocalStorage = !0, 
+                $window.i18n.preload([ lang ], function() {
+                    I18nOverride($window.i18nOverride, !0);
+                })), 0 < count || (console.log("setting cookie"), ipCookie("lang", lang, _.extend({
                     expires: 360,
                     path: "/"
                 }, ConfigService.i18nextCookieOptions)), scope.deflang = lang, angular.element("#ng-app").attr("lang", scope.deflang), 

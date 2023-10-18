@@ -55,6 +55,7 @@ angular.module('avUi')
         // load i18n_overrides if any
         if (angular.isDefined($window.i18nOverride))
         {
+          $i18next.options.useLocalStorage = true;
           $window.i18n.preload(
             [lang],
             function ()
@@ -63,11 +64,11 @@ angular.module('avUi')
                 /* overrides = */ $window.i18nOverride, // set to use the default, $window.i18nOverride
                 /* force = */ true
               );
-              if (!count) {
+              /*if (!count) {
                 setTimeout(function () {
                   scope.changeLang(lang, count + 1);
                 }, 1000);
-              }
+              }*/
             }
           );
         }
