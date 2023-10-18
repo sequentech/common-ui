@@ -54,19 +54,15 @@ angular.module('avUi')
         // load i18n_overrides if any
         if (angular.isDefined($window.i18nOverride))
         {
-          // $window.i18n.preload(
-          //   [lang],
-          //   function ()
-          //   {
-          //     I18nOverride(
-          //       /* overrides = */ $window.i18nOverride, // set to use the default, $window.i18nOverride
-          //       /* force = */ true
-          //     );
-          //   }
-          // );
-          I18nOverride(
-            /* overrides = */ $window.i18nOverride, // set to use the default, $window.i18nOverride
-            /* force = */ true
+          $window.i18n.preload(
+            [lang],
+            function ()
+            {
+              I18nOverride(
+                /* overrides = */ $window.i18nOverride, // set to use the default, $window.i18nOverride
+                /* force = */ true
+              );
+            }
           );
         }
 
@@ -83,11 +79,11 @@ angular.module('avUi')
         angular.element('#ng-app').attr('lang', scope.deflang);
 
         // async load moment i18n
-        /*angularLoad
+        angularLoad
           .loadScript(ConfigService.base + '/locales/moment/' + lang + '.js')
           .then(function () {
             amMoment.changeLocale(lang);
-          });*/
+          });
       };
     }
 

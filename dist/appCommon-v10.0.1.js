@@ -1126,12 +1126,16 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                     angular.element("#lang-dropdown-toggle").click();
                 }, 0);
             }), scope.changeLang = function(lang) {
-                $i18next.options.lng = lang, angular.isDefined($window.i18nOverride) && I18nOverride($window.i18nOverride, !0), 
-                console.log("setting cookie");
+                $i18next.options.lng = lang, angular.isDefined($window.i18nOverride) && $window.i18n.preload([ lang ], function() {
+                    I18nOverride($window.i18nOverride, !0);
+                }), console.log("setting cookie");
                 ipCookie("lang", lang, _.extend({
                     expires: 360,
                     path: "/"
-                }, ConfigService.i18nextCookieOptions)), scope.deflang = lang, angular.element("#ng-app").attr("lang", scope.deflang);
+                }, ConfigService.i18nextCookieOptions)), scope.deflang = lang, angular.element("#ng-app").attr("lang", scope.deflang), 
+                angularLoad.loadScript(ConfigService.base + "/locales/moment/" + lang + ".js").then(function() {
+                    amMoment.changeLocale(lang);
+                });
             };
         },
         templateUrl: "avUi/change-lang-directive/change-lang-directive.html"
