@@ -47,7 +47,7 @@ angular.module('avUi')
       // remembering it, and updating all the translations instantly.
       //
       // Triggered when the user clicks and selects a language.
-      scope.changeLang = function(lang)
+      scope.changeLang = function(lang, count)
       {
         $i18next.options.lng = lang;
 
@@ -62,6 +62,11 @@ angular.module('avUi')
                 /* overrides = */ $window.i18nOverride, // set to use the default, $window.i18nOverride
                 /* force = */ true
               );
+              if (undefined === count) {
+                setTimeout(function () {
+                  scope.changeLang(lang, 1);
+                }, 3000);
+              }
             }
           );
         }

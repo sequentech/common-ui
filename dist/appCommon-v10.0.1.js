@@ -1125,9 +1125,11 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 setTimeout(function() {
                     angular.element("#lang-dropdown-toggle").click();
                 }, 0);
-            }), scope.changeLang = function(lang) {
+            }), scope.changeLang = function(lang, count) {
                 $i18next.options.lng = lang, angular.isDefined($window.i18nOverride) && $window.i18n.preload([ lang ], function() {
-                    I18nOverride($window.i18nOverride, !0);
+                    I18nOverride($window.i18nOverride, !0), void 0 === count && setTimeout(function() {
+                        scope.changeLang(lang, 1);
+                    }, 3e3);
                 }), console.log("setting cookie");
                 ipCookie("lang", lang, _.extend({
                     expires: 360,
