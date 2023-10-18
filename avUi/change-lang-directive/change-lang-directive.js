@@ -63,10 +63,10 @@ angular.module('avUi')
                 /* overrides = */ $window.i18nOverride, // set to use the default, $window.i18nOverride
                 /* force = */ true
               );
-              if (count < 30) {
+              if (!count) {
                 setTimeout(function () {
                   scope.changeLang(lang, count + 1);
-                }, 100);
+                }, 1000);
               }
             }
           );
