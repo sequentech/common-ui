@@ -50,6 +50,7 @@ angular.module('avUi')
       scope.changeLang = function(lang, count)
       {
         $i18next.options.lng = lang;
+        count = count || 0;
 
         // load i18n_overrides if any
         if (angular.isDefined($window.i18nOverride))
@@ -62,13 +63,17 @@ angular.module('avUi')
                 /* overrides = */ $window.i18nOverride, // set to use the default, $window.i18nOverride
                 /* force = */ true
               );
-              if (undefined === count) {
+              if (count < 30) {
                 setTimeout(function () {
-                  scope.changeLang(lang, 1);
-                }, 3000);
+                  scope.changeLang(lang, count + 1);
+                }, 100);
               }
             }
           );
+        }
+
+        if (count > 0) {
+          return;
         }
 
         console.log("setting cookie");
