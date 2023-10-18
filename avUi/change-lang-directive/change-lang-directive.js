@@ -47,15 +47,14 @@ angular.module('avUi')
       // remembering it, and updating all the translations instantly.
       //
       // Triggered when the user clicks and selects a language.
-      scope.changeLang = function(lang, count)
+      scope.changeLang = function(lang)
       {
         $i18next.options.lng = lang;
-        count = count || 0;
+        $i18next.options.useLocalStorage = true;
 
         // load i18n_overrides if any
         if (angular.isDefined($window.i18nOverride))
         {
-          $i18next.options.useLocalStorage = true;
           $window.i18n.preload(
             [lang],
             function ()
@@ -64,17 +63,8 @@ angular.module('avUi')
                 /* overrides = */ $window.i18nOverride, // set to use the default, $window.i18nOverride
                 /* force = */ true
               );
-              /*if (!count) {
-                setTimeout(function () {
-                  scope.changeLang(lang, count + 1);
-                }, 1000);
-              }*/
             }
           );
-        }
-
-        if (count > 0) {
-          return;
         }
 
         console.log("setting cookie");
