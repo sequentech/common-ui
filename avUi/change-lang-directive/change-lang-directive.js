@@ -80,12 +80,14 @@ angular.module('avUi')
         angular.element('#ng-app').attr('lang', scope.deflang);
 
         // async load moment i18n
-        angularLoad
+        /*angularLoad
           .loadScript(ConfigService.base + '/locales/moment/' + lang + '.js')
           .then(function () {
             amMoment.changeLocale(lang);
-          });
+          });*/
       };
+      $i18next.options.useLocalStorage = true;
+
     }
 
     return {
