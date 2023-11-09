@@ -1133,9 +1133,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                     expires: 360,
                     path: "/"
                 }, ConfigService.i18nextCookieOptions)), scope.deflang = lang, angular.element("#ng-app").attr("lang", scope.deflang);
-            }, setTimeout(function() {
-                scope.changeLang($i18next.options.lng);
-            }, 0);
+            }, $i18next.options.useLocalStorage = !0;
         },
         templateUrl: "avUi/change-lang-directive/change-lang-directive.html"
     };

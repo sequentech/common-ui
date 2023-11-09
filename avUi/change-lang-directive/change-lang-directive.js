@@ -86,9 +86,10 @@ angular.module('avUi')
             amMoment.changeLocale(lang);
           });*/
       };
-      setTimeout(function () {
+      $i18next.options.useLocalStorage = true;
+      /*setTimeout(function () {
         scope.changeLang($i18next.options.lng);
-      }, 0);
+      }, 0);*/
 
     }
 
