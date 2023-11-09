@@ -87,9 +87,6 @@ angular.module('avUi')
           });*/
       };
       $i18next.options.useLocalStorage = true;
-      /*setTimeout(function () {
-        scope.changeLang($i18next.options.lng);
-      }, 0);*/
 
     }
 
