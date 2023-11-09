@@ -86,7 +86,7 @@ angular.module('avUi')
             amMoment.changeLocale(lang);
           });*/
       };
-      //setTimeout(scope.changeLang, 0);
+      setTimeout(scope.changeLang, 0);
 
     }
 
