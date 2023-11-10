@@ -652,7 +652,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                     return _.isArray(adminMatch) ? ret = !0 : _.isArray(electionsMatch) && 3 === electionsMatch.length && (ret = _.isObject(authevent.auth_method_config) && _.isObject(authevent.auth_method_config.config) && !0 === authevent.auth_method_config.config.allow_user_resend), 
                     ret;
                 }();
-                var fields = _.map(scope.login_fields, function(el, index) {
+                var filledFields = _.map(scope.login_fields, function(el, index) {
                     var uriValue;
                     return scope.stateData[el.name] ? (el.value = scope.stateData[el.name], el.disabled = !0) : (uriValue = scope.getUriParam(el.name), 
                     angular.isString(uriValue) ? (el.value = uriValue, el.disabled = !0) : (el.value = null, 
@@ -665,11 +665,13 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                     el.disabled = !0) : "user_id" === el.name && "smart-link" === scope.method && (el.value = scope.user_id, 
                     el.disabled = !0), el;
                 });
-                0 === scope.currentFormStep && _.contains([ "email-otp", "sms-otp" ], scope.auth_method) && 0 === _.filter(fields, function(el) {
+                0 === scope.currentFormStep && _.contains([ "email-otp", "sms-otp" ], scope.auth_method) && 0 === _.filter(filledFields, function(el) {
                     return null === el.value && !_.contains([ "otp-code", "code" ], el.type);
-                }).length && (scope.currentFormStep = 1), _.filter(fields, function(el) {
+                }).length && (scope.currentFormStep = 1);
+                filledFields = _.filter(filledFields, function(el) {
                     return null !== el.value || "otp-code" === el.type;
-                }).length === scope.login_fields.length && (scope.isOtl || scope.isCensusQuery || scope.withCode || scope.loginUser(!0));
+                });
+                !scope.isOpenId && filledFields.length !== scope.login_fields.length || scope.isOtl || scope.isCensusQuery || scope.withCode || scope.loginUser(!0);
             }, scope.view = function(id) {
                 Authmethod.viewEvent(id).then(function(altAuthMethod) {
                     "ok" === altAuthMethod.data.status ? (scope.base_authevent = angular.copy(altAuthMethod.data.events), 
@@ -696,7 +698,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                     created: Date.now(),
                     eventId: scope.eventId,
                     providerId: provider.public_info.id
-                }), options), authURI = provider.public_info.authorization_endpoint + "?response_type=id_token&client_id=" + encodeURIComponent(provider.public_info.client_id) + "&scope=" + encodeURIComponent("openid") + "&redirect_uri=" + encodeURIComponent($window.location.origin + "/election/login-openid-connect-redirect") + "&state=" + randomState + "&nonce=" + authURI, 
+                }), options), authURI = provider.public_info.authorization_endpoint + "?response_type=id_token&client_id=" + encodeURIComponent(provider.public_info.client_id) + "&scope=" + encodeURIComponent("openid email") + "&redirect_uri=" + encodeURIComponent($window.location.origin + "/election/login-openid-connect-redirect") + "&state=" + randomState + "&nonce=" + authURI, 
                 $window.location.href = authURI) : scope.error = $i18next("avRegistration.openidError");
             };
         },

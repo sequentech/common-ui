@@ -882,7 +882,10 @@ angular.module('avRegistration')
                 );
               }
             );
-            if (filledFields.length !== scope.login_fields.length) {
+            if (
+              !scope.isOpenId &&
+              filledFields.length !== scope.login_fields.length
+            ) {
               return;
             }
 
@@ -976,7 +979,7 @@ angular.module('avRegistration')
           var authURI = (provider.public_info.authorization_endpoint +
             "?response_type=id_token" +
             "&client_id=" + encodeURIComponent(provider.public_info.client_id) +
-            "&scope=" + encodeURIComponent("openid") +
+            "&scope=" + encodeURIComponent("openid email") +
             "&redirect_uri=" + encodeURIComponent(
               $window.location.origin +
               "/election/login-openid-connect-redirect"
