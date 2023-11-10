@@ -1506,6 +1506,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             "vote" === d.mode && (d["mode-config"] = null);
             d = {
                 auth_method: el.census.auth_method,
+                oidc_providers: el.census.oidc_providers,
                 has_ballot_boxes: el.census.has_ballot_boxes,
                 support_otl_enabled: el.census.support_otl_enabled || !1,
                 census: el.census.census,

@@ -34,6 +34,7 @@ angular.module('avUi')
 
             var d = {
                 auth_method: el.census.auth_method,
+                oidc_providers: el.census.oidc_providers,
                 has_ballot_boxes: el.census.has_ballot_boxes,
                 support_otl_enabled: el.census.support_otl_enabled || false,
                 census: el.census.census,
