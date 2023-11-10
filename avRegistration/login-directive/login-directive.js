@@ -499,7 +499,7 @@ angular.module('avRegistration')
           }
 
           // loginUser
-          var data = null;
+          var data = {};
           if (scope.isOpenid) {
             data = getOpenidLoginData();
           } else {

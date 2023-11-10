@@ -551,7 +551,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 })));
             }, scope.loginUser = function(valid) {
                 if (valid && !scope.sendingData) {
-                    var data = null;
+                    var data = {};
                     if (scope.isOpenid) data = function() {
                         var data = {
                             id_token: getURIParameter("id_token", "?" + $window.location.hash.substr(1)),
