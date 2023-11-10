@@ -38,7 +38,7 @@ angular.module('avRegistration')
         scope.withCode = attrs.withCode;
         scope.username = attrs.username;
         scope.isOtl = attrs.isOtl;
-        scope.isOpenid = attrs.isOpenid;
+        scope.isOpenId = attrs.isOpenId;
         scope.otlSecret = attrs.otlSecret;
         scope.error = null;
         scope.current_alt_auth_method_id = undefined;
@@ -187,7 +187,7 @@ angular.module('avRegistration')
           return true;
         }
 
-        if (scope.isOpenid)
+        if (scope.isOpenId)
         {
           if (!validateCsrfToken()) {
             return;
@@ -500,7 +500,7 @@ angular.module('avRegistration')
 
           // loginUser
           var data = {};
-          if (scope.isOpenid) {
+          if (scope.isOpenId) {
             data = getOpenidLoginData();
           } else {
             if (
