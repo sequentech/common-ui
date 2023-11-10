@@ -26,7 +26,7 @@ angular.module('avRegistration')
       $scope.code = $stateParams.code;
       $scope.email = $stateParams.email;
       $scope.username = $stateParams.username;
-      $scope.isOpenId = $stateParams.isOpenId;
+      $scope.isOpenid = $stateParams.isOpenid;
       $scope.withCode = $stateParams.withCode;
       $scope.withAltMethod = $stateParams.withAltMethod;
       $scope.selectedAltMethod = $stateParams.altmethod;
