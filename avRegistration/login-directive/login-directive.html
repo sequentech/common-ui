@@ -213,14 +213,14 @@
         <span ng-repeat="provider in current_oidc_providers">
           <a
             ng-click="openidConnectAuth(provider)"
-            alt="{{provider.description}}"
+            alt="{{provider.public_info.description}}"
             class="btn btn-lg btn-primary btn-login"
           >
             <img
-              ng-if="!!provider.icon"
-              alt="{{provider.description}}"
+              ng-if="!!provider.public_info.icon"
+              alt="{{provider.public_info.description}}"
               class="logo-img"
-              ng-src="{{provider.icon}}"
+              ng-src="{{provider.public_info.icon}}"
             />
             {{provider.title}}
           </a>

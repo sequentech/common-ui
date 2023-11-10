@@ -254,7 +254,7 @@ angular.module('avRegistration')
             function (provider_id) {
               return _.find(
                 auth_event.oidc_providers,
-                function (provider) { return provider.id === provider_id; }
+                function (provider) { return provider.public_info.id === provider_id; }
               );
             }
           );
@@ -961,13 +961,13 @@ angular.module('avRegistration')
             altAuthMethodId: scope.current_alt_auth_method_id,
             created: Date.now(),
             eventId: scope.eventId,
-            providerId: provider.id
+            providerId: provider.public_info.id
           });
 
           // Craft the OpenID Connect auth URI
-          var authURI = (provider.authorization_endpoint +
+          var authURI = (provider.public_info.authorization_endpoint +
             "?response_type=id_token" +
-            "&client_id=" + encodeURIComponent(provider.client_id) +
+            "&client_id=" + encodeURIComponent(provider.public_info.client_id) +
             "&scope=" + encodeURIComponent("openid") +
             "&redirect_uri=" + encodeURIComponent(
               $window.location.origin +
