@@ -210,16 +210,18 @@
     </div>
 
     <div class="col-sm-12 text-center" ng-if="method === 'openid-connect'">
-        <span ng-repeat="provider in openIDConnectProviders">
+        <span ng-repeat="provider in current_oidc_providers">
           <a
             ng-click="openidConnectAuth(provider)"
             alt="{{provider.description}}"
-            class="btn btn-lg btn-primary btn-login">
+            class="btn btn-lg btn-primary btn-login"
+          >
             <img
               ng-if="!!provider.icon"
               alt="{{provider.description}}"
               class="logo-img"
-              ng-src="{{provider.icon}}" />
+              ng-src="{{provider.icon}}"
+            />
             {{provider.title}}
           </a>
         </span>
