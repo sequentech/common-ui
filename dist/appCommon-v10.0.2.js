@@ -635,9 +635,9 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 var auth_event;
                 scope.hasOtpFieldsCode = Authmethod.hasOtpCodeField(authevent), scope.method = authevent.auth_method, 
                 scope.oidc_providers = authevent.oidc_providers, scope.current_oidc_providers = (auth_event = authevent, 
-                _.map(auth_event.auth_method_config.config.provider_names, function(provider_name) {
+                _.map(auth_event.auth_method_config.config.provider_ids, function(provider_id) {
                     return _.find(auth_event.oidc_providers, function(provider) {
-                        return provider.id === provider_name;
+                        return provider.id === provider_id;
                     });
                 })), (scope.hasOtpFieldsCode || _.contains([ "sms-otp", "email-otp" ], scope.method)) && (scope.skipSendAuthCode = scope.successfulRegistration), 
                 scope.name = authevent.name, scope.parseAuthToken(), scope.registrationAllowed = "open" === authevent.census && (autheventid !== adminId || ConfigService.allowAdminRegistration), 

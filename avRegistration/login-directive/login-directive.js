@@ -250,11 +250,11 @@ angular.module('avRegistration')
         function getCurrentOidcProviders(auth_event)
         {
           return _.map(
-            auth_event.auth_method_config.config.provider_names,
-            function (provider_name) {
+            auth_event.auth_method_config.config.provider_ids,
+            function (provider_id) {
               return _.find(
                 auth_event.oidc_providers,
-                function (provider) { return provider.id === provider_name; }
+                function (provider) { return provider.id === provider_id; }
               );
             }
           );
