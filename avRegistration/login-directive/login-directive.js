@@ -31,6 +31,7 @@ angular.module('avRegistration')
       ConfigService,
       Patterns)
     {
+      var OIDC_CSRF_COOKIE = "OIDC_CSRF";
       // we use it as something similar to a controller here
       function link(scope, element, attrs)
       {
@@ -43,9 +44,6 @@ angular.module('avRegistration')
         scope.error = null;
         scope.current_alt_auth_method_id = undefined;
         scope.alternative_auth_methods = null;
-
-        // Maximum Oauth Login Timeout is 5 minutes
-        var maxOAuthLoginTimeout = 1000 * 60 * 5;
 
         scope.csrf = null;
 
@@ -139,14 +137,14 @@ angular.module('avRegistration')
         // Validates the CSRF token
         function validateCsrfToken()
         {
-          if (!$cookies.get('openid-connect-csrf'))
+          if (!$cookies.get(OIDC_CSRF_COOKIE))
           {
             redirectToLogin();
             return null;
           }
 
           // validate csrf token format and data
-          var csrf = scope.csrf = angular.fromJson($cookies.get('openid-connect-csrf'));
+          var csrf = scope.csrf = angular.fromJson($cookies.get(OIDC_CSRF_COOKIE));
           var uri = "?" + $window.location.hash.substr(1);
 
           // NOTE: if you need to debug this callback, obtain the callback
@@ -167,7 +165,7 @@ angular.module('avRegistration')
           //   eventId: 11111
           // };
 
-          $cookies.remove('openid-connect-csrf');
+          $cookies.remove(OIDC_CSRF_COOKIE);
           var isCsrfValid = (!!csrf &&
             angular.isObject(csrf) &&
             angular.isString(csrf.randomState) &&
@@ -176,7 +174,7 @@ angular.module('avRegistration')
             angular.isNumber(csrf.created) &&
             angular.isDefined(csrf.altAuthMethodId) &&
             getURIParameter("state", uri) === csrf.randomState &&
-            csrf.created - Date.now() < maxOAuthLoginTimeout
+            csrf.created - Date.now() < ConfigService.authTokenExpirationSeconds
           );
 
           if (!isCsrfValid)
@@ -955,14 +953,24 @@ angular.module('avRegistration')
 
           var randomState = randomStr();
           var randomNonce = randomStr();
-          $cookies['openid-connect-csrf'] = angular.toJson({
-            randomState: randomState,
-            randomNonce: randomNonce,
-            altAuthMethodId: scope.current_alt_auth_method_id,
-            created: Date.now(),
-            eventId: scope.eventId,
-            providerId: provider.public_info.id
-          });
+          var options = {};
+          if (ConfigService.authTokenExpirationSeconds) {
+            options.expires = new Date(
+              Date.now() + 1000 * ConfigService.authTokenExpirationSeconds
+            );
+          }
+          $cookies.put(
+            OIDC_CSRF_COOKIE,
+            angular.toJson({
+              randomState: randomState,
+              randomNonce: randomNonce,
+              altAuthMethodId: scope.current_alt_auth_method_id,
+              created: Date.now(),
+              eventId: scope.eventId,
+              providerId: provider.public_info.id
+            }),
+            options
+          );
 
           // Craft the OpenID Connect auth URI
           var authURI = (provider.public_info.authorization_endpoint +
