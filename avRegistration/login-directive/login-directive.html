@@ -204,14 +204,21 @@
       </p>
     </div>
 
-    <div class="col-sm-12 text-center" ng-if="method === 'openid-connect'">
-        <p ng-i18next="[html]avRegistration.openidLoginDescription"></p>
-        <span ng-repeat="provider in current_oidc_providers">
+    <div class="col-sm-12 text-center oidc-section" ng-if="method === 'openid-connect'">
+        <p
+          class="oidc-login-description"
+          ng-i18next="[html]avRegistration.openidLoginDescription"
+        ></p>
+        <span
+          ng-repeat="provider in current_oidc_providers"
+          class="provider-span"
+        >
           <button
             ng-click="openidConnectAuth(provider)"
             alt="{{provider.public_info.description}}"
             tabindex="0"
-            class="btn btn-block btn-lg btn-success-action"
+            class="btn btn-block btn-lg btn-success-action provider-btn"
+            ng-class="{provider.public_info.id: true]}"
           >
             <img
               ng-if="!!provider.public_info.icon"
