@@ -3,18 +3,13 @@
     <div class="col-sm-12 loginheader">
         <h3
           class="tex-center login-header-text"
-          ng-if="!isAdmin && !isOtl && !isCensusQuery && method !== 'openid-connect'"
+          ng-if="!isAdmin && !isOtl && !isCensusQuery"
           ng-i18next="[i18next]({name: orgName})avRegistration.loginHeader">
         </h3>
         <h3
           class="tex-center login-header-text"
           ng-if="isAdmin && !isOtl"
           ng-i18next="[i18next]avRegistration.adminLoginHeader">
-        </h3>
-        <h3
-          class="tex-center login-header-text"
-          ng-if="!isCensusQuery && method === 'openid-connect'"
-          ng-i18next="[i18next]avRegistration.loginButton">
         </h3>
         <h3
           class="tex-center login-header-text"
@@ -211,10 +206,11 @@
 
     <div class="col-sm-12 text-center" ng-if="method === 'openid-connect'">
         <span ng-repeat="provider in current_oidc_providers">
-          <a
+          <button
             ng-click="openidConnectAuth(provider)"
             alt="{{provider.public_info.description}}"
-            class="btn btn-lg btn-primary btn-login"
+            tabindex="0"
+            class="btn btn-block btn-lg btn-success-action"
           >
             <img
               ng-if="!!provider.public_info.icon"
@@ -223,7 +219,7 @@
               ng-src="{{provider.public_info.icon}}"
             />
             {{provider.public_info.title}}
-          </a>
+        </button>
         </span>
     </div>
   </div>
