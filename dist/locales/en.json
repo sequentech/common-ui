@@ -19,6 +19,7 @@
 		"name": "Sequent Tech"
 	},
 	"avRegistration": {
+		"openidLoginDescription": "Use an identity provider to authenticate:",
 		"defaultAuthMethod": "Default",
 		"languageName": "English",
 		"loginHeader": "Authenticate to vote",
