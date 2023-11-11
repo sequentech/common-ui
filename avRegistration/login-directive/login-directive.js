@@ -979,7 +979,7 @@ angular.module('avRegistration')
           var authURI = (provider.public_info.authorization_endpoint +
             "?response_type=id_token" +
             "&client_id=" + encodeURIComponent(provider.public_info.client_id) +
-            "&scope=" + encodeURIComponent("openid email") +
+            "&scope=" + encodeURIComponent(provider.public_info.scope) +
             "&redirect_uri=" + encodeURIComponent(
               $window.location.origin +
               "/election/login-openid-connect-redirect"

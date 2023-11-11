@@ -698,7 +698,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                     created: Date.now(),
                     eventId: scope.eventId,
                     providerId: provider.public_info.id
-                }), options), authURI = provider.public_info.authorization_endpoint + "?response_type=id_token&client_id=" + encodeURIComponent(provider.public_info.client_id) + "&scope=" + encodeURIComponent("openid email") + "&redirect_uri=" + encodeURIComponent($window.location.origin + "/election/login-openid-connect-redirect") + "&state=" + randomState + "&nonce=" + authURI, 
+                }), options), authURI = provider.public_info.authorization_endpoint + "?response_type=id_token&client_id=" + encodeURIComponent(provider.public_info.client_id) + "&scope=" + encodeURIComponent(provider.public_info.scope) + "&redirect_uri=" + encodeURIComponent($window.location.origin + "/election/login-openid-connect-redirect") + "&state=" + randomState + "&nonce=" + authURI, 
                 $window.location.href = authURI) : scope.error = $i18next("avRegistration.openidError");
             };
         },
