@@ -50,7 +50,7 @@ angular.module('avUi')
       scope.changeLang = function(lang)
       {
         $i18next.options.lng = lang;
-        $i18next.options.useLocalStorage = true;
+        //$i18next.options.useLocalStorage = true;
 
         // load i18n_overrides if any
         if (angular.isDefined($window.i18nOverride))
