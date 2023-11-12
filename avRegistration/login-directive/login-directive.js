@@ -247,6 +247,12 @@ angular.module('avRegistration')
         // Gets the list of current auth method providers
         function getCurrentOidcProviders(auth_event)
         {
+          if (
+            !auth_event.auth_method_config ||
+            auth_event.auth_method_config.config.provider_ids
+          ) {
+            return [];
+          }
           return _.map(
             auth_event.auth_method_config.config.provider_ids,
             function (provider_id) {
