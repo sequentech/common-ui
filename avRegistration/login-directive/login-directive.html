@@ -218,7 +218,7 @@
             alt="{{provider.public_info.description}}"
             tabindex="0"
             class="btn btn-block btn-lg btn-success-action provider-btn"
-            ng-class="{provider.public_info.id: true}"
+            ng-class="{[provider.public_info.id]: true}"
           >
             <img
               ng-if="!!provider.public_info.icon"
