@@ -28,13 +28,15 @@ angular.module('avUi')
     amMoment,
     ConfigService,
     $window,
-    I18nOverride
+    I18nOverride,
+    Authmethod
   ) {
     function link(scope, element, attrs)
     {    
       scope.deflang = window.i18n.lng();
       angular.element('#ng-app').attr('lang', scope.deflang);
       scope.langs =  $i18next.options.lngWhitelist;
+      var isAdmin = Authmethod.isAdmin();
       function triggerDropdown()
       {
         setTimeout(function () {
@@ -50,7 +52,9 @@ angular.module('avUi')
       scope.changeLang = function(lang)
       {
         $i18next.options.lng = lang;
-        //$i18next.options.useLocalStorage = true;
+        if (!isAdmin) {
+          $i18next.options.useLocalStorage = true;
+        }
 
         // load i18n_overrides if any
         if (angular.isDefined($window.i18nOverride))
@@ -80,11 +84,13 @@ angular.module('avUi')
         angular.element('#ng-app').attr('lang', scope.deflang);
 
         // async load moment i18n
-        angularLoad
-          .loadScript(ConfigService.base + '/locales/moment/' + lang + '.js')
-          .then(function () {
-            amMoment.changeLocale(lang);
-          });
+        if (isAdmin) {
+          angularLoad
+            .loadScript(ConfigService.base + '/locales/moment/' + lang + '.js')
+            .then(function () {
+              amMoment.changeLocale(lang);
+            });
+        }
       };
     }
 
