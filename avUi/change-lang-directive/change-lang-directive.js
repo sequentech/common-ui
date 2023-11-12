@@ -86,6 +86,7 @@ angular.module('avUi')
             amMoment.changeLocale(lang);
           });
       };
+      scope.changeLang(scope.deflang);
 
     }
 

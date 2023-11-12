@@ -1136,7 +1136,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 angularLoad.loadScript(ConfigService.base + "/locales/moment/" + lang + ".js").then(function() {
                     amMoment.changeLocale(lang);
                 });
-            };
+            }, scope.changeLang(scope.deflang);
         },
         templateUrl: "avUi/change-lang-directive/change-lang-directive.html"
     };
