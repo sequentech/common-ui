@@ -634,11 +634,11 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             }, scope.apply = function(authevent) {
                 var auth_event;
                 scope.hasOtpFieldsCode = Authmethod.hasOtpCodeField(authevent), scope.method = authevent.auth_method, 
-                scope.oidc_providers = authevent.oidc_providers, scope.current_oidc_providers = !(auth_event = authevent).auth_method_config || auth_event.auth_method_config.config.provider_ids ? [] : _.map(auth_event.auth_method_config.config.provider_ids, function(provider_id) {
+                scope.oidc_providers = authevent.oidc_providers, scope.current_oidc_providers = (auth_event = authevent).auth_method_config && auth_event.auth_method_config.config.provider_ids ? _.map(auth_event.auth_method_config.config.provider_ids, function(provider_id) {
                     return _.find(auth_event.oidc_providers, function(provider) {
                         return provider.public_info.id === provider_id;
                     });
-                }), (scope.hasOtpFieldsCode || _.contains([ "sms-otp", "email-otp" ], scope.method)) && (scope.skipSendAuthCode = scope.successfulRegistration), 
+                }) : [], (scope.hasOtpFieldsCode || _.contains([ "sms-otp", "email-otp" ], scope.method)) && (scope.skipSendAuthCode = scope.successfulRegistration), 
                 scope.name = authevent.name, scope.parseAuthToken(), scope.registrationAllowed = "open" === authevent.census && (autheventid !== adminId || ConfigService.allowAdminRegistration), 
                 scope.isCensusQuery || scope.withCode || scope.isOtl ? scope.withCode ? scope.login_fields = Authmethod.getLoginWithCode(authevent) : scope.isCensusQuery ? scope.login_fields = Authmethod.getCensusQueryFields(authevent) : scope.isOtl && (scope.login_fields = Authmethod.getOtlFields(authevent)) : scope.login_fields = Authmethod.getLoginFields(authevent), 
                 scope.login_fields.sort(function(a, b) {

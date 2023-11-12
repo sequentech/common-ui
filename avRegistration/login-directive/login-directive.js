@@ -249,7 +249,7 @@ angular.module('avRegistration')
         {
           if (
             !auth_event.auth_method_config ||
-            auth_event.auth_method_config.config.provider_ids
+            !auth_event.auth_method_config.config.provider_ids
           ) {
             return [];
           }
