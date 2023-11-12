@@ -634,7 +634,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             }, scope.apply = function(authevent) {
                 var auth_event;
                 scope.hasOtpFieldsCode = Authmethod.hasOtpCodeField(authevent), scope.method = authevent.auth_method, 
-                scope.oidc_providers = authevent.oidc_providers, scope.current_oidc_providers = (auth_event = authevent).auth_method_config && auth_event.auth_method_config.config.provider_ids ? _.map(auth_event.auth_method_config.config.provider_ids, function(provider_id) {
+                scope.oidc_providers = authevent.oidc_providers, scope.current_oidc_providers = (auth_event = authevent).auth_method_config && auth_event.auth_method_config.config && auth_event.auth_method_config.config.provider_ids ? _.map(auth_event.auth_method_config.config.provider_ids, function(provider_id) {
                     return _.find(auth_event.oidc_providers, function(provider) {
                         return provider.public_info.id === provider_id;
                     });
