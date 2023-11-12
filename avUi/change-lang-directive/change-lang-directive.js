@@ -86,9 +86,6 @@ angular.module('avUi')
             amMoment.changeLocale(lang);
           });
       };
-      setTimeout(function () {
-        scope.changeLang(scope.deflang);
-      }, 5000);
     }
 
     return {
