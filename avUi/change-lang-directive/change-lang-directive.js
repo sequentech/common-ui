@@ -84,11 +84,11 @@ angular.module('avUi')
           .then(function () {
             amMoment.changeLocale(lang);
           });
-        $i18next.options.useLocalStorage = true;
+        setTimeout(function () {
+          $i18next.options.useLocalStorage = true;
+        }, 1000);
       };
-      setTimeout(function () {
-        scope.changeLang(scope.deflang);
-      }, 100);
+      scope.changeLang(scope.deflang);
     }
 
     return {

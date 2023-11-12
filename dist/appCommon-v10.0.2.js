@@ -1135,10 +1135,10 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 }, ConfigService.i18nextCookieOptions)), scope.deflang = lang, angular.element("#ng-app").attr("lang", scope.deflang), 
                 angularLoad.loadScript(ConfigService.base + "/locales/moment/" + lang + ".js").then(function() {
                     amMoment.changeLocale(lang);
-                }), $i18next.options.useLocalStorage = !0;
-            }, setTimeout(function() {
-                scope.changeLang(scope.deflang);
-            }, 100);
+                }), setTimeout(function() {
+                    $i18next.options.useLocalStorage = !0;
+                }, 1e3);
+            }, scope.changeLang(scope.deflang);
         },
         templateUrl: "avUi/change-lang-directive/change-lang-directive.html"
     };
