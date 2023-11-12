@@ -472,13 +472,28 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 paramName2 = paramName2.replace(/[\[\]]/g, "\\$&"), params = new RegExp("[?&]" + paramName2 + "(=([^&#]*)|&|#|$)").exec(params);
                 return params ? params[2] ? decodeURIComponent(params[2].replace(/\+/g, " ")) : "" : null;
             }
-            if (scope.isOpenId) {
+            function setOIDCErrorCookie(errorCodename) {
+                var options = {};
+                ConfigService.authTokenExpirationSeconds && (options.expires = new Date(Date.now() + 1e3 * ConfigService.authTokenExpirationSeconds)), 
+                $cookies.put("OIDC_ERROR_COOKIE", angular.toJson({
+                    altAuthMethodId: scope.current_alt_auth_method_id,
+                    eventId: scope.eventId,
+                    errorCodename: errorCodename
+                }), options);
+            }
+            function setError(errorCodename, error) {
+                scope.error = error, scope.isOpenId && (setOIDCErrorCookie(errorCodename), redirectToLogin());
+            }
+            if (scope.oidcError = $cookies.get("OIDC_ERROR_COOKIE") ? angular.fromJson($cookies.get("OIDC_ERROR_COOKIE")) : null, 
+            scope.oidcError && (scope.selectedAltMethod = scope.oidcError.altAuthMethodId, scope.error = $i18next("avRegistration.loginError.openid-connect." + scope.oidcError.errorCodename, {
+                support: '<a href="mailto:' + ConfigService.contact.email + '" target="_blank">' + ConfigService.contact.email + "</a>"
+            })), scope.isOpenId) {
                 if (!function() {
-                    if ($cookies.get("OIDC_CSRF")) {
-                        var csrf = scope.csrf = angular.fromJson($cookies.get("OIDC_CSRF")), uri = "?" + $window.location.hash.substr(1);
-                        if ($cookies.remove("OIDC_CSRF"), !!csrf && angular.isObject(csrf) && angular.isString(csrf.randomState) && angular.isString(csrf.randomNonce) && angular.isString(csrf.providerId) && angular.isNumber(csrf.created) && angular.isDefined(csrf.altAuthMethodId) && getURIParameter("state", uri) === csrf.randomState && csrf.created - Date.now() < ConfigService.authTokenExpirationSeconds) return 1;
-                        redirectToLogin();
-                    } else redirectToLogin();
+                    if (!$cookies.get("OIDC_CSRF")) return setOIDCErrorCookie("unexpectedOIDCRedirect"), 
+                    void redirectToLogin();
+                    var csrf = scope.csrf = angular.fromJson($cookies.get("OIDC_CSRF")), uri = "?" + $window.location.hash.substr(1);
+                    return $cookies.remove("OIDC_CSRF"), !!csrf && angular.isObject(csrf) && angular.isString(csrf.randomState) && angular.isString(csrf.randomNonce) && angular.isString(csrf.providerId) && angular.isNumber(csrf.created) && angular.isDefined(csrf.altAuthMethodId) && getURIParameter("state", uri) === csrf.randomState && csrf.created - Date.now() < ConfigService.authTokenExpirationSeconds ? 1 : (setOIDCErrorCookie("invalidCsrf"), 
+                    void redirectToLogin());
                 }()) return;
                 autheventid = scope.eventId = attrs.eventId = scope.csrf.eventId, scope.selectedAltMethod = scope.csrf.altAuthMethodId;
             } else autheventid = scope.eventId = attrs.eventId;
@@ -606,17 +621,17 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                                 sessionStartedAtMs: sessionStartedAtMs
                             };
                         }).value(), $window.sessionStorage.setItem("vote_permission_tokens", JSON.stringify(tokens)), 
-                        $window.location.href = "/booth/" + autheventid + "/vote") : scope.error = $i18next("avRegistration.loginError." + scope.method + ".unrecognizedServerResponse", {
+                        $window.location.href = "/booth/" + autheventid + "/vote") : setError("unrecognizedServerResponse", $i18next("avRegistration.loginError." + scope.method + ".unrecognizedServerResponse", {
                             support: '<a href="mailto:' + ConfigService.contact.email + '" target="_blank">' + ConfigService.contact.email + "</a>"
-                        })) : (scope.sendingData = !1, scope.error = $i18next("avRegistration.loginError." + scope.method + ".invalidServerResponse", {
+                        }))) : (scope.sendingData = !1, setError("invalidServerResponse", $i18next("avRegistration.loginError." + scope.method + ".invalidServerResponse", {
                             support: '<a href="mailto:' + ConfigService.contact.email + '" target="_blank">' + ConfigService.contact.email + "</a>"
-                        }));
+                        })));
                     }, function(codename) {
                         scope.sendingData = !1;
                         codename = codename.data.error_codename;
-                        scope.error = $i18next("avRegistration.loginError." + scope.method + "." + codename, {
+                        setError("codename", $i18next("avRegistration.loginError." + scope.method + "." + codename, {
                             support: '<a href="mailto:' + ConfigService.contact.email + '" target="_blank">' + ConfigService.contact.email + "</a>"
-                        });
+                        }));
                     });
                 }
             }, scope.getUriParam = function(paramName2) {
@@ -670,7 +685,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 filledFields = _.filter(filledFields, function(el) {
                     return null !== el.value || "otp-code" === el.type;
                 });
-                !scope.isOpenId && filledFields.length !== scope.login_fields.length || scope.isOtl || scope.isCensusQuery || scope.withCode || scope.loginUser(!0);
+                !scope.isOpenId && filledFields.length !== scope.login_fields.length || scope.isOtl || scope.isCensusQuery || scope.withCode || scope.oidcError || scope.loginUser(!0);
             }, scope.view = function(id) {
                 Authmethod.viewEvent(id).then(function(altAuthMethod) {
                     "ok" === altAuthMethod.data.status ? (scope.base_authevent = angular.copy(altAuthMethod.data.events), 

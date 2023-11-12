@@ -32,6 +32,7 @@ angular.module('avRegistration')
       Patterns)
     {
       var OIDC_CSRF_COOKIE = "OIDC_CSRF";
+      var OIDC_ERROR_COOKIE = "OIDC_ERROR_COOKIE";
       // we use it as something similar to a controller here
       function link(scope, element, attrs)
       {
@@ -58,7 +59,26 @@ angular.module('avRegistration')
         var adminId = ConfigService.freeAuthId + '';
         var autheventid = null;
 
+        function parseOidcErrorCookie()
+        {
+          if (!$cookies.get(OIDC_ERROR_COOKIE))
+          {
+            return null;
+          }
 
+          // validate csrf token format and data
+          return angular.fromJson($cookies.get(OIDC_ERROR_COOKIE));
+        }
+        scope.oidcError = parseOidcErrorCookie();
+        if (scope.oidcError) {
+          scope.selectedAltMethod = scope.oidcError.altAuthMethodId;
+          scope.error = $i18next(
+            'avRegistration.loginError.openid-connect.' + scope.oidcError.errorCodename, 
+            {
+              support: '<a href="mailto:' + ConfigService.contact.email + '" target="_blank">' + ConfigService.contact.email + "</a>"
+            }
+          );
+        }
 
         // simply redirect to login
         function simpleRedirectToLogin()
@@ -134,11 +154,40 @@ angular.module('avRegistration')
           return decodeURIComponent(params[2].replace(/\+/g, ' '));
         }
 
+        function setOIDCErrorCookie(errorCodename)
+        {
+          var options = {};
+          if (ConfigService.authTokenExpirationSeconds) {
+            options.expires = new Date(
+              Date.now() + 1000 * ConfigService.authTokenExpirationSeconds
+            );
+          }
+          $cookies.put(
+            OIDC_ERROR_COOKIE,
+            angular.toJson({
+              altAuthMethodId: scope.current_alt_auth_method_id,
+              eventId: scope.eventId,
+              errorCodename: errorCodename
+            }),
+            options
+          );
+        }
+
+        function setError(errorCodename, error)
+        {
+          scope.error = error;
+          if (scope.isOpenId) {
+            setOIDCErrorCookie(errorCodename);
+            redirectToLogin();
+          }
+        }
+
         // Validates the CSRF token
         function validateCsrfToken()
         {
           if (!$cookies.get(OIDC_CSRF_COOKIE))
           {
+            setOIDCErrorCookie("unexpectedOIDCRedirect");
             redirectToLogin();
             return null;
           }
@@ -179,6 +228,7 @@ angular.module('avRegistration')
 
           if (!isCsrfValid)
           {
+            setOIDCErrorCookie("invalidCsrf");
             redirectToLogin();
             return null;
           }
@@ -569,7 +619,9 @@ angular.module('avRegistration')
                   var postfix = "_authevent_" + autheventid;
                   var options = {};
                   if (ConfigService.authTokenExpirationSeconds) {
-                    options.expires = new Date(Date.now() + 1000 * ConfigService.authTokenExpirationSeconds);
+                    options.expires = new Date(
+                      Date.now() + 1000 * ConfigService.authTokenExpirationSeconds
+                    );
                   }
                   $cookies.put("authevent_" + autheventid, autheventid, options);
                   $cookies.put("userid" + postfix, response.data.username, options);
@@ -644,25 +696,35 @@ angular.module('avRegistration')
 
                     $window.location.href = '/booth/' + autheventid + '/vote';
                   } else {
-                    scope.error = $i18next(
-                      'avRegistration.loginError.' + scope.method + '.unrecognizedServerResponse', 
-                      {support: '<a href="mailto:' + ConfigService.contact.email + '" target="_blank">' + ConfigService.contact.email + "</a>"}
+                    setError(
+                      "unrecognizedServerResponse",
+                      $i18next(
+                        'avRegistration.loginError.' + scope.method + '.unrecognizedServerResponse', 
+                        {support: '<a href="mailto:' + ConfigService.contact.email + '" target="_blank">' + ConfigService.contact.email + "</a>"}
+                      )
                     );
                   }
                 } else {
                   scope.sendingData = false;
-                  scope.error = $i18next(
-                    'avRegistration.loginError.' + scope.method + '.invalidServerResponse', 
-                    {support: '<a href="mailto:' + ConfigService.contact.email + '" target="_blank">' + ConfigService.contact.email + "</a>"}
+                  setError(
+                    "invalidServerResponse",
+                    $i18next(
+                      'avRegistration.loginError.' + scope.method + '.invalidServerResponse', 
+                      {support: '<a href="mailto:' + ConfigService.contact.email + '" target="_blank">' + ConfigService.contact.email + "</a>"}
+                    )
                   );
                 }
             },
             function onError(response) {
               scope.sendingData = false;
               var codename = response.data.error_codename;
-              scope.error = $i18next(
-                'avRegistration.loginError.' + scope.method + '.' + codename,
-                {support: '<a href="mailto:' + ConfigService.contact.email + '" target="_blank">' + ConfigService.contact.email + "</a>"}
+
+              setError(
+                "codename",
+                $i18next(
+                  'avRegistration.loginError.' + scope.method + '.' + codename,
+                  {support: '<a href="mailto:' + ConfigService.contact.email + '" target="_blank">' + ConfigService.contact.email + "</a>"}
+                )
               );
             }
           );
@@ -901,7 +963,8 @@ angular.module('avRegistration')
             if (
               !scope.isOtl &&
               !scope.isCensusQuery &&
-              !scope.withCode
+              !scope.withCode &&
+              !scope.oidcError
             ) {
               scope.loginUser(true);
             }
