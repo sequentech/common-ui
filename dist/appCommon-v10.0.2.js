@@ -1121,8 +1121,11 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 ipCookie("lang", lang, _.extend({
                     expires: 360,
                     path: "/"
-                }, ConfigService.i18nextCookieOptions)), scope.deflang = lang, angular.element("#ng-app").attr("lang", scope.deflang);
-            }, $i18next.options.useLocalStorage = !0;
+                }, ConfigService.i18nextCookieOptions)), scope.deflang = lang, angular.element("#ng-app").attr("lang", scope.deflang), 
+                angularLoad.loadScript(ConfigService.base + "/locales/moment/" + lang + ".js").then(function() {
+                    amMoment.changeLocale(lang);
+                });
+            };
         },
         templateUrl: "avUi/change-lang-directive/change-lang-directive.html"
     };
