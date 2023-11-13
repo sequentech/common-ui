@@ -1,20 +1,15 @@
-<div class="container-login">
+<div class="container-login" ng-if="!isOpenId">
   <div class="row">
     <div class="col-sm-12 loginheader">
         <h3
           class="tex-center login-header-text"
-          ng-if="!isAdmin && !isOtl && !isCensusQuery && method !== 'openid-connect'"
+          ng-if="!isAdmin && !isOtl && !isCensusQuery"
           ng-i18next="[i18next]({name: orgName})avRegistration.loginHeader">
         </h3>
         <h3
           class="tex-center login-header-text"
           ng-if="isAdmin && !isOtl"
           ng-i18next="[i18next]avRegistration.adminLoginHeader">
-        </h3>
-        <h3
-          class="tex-center login-header-text"
-          ng-if="!isCensusQuery && method === 'openid-connect'"
-          ng-i18next="[i18next]avRegistration.loginButton">
         </h3>
         <h3
           class="tex-center login-header-text"
@@ -82,8 +77,8 @@
                   class="error text-danger"
                   role="alert"
                   ng-if="error"
-                  ng-bind-html="error"
-                ></div>
+                  ng-i18next
+                >[html:i18next]({{errorData}}){{error}}</div>
               </div>
               <div class="input-warn">
                 <div class="warn-box" ng-if="!form.$valid || sendingData" >
@@ -209,20 +204,41 @@
       </p>
     </div>
 
-    <div class="col-sm-12 text-center" ng-if="method === 'openid-connect'">
-        <span ng-repeat="provider in openIDConnectProviders">
-          <a
+    <div class="col-sm-12 text-center oidc-section" ng-if="method === 'openid-connect'">
+        <p
+          class="oidc-login-description"
+          ng-i18next="[html]avRegistration.openidLoginDescription"
+        ></p>
+        <span
+          ng-repeat="provider in current_oidc_providers"
+          class="provider-span"
+        >
+          <button
             ng-click="openidConnectAuth(provider)"
-            alt="{{provider.description}}"
-            class="btn btn-lg btn-primary btn-login">
+            alt="{{provider.public_info.description}}"
+            tabindex="0"
+            class="btn btn-block btn-lg btn-success-action provider-btn"
+            ng-class="{[provider.public_info.id]: true}"
+          >
             <img
-              ng-if="!!provider.icon"
-              alt="{{provider.description}}"
+              ng-if="!!provider.public_info.icon"
+              alt="{{provider.public_info.description}}"
               class="logo-img"
-              ng-src="{{provider.icon}}" />
-            {{provider.title}}
-          </a>
+              ng-src="{{provider.public_info.icon}}"
+            />
+            {{provider.public_info.title}}
+        </button>
         </span>
+        <div class="button-group">
+          <div class="input-error">
+            <div
+              class="error text-danger"
+              role="alert"
+              ng-if="error"
+              ng-i18next
+            >[html:i18next]({{errorData}}){{error}}</div>
+          </div>
+        </div>
     </div>
   </div>
 </div>

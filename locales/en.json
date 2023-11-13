@@ -20,6 +20,7 @@
     "name": "Sequent Tech"
   },
   "avRegistration": {
+    "openidLoginDescription": "Use an identity provider to authenticate:",
     "defaultAuthMethod": "Default",
     "languageName": "English",
     "loginHeader": "Authenticate to vote",
@@ -49,6 +50,22 @@
         "INVALID_USER_CREDENTIALS": "<strong>Invalid User Credentials</strong>.There are multiple reasons why this can happen:<ul><li>Your email or authentication code are invalid.</li><li>Some other authentication credentials are invalid.</li><li>You are not part of the census.</li></ul><p>Please review your credentials and try again.<p>If you think this is an error, please contact support at __support__.</p>"
       },
       "email-otp": {
+        "unrecognizedServerResponse": "There was an error during authentication: <strong>Unrecognized Server Response</strong>.<p>Please try again later. If the problem persists, please contact support at __support__.</p>",
+        "invalidServerResponse": "There was an error during authentication: <strong>Invalid Server Response</strong>.<p>Please try again later. If the problem persists, please contact support at __support__.</p>",
+        "INTERNAL_SERVER_ERROR": "There was an error during authentication: <strong>Internal Server Error</strong>.<p>Please try again later. If the problem persists, please contact support at __support__.</p>",
+        "BAD_REQUEST": "There was an error during authentication: <strong>Bad Request</strong>.<p>Please try again later. If the problem persists, please contact support at __support__.</p>",
+        "INVALID_REQUEST": "There was an error during authentication: <strong>Invalid Request</strong>.<p>Please try again later. If the problem persists, please contact support at __support__.</p>",
+        "GENERAL_ERROR": "There was an error during authentication: <strong>General Error</strong>.<p>Please try again later. If the problem persists, please contact support at __support__.</p>",
+        "AUTH_EVENT_NOT_FOUND": "The election in which you are trying to authenticate was not found.<p>Please review you have the correct link. If the problem persists, please contact support at __support__.</p>",
+        "AUTH_EVENT_NOT_STARTED": "The voting period of the election is not open. It might be temporarely paused, stopped or not yet opened.<p>Please review and try again later. If the problem persists, please contact support at __support__.</p>",
+        "CANT_VOTE_MORE_TIMES": "Your authentication was successful, but we have already recorded a vote from you and you can't vote more times.<p>If you think this is an error, please contact support at __support__.</p>",
+        "CANT_AUTHENTICATE_TO_PARENT": "You are trying to authenticate to the wrong election. Please authenticate the parent election.<p>If you think this is an error, please contact support at __support__.</p>",
+        "INVALID_USER_CREDENTIALS": "<strong>Invalid User Credentials</strong>.There are multiple reasons why this can happen:<ul><li>Your email or authentication code are invalid.</li><li>Some other authentication credentials are invalid.</li><li>You are not part of the census.</li></ul><p>Please review your credentials and try again.<p>If you think this is an error, please contact support at __support__.</p>"
+      },
+      "openid-connect": {
+        "providerNotFound": "There was an error during authentication: <strong>OIDC Provider not found</strong>.<p>Please try again later. If the problem persists, please contact support at __support__.</p>",
+        "invalidCsrf": "There was an error during authentication: <strong>Invalid OIDC CSRF Token</strong>.<p>Please try again later. If the problem persists, please contact support at __support__.</p>",
+        "unexpectedOIDCRedirect": "There was an error during authentication: <strong>Unexpected OIDC Redirect</strong>.<p>Please try again later. If the problem persists, please contact support at __support__.</p>",
         "unrecognizedServerResponse": "There was an error during authentication: <strong>Unrecognized Server Response</strong>.<p>Please try again later. If the problem persists, please contact support at __support__.</p>",
         "invalidServerResponse": "There was an error during authentication: <strong>Invalid Server Response</strong>.<p>Please try again later. If the problem persists, please contact support at __support__.</p>",
         "INTERNAL_SERVER_ERROR": "There was an error during authentication: <strong>Internal Server Error</strong>.<p>Please try again later. If the problem persists, please contact support at __support__.</p>",
