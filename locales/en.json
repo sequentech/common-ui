@@ -63,9 +63,9 @@
         "INVALID_USER_CREDENTIALS": "<strong>Invalid User Credentials</strong>.There are multiple reasons why this can happen:<ul><li>Your email or authentication code are invalid.</li><li>Some other authentication credentials are invalid.</li><li>You are not part of the census.</li></ul><p>Please review your credentials and try again.<p>If you think this is an error, please contact support at __support__.</p>"
       },
       "openid-connect": {
-        "providerNotFound": "There was an error during authentication: <strong>Provider not found</strong>.<p>Please try again later. If the problem persists, please contact support at __support__.</p>",
-        "invalidCsrf": "There was an error during authentication: <strong>Invalid CSRF Token</strong>.<p>Please try again later. If the problem persists, please contact support at __support__.</p>",
-        "unexpectedOIDCRedirect": "There was an error during authentication: <strong>Unexpected OpenID Redirect</strong>.<p>Please try again later. If the problem persists, please contact support at __support__.</p>",
+        "providerNotFound": "There was an error during authentication: <strong>OIDC Provider not found</strong>.<p>Please try again later. If the problem persists, please contact support at __support__.</p>",
+        "invalidCsrf": "There was an error during authentication: <strong>Invalid OIDC CSRF Token</strong>.<p>Please try again later. If the problem persists, please contact support at __support__.</p>",
+        "unexpectedOIDCRedirect": "There was an error during authentication: <strong>Unexpected OIDC Redirect</strong>.<p>Please try again later. If the problem persists, please contact support at __support__.</p>",
         "unrecognizedServerResponse": "There was an error during authentication: <strong>Unrecognized Server Response</strong>.<p>Please try again later. If the problem persists, please contact support at __support__.</p>",
         "invalidServerResponse": "There was an error during authentication: <strong>Invalid Server Response</strong>.<p>Please try again later. If the problem persists, please contact support at __support__.</p>",
         "INTERNAL_SERVER_ERROR": "There was an error during authentication: <strong>Internal Server Error</strong>.<p>Please try again later. If the problem persists, please contact support at __support__.</p>",
