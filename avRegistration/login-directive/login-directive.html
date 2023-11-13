@@ -77,8 +77,8 @@
                   class="error text-danger"
                   role="alert"
                   ng-if="error"
-                  ng-bind-html="error"
-                ></div>
+                  ng-i18next
+                >[html:i18next]({{errorData}}){{error}}</div>
               </div>
               <div class="input-warn">
                 <div class="warn-box" ng-if="!form.$valid || sendingData" >

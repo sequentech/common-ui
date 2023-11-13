@@ -42,6 +42,7 @@ angular.module('avRegistration')
         scope.isOpenId = attrs.isOpenId;
         scope.otlSecret = attrs.otlSecret;
         scope.error = null;
+        scope.errorData = null;
         scope.current_alt_auth_method_id = undefined;
         scope.alternative_auth_methods = null;
 
@@ -68,15 +69,16 @@ angular.module('avRegistration')
           // validate csrf token format and data
           return angular.fromJson($cookies.get(OIDC_ERROR_COOKIE));
         }
+
         scope.oidcError = parseOidcErrorCookie();
         if (scope.oidcError) {
           scope.selectedAltMethod = scope.oidcError.altAuthMethodId;
-          scope.error = $i18next(
-            'avRegistration.loginError.openid-connect.' + scope.oidcError.errorCodename, 
-            {
-              support: '<a href="mailto:' + ConfigService.contact.email + '" target="_blank">' + ConfigService.contact.email + "</a>"
-            }
+          /* jshint ignore:start */
+          setError(
+            scope.oidcError.errorCodename,
+            'avRegistration.loginError.openid-connect.' + scope.oidcError.errorCodename
           );
+          /* jshint ignore:end */
         }
 
         // simply redirect to login
@@ -248,6 +250,9 @@ angular.module('avRegistration')
         function setError(errorCodename, error)
         {
           scope.error = error;
+          scope.errorData = angular.toJson({
+            support: '<a href="mailto:' + ConfigService.contact.email + '" target="_blank">' + ConfigService.contact.email + "</a>"
+          });
           if (scope.isOpenId) {
             setOIDCErrorCookie(errorCodename);
             redirectToLogin();
@@ -488,7 +493,7 @@ angular.module('avRegistration')
               }
             );
             scope.currentFormStep = 1;
-            scope.error = null;
+            setError(null, null);
             $timeout(scope.sendingDataTimeout, 3000);
           }
 
@@ -504,7 +509,10 @@ angular.module('avRegistration')
               onAuthCodeSent,
               function onError(response) {
                 $timeout(scope.sendingDataTimeout, 3000);
-                scope.error = $i18next('avRegistration.errorSendingAuthCode');
+                setError(
+                  null,
+                  'avRegistration.errorSendingAuthCode'
+                );
               }
             );
         };
@@ -659,7 +667,7 @@ angular.module('avRegistration')
           }
 
           scope.sendingData = true;
-          scope.error = null;
+          setError(null, null);
 
           var sessionStartedAtMs = Date.now();
           Authmethod
@@ -749,20 +757,14 @@ angular.module('avRegistration')
                   } else {
                     setError(
                       "unrecognizedServerResponse",
-                      $i18next(
-                        'avRegistration.loginError.' + scope.method + '.unrecognizedServerResponse', 
-                        {support: '<a href="mailto:' + ConfigService.contact.email + '" target="_blank">' + ConfigService.contact.email + "</a>"}
-                      )
+                      'avRegistration.loginError.' + scope.method + '.unrecognizedServerResponse'
                     );
                   }
                 } else {
                   scope.sendingData = false;
                   setError(
                     "invalidServerResponse",
-                    $i18next(
-                      'avRegistration.loginError.' + scope.method + '.invalidServerResponse', 
-                      {support: '<a href="mailto:' + ConfigService.contact.email + '" target="_blank">' + ConfigService.contact.email + "</a>"}
-                    )
+                    'avRegistration.loginError.' + scope.method + '.invalidServerResponse'
                   );
                 }
             },
@@ -772,10 +774,7 @@ angular.module('avRegistration')
 
               setError(
                 codename,
-                $i18next(
-                  'avRegistration.loginError.' + scope.method + '.' + codename,
-                  {support: '<a href="mailto:' + ConfigService.contact.email + '" target="_blank">' + ConfigService.contact.email + "</a>"}
-                )
+                'avRegistration.loginError.' + scope.method + '.' + codename
               );
             }
           );
@@ -1071,7 +1070,10 @@ angular.module('avRegistration')
           // find provider
           if (!provider)
           {
-            scope.error = $i18next('avRegistration.openidError');
+            setError(
+              'providerNotFound',
+              'avRegistration.loginError.openid-connect.providerNotFound'
+            );
             return;
           }
 
