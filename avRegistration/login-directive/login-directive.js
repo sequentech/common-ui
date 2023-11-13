@@ -22,7 +22,6 @@ angular.module('avRegistration')
       Authmethod,
       StateDataService,
       $state,
-      $stateParams,
       $location,
       $cookies,
       $i18next,
@@ -31,6 +30,8 @@ angular.module('avRegistration')
       ConfigService,
       Patterns)
     {
+      var OIDC_CSRF_COOKIE = "OIDC_CSRF";
+      var OIDC_ERROR_COOKIE = "OIDC_ERROR_COOKIE";
       // we use it as something similar to a controller here
       function link(scope, element, attrs)
       {
@@ -38,10 +39,14 @@ angular.module('avRegistration')
         scope.withCode = attrs.withCode;
         scope.username = attrs.username;
         scope.isOtl = attrs.isOtl;
+        scope.isOpenId = attrs.isOpenId;
         scope.otlSecret = attrs.otlSecret;
         scope.error = null;
+        scope.errorData = null;
         scope.current_alt_auth_method_id = undefined;
         scope.alternative_auth_methods = null;
+
+        scope.csrf = null;
 
         if (!attrs.withAltMethod || !attrs.selectedAltMethod) {
           scope.selectedAltMethod = null;
@@ -52,9 +57,274 @@ angular.module('avRegistration')
         // by default
         scope.hide_default_login_lookup_field = false;
         var adminId = ConfigService.freeAuthId + '';
-        var autheventid = scope.eventId = attrs.eventId;
+        var autheventid = null;
+
+        function parseOidcErrorCookie()
+        {
+          if (!$cookies.get(OIDC_ERROR_COOKIE))
+          {
+            return null;
+          }
+          var oidcError = angular.fromJson($cookies.get(OIDC_ERROR_COOKIE));
+          $cookies.remove(OIDC_ERROR_COOKIE);
+
+          // validate csrf token format and data
+          return oidcError;
+        }
+
+        scope.oidcError = parseOidcErrorCookie();
+        if (scope.oidcError) {
+          scope.selectedAltMethod = scope.oidcError.altAuthMethodId;
+          /* jshint ignore:start */
+          setError(
+            scope.oidcError.errorCodename,
+            'avRegistration.loginError.openid-connect.' + scope.oidcError.errorCodename
+          );
+          /* jshint ignore:end */
+        }
+
+        // simply redirect to login
+        function simpleRedirectToLogin()
+        {
+          if (scope.csrf)
+          {
+            $window.location.href = "/election/" + scope.csrf.eventId + "/public/login";
+          } else  {
+            $window.location.href = ConfigService.defaultRoute;
+          }
+        }
+
+        // Gets the list of current auth method providers
+        function getCurrentOidcProviders(auth_event)
+        {
+          if (
+            !auth_event.auth_method_config ||
+            !auth_event.auth_method_config.config ||
+            !auth_event.auth_method_config.config.provider_ids
+          ) {
+            return [];
+          }
+          return _.map(
+            auth_event.auth_method_config.config.provider_ids,
+            function (provider_id) {
+              return _.find(
+                auth_event.oidc_providers,
+                function (provider) { return provider.public_info.id === provider_id; }
+              );
+            }
+          );
+        }
+
+        // Returns the logout url if any from the appropiate openidprovider
+        // TODO: logout asumes that you are using the first provider, so it
+        // basically supports only one provider
+        function getLogoutUri(authEvent)
+        {
+          var eventId = null;
+          var redirectUri = null;
+          if (scope.csrf)
+          {
+            eventId = scope.csrf.eventId;
+            redirectUri = "/election/" + eventId + "/public/login";
+          } else {
+            redirectUri = ConfigService.defaultRoute;
+          }
+          scope.oidc_providers = authEvent.oidc_providers;
+          scope.current_oidc_providers = getCurrentOidcProviders(authEvent);
+
+          if (scope.current_oidc_providers.length === 0)
+          {
+            return redirectUri;
+          }
+
+          var oidcProvider = _.find(
+            authEvent.oidc_providers,
+            function (provider) {
+              return provider.public_info.id === scope.csrf.providerId;
+            }
+          );
+
+          if (!oidcProvider || !oidcProvider.logout_uri) {
+            return redirectUri;
+          }
+
+          redirectUri = oidcProvider.logout_uri;
+          redirectUri = redirectUri.replace("__EVENT_ID__", "" + eventId);
+
+          var postfix = "_authevent_" + eventId;
+          if (!!$cookies.get("id_token_" + postfix))
+          {
+            redirectUri = redirectUri.replace(
+              "__ID_TOKEN__", $cookies.get("id_token_" + postfix)
+            );
+
+          // if __ID_TOKEN__ is there but we cannot replace it, we need to
+          // directly redirect to the login, otherwise the URI might show an
+          // error 500
+          } else if (redirectUri.indexOf("__ID_TOKEN__") > -1)
+          {
+            redirectUri = "/election/" + eventId + "/public/login";
+          }
+
+          return redirectUri;
+        }
+
+        // Redirects to the login page of the respective event_id if any
+        function redirectToLogin()
+        {
+          if (scope.sendingData)
+          {
+            return;
+          }
+
+          scope.sendingData = true;
+
+          if (!scope.csrf || !scope.csrf.eventId)
+          {
+            $window.location.href = ConfigService.defaultRoute;
+            return;
+          }
+
+          var eventId = scope.csrf.eventId;
+          Authmethod.viewEvent(eventId)
+            .then(
+              function onSuccess(response)
+              {
+                if (
+                  response.data.status !== "ok" ||
+                  !response.data.events
+                ) {
+                  simpleRedirectToLogin();
+                  return;
+                }
+
+                var postfix = "_authevent_" + eventId;
+                var uri = getLogoutUri(response.data.events);
+                $cookies.remove("id_token_" + postfix);
+                $window.location.href = uri;
+              },
+              function onError()
+              {
+                simpleRedirectToLogin();
+              }
+            );
+        }
+
+        // Get the decoded value of a uri parameter from any uri. The uri does
+        // not need to have any domain, it can start with the character "?"
+        function getURIParameter(paramName, uri)
+        {
+          var paramName2 = paramName.replace(/[\[\]]/g, '\\$&');
+          var rx = new RegExp('[?&]' + paramName2 + '(=([^&#]*)|&|#|$)');
+          var params = rx.exec(uri);
+
+          if (!params)
+          {
+            return null;
+          }
+
+          if (!params[2])
+          {
+            return '';
+          }
+          return decodeURIComponent(params[2].replace(/\+/g, ' '));
+        }
+
+        function setOIDCErrorCookie(errorCodename)
+        {
+          var options = {};
+          if (ConfigService.authTokenExpirationSeconds) {
+            options.expires = new Date(
+              Date.now() + 1000 * ConfigService.authTokenExpirationSeconds
+            );
+          }
+          $cookies.put(
+            OIDC_ERROR_COOKIE,
+            angular.toJson({
+              altAuthMethodId: scope.current_alt_auth_method_id,
+              eventId: scope.eventId,
+              errorCodename: errorCodename
+            }),
+            options
+          );
+        }
+
+        function setError(errorCodename, error)
+        {
+          scope.error = error;
+          scope.errorData = angular.toJson({
+            support: '<a href="mailto:' + ConfigService.contact.email + '" target="_blank">' + ConfigService.contact.email + "</a>"
+          });
+          if (scope.isOpenId) {
+            setOIDCErrorCookie(errorCodename);
+            redirectToLogin();
+          }
+        }
+
+        // Validates the CSRF token
+        function validateCsrfToken()
+        {
+          if (!$cookies.get(OIDC_CSRF_COOKIE))
+          {
+            setOIDCErrorCookie("unexpectedOIDCRedirect");
+            redirectToLogin();
+            return null;
+          }
+
+          // validate csrf token format and data
+          var csrf = scope.csrf = angular.fromJson($cookies.get(OIDC_CSRF_COOKIE));
+          var uri = "?" + $window.location.hash.substr(1);
+
+          // NOTE: if you need to debug this callback, obtain the callback
+          // URL, get the callback received in the server (to obtain the
+          // nonce) that was received by the client and change the data here
+          // accordingly and set here the debug break point, then execute
+          // a line like the following in the comment.
+          //
+          // The only data that needs to be changed is the randomNonnce and
+          // the eventId.
+          //
+          // csrf = scope.csrf = {
+          //   randomNonce: 'something',
+          //   randomState: getURIParameter("state", uri),
+          //   altAuthMethodId: null,
+          //   created: Date.now(),
+          //   providerId: 'google',
+          //   eventId: 11111
+          // };
+
+          $cookies.remove(OIDC_CSRF_COOKIE);
+          var isCsrfValid = (!!csrf &&
+            angular.isObject(csrf) &&
+            angular.isString(csrf.randomState) &&
+            angular.isString(csrf.randomNonce) &&
+            angular.isString(csrf.providerId) &&
+            angular.isNumber(csrf.created) &&
+            angular.isDefined(csrf.altAuthMethodId) &&
+            getURIParameter("state", uri) === csrf.randomState &&
+            csrf.created - Date.now() < ConfigService.authTokenExpirationSeconds
+          );
+
+          if (!isCsrfValid)
+          {
+            setOIDCErrorCookie("invalidCsrf");
+            redirectToLogin();
+            return null;
+          }
+          return true;
+        }
+
+        if (scope.isOpenId)
+        {
+          if (!validateCsrfToken()) {
+            return;
+          }
+          autheventid = scope.eventId = attrs.eventId = scope.csrf.eventId;
+          scope.selectedAltMethod = scope.csrf.altAuthMethodId;
+        } else {
+          autheventid = scope.eventId = attrs.eventId;
+        }
         scope.orgName = ConfigService.organization.orgName;
-        scope.openIDConnectProviders = ConfigService.openIDConnectProviders;
 
         // redirect from admin login to admin elections if login is not needed
         var autheventCookie = $cookies.get('authevent_' + adminId);
@@ -101,6 +371,31 @@ angular.module('avRegistration')
         function isValidEmail(email) {
           var pattern = Patterns.get('email');
           return null !== email.match(pattern);
+        }
+
+        // obtain the openid login data
+        function getOpenidLoginData()
+        {
+          var uri = "?" + $window.location.hash.substr(1);
+
+          // Auth data to send back to our backend
+          var data = {
+            id_token: getURIParameter("id_token", uri),
+            provider_id: scope.csrf.providerId,
+            nonce: scope.csrf.randomNonce
+          };
+
+          var options = {};
+          if (ConfigService.authTokenExpirationSeconds) {
+            options.expires = new Date(
+              Date.now() + 1000 * ConfigService.authTokenExpirationSeconds
+            );
+          }
+
+          var postfix = "_authevent_" + scope.csrf.eventId;
+          $cookies.put("id_token_" + postfix, data.id_token, options);
+
+          return data;
         }
 
         /**
@@ -200,7 +495,7 @@ angular.module('avRegistration')
               }
             );
             scope.currentFormStep = 1;
-            scope.error = null;
+            setError(null, null);
             $timeout(scope.sendingDataTimeout, 3000);
           }
 
@@ -216,7 +511,10 @@ angular.module('avRegistration')
               onAuthCodeSent,
               function onError(response) {
                 $timeout(scope.sendingDataTimeout, 3000);
-                scope.error = $i18next('avRegistration.errorSendingAuthCode');
+                setError(
+                  null,
+                  'avRegistration.errorSendingAuthCode'
+                );
               }
             );
         };
@@ -317,57 +615,61 @@ angular.module('avRegistration')
           }
 
           // loginUser
-          if (
-            !scope.withCode &&
-            (
-              scope.hasOtpFieldsCode ||
-              _.contains(['sms-otp', 'email-otp'], scope.method)
-            ) &&
-            scope.currentFormStep === 0
-          ) {
-            scope.resendAuthCode();
-            return;
+          var data = {};
+          if (scope.isOpenId) {
+            data = getOpenidLoginData();
+          } else {
+            if (
+              !scope.withCode &&
+              (
+                scope.hasOtpFieldsCode ||
+                _.contains(['sms-otp', 'email-otp'], scope.method)
+              ) &&
+              scope.currentFormStep === 0
+            ) {
+              scope.resendAuthCode();
+              return;
+            }
+            data['captcha_code'] = Authmethod.captcha_code;
+
+            var hasEmptyCode = false;
+            _.each(scope.login_fields, function (field) {
+              if (angular.isUndefined(field.value)) {
+                data[field.name] = '';
+              }
+              if (field.type === 'email') {
+                scope.email = field.value;
+              } else if (_.contains(['code', 'otp-code'], field.type)) {
+                if (!angular.isString(field.value)) {
+                  // This will stop the login process
+                  hasEmptyCode = true;
+                }
+                field.value = field.value.trim().replace(/ |\n|\t|-|_/g,'').toUpperCase();
+              }
+              data[field.name] = field.value;
+            });
+
+            // This happens in non sms-otp or email-otp that have a code/otp-code
+            // field empty
+            if (hasEmptyCode) {
+              return;
+            }
+
+            // Get the smart link authentication token and set it in the data if
+            // this is an auth event with smart-link auth method
+            if (scope.method === 'smart-link' && !scope.withCode)
+            {
+              data['auth-token'] = $location.search()['auth-token'];
+            }
           }
-          var data = {
-            'captcha_code': Authmethod.captcha_code,
-          };
 
           // set alternative auth method id
           if (scope.current_alt_auth_method_id) {
             data.alt_auth_method_id = scope.current_alt_auth_method_id;
           }
-          var hasEmptyCode = false;
-          _.each(scope.login_fields, function (field) {
-            if (angular.isUndefined(field.value)) {
-              data[field.name] = '';
-            }
-            if (field.type === 'email') {
-              scope.email = field.value;
-            } else if (_.contains(['code', 'otp-code'], field.type)) {
-              if (!angular.isString(field.value)) {
-                // This will stop the login process
-                hasEmptyCode = true;
-              }
-              field.value = field.value.trim().replace(/ |\n|\t|-|_/g,'').toUpperCase();
-            }
-            data[field.name] = field.value;
-          });
-
-          // This happens in non sms-otp or email-otp that have a code/otp-code
-          // field empty
-          if (hasEmptyCode) {
-            return;
-          }
-
-          // Get the smart link authentication token and set it in the data if
-          // this is an auth event with smart-link auth method
-          if (scope.method === 'smart-link' && !scope.withCode)
-          {
-            data['auth-token'] = $location.search()['auth-token'];
-          }
 
           scope.sendingData = true;
-          scope.error = null;
+          setError(null, null);
 
           var sessionStartedAtMs = Date.now();
           Authmethod
@@ -378,7 +680,9 @@ angular.module('avRegistration')
                   var postfix = "_authevent_" + autheventid;
                   var options = {};
                   if (ConfigService.authTokenExpirationSeconds) {
-                    options.expires = new Date(Date.now() + 1000 * ConfigService.authTokenExpirationSeconds);
+                    options.expires = new Date(
+                      Date.now() + 1000 * ConfigService.authTokenExpirationSeconds
+                    );
                   }
                   $cookies.put("authevent_" + autheventid, autheventid, options);
                   $cookies.put("userid" + postfix, response.data.username, options);
@@ -453,25 +757,26 @@ angular.module('avRegistration')
 
                     $window.location.href = '/booth/' + autheventid + '/vote';
                   } else {
-                    scope.error = $i18next(
-                      'avRegistration.loginError.' + scope.method + '.unrecognizedServerResponse', 
-                      {support: '<a href="mailto:' + ConfigService.contact.email + '" target="_blank">' + ConfigService.contact.email + "</a>"}
+                    setError(
+                      "unrecognizedServerResponse",
+                      'avRegistration.loginError.' + scope.method + '.unrecognizedServerResponse'
                     );
                   }
                 } else {
                   scope.sendingData = false;
-                  scope.error = $i18next(
-                    'avRegistration.loginError.' + scope.method + '.invalidServerResponse', 
-                    {support: '<a href="mailto:' + ConfigService.contact.email + '" target="_blank">' + ConfigService.contact.email + "</a>"}
+                  setError(
+                    "invalidServerResponse",
+                    'avRegistration.loginError.' + scope.method + '.invalidServerResponse'
                   );
                 }
             },
             function onError(response) {
               scope.sendingData = false;
               var codename = response.data.error_codename;
-              scope.error = $i18next(
-                'avRegistration.loginError.' + scope.method + '.' + codename,
-                {support: '<a href="mailto:' + ConfigService.contact.email + '" target="_blank">' + ConfigService.contact.email + "</a>"}
+
+              setError(
+                codename,
+                'avRegistration.loginError.' + scope.method + '.' + codename
               );
             }
           );
@@ -539,6 +844,7 @@ angular.module('avRegistration')
 
           scope.current_alt_auth_method_id = altAuthMethod.id;
           authevent.extra_fields = altAuthMethod.extra_fields;
+          authevent.auth_method_config = altAuthMethod.auth_method_config;
           authevent.auth_method = altAuthMethod.auth_method_name;
           scope.apply(authevent);
         };
@@ -546,6 +852,8 @@ angular.module('avRegistration')
         scope.apply = function(authevent) {
             scope.hasOtpFieldsCode = Authmethod.hasOtpCodeField(authevent);
             scope.method = authevent['auth_method'];
+            scope.oidc_providers = authevent.oidc_providers;
+            scope.current_oidc_providers = getCurrentOidcProviders(authevent);
 
             if (scope.hasOtpFieldsCode ||
               _.contains(['sms-otp', 'email-otp'], scope.method)) {
@@ -695,17 +1003,20 @@ angular.module('avRegistration')
                 );
               }
             );
-            if (filledFields.length !== scope.login_fields.length) {
+            if (
+              !scope.isOpenId &&
+              filledFields.length !== scope.login_fields.length
+            ) {
               return;
             }
 
             // if all fields all filled in and it's not OpenID Connect do
             // auto-login
             if (
-              scope.method !== 'openid-connect' &&
               !scope.isOtl &&
               !scope.isCensusQuery &&
-              !scope.withCode
+              !scope.withCode &&
+              !scope.oidcError
             ) {
               scope.loginUser(true);
             }
@@ -758,38 +1069,52 @@ angular.module('avRegistration')
         // https://developers.google.com/identity/protocols/OpenIDConnect#createxsrftoken
         scope.openidConnectAuth = function(provider)
         {
-            var randomState = randomStr();
-            var randomNonce = randomStr();
-            $cookies['openid-connect-csrf'] = angular.toJson({
+          // find provider
+          if (!provider)
+          {
+            setError(
+              'providerNotFound',
+              'avRegistration.loginError.openid-connect.providerNotFound'
+            );
+            return;
+          }
+
+          var randomState = randomStr();
+          var randomNonce = randomStr();
+          var options = {};
+          if (ConfigService.authTokenExpirationSeconds) {
+            options.expires = new Date(
+              Date.now() + 1000 * ConfigService.authTokenExpirationSeconds
+            );
+          }
+          $cookies.put(
+            OIDC_CSRF_COOKIE,
+            angular.toJson({
               randomState: randomState,
               randomNonce: randomNonce,
+              altAuthMethodId: scope.current_alt_auth_method_id,
               created: Date.now(),
               eventId: scope.eventId,
-              providerId: provider.id
-            });
+              providerId: provider.public_info.id
+            }),
+            options
+          );
 
-            // find provider
-            if (!provider)
-            {
-                scope.error = $i18next('avRegistration.openidError');
-                return;
-            }
+          // Craft the OpenID Connect auth URI
+          var authURI = (provider.public_info.authorization_endpoint +
+            "?response_type=id_token" +
+            "&client_id=" + encodeURIComponent(provider.public_info.client_id) +
+            "&scope=" + encodeURIComponent(provider.public_info.scope) +
+            "&redirect_uri=" + encodeURIComponent(
+              $window.location.origin +
+              "/election/login-openid-connect-redirect"
+            ) +
+            "&state=" + randomState +
+            "&nonce=" + randomNonce
+          );
 
-            // Craft the OpenID Connect auth URI
-            var authURI = (provider.authorization_endpoint +
-                "?response_type=id_token" +
-                "&client_id=" + encodeURIComponent(provider.client_id) +
-                "&scope=" + encodeURIComponent("openid") +
-                "&redirect_uri=" + encodeURIComponent(
-                    $window.location.origin +
-                    "/election/login-openid-connect-redirect"
-                ) +
-                "&state=" + randomState +
-                "&nonce=" + randomNonce
-            );
-
-            // Redirect to the Auth URI
-            $window.location.href = authURI;
+          // Redirect to the Auth URI
+          $window.location.href = authURI;
         };
     }
     return {

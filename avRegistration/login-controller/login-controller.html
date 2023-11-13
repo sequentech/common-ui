@@ -8,15 +8,11 @@
       with-code="{{withCode}}"
       username="{{username}}"
       is-otl="{{isOtl}}"
+      is-open-id="{{isOpenId}}"
       otl-secret="{{otlSecret}}"
       with-alt-method="{{withAltMethod}}"
       selected-alt-method="{{selectedAltMethod}}"
-      ng-if="!isOpenId"
     >
-    </div>
-    <div
-      av-openid-connect
-      ng-if="isOpenId">
     </div>
   </div>
 </div>
