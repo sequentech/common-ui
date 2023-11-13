@@ -22,7 +22,6 @@ angular.module('avRegistration')
       Authmethod,
       StateDataService,
       $state,
-      $stateParams,
       $location,
       $cookies,
       $i18next,
@@ -720,7 +719,7 @@ angular.module('avRegistration')
               var codename = response.data.error_codename;
 
               setError(
-                "codename",
+                codename,
                 $i18next(
                   'avRegistration.loginError.' + scope.method + '.' + codename,
                   {support: '<a href="mailto:' + ConfigService.contact.email + '" target="_blank">' + ConfigService.contact.email + "</a>"}

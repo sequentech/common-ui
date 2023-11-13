@@ -445,7 +445,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
     $scope.withCode = $stateParams.withCode, $scope.withAltMethod = $stateParams.withAltMethod, 
     $scope.selectedAltMethod = $stateParams.altmethod, $scope.isOtl = $stateParams.isOtl, 
     $scope.otlSecret = $stateParams.otlSecret;
-} ]), angular.module("avRegistration").directive("avLogin", [ "Authmethod", "StateDataService", "$state", "$stateParams", "$location", "$cookies", "$i18next", "$window", "$timeout", "ConfigService", "Patterns", function(Authmethod, StateDataService, $state, $stateParams, $location, $cookies, $i18next, $window, $timeout, ConfigService, Patterns) {
+} ]), angular.module("avRegistration").directive("avLogin", [ "Authmethod", "StateDataService", "$state", "$location", "$cookies", "$i18next", "$window", "$timeout", "ConfigService", "Patterns", function(Authmethod, StateDataService, $state, $location, $cookies, $i18next, $window, $timeout, ConfigService, Patterns) {
     return {
         restrict: "AE",
         scope: !0,
@@ -629,7 +629,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                     }, function(codename) {
                         scope.sendingData = !1;
                         codename = codename.data.error_codename;
-                        setError("codename", $i18next("avRegistration.loginError." + scope.method + "." + codename, {
+                        setError(codename, $i18next("avRegistration.loginError." + scope.method + "." + codename, {
                             support: '<a href="mailto:' + ConfigService.contact.email + '" target="_blank">' + ConfigService.contact.email + "</a>"
                         }));
                     });
