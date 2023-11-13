@@ -90,6 +90,81 @@ angular.module('avRegistration')
           }
         }
 
+        // Gets the list of current auth method providers
+        function getCurrentOidcProviders(auth_event)
+        {
+          if (
+            !auth_event.auth_method_config ||
+            !auth_event.auth_method_config.config ||
+            !auth_event.auth_method_config.config.provider_ids
+          ) {
+            return [];
+          }
+          return _.map(
+            auth_event.auth_method_config.config.provider_ids,
+            function (provider_id) {
+              return _.find(
+                auth_event.oidc_providers,
+                function (provider) { return provider.public_info.id === provider_id; }
+              );
+            }
+          );
+        }
+
+        // Returns the logout url if any from the appropiate openidprovider
+        // TODO: logout asumes that you are using the first provider, so it
+        // basically supports only one provider
+        function getLogoutUri(authEvent)
+        {
+          var eventId = null;
+          var redirectUri = null;
+          if (scope.csrf)
+          {
+            eventId = scope.csrf.eventId;
+            redirectUri = "/election/" + eventId + "/public/login";
+          } else {
+            redirectUri = ConfigService.defaultRoute;
+          }
+          scope.oidc_providers = authEvent.oidc_providers;
+          scope.current_oidc_providers = getCurrentOidcProviders(authEvent);
+
+          if (scope.current_oidc_providers.length === 0)
+          {
+            return redirectUri;
+          }
+
+          var oidcProvider = _.find(
+            authEvent.oidc_providers,
+            function (provider) {
+              return provider.public_info.id === scope.csrf.providerId;
+            }
+          );
+
+          if (!oidcProvider || !oidcProvider.logout_uri) {
+            return redirectUri;
+          }
+
+          redirectUri = oidcProvider.logout_uri;
+          redirectUri = redirectUri.replace("__EVENT_ID__", "" + eventId);
+
+          var postfix = "_authevent_" + eventId;
+          if (!!$cookies.get("id_token_" + postfix))
+          {
+            redirectUri = redirectUri.replace(
+              "__ID_TOKEN__", $cookies.get("id_token_" + postfix)
+            );
+
+          // if __ID_TOKEN__ is there but we cannot replace it, we need to
+          // directly redirect to the login, otherwise the URI might show an
+          // error 500
+          } else if (redirectUri.indexOf("__ID_TOKEN__") > -1)
+          {
+            redirectUri = "/election/" + eventId + "/public/login";
+          }
+
+          return redirectUri;
+        }
+
         // Redirects to the login page of the respective event_id if any
         function redirectToLogin()
         {
@@ -100,7 +175,7 @@ angular.module('avRegistration')
 
           scope.sendingData = true;
 
-          if (!scope.csrf)
+          if (!scope.csrf || !scope.csrf.eventId)
           {
             $window.location.href = ConfigService.defaultRoute;
             return;
@@ -118,13 +193,11 @@ angular.module('avRegistration')
                   simpleRedirectToLogin();
                   return;
                 }
-                // TODO: add back getLogoutUri
-                window.alert("TODO getLogoutUri not implemented");
 
-                // var postfix = "_authevent_" + eventId;
-                // var uri = getLogoutUri();
-                // $cookies.remove("id_token_" + postfix);
-                // $window.location.href = uri;
+                var postfix = "_authevent_" + eventId;
+                var uri = getLogoutUri(response.data.events);
+                $cookies.remove("id_token_" + postfix);
+                $window.location.href = uri;
               },
               function onError()
               {
@@ -291,27 +364,6 @@ angular.module('avRegistration')
         function isValidEmail(email) {
           var pattern = Patterns.get('email');
           return null !== email.match(pattern);
-        }
-
-        // Gets the list of current auth method providers
-        function getCurrentOidcProviders(auth_event)
-        {
-          if (
-            !auth_event.auth_method_config ||
-            !auth_event.auth_method_config.config ||
-            !auth_event.auth_method_config.config.provider_ids
-          ) {
-            return [];
-          }
-          return _.map(
-            auth_event.auth_method_config.config.provider_ids,
-            function (provider_id) {
-              return _.find(
-                auth_event.oidc_providers,
-                function (provider) { return provider.public_info.id === provider_id; }
-              );
-            }
-          );
         }
 
         // obtain the openid login data

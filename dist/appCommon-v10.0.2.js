@@ -459,11 +459,28 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             function simpleRedirectToLogin() {
                 scope.csrf ? $window.location.href = "/election/" + scope.csrf.eventId + "/public/login" : $window.location.href = ConfigService.defaultRoute;
             }
+            function getCurrentOidcProviders(auth_event) {
+                return auth_event.auth_method_config && auth_event.auth_method_config.config && auth_event.auth_method_config.config.provider_ids ? _.map(auth_event.auth_method_config.config.provider_ids, function(provider_id) {
+                    return _.find(auth_event.oidc_providers, function(provider) {
+                        return provider.public_info.id === provider_id;
+                    });
+                }) : [];
+            }
             function redirectToLogin() {
                 var eventId;
-                scope.sendingData || (scope.sendingData = !0, scope.csrf ? (eventId = scope.csrf.eventId, 
-                Authmethod.viewEvent(eventId).then(function(response) {
-                    "ok" === response.data.status && response.data.events ? window.alert("TODO getLogoutUri not implemented") : simpleRedirectToLogin();
+                scope.sendingData || (scope.sendingData = !0, scope.csrf && scope.csrf.eventId ? (eventId = scope.csrf.eventId, 
+                Authmethod.viewEvent(eventId).then(function(uri) {
+                    var postfix;
+                    "ok" === uri.data.status && uri.data.events ? (postfix = "_authevent_" + eventId, 
+                    uri = function(postfix) {
+                        var eventId = null, redirectUri = null, redirectUri = scope.csrf ? "/election/" + (eventId = scope.csrf.eventId) + "/public/login" : ConfigService.defaultRoute;
+                        return scope.oidc_providers = postfix.oidc_providers, scope.current_oidc_providers = getCurrentOidcProviders(postfix), 
+                        0 === scope.current_oidc_providers.length || (postfix = _.find(postfix.oidc_providers, function(provider) {
+                            return provider.public_info.id === scope.csrf.providerId;
+                        })) && postfix.logout_uri && (redirectUri = (redirectUri = postfix.logout_uri).replace("__EVENT_ID__", "" + eventId), 
+                        postfix = "_authevent_" + eventId, $cookies.get("id_token_" + postfix) ? redirectUri = redirectUri.replace("__ID_TOKEN__", $cookies.get("id_token_" + postfix)) : -1 < redirectUri.indexOf("__ID_TOKEN__") && (redirectUri = "/election/" + eventId + "/public/login")), 
+                        redirectUri;
+                    }(uri.data.events), $cookies.remove("id_token_" + postfix), $window.location.href = uri) : simpleRedirectToLogin();
                 }, function() {
                     simpleRedirectToLogin();
                 })) : $window.location.href = ConfigService.defaultRoute);
@@ -647,13 +664,9 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 authevent.extra_fields = altAuthMethod.extra_fields, authevent.auth_method_config = altAuthMethod.auth_method_config, 
                 authevent.auth_method = altAuthMethod.auth_method_name, scope.apply(authevent)));
             }, scope.apply = function(authevent) {
-                var auth_event;
                 scope.hasOtpFieldsCode = Authmethod.hasOtpCodeField(authevent), scope.method = authevent.auth_method, 
-                scope.oidc_providers = authevent.oidc_providers, scope.current_oidc_providers = (auth_event = authevent).auth_method_config && auth_event.auth_method_config.config && auth_event.auth_method_config.config.provider_ids ? _.map(auth_event.auth_method_config.config.provider_ids, function(provider_id) {
-                    return _.find(auth_event.oidc_providers, function(provider) {
-                        return provider.public_info.id === provider_id;
-                    });
-                }) : [], (scope.hasOtpFieldsCode || _.contains([ "sms-otp", "email-otp" ], scope.method)) && (scope.skipSendAuthCode = scope.successfulRegistration), 
+                scope.oidc_providers = authevent.oidc_providers, scope.current_oidc_providers = getCurrentOidcProviders(authevent), 
+                (scope.hasOtpFieldsCode || _.contains([ "sms-otp", "email-otp" ], scope.method)) && (scope.skipSendAuthCode = scope.successfulRegistration), 
                 scope.name = authevent.name, scope.parseAuthToken(), scope.registrationAllowed = "open" === authevent.census && (autheventid !== adminId || ConfigService.allowAdminRegistration), 
                 scope.isCensusQuery || scope.withCode || scope.isOtl ? scope.withCode ? scope.login_fields = Authmethod.getLoginWithCode(authevent) : scope.isCensusQuery ? scope.login_fields = Authmethod.getCensusQueryFields(authevent) : scope.isOtl && (scope.login_fields = Authmethod.getOtlFields(authevent)) : scope.login_fields = Authmethod.getLoginFields(authevent), 
                 scope.login_fields.sort(function(a, b) {
