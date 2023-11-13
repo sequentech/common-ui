@@ -65,9 +65,11 @@ angular.module('avRegistration')
           {
             return null;
           }
+          var oidcError = angular.fromJson($cookies.get(OIDC_ERROR_COOKIE));
+          $cookies.remove(OIDC_ERROR_COOKIE);
 
           // validate csrf token format and data
-          return angular.fromJson($cookies.get(OIDC_ERROR_COOKIE));
+          return oidcError;
         }
 
         scope.oidcError = parseOidcErrorCookie();
