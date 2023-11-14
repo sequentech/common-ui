@@ -38,7 +38,7 @@ angular
     'I18nOverride',
     function($i18next, $rootScope, $window)
     {
-      return function (overrides, force)
+      return function (overrides, force, languagesConf)
       {
         force = angular.isDefined(force) ? force : false;
         overrides = overrides === null ? $window.i18nOverride : overrides;
@@ -51,6 +51,16 @@ angular
             JSON.stringify(overrides) !== JSON.stringify($window.i18nOverride)
           );
           $window.i18nOverride = overrides;
+        }
+
+        if (languagesConf)
+        {
+          $i18next.options.lngWhitelist = languagesConf.available_languages;
+          $i18next.options.fallbackLng = languagesConf.default_language;
+          if (languagesConf.force_default_language)
+          {
+            $i18next.options.lng = languagesConf.default_language;
+          }
         }
 
         // load i18n_overrides if any
@@ -76,6 +86,7 @@ angular
               );
             }
           );
+
           $rootScope.$broadcast(
             'i18nextLanguageChange',
             $window.i18n.lng()

@@ -26,6 +26,7 @@ angular.module('avUi')
     ipCookie,
     angularLoad,
     amMoment,
+    $rootScope,
     ConfigService,
     $window,
     I18nOverride,
@@ -79,7 +80,8 @@ angular.module('avUi')
         ipCookie(
           "lang",
           lang,
-          _.extend(cookieConf, ConfigService.i18nextCookieOptions));
+          _.extend(cookieConf, ConfigService.i18nextCookieOptions)
+        );
         scope.deflang = lang;
         angular.element('#ng-app').attr('lang', scope.deflang);
 
@@ -91,6 +93,16 @@ angular.module('avUi')
               amMoment.changeLocale(lang);
             });
         }
+        
+        // detect language changes
+        $rootScope.$on(
+          'i18nextLanguageChange',
+          function ()
+          {
+            scope.deflang = $i18next.options.lng;
+            scope.langs = $i18next.options.lngWhitelist;
+          }
+        );
       };
     }
 

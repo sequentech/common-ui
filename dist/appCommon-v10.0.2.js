@@ -1121,17 +1121,19 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         });
     };
 } ]), angular.module("avUi").service("I18nOverride", [ "$i18next", "$rootScope", "$window", function($i18next, $rootScope, $window) {
-    return function(overrides, force) {
+    return function(overrides, force, languagesConf) {
         force = !!angular.isDefined(force) && force;
         var performOverrides = !1;
         (overrides = null === overrides ? $window.i18nOverride : overrides) && (performOverrides = force || JSON.stringify(overrides) !== JSON.stringify($window.i18nOverride), 
-        $window.i18nOverride = overrides), performOverrides && (_.map($window.i18nOverride, function(i18nOverride, language) {
+        $window.i18nOverride = overrides), languagesConf && ($i18next.options.lngWhitelist = languagesConf.available_languages, 
+        $i18next.options.fallbackLng = languagesConf.default_language, languagesConf.force_default_language && ($i18next.options.lng = languagesConf.default_language)), 
+        performOverrides && (_.map($window.i18nOverride, function(i18nOverride, language) {
             $window.i18n.addResources(language, "translation", i18nOverride), _.each(_.keys(i18nOverride), function(i18nString) {
                 $i18next(i18nString, {});
             });
         }), $rootScope.$broadcast("i18nextLanguageChange", $window.i18n.lng()));
     };
-} ]), angular.module("avUi").directive("avChangeLang", [ "$i18next", "ipCookie", "angularLoad", "amMoment", "ConfigService", "$window", "I18nOverride", "Authmethod", function($i18next, ipCookie, angularLoad, amMoment, ConfigService, $window, I18nOverride, Authmethod) {
+} ]), angular.module("avUi").directive("avChangeLang", [ "$i18next", "ipCookie", "angularLoad", "amMoment", "$rootScope", "ConfigService", "$window", "I18nOverride", "Authmethod", function($i18next, ipCookie, angularLoad, amMoment, $rootScope, ConfigService, $window, I18nOverride, Authmethod) {
     return {
         restrict: "AE",
         scope: {},
@@ -1154,6 +1156,8 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 }, ConfigService.i18nextCookieOptions)), scope.deflang = lang, angular.element("#ng-app").attr("lang", scope.deflang), 
                 isAdmin && angularLoad.loadScript(ConfigService.base + "/locales/moment/" + lang + ".js").then(function() {
                     amMoment.changeLocale(lang);
+                }), $rootScope.$on("i18nextLanguageChange", function() {
+                    scope.deflang = $i18next.options.lng, scope.langs = $i18next.options.lngWhitelist;
                 });
             };
         },
