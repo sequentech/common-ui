@@ -46,6 +46,17 @@ angular.module('avUi')
       }
       element.on('click', triggerDropdown);
 
+      // detect language changes
+      $rootScope.$on(
+        'i18nextLanguageChange',
+        function (event, data)
+        {
+          scope.deflang = $i18next.options.lng || $i18next.options.language;
+          scope.langs = $i18next.options.lngWhitelist;
+          scope.$apply();
+        }
+      );
+
       // Changes i18n to a specific language, setting also a cookie for
       // remembering it, and updating all the translations instantly.
       //
@@ -93,16 +104,6 @@ angular.module('avUi')
               amMoment.changeLocale(lang);
             });
         }
-        
-        // detect language changes
-        $rootScope.$on(
-          'i18nextLanguageChange',
-          function ()
-          {
-            scope.deflang = $i18next.options.lng;
-            scope.langs = $i18next.options.lngWhitelist;
-          }
-        );
       };
     }
 

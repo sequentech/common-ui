@@ -87,7 +87,7 @@ angular
             }
           );
 
-          $rootScope.$broadcast(
+          $rootScope.$emit(
             'i18nextLanguageChange',
             $window.i18n.lng()
           );

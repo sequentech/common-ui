@@ -1131,7 +1131,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             $window.i18n.addResources(language, "translation", i18nOverride), _.each(_.keys(i18nOverride), function(i18nString) {
                 $i18next(i18nString, {});
             });
-        }), $rootScope.$broadcast("i18nextLanguageChange", $window.i18n.lng()));
+        }), $rootScope.$emit("i18nextLanguageChange", $window.i18n.lng()));
     };
 } ]), angular.module("avUi").directive("avChangeLang", [ "$i18next", "ipCookie", "angularLoad", "amMoment", "$rootScope", "ConfigService", "$window", "I18nOverride", "Authmethod", function($i18next, ipCookie, angularLoad, amMoment, $rootScope, ConfigService, $window, I18nOverride, Authmethod) {
     return {
@@ -1145,6 +1145,9 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 setTimeout(function() {
                     angular.element("#lang-dropdown-toggle").click();
                 }, 0);
+            }), $rootScope.$on("i18nextLanguageChange", function(event, data) {
+                scope.deflang = $i18next.options.lng || $i18next.options.language, scope.langs = $i18next.options.lngWhitelist, 
+                scope.$apply();
             }), scope.changeLang = function(lang) {
                 $i18next.options.lng = lang, isAdmin || ($i18next.options.useLocalStorage = !0), 
                 angular.isDefined($window.i18nOverride) && $window.i18n.preload([ lang ], function() {
@@ -1156,8 +1159,6 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 }, ConfigService.i18nextCookieOptions)), scope.deflang = lang, angular.element("#ng-app").attr("lang", scope.deflang), 
                 isAdmin && angularLoad.loadScript(ConfigService.base + "/locales/moment/" + lang + ".js").then(function() {
                     amMoment.changeLocale(lang);
-                }), $rootScope.$on("i18nextLanguageChange", function() {
-                    scope.deflang = $i18next.options.lng, scope.langs = $i18next.options.lngWhitelist;
                 });
             };
         },
