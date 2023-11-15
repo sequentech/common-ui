@@ -103,7 +103,7 @@ angular
         // for reference.
         $rootScope.$emit(
           'i18nextLanguageChange',
-          $window.i18n.lng()
+          $i18next.options.lng
         );
       };
     }

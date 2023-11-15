@@ -1132,7 +1132,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 $i18next(i18nString, {});
             });
         }), languagesConf && languagesConf.force_default_language && ($i18next.options.lng = languagesConf.default_language), 
-        $rootScope.$emit("i18nextLanguageChange", $window.i18n.lng());
+        $rootScope.$emit("i18nextLanguageChange", $i18next.options.lng);
     };
 } ]), angular.module("avUi").directive("avChangeLang", [ "$i18next", "ipCookie", "angularLoad", "amMoment", "$rootScope", "ConfigService", "$window", "I18nOverride", "Authmethod", function($i18next, ipCookie, angularLoad, amMoment, $rootScope, ConfigService, $window, I18nOverride, Authmethod) {
     return {
