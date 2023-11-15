@@ -60,7 +60,8 @@ angular
           // language change when the init() function from $i18next gets called
           // later in this code. For this reason, we set the correct language in
           // `$i18next.options.lng` to ensure that doesn't happen.
-          $i18next.options.lng = $window.i18n.lng();
+          $i18next.options.lng = (languagesConf.force_default_language) ?
+            languagesConf.default_language : $window.i18n.lng();
 
           $i18next.options.lngWhitelist = languagesConf.available_languages;
           $i18next.options.fallbackLng = [languagesConf.default_language, 'en'];
@@ -89,12 +90,6 @@ angular
               );
             }
           );
-        }
-
-        if (languagesConf && languagesConf.force_default_language)
-        {
-          // force the language to be the default language
-          $i18next.options.lng = languagesConf.default_language;
         }
 
         // This will trigget a $i18next's init function to be called and all
