@@ -49,9 +49,9 @@ angular.module('avUi')
       // detect language changes
       $rootScope.$on(
         'i18nextLanguageChange',
-        function (event, data)
+        function (event, languageCode)
         {
-          scope.deflang = $i18next.options.lng || $i18next.options.language;
+          scope.deflang = languageCode;
           scope.langs = $i18next.options.lngWhitelist;
           scope.$apply();
         }
