@@ -26,6 +26,7 @@ angular.module('avUi')
     ipCookie,
     angularLoad,
     amMoment,
+    $rootScope,
     ConfigService,
     $window,
     I18nOverride,
@@ -44,6 +45,17 @@ angular.module('avUi')
         }, 0);
       }
       element.on('click', triggerDropdown);
+
+      // detect language changes
+      $rootScope.$on(
+        'i18nextLanguageChange',
+        function (event, languageCode)
+        {
+          scope.deflang = languageCode;
+          scope.langs = $i18next.options.lngWhitelist;
+          scope.$apply();
+        }
+      );
 
       // Changes i18n to a specific language, setting also a cookie for
       // remembering it, and updating all the translations instantly.
@@ -79,7 +91,8 @@ angular.module('avUi')
         ipCookie(
           "lang",
           lang,
-          _.extend(cookieConf, ConfigService.i18nextCookieOptions));
+          _.extend(cookieConf, ConfigService.i18nextCookieOptions)
+        );
         scope.deflang = lang;
         angular.element('#ng-app').attr('lang', scope.deflang);
 

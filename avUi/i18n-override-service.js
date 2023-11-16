@@ -38,7 +38,7 @@ angular
     'I18nOverride',
     function($i18next, $rootScope, $window)
     {
-      return function (overrides, force)
+      return function (overrides, force, languagesConf)
       {
         force = angular.isDefined(force) ? force : false;
         overrides = overrides === null ? $window.i18nOverride : overrides;
@@ -51,6 +51,20 @@ angular
             JSON.stringify(overrides) !== JSON.stringify($window.i18nOverride)
           );
           $window.i18nOverride = overrides;
+        }
+
+        if (languagesConf)
+        {
+          // For some reason it seems that `$i18next.options.lng` gets desynced
+          // from `$window.i18n.lng()`. This might result in an unexpected
+          // language change when the init() function from $i18next gets called
+          // later in this code. For this reason, we set the correct language in
+          // `$i18next.options.lng` to ensure that doesn't happen.
+          $i18next.options.lng = (languagesConf.force_default_language) ?
+            languagesConf.default_language : $window.i18n.lng();
+
+          $i18next.options.lngWhitelist = languagesConf.available_languages;
+          $i18next.options.fallbackLng = [languagesConf.default_language, 'en'];
         }
 
         // load i18n_overrides if any
@@ -76,11 +90,16 @@ angular
               );
             }
           );
-          $rootScope.$broadcast(
-            'i18nextLanguageChange',
-            $window.i18n.lng()
-          );
         }
+
+        // This will trigget a $i18next's init function to be called and all
+        // angularjs $i18next translations to be updated accordingly.
+        // `i18nextLanguageChange` signal is special for $i18next, see its code
+        // for reference.
+        $rootScope.$emit(
+          'i18nextLanguageChange',
+          $i18next.options.lng
+        );
       };
     }
   );
