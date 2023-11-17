@@ -151,8 +151,12 @@
     }
   }
 
-  .btn[disabled] {
+  .btn[disabled], .btn.disabled-cls {
     opacity: 0.4;
+
+    &:hover {
+      box-shadow: none !important;
+    }
   }
 
   .btn-opt-warn {
@@ -268,9 +272,13 @@
     }
   }
 
-  .btn[disabled] {
+  .btn[disabled], .btn.disabled-cls {
     background-color: @grey-darker !important;
     opacity: 1 !important;
+
+    &:hover {
+      box-shadow: none !important;
+    }
   }
 
   .btn-cancel {
