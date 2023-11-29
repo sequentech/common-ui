@@ -14,9 +14,9 @@
   ],
   "devDependencies": {
     "@bower_components/angular-ui-router": "angular-ui/ui-router#0.3.2",
-    "@bower_components/i18next": "i18next/i18next#1.9.0",
+    "i18next": "~19.4.5",
     "@bower_components/ng-autofocus": "jljouannic/ng-autofocus#0.0.1",
-    "@bower_components/ng-i18next": "i18next/ng-i18next#0.4.2",
+    "ng-i18next": "~1.0.7",
     "@bower_components/ngInfiniteScroll": "sroze/ngInfiniteScroll#1.2.0",
     "@lodder/grunt-postcss": "^3.0.0",
     "angular": "~1.8.3",

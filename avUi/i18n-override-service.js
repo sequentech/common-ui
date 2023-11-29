@@ -85,7 +85,7 @@ angular
                 _.keys(i18nOverride),
                 function (i18nString)
                 {
-                  $i18next(i18nString, {});
+                  $i18next.t(i18nString, {});
                 }
               );
             }

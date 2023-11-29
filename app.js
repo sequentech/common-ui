@@ -38,23 +38,8 @@ angular.module(
   'ng-autofocus'
 ]);
 
-angular.module('jm.i18next').config(function ($i18nextProvider, ConfigServiceProvider) {
-  // note that we do not send the language: by default, it will try the language
-  // supported by the web browser
+angular.module('jm.i18next').config(function () {
   $("#no-js").hide();
-
-  $i18nextProvider.options = _.extend(
-    {
-      useCookie: true,
-      useLocalStorage: false,
-      fallbackLng: 'en',
-      cookieName: 'lang',
-      detectLngQS: 'lang',
-      lngWhitelist: ['en', 'es', 'gl', 'ca'],
-      resGetPath: '/locales/__lng__.json',
-      defaultLoadingValue: '' // ng-i18next option, *NOT* directly supported by i18next
-    },
-    ConfigServiceProvider.i18nextInitOptions);
 });
 
 angular.module('common-ui').run(function($http, $rootScope) {

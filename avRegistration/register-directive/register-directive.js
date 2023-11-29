@@ -76,13 +76,13 @@ angular.module('avRegistration')
                         scope.user = response.data.user;
                         data.successfulRegistration = true;
                         StateDataService.go(details.path, details.data, data);
-                        scope.error = response.data.msg || $sce.trustAsHtml($i18next('avRegistration.invalidRegisterData', {
+                        scope.error = response.data.msg || $sce.trustAsHtml($i18next.t('avRegistration.invalidRegisterData', {
                           url: $state.href(details.path, details.data)
                         }));
                     } else {
                         scope.sendingData = false;
                         scope.status = 'Not found';
-                        scope.error = response.data.msg || $sce.trustAsHtml($i18next('avRegistration.invalidRegisterData', {
+                        scope.error = response.data.msg || $sce.trustAsHtml($i18next.t('avRegistration.invalidRegisterData', {
                           url: $state.href(details.path, details.data)
                         }));
                     }
@@ -93,9 +93,9 @@ angular.module('avRegistration')
                     scope.status = 'Registration error: ' + response.data.message;
 
                     if (!!response.data.error_codename && response.data.error_codename === 'invalid-dni') {
-                      scope.error = $sce.trustAsHtml($i18next('avRegistration.invalidRegisterDNI'));
+                      scope.error = $sce.trustAsHtml($i18next.t('avRegistration.invalidRegisterDNI'));
                     } else {
-                        scope.error = response.data.msg || $sce.trustAsHtml($i18next('avRegistration.invalidRegisterData', {
+                        scope.error = response.data.msg || $sce.trustAsHtml($i18next.t('avRegistration.invalidRegisterData', {
                           url: $state.href(details.path, details.data)
                         }));
                         if (response.data.msg === 'Invalid captcha') {

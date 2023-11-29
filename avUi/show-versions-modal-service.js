@@ -28,7 +28,7 @@ angular
           size: 'lg',
           resolve: {
             data: function () {
-              var mainVersion = $i18next('avCommon.showVersionModal.mainVersion');
+              var mainVersion = $i18next.t('avCommon.showVersionModal.mainVersion');
               var versionList = (
                 "<li><strong>" + mainVersion + " (deployment-tool):</strong> " +
                 ConfigService.mainVersion +
@@ -46,7 +46,7 @@ angular
                   );
                 }
               );
-              var body = $i18next(
+              var body = $i18next.t(
                 'avCommon.showVersionModal.body',
                 {
                   versionList: versionList
@@ -54,9 +54,9 @@ angular
               );
               return {
                 i18n: {
-                  header: $i18next('avCommon.showVersionModal.header'),
+                  header: $i18next.t('avCommon.showVersionModal.header'),
                   body: body,
-                  confirmButton: $i18next('avCommon.showVersionModal.confirmButton'),
+                  confirmButton: $i18next.t('avCommon.showVersionModal.confirmButton'),
                 },
                 hideCancelButton: true
               };
