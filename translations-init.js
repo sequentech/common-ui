@@ -14,9 +14,6 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with common-ui.  If not, see <http://www.gnu.org/licenses/>.
 **/
-var i18next = require("i18next");
-
-window.i18next = i18next;
 
 // Before booting angular use i18next configuration system to configure and load your localization resources.
 
