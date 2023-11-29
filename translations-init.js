@@ -15,14 +15,15 @@
  * along with common-ui.  If not, see <http://www.gnu.org/licenses/>.
 **/
 var i18next = require("i18next");
-var i18nextXHRBackend = require('i18next-xhr-backend');
 
 window.i18next = i18next;
-window.i18nextXHRBackend = i18nextXHRBackend;
 
 // Before booting angular use i18next configuration system to configure and load your localization resources.
-window.i18next
-    .use(window.i18nextXHRBackend);
+
+if(window.i18nextXHRBackend) {
+    window.i18next
+        .use(window.i18nextXHRBackend);
+}
 
 // note that we do not send the language: by default, it will try the language
 // supported by the web browser
