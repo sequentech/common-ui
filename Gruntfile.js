@@ -167,6 +167,7 @@ module.exports = function (grunt) {
           append: [
             {selector:'body',html:'<script src="/libnocompat-v10.0.2.js"></script>'},
             {selector:'body',html:'<!--All the source code of this program under copyright. Take a look at the license details at https://github.com/sequent/sequent-core-common/blob/master/README.md -->'},
+            {selector:'body',html:'<script src="/translations-init-v10.0.2.js"></script>'},
             {selector:'body',html:'<script src="/appCommon-v10.0.2.js"></script>'},
             {selector:'body',html:'<script src="/SequentPlugins-v10.0.2.js"></script>'},
             {selector:'head',html:'<link rel="stylesheet" id="theme" href="/themes/default/app.min.css">'}
