@@ -37,22 +37,6 @@ function uiUploader($log) {
     };
 }
 
-var mod;
-
-function RC4(seed) {
-    this.s = new Array(256), this.i = 0;
-    for (var i = this.j = 0; i < 256; i++) this.s[i] = i;
-    seed && this.mix(seed);
-}
-
-function RNG(seed) {
-    null == seed ? seed = (Math.random() + Date.now()).toString() : "function" == typeof seed ? (this.uniform = seed, 
-    this.nextByte = function() {
-        return ~~(256 * this.uniform());
-    }, seed = null) : "[object String]" !== Object.prototype.toString.call(seed) && (seed = JSON.stringify(seed)), 
-    this._normal = null, this._state = seed ? new RC4(seed) : null;
-}
-
 !function() {
     "use strict";
     var version = jQuery.fn.jquery.split(" ")[0].split(".");
@@ -18058,7 +18042,25 @@ function(angular) {
             }
         } ]), I18n;
     }())();
-}), function(global, factory) {
+});
+
+var mod, main = require("./dist/cjs/i18nextXHRBackend.js").default;
+
+function RC4(seed) {
+    this.s = new Array(256), this.i = 0;
+    for (var i = this.j = 0; i < 256; i++) this.s[i] = i;
+    seed && this.mix(seed);
+}
+
+function RNG(seed) {
+    null == seed ? seed = (Math.random() + Date.now()).toString() : "function" == typeof seed ? (this.uniform = seed, 
+    this.nextByte = function() {
+        return ~~(256 * this.uniform());
+    }, seed = null) : "[object String]" !== Object.prototype.toString.call(seed) && (seed = JSON.stringify(seed)), 
+    this._normal = null, this._state = seed ? new RC4(seed) : null;
+}
+
+module.exports = main, module.exports.default = main, function(global, factory) {
     "object" == typeof exports && "undefined" != typeof module ? module.exports = factory(require("angular")) : "function" == typeof define && define.amd ? define([ "angular" ], factory) : global.ngI18next = factory(global.angular);
 }(this, function(angular) {
     "use strict";

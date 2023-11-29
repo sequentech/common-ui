@@ -14,26 +14,31 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with common-ui.  If not, see <http://www.gnu.org/licenses/>.
 **/
+var i18next = require("i18next");
+var i18nextXHRBackend = require('i18next-xhr-backend');
+
+window.i18next = i18next;
+window.i18nextXHRBackend = i18nextXHRBackend;
 
 // Before booting angular use i18next configuration system to configure and load your localization resources.
 window.i18next
-	.use(window.i18nextXHRBackend);
+    .use(window.i18nextXHRBackend);
 
 // note that we do not send the language: by default, it will try the language
 // supported by the web browser
 window.i18next.init({
-	debug: true,
+    debug: true,
     useCookie: true,
     useLocalStorage: false,
     fallbackLng: 'en',
     cookieName: 'lang',
     detectLngQS: 'lang',
     lngWhitelist: ['en', 'es', 'gl', 'ca'],
-	backend: {
-		loadPath: '../locales/{{lng}}.json'
-	},
+    backend: {
+        loadPath: '../locales/{{lng}}.json'
+    },
     resGetPath: '/locales/__lng__.json',
     defaultLoadingValue: '' // ng-i18next option, *NOT* directly supported by i18next
 }, function (err, t) {
-	console.log('resources loaded');
+    console.log('resources loaded');
 });
