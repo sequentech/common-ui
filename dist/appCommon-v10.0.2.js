@@ -2,7 +2,22 @@ function $buo_f() {
     $buo(SequentConfigData.browserUpdate);
 }
 
-if (angular.module("avRegistration", [ "ui.bootstrap", "ui.utils", "ui.router" ]), 
+if (window.i18nextXHRBackend && window.i18next.use(window.i18nextXHRBackend), window.i18next.init({
+    debug: !0,
+    useCookie: !0,
+    useLocalStorage: !1,
+    fallbackLng: "en",
+    cookieName: "lang",
+    detectLngQS: "lang",
+    lngWhitelist: [ "en", "es", "gl", "ca" ],
+    backend: {
+        loadPath: "../locales/{{lng}}.json"
+    },
+    resGetPath: "/locales/__lng__.json",
+    defaultLoadingValue: ""
+}, function(err, t) {
+    console.log("resources loaded");
+}), angular.module("avRegistration", [ "ui.bootstrap", "ui.utils", "ui.router" ]), 
 angular.module("avRegistration").config(function() {}), angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "ConfigService", "$interval", "$state", "$location", "$document", "$q", function($http, $cookies, ConfigService, $interval, $state, $location, $document, $q) {
     var backendUrl = ConfigService.authAPI, authId = ConfigService.freeAuthId, authmethod = {
         captcha_code: null,

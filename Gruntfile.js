@@ -167,7 +167,6 @@ module.exports = function (grunt) {
           append: [
             {selector:'body',html:'<script src="/libnocompat-v10.0.2.js"></script>'},
             {selector:'body',html:'<!--All the source code of this program under copyright. Take a look at the license details at https://github.com/sequent/sequent-core-common/blob/master/README.md -->'},
-            {selector:'body',html:'<script src="/translations-init-v10.0.2.js"></script>'},
             {selector:'body',html:'<script src="/appCommon-v10.0.2.js"></script>'},
             {selector:'body',html:'<script src="/SequentPlugins-v10.0.2.js"></script>'},
             {selector:'head',html:'<link rel="stylesheet" id="theme" href="/themes/default/app.min.css">'}
@@ -194,7 +193,6 @@ module.exports = function (grunt) {
         files: {
           'temp/libnocompat.js': ['<%= dom_munger.data.libnocompatjs %>'],
           'temp/lib.js': ['<%= dom_munger.data.libjs %>'],
-          'dist/translations-init-v10.0.2.js': ['translations-init.js'],
           'temp/app.js': ['<%= dom_munger.data.appjs %>','<%= ngtemplates.main.dest %>'],
           'dist/SequentConfig-v10.0.2.js': ['SequentConfig.js'],
           'dist/SequentThemes-v10.0.2.js': ['SequentThemes.js'],
@@ -326,7 +324,6 @@ module.exports = function (grunt) {
           '<%= dom_munger.data.libnocompatjs %>',
           '<%= dom_munger.data.libjs %>',
           'SequentConfig.js',
-          'translations-init.js',
           'SequentThemes.js',
           'avWidgets.js',
           '<%= dom_munger.data.appjs %>',
@@ -425,7 +422,6 @@ module.exports = function (grunt) {
         var files = [].concat(grunt.config('dom_munger.data.libnocompatjs'));
         files.concat(grunt.config('dom_munger.data.libjs'));
         files.push('node_modules/angular-mocks/angular-mocks.js');
-        files.push('translations-init.js');
         files.push('SequentConfig.js');
         files.push('SequentThemes.js');
         files.push('avWidgets.js');
