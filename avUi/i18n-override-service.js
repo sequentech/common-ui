@@ -94,12 +94,7 @@ angular
 
         // This will trigget a $i18next's init function to be called and all
         // angularjs $i18next translations to be updated accordingly.
-        // `i18nextLanguageChange` signal is special for $i18next, see its code
-        // for reference.
-        $rootScope.$emit(
-          'i18nextLanguageChange',
-          $i18next.options.lng
-        );
+        $i18next.reInit();
       };
     }
   );
