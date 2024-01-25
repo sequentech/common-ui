@@ -140,7 +140,7 @@ angular
             {
               $window.i18n.addResources(
                 /* lng = */ language,
-                /* ns = */ "translation",
+                /* ns = */ "locales",
                 /* resources = */ expandObject(i18nOverride)
               );
 

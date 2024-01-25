@@ -1145,8 +1145,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         $window.i18nOverride = overrides), languagesConf && ($i18next.options.lng = languagesConf.force_default_language ? languagesConf.default_language : $window.i18n.lng(), 
         $i18next.options.lngWhitelist = languagesConf.available_languages, $i18next.options.fallbackLng = [ languagesConf.default_language, "en" ]), 
         performOverrides && _.map($window.i18nOverride, function(i18nOverride, language) {
-            $window.i18n.addResources(language, "translation", expandObject(i18nOverride)), 
-            _.each(_.keys(i18nOverride), function(i18nString) {
+            $window.i18n.addResources(language, "locales", expandObject(i18nOverride)), _.each(_.keys(i18nOverride), function(i18nString) {
                 $i18next(i18nString, {});
             });
         }), $i18next.reInit();
