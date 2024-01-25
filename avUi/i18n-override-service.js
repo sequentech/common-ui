@@ -38,10 +38,74 @@ angular
     'I18nOverride',
     function($i18next, $rootScope, $window)
     {
+      function expandObject(obj)
+      {
+        var result = {};
+    
+        // Helper function to handle the recursion
+        function assignValue(ref, keys, value) {
+            var key = keys.shift(); // Get the current key part
+            if (keys.length === 0) {
+                // If no more keys, assign the value directly
+                ref[key] = value;
+            } else {
+                // Prepare the next level sub-object if necessary
+                if (!ref[key]) {
+                  ref[key] = {};
+                }
+                // Recurse with the next level of the key and the corresponding sub-object
+                assignValue(ref[key], keys, value);
+            }
+        }
+    
+        // Iterate over each property in the input object
+        for (var prop in obj) {
+            if (obj.hasOwnProperty(prop)) {
+                var keys = prop.split('.'); // Split the property by dots into parts
+                assignValue(result, keys, obj[prop]); // Use the helper to assign the value in the result object
+            }
+        }
+    
+        return result;
+      }
+      function deepExtend(target, source) {
+        for (var prop in source) {
+            if (source.hasOwnProperty(prop)) {
+                if (target[prop] && typeof source[prop] === 'object') {
+                  deepExtend(target[prop], source[prop]);
+                }
+                else {
+                    target[prop] = source[prop];
+                }
+            }
+        }
+        return target;
+      }
       return function (overrides, force, languagesConf)
       {
         force = angular.isDefined(force) ? force : false;
-        overrides = overrides === null ? $window.i18nOverride : overrides;
+        if (overrides !== null) {
+          if (languagesConf && languagesConf.available_languages)
+          {
+            // We use deep extend to have as an override for all available
+            // languages the original changed with the override
+            deepExtend(
+              overrides,
+              _.object(_.map(
+                languagesConf.available_languages,
+                function(key) { return [key, {}]; }
+                ))
+            );
+          }
+          overrides = _.mapObject(overrides, function(obj, langCode) {
+            var original = $window.i18n.getResourceBundle(langCode, "locales");
+            var override = expandObject(obj);
+            deepExtend(original, override);
+            return original;
+          });
+        } else {
+          overrides = $window.i18nOverride;
+        }
 
         // reset $window.i18nOverride
         var performOverrides = false;
@@ -77,7 +141,7 @@ angular
               $window.i18n.addResources(
                 /* lng = */ language,
                 /* ns = */ "translation",
-                /* resources = */ i18nOverride
+                /* resources = */ expandObject(i18nOverride)
               );
 
               // force-refresh cached translations to override
