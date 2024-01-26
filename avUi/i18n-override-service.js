@@ -68,19 +68,6 @@ angular
     
         return result;
       }
-      function deepExtend(target, source) {
-        for (var prop in source) {
-            if (source.hasOwnProperty(prop)) {
-                if (target[prop] && typeof source[prop] === 'object') {
-                  deepExtend(target[prop], source[prop]);
-                }
-                else {
-                    target[prop] = source[prop];
-                }
-            }
-        }
-        return target;
-      }
       return function (overrides, force, languagesConf)
       {
         force = angular.isDefined(force) ? force : false;
@@ -89,7 +76,7 @@ angular
           {
             // We use deep extend to have as an override for all available
             // languages the original changed with the override
-            deepExtend(
+            angular.extend(
               overrides,
               _.object(_.map(
                 languagesConf.available_languages,
@@ -97,11 +84,16 @@ angular
                 ))
             );
           }
+          $i18next.options.useLocalStorage = true;
+          $window.i18n.options.useLocalStorage = true;
           overrides = _.mapObject(overrides, function(obj, langCode) {
-            var original = $window.i18n.getResourceBundle(langCode, "locales");
+            var original = {};
+            if ($window.i18nOriginal && $window.i18nOriginal[langCode]) {
+              original = $window.i18nOriginal[langCode];
+            }
             var override = expandObject(obj);
-            deepExtend(original, override);
-            return original;
+            var merged = angular.merge({}, original, override);
+            return merged;
           });
         } else {
           overrides = $window.i18nOverride;
@@ -138,19 +130,10 @@ angular
             $window.i18nOverride,
             function (i18nOverride, language)
             {
-              $window.i18n.addResources(
+              $window.i18n.addResourceBundle(
                 /* lng = */ language,
-                /* ns = */ "locales",
-                /* resources = */ expandObject(i18nOverride)
-              );
-
-              // force-refresh cached translations to override
-              _.each(
-                _.keys(i18nOverride),
-                function (i18nString)
-                {
-                  $i18next(i18nString, {});
-                }
+                /* ns = */ "translation",
+                /* resources = */ i18nOverride
               );
             }
           );

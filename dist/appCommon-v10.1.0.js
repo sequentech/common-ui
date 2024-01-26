@@ -1129,25 +1129,22 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         }(result, prop.split("."), obj[prop]);
         return result;
     }
-    function deepExtend(target, source) {
-        for (var prop in source) source.hasOwnProperty(prop) && (target[prop] && "object" == typeof source[prop] ? deepExtend(target[prop], source[prop]) : target[prop] = source[prop]);
-        return target;
-    }
     return function(overrides, force, languagesConf) {
         force = !!angular.isDefined(force) && force;
         var performOverrides = !1;
-        (overrides = null !== overrides ? (languagesConf && languagesConf.available_languages && deepExtend(overrides, _.object(_.map(languagesConf.available_languages, function(key) {
+        (overrides = null !== overrides ? (languagesConf && languagesConf.available_languages && angular.extend(overrides, _.object(_.map(languagesConf.available_languages, function(key) {
             return [ key, {} ];
-        }))), _.mapObject(overrides, function(obj, original) {
-            original = $window.i18n.getResourceBundle(original, "locales");
-            return deepExtend(original, expandObject(obj)), original;
+        }))), $i18next.options.useLocalStorage = !0, $window.i18n.options.useLocalStorage = !0, 
+        _.mapObject(overrides, function(override, langCode) {
+            var original = {};
+            $window.i18nOriginal && $window.i18nOriginal[langCode] && (original = $window.i18nOriginal[langCode]);
+            override = expandObject(override);
+            return angular.merge({}, original, override);
         })) : $window.i18nOverride) && (performOverrides = force || JSON.stringify(overrides) !== JSON.stringify($window.i18nOverride), 
         $window.i18nOverride = overrides), languagesConf && ($i18next.options.lng = languagesConf.force_default_language ? languagesConf.default_language : $window.i18n.lng(), 
         $i18next.options.lngWhitelist = languagesConf.available_languages, $i18next.options.fallbackLng = [ languagesConf.default_language, "en" ]), 
         performOverrides && _.map($window.i18nOverride, function(i18nOverride, language) {
-            $window.i18n.addResources(language, "locales", expandObject(i18nOverride)), _.each(_.keys(i18nOverride), function(i18nString) {
-                $i18next(i18nString, {});
-            });
+            $window.i18n.addResourceBundle(language, "translation", i18nOverride);
         }), $i18next.reInit();
     };
 } ]), angular.module("avUi").directive("avChangeLang", [ "$i18next", "ipCookie", "angularLoad", "amMoment", "$rootScope", "ConfigService", "$window", "I18nOverride", "Authmethod", function($i18next, ipCookie, angularLoad, amMoment, $rootScope, ConfigService, $window, I18nOverride, Authmethod) {
