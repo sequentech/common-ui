@@ -1132,7 +1132,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
     return function(overrides, force, languagesConf) {
         force = !!angular.isDefined(force) && force;
         var performOverrides = !1;
-        (overrides = null !== overrides ? (languagesConf && languagesConf.available_languages && angular.extend(overrides, _.object(_.map(languagesConf.available_languages, function(key) {
+        (overrides = null !== overrides ? (languagesConf && languagesConf.available_languages && angular.merge(overrides, _.object(_.map(languagesConf.available_languages, function(key) {
             return [ key, {} ];
         }))), $i18next.options.useLocalStorage = !0, $window.i18n.options.useLocalStorage = !0, 
         _.mapObject(overrides, function(override, langCode) {

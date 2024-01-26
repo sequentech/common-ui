@@ -76,7 +76,7 @@ angular
           {
             // We use deep extend to have as an override for all available
             // languages the original changed with the override
-            angular.extend(
+            angular.merge(
               overrides,
               _.object(_.map(
                 languagesConf.available_languages,
