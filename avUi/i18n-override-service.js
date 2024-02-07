@@ -122,28 +122,35 @@ angular
           $i18next.options.lngWhitelist = languagesConf.available_languages;
           $i18next.options.fallbackLng = [languagesConf.default_language, 'en'];
         }
-
-        // load i18n_overrides if any
-        if (performOverrides)
-        {
-          _.map(
-            $window.i18nOverride,
-            function (i18nOverride, language)
+        console.log("calling reloadResources()..");
+        $window.i18next
+          .reloadResources()
+          .then(function () {
+            console.log("reloadResources: successful. Now checking overrides");
+            // load i18n_overrides if any
+            if (performOverrides)
             {
-              $window.i18n.addResourceBundle(
-                /* lng = */ language,
-                /* ns = */ "translation",
-                /* resources = */ i18nOverride,
-                /* deep */ true,
-                /* overwrite */ true
+              console.log("reloadResources: adding overrides");
+              _.map(
+                $window.i18nOverride,
+                function (i18nOverride, language)
+                {
+                  $window.i18n.addResourceBundle(
+                    /* lng = */ language,
+                    /* ns = */ "translation",
+                    /* resources = */ i18nOverride,
+                    /* deep */ true,
+                    /* overwrite */ true
+                  );
+                }
               );
             }
-          );
-        }
+            console.log("reloadResources: $i18next.reInit()");
 
-        // This will trigget a $i18next's init function to be called and all
-        // angularjs $i18next translations to be updated accordingly.
-        $i18next.reInit();
+            // This will trigget a $i18next's init function to be called and all
+            // angularjs $i18next translations to be updated accordingly.
+            $i18next.reInit();
+          });
       };
     }
   );
