@@ -36,7 +36,7 @@ angular.module('avUi')
     {    
       scope.deflang = $window.i18next.resolvedLanguage;
       angular.element('#ng-app').attr('lang', scope.deflang);
-      scope.langs =  $i18next.options.lngWhitelist;
+      scope.langs =  $window.i18next.options.lngWhitelist;
       var isAdmin = Authmethod.isAdmin();
       function triggerDropdown()
       {

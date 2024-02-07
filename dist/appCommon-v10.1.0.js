@@ -1157,7 +1157,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         scope: {},
         link: function(scope, element, attrs) {
             scope.deflang = $window.i18next.resolvedLanguage, angular.element("#ng-app").attr("lang", scope.deflang), 
-            scope.langs = $i18next.options.lngWhitelist;
+            scope.langs = $window.i18next.options.lngWhitelist;
             var isAdmin = Authmethod.isAdmin();
             element.on("click", function() {
                 setTimeout(function() {
@@ -1736,7 +1736,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
     };
 } ]), angular.module("avUi").filter("customI18n", function() {
     return function(data, key) {
-        var lang = window.i18n.lng(), value = "";
+        var lang = window.i18next.resolvedLanguage, value = "";
         return value = _.isString(key) && _.isObject(data) && _.isString(lang) ? data[key + "_i18n"] && data[key + "_i18n"][lang] || data[key] || value : value;
     };
 }), angular.module("common-ui", [ "ui.bootstrap", "ui.utils", "ui.router", "ngAnimate", "ngResource", "ngCookies", "ipCookie", "ngSanitize", "infinite-scroll", "angularMoment", "SequentConfig", "jm.i18next", "avRegistration", "avUi", "avTest", "angularFileUpload", "dndLists", "angularLoad", "ng-autofocus" ]), 
