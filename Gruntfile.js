@@ -232,7 +232,7 @@ module.exports = function (grunt) {
         },
         files: {
           'dist/appCommon-v10.1.0.js': 'temp/app.js',
-          'dist/libCommon-v10.1.0.js': 'temp/lib.js',
+          'dist/libCommon-v10.1.0.js': ['temp/lib.js', 'node_modules/i18next/cjs/i18next.js'],
           'dist/libnocompat-v10.1.0.js': 'temp/libnocompat.js',
           'dist/avWidgets.js': 'avWidgets.js',
 

@@ -133,7 +133,9 @@ angular
               $window.i18n.addResourceBundle(
                 /* lng = */ language,
                 /* ns = */ "translation",
-                /* resources = */ i18nOverride
+                /* resources = */ i18nOverride,
+                /* deep */ true,
+                /* overwrite */ true
               );
             }
           );

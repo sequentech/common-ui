@@ -1144,7 +1144,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         $window.i18nOverride = overrides), languagesConf && ($i18next.options.lng = languagesConf.force_default_language ? languagesConf.default_language : $window.i18n.lng(), 
         $i18next.options.lngWhitelist = languagesConf.available_languages, $i18next.options.fallbackLng = [ languagesConf.default_language, "en" ]), 
         performOverrides && _.map($window.i18nOverride, function(i18nOverride, language) {
-            $window.i18n.addResourceBundle(language, "translation", i18nOverride);
+            $window.i18n.addResourceBundle(language, "translation", i18nOverride, !0, !0);
         }), $i18next.reInit();
     };
 } ]), angular.module("avUi").directive("avChangeLang", [ "$i18next", "ipCookie", "angularLoad", "amMoment", "$rootScope", "ConfigService", "$window", "I18nOverride", "Authmethod", function($i18next, ipCookie, angularLoad, amMoment, $rootScope, ConfigService, $window, I18nOverride, Authmethod) {
@@ -1736,18 +1736,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         return value = _.isString(key) && _.isObject(data) && _.isString(lang) ? data[key + "_i18n"] && data[key + "_i18n"][lang] || data[key] || value : value;
     };
 }), angular.module("common-ui", [ "ui.bootstrap", "ui.utils", "ui.router", "ngAnimate", "ngResource", "ngCookies", "ipCookie", "ngSanitize", "infinite-scroll", "angularMoment", "SequentConfig", "jm.i18next", "avRegistration", "avUi", "avTest", "angularFileUpload", "dndLists", "angularLoad", "ng-autofocus" ]), 
-angular.module("jm.i18next").config([ "$i18nextProvider", "ConfigServiceProvider", function($i18nextProvider, ConfigServiceProvider) {
-    $("#no-js").hide(), $i18nextProvider.options = _.extend({
-        useCookie: !0,
-        useLocalStorage: !1,
-        fallbackLng: "en",
-        cookieName: "lang",
-        detectLngQS: "lang",
-        lngWhitelist: [ "en", "es", "gl", "ca" ],
-        resGetPath: "/locales/__lng__.json",
-        defaultLoadingValue: ""
-    }, ConfigServiceProvider.i18nextInitOptions);
-} ]), angular.module("common-ui").run([ "$http", "$rootScope", function($http, $rootScope) {
+angular.module("common-ui").run([ "$http", "$rootScope", function($http, $rootScope) {
     $rootScope.safeApply = function(fn) {
         var phase = $rootScope.$$phase;
         "$apply" === phase || "$digest" === phase ? fn && "function" == typeof fn && fn() : this.$apply(fn);
