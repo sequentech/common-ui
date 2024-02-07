@@ -201,7 +201,7 @@ module.exports = function (grunt) {
       },
       postUglify: {
         files: {
-          'dist/libCommon-v10.1.0.js': ['dist/libCommon-v10.1.0.js', 'node_modules/i18next/dist/cjs/i18next.js']
+          'dist/libCommon-v10.1.0.js': ['dist/libCommon-v10.1.0.js', 'node_modules/i18next/dist/umd/i18next.js']
         }
       },
     },
