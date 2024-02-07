@@ -146,11 +146,11 @@ angular
                 }
               );
             }
-            console.log("reloadResources: $i18next.reInit()");
+            console.log("reloadResources: $i18next.changeLanguage($i18next.options.lng);");
 
             // This will trigget a $i18next's init function to be called and all
             // angularjs $i18next translations to be updated accordingly.
-            $i18next.reInit();
+            $i18next.changeLanguage($i18next.options.lng);
           });
       };
     }

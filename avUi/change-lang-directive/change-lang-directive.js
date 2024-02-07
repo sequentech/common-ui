@@ -66,11 +66,10 @@ angular.module('avUi')
         $window.i18next
           .changeLanguage(lang)
           .then(function () {
-            console.log("changeLang: changed, calling $i18next.reInit()");
+            console.log("changeLang: changed, calling $i18next.changeLanguage($i18next.options.lng);");
 
-            // This will trigget a $i18next's init function to be called and all
-            // angularjs $i18next translations to be updated accordingly.
-            $i18next.reInit();
+            // This will trigger a _this.$rootScope.$broadcast('i18nextLanguageChange', _this.i18n.language);
+            $i18next.changeLanguage($i18next.options.lng);
 
           });
 
