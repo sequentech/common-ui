@@ -1132,7 +1132,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
     return function(overrides, force, languagesConf) {
         force = !!angular.isDefined(force) && force, overrides = null !== overrides ? (languagesConf && languagesConf.available_languages && angular.merge(overrides, _.object(_.map(languagesConf.available_languages, function(key) {
             return [ key, {} ];
-        }))), $i18next.options.useLocalStorage = !0, $window.i18n.options.useLocalStorage = !0, 
+        }))), $i18next.options.useLocalStorage = !0, $window.i18next.options.useLocalStorage = !0, 
         _.mapObject(overrides, function(override, langCode) {
             var original = {};
             $window.i18nOriginal && $window.i18nOriginal[langCode] && (original = $window.i18nOriginal[langCode]);
@@ -1141,12 +1141,13 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         })) : $window.i18nOverride;
         var performOverrides = !1;
         overrides && (performOverrides = force || JSON.stringify(overrides) !== JSON.stringify($window.i18nOverride), 
-        $window.i18nOverride = overrides), languagesConf && ($i18next.options.lng = languagesConf.force_default_language ? languagesConf.default_language : $window.i18n.lng(), 
-        $i18next.options.lngWhitelist = languagesConf.available_languages, $i18next.options.fallbackLng = [ languagesConf.default_language, "en" ]), 
-        console.log("calling reloadResources().."), $window.i18next.reloadResources().then(function() {
+        $window.i18nOverride = overrides), languagesConf && ($i18next.options.lng = languagesConf.force_default_language ? languagesConf.default_language : $window.i18next.resolvedLanguage, 
+        $i18next.options.lngWhitelist = languagesConf.available_languages, $i18next.options.preload = languagesConf.available_languages, 
+        $i18next.options.fallbackLng = [ languagesConf.default_language, "en" ]), console.log("calling reloadResources().."), 
+        $window.i18next.reloadResources().then(function() {
             console.log("reloadResources: successful. Now checking overrides"), performOverrides && (console.log("reloadResources: adding overrides"), 
             _.map($window.i18nOverride, function(i18nOverride, language) {
-                $window.i18n.addResourceBundle(language, "translation", i18nOverride, !0, !0);
+                $window.i18next.addResourceBundle(language, "translation", i18nOverride, !0, !0);
             })), console.log("reloadResources: $i18next.reInit()"), $i18next.reInit();
         });
     };
@@ -1155,7 +1156,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         restrict: "AE",
         scope: {},
         link: function(scope, element, attrs) {
-            scope.deflang = window.i18n.lng(), angular.element("#ng-app").attr("lang", scope.deflang), 
+            scope.deflang = $window.i18next.resolvedLanguage, angular.element("#ng-app").attr("lang", scope.deflang), 
             scope.langs = $i18next.options.lngWhitelist;
             var isAdmin = Authmethod.isAdmin();
             element.on("click", function() {
@@ -1165,8 +1166,8 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             }), $rootScope.$on("i18nextLanguageChange", function(event, languageCode) {
                 scope.deflang = languageCode, scope.langs = $i18next.options.lngWhitelist, scope.$apply();
             }), scope.changeLang = function(lang) {
-                $i18next.options.lng = lang, angular.isDefined($window.i18nOverride) && $window.i18n.preload([ lang ], function() {
-                    I18nOverride($window.i18nOverride, !0);
+                $window.i18next.changeLanguage(lang).then(function() {
+                    console.log("changeLang: changed, calling $i18next.reInit()"), $i18next.reInit();
                 }), console.log("setting cookie");
                 ipCookie("lang", lang, _.extend({
                     expires: 360,

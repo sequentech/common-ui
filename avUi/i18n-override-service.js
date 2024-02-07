@@ -85,7 +85,7 @@ angular
             );
           }
           $i18next.options.useLocalStorage = true;
-          $window.i18n.options.useLocalStorage = true;
+          $window.i18next.options.useLocalStorage = true;
           overrides = _.mapObject(overrides, function(obj, langCode) {
             var original = {};
             if ($window.i18nOriginal && $window.i18nOriginal[langCode]) {
@@ -112,14 +112,15 @@ angular
         if (languagesConf)
         {
           // For some reason it seems that `$i18next.options.lng` gets desynced
-          // from `$window.i18n.lng()`. This might result in an unexpected
+          // from `$window.i18next.resolvedLanguage`. This might result in an unexpected
           // language change when the init() function from $i18next gets called
           // later in this code. For this reason, we set the correct language in
           // `$i18next.options.lng` to ensure that doesn't happen.
           $i18next.options.lng = (languagesConf.force_default_language) ?
-            languagesConf.default_language : $window.i18n.lng();
+            languagesConf.default_language : $window.i18next.resolvedLanguage;
 
           $i18next.options.lngWhitelist = languagesConf.available_languages;
+          $i18next.options.preload = languagesConf.available_languages;
           $i18next.options.fallbackLng = [languagesConf.default_language, 'en'];
         }
         console.log("calling reloadResources()..");
@@ -135,7 +136,7 @@ angular
                 $window.i18nOverride,
                 function (i18nOverride, language)
                 {
-                  $window.i18n.addResourceBundle(
+                  $window.i18next.addResourceBundle(
                     /* lng = */ language,
                     /* ns = */ "translation",
                     /* resources = */ i18nOverride,

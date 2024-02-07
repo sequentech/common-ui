@@ -34,7 +34,7 @@ angular.module('avUi')
   ) {
     function link(scope, element, attrs)
     {    
-      scope.deflang = window.i18n.lng();
+      scope.deflang = $window.i18next.resolvedLanguage;
       angular.element('#ng-app').attr('lang', scope.deflang);
       scope.langs =  $i18next.options.lngWhitelist;
       var isAdmin = Authmethod.isAdmin();
@@ -63,22 +63,16 @@ angular.module('avUi')
       // Triggered when the user clicks and selects a language.
       scope.changeLang = function(lang)
       {
-        $i18next.options.lng = lang;
+        $window.i18next
+          .changeLanguage(lang)
+          .then(function () {
+            console.log("changeLang: changed, calling $i18next.reInit()");
 
-        // load i18n_overrides if any
-        if (angular.isDefined($window.i18nOverride))
-        {
-          $window.i18n.preload(
-            [lang],
-            function ()
-            {
-              I18nOverride(
-                /* overrides = */ $window.i18nOverride, // set to use the default, $window.i18nOverride
-                /* force = */ true
-              );
-            }
-          );
-        }
+            // This will trigget a $i18next's init function to be called and all
+            // angularjs $i18next translations to be updated accordingly.
+            $i18next.reInit();
+
+          });
 
         console.log("setting cookie");
         var cookieConf = {
