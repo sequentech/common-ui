@@ -146,11 +146,8 @@ angular
                 }
               );
             }
-            console.log("reloadResources: $i18next.changeLanguage($i18next.options.lng);");
-
-            // This will trigget a $i18next's init function to be called and all
-            // angularjs $i18next translations to be updated accordingly.
-            $i18next.changeLanguage($i18next.options.lng);
+            console.log("reloadResources: broadcast i18nextLanguageChange");
+            $rootScope.$broadcast('i18nextLanguageChange', $i18next.options.lng);
           });
       };
     }

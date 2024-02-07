@@ -66,10 +66,8 @@ angular.module('avUi')
         $window.i18next
           .changeLanguage(lang)
           .then(function () {
-            console.log("changeLang: changed, calling $i18next.changeLanguage($i18next.options.lng);");
-
-            // This will trigger a _this.$rootScope.$broadcast('i18nextLanguageChange', _this.i18n.language);
-            $i18next.changeLanguage($i18next.options.lng);
+            console.log("changeLang: broadcast i18nextLanguageChange");
+            $rootScope.$broadcast('i18nextLanguageChange', $i18next.options.lng);
 
           });
 

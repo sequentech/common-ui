@@ -1148,8 +1148,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             console.log("reloadResources: successful. Now checking overrides"), performOverrides && (console.log("reloadResources: adding overrides"), 
             _.map($window.i18nOverride, function(i18nOverride, language) {
                 $window.i18next.addResourceBundle(language, "translation", i18nOverride, !0, !0);
-            })), console.log("reloadResources: $i18next.changeLanguage($i18next.options.lng);"), 
-            $i18next.changeLanguage($i18next.options.lng);
+            })), console.log("reloadResources: broadcast i18nextLanguageChange"), $rootScope.$broadcast("i18nextLanguageChange", $i18next.options.lng);
         });
     };
 } ]), angular.module("avUi").directive("avChangeLang", [ "$i18next", "ipCookie", "angularLoad", "amMoment", "$rootScope", "ConfigService", "$window", "I18nOverride", "Authmethod", function($i18next, ipCookie, angularLoad, amMoment, $rootScope, ConfigService, $window, I18nOverride, Authmethod) {
@@ -1168,8 +1167,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 scope.deflang = languageCode, scope.langs = $i18next.options.lngWhitelist, scope.$apply();
             }), scope.changeLang = function(lang) {
                 $window.i18next.changeLanguage(lang).then(function() {
-                    console.log("changeLang: changed, calling $i18next.changeLanguage($i18next.options.lng);"), 
-                    $i18next.changeLanguage($i18next.options.lng);
+                    console.log("changeLang: broadcast i18nextLanguageChange"), $rootScope.$broadcast("i18nextLanguageChange", $i18next.options.lng);
                 }), console.log("setting cookie");
                 ipCookie("lang", lang, _.extend({
                     expires: 360,
@@ -1737,10 +1735,11 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         templateUrl: "avUi/foot-directive/foot-directive.html"
     };
 } ]), angular.module("avUi").filter("customI18n", function() {
-    return function(data, key) {
+    function customI18nFilter(data, key) {
         var lang = window.i18next.resolvedLanguage, value = "";
         return value = _.isString(key) && _.isObject(data) && _.isString(lang) ? data[key + "_i18n"] && data[key + "_i18n"][lang] || data[key] || value : value;
-    };
+    }
+    return customI18nFilter.$stateful = !0, customI18nFilter;
 }), angular.module("common-ui", [ "ui.bootstrap", "ui.utils", "ui.router", "ngAnimate", "ngResource", "ngCookies", "ipCookie", "ngSanitize", "infinite-scroll", "angularMoment", "SequentConfig", "jm.i18next", "avRegistration", "avUi", "avTest", "angularFileUpload", "dndLists", "angularLoad", "ng-autofocus" ]), 
 angular.module("common-ui").run([ "$http", "$rootScope", function($http, $rootScope) {
     $rootScope.safeApply = function(fn) {

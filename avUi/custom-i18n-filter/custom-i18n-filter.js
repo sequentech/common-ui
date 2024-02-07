@@ -25,7 +25,7 @@ angular
     'customI18n',
     function()
     {
-      return function(data, key)
+      function customI18nFilter(data, key)
       {
         var suffix = "_i18n";
         var lang = window.i18next.resolvedLanguage;
@@ -34,7 +34,9 @@ angular
             value = data[key + suffix] && data[key + suffix][lang] || data[key] || value;
         }
         return value;
-      };
+      }
+      customI18nFilter.$stateful = true;
+      return customI18nFilter;
     }
   );
 
