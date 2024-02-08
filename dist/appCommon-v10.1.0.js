@@ -1127,12 +1127,13 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         languagesConf && ($i18next.options.lng = languagesConf.force_default_language ? languagesConf.default_language : $window.i18next.resolvedLanguage, 
         $i18next.options.lngWhitelist = languagesConf.available_languages, $i18next.options.preload = languagesConf.available_languages, 
         $i18next.options.fallbackLng = [ languagesConf.default_language, "en" ]), console.log("calling $window.i18next.reloadResources().."), 
-        $window.i18next.reloadResources().then(function() {
-            console.log("reloadResources: successful. broadcast i18nextLanguageChange signal"), 
-            $rootScope.$broadcast("i18nextLanguageChange", $i18next.options.lng);
+        $window.i18next.reloadResources($i18next.options.preload).then(function() {
+            languagesConf.force_default_language && $window.i18next.changeAppLang ? (console.log("reloadResources: successful. force-changing default lang to=" + languagesConf.default_language), 
+            $window.i18next.changeAppLang(languagesConf.default_language)) : (console.log("reloadResources: successful. broadcast i18nextLanguageChange signal"), 
+            $rootScope.$broadcast("i18nextLanguageChange", $i18next.options.lng));
         });
     };
-} ]), angular.module("avUi").directive("avChangeLang", [ "$i18next", "ipCookie", "angularLoad", "amMoment", "$rootScope", "ConfigService", "$window", "I18nOverride", "Authmethod", function($i18next, ipCookie, angularLoad, amMoment, $rootScope, ConfigService, $window, I18nOverride, Authmethod) {
+} ]), angular.module("avUi").directive("avChangeLang", [ "$i18next", "ipCookie", "angularLoad", "amMoment", "$rootScope", "ConfigService", "$window", "Authmethod", function($i18next, ipCookie, angularLoad, amMoment, $rootScope, ConfigService, $window, Authmethod) {
     return {
         restrict: "AE",
         scope: {},
@@ -1146,9 +1147,9 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 }, 0);
             }), $rootScope.$on("i18nextLanguageChange", function(event, languageCode) {
                 scope.deflang = languageCode, scope.langs = $i18next.options.lngWhitelist, scope.$apply();
-            }), scope.changeLang = function(lang) {
+            }), $window.i18next.changeAppLang = scope.changeLang = function(lang) {
                 $window.i18next.changeLanguage(lang).then(function() {
-                    console.log("changeLang: broadcast i18nextLanguageChange"), $rootScope.$broadcast("i18nextLanguageChange", $i18next.options.lng);
+                    console.log("changeLang: broadcast i18nextLanguageChange"), $rootScope.$broadcast("i18nextLanguageChange", $window.i18next.resolvedLanguage);
                 }), console.log("setting cookie");
                 ipCookie("lang", lang, _.extend({
                     expires: 360,

@@ -29,7 +29,6 @@ angular.module('avUi')
     $rootScope,
     ConfigService,
     $window,
-    I18nOverride,
     Authmethod
   ) {
     function link(scope, element, attrs)
@@ -61,13 +60,13 @@ angular.module('avUi')
       // remembering it, and updating all the translations instantly.
       //
       // Triggered when the user clicks and selects a language.
-      scope.changeLang = function(lang)
+      $window.i18next.changeAppLang = scope.changeLang = function(lang)
       {
         $window.i18next
           .changeLanguage(lang)
           .then(function () {
             console.log("changeLang: broadcast i18nextLanguageChange");
-            $rootScope.$broadcast('i18nextLanguageChange', $i18next.options.lng);
+            $rootScope.$broadcast('i18nextLanguageChange', $window.i18next.resolvedLanguage);
 
           });
 

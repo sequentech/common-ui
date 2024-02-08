@@ -68,10 +68,16 @@ angular
         }
         console.log("calling $window.i18next.reloadResources()..");
         $window.i18next
-          .reloadResources()
+          .reloadResources($i18next.options.preload)
           .then(function () {
-            console.log("reloadResources: successful. broadcast i18nextLanguageChange signal");
-            $rootScope.$broadcast('i18nextLanguageChange', $i18next.options.lng);
+            if (languagesConf.force_default_language && $window.i18next.changeAppLang)
+            {
+              console.log("reloadResources: successful. force-changing default lang to=" + languagesConf.default_language);
+              $window.i18next.changeAppLang(languagesConf.default_language);
+            } else {
+              console.log("reloadResources: successful. broadcast i18nextLanguageChange signal");
+              $rootScope.$broadcast('i18nextLanguageChange', $i18next.options.lng);
+            }
           });
       };
     }
