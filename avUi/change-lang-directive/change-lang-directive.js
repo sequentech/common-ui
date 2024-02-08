@@ -29,14 +29,13 @@ angular.module('avUi')
     $rootScope,
     ConfigService,
     $window,
-    I18nOverride,
     Authmethod
   ) {
     function link(scope, element, attrs)
     {    
-      scope.deflang = window.i18n.lng();
+      scope.deflang = $window.i18next.resolvedLanguage;
       angular.element('#ng-app').attr('lang', scope.deflang);
-      scope.langs =  $i18next.options.lngWhitelist;
+      scope.langs =  $window.i18next.options.lngWhitelist;
       var isAdmin = Authmethod.isAdmin();
       function triggerDropdown()
       {
@@ -61,27 +60,15 @@ angular.module('avUi')
       // remembering it, and updating all the translations instantly.
       //
       // Triggered when the user clicks and selects a language.
-      scope.changeLang = function(lang)
+      $window.i18next.changeAppLang = scope.changeLang = function(lang)
       {
-        $i18next.options.lng = lang;
-        if (!isAdmin) {
-          $i18next.options.useLocalStorage = true;
-        }
+        $window.i18next
+          .changeLanguage(lang)
+          .then(function () {
+            console.log("changeLang: broadcast i18nextLanguageChange");
+            $rootScope.$broadcast('i18nextLanguageChange', $window.i18next.resolvedLanguage);
 
-        // load i18n_overrides if any
-        if (angular.isDefined($window.i18nOverride))
-        {
-          $window.i18n.preload(
-            [lang],
-            function ()
-            {
-              I18nOverride(
-                /* overrides = */ $window.i18nOverride, // set to use the default, $window.i18nOverride
-                /* force = */ true
-              );
-            }
-          );
-        }
+          });
 
         console.log("setting cookie");
         var cookieConf = {

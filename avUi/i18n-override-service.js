@@ -41,65 +41,47 @@ angular
       return function (overrides, force, languagesConf)
       {
         force = angular.isDefined(force) ? force : false;
-        overrides = overrides === null ? $window.i18nOverride : overrides;
-
-        // reset $window.i18nOverride
         var performOverrides = false;
-        if (overrides) {
+        if (overrides !== null) {
           performOverrides = (
             force ||
             JSON.stringify(overrides) !== JSON.stringify($window.i18nOverride)
-          );
-          $window.i18nOverride = overrides;
+            );
+          if (performOverrides) {
+            $window.i18nOverride = overrides;
+          }
         }
 
         if (languagesConf)
         {
           // For some reason it seems that `$i18next.options.lng` gets desynced
-          // from `$window.i18n.lng()`. This might result in an unexpected
+          // from `$window.i18next.resolvedLanguage`. This might result in an unexpected
           // language change when the init() function from $i18next gets called
           // later in this code. For this reason, we set the correct language in
           // `$i18next.options.lng` to ensure that doesn't happen.
           $i18next.options.lng = (languagesConf.force_default_language) ?
-            languagesConf.default_language : $window.i18n.lng();
+            languagesConf.default_language : $window.i18next.resolvedLanguage;
 
           $i18next.options.lngWhitelist = languagesConf.available_languages;
+          $i18next.options.preload = languagesConf.available_languages;
           $i18next.options.fallbackLng = [languagesConf.default_language, 'en'];
         }
-
-        // load i18n_overrides if any
-        if (performOverrides)
-        {
-          _.map(
-            $window.i18nOverride,
-            function (i18nOverride, language)
-            {
-              $window.i18n.addResources(
-                /* lng = */ language,
-                /* ns = */ "translation",
-                /* resources = */ i18nOverride
-              );
-
-              // force-refresh cached translations to override
-              _.each(
-                _.keys(i18nOverride),
-                function (i18nString)
-                {
-                  $i18next(i18nString, {});
-                }
-              );
+        console.log("calling $window.i18next.reloadResources()..");
+        $window.i18next
+          .reloadResources($i18next.options.preload)
+          .then(function () {
+            if (
+              languagesConf &&
+              languagesConf.force_default_language &&
+              $window.i18next.changeAppLang
+            ) {
+              console.log("reloadResources: successful. force-changing default lang to=" + languagesConf.default_language);
+              $window.i18next.changeAppLang(languagesConf.default_language);
+            } else {
+              console.log("reloadResources: successful. broadcast i18nextLanguageChange signal");
+              $rootScope.$broadcast('i18nextLanguageChange', $i18next.options.lng);
             }
-          );
-        }
-
-        // This will trigget a $i18next's init function to be called and all
-        // angularjs $i18next translations to be updated accordingly.
-        // `i18nextLanguageChange` signal is special for $i18next, see its code
-        // for reference.
-        $rootScope.$emit(
-          'i18nextLanguageChange',
-          $i18next.options.lng
-        );
+	  });
       };
     }
   );

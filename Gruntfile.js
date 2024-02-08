@@ -198,7 +198,12 @@ module.exports = function (grunt) {
           'dist/SequentThemes-vmaster.js': ['SequentThemes.js'],
           'dist/SequentPlugins-vmaster.js': ['plugins/**/*.js']
         }
-      }
+      },
+      postUglify: {
+        files: {
+          'dist/libCommon-v10.1.0.js': ['dist/libCommon-v10.1.0.js', 'node_modules/i18next/dist/umd/i18next.js']
+        }
+      },
     },
     "merge-json": {
       main: {
@@ -385,10 +390,11 @@ module.exports = function (grunt) {
       'dom_munger',
       'ngtemplates',
       'cssmin',
-      'concat',
+      'concat:main',
       'merge-json',
       'ngAnnotate',
       'uglify',
+      'concat:postUglify',
       'copy:main',
       'htmlmin',
       'imagemin',
