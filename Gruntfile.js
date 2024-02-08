@@ -198,7 +198,12 @@ module.exports = function (grunt) {
           'dist/SequentThemes-v10.1.0.js': ['SequentThemes.js'],
           'dist/SequentPlugins-v10.1.0.js': ['plugins/**/*.js']
         }
-      }
+      },
+      postUglify: {
+        files: {
+          'dist/libCommon-v10.1.0.js': ['dist/libCommon-v10.1.0.js', 'node_modules/i18next/dist/umd/i18next.js']
+        }
+      },
     },
     "merge-json": {
       main: {
@@ -232,7 +237,7 @@ module.exports = function (grunt) {
         },
         files: {
           'dist/appCommon-v10.1.0.js': 'temp/app.js',
-          'dist/libCommon-v10.1.0.js': 'temp/lib.js',
+          'dist/libCommon-v10.1.0.js': ['temp/lib.js'],
           'dist/libnocompat-v10.1.0.js': 'temp/libnocompat.js',
           'dist/avWidgets.js': 'avWidgets.js',
 
@@ -385,10 +390,11 @@ module.exports = function (grunt) {
       'dom_munger',
       'ngtemplates',
       'cssmin',
-      'concat',
+      'concat:main',
       'merge-json',
       'ngAnnotate',
       'uglify',
+      'concat:postUglify',
       'copy:main',
       'htmlmin',
       'imagemin',
