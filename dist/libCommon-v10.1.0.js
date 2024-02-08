@@ -17153,6 +17153,137 @@ function(angular) {
         5: [ function(require, module, exports) {}, {} ]
     }, {}, [ 2 ])(2);
 }), function(global, factory) {
+    "object" == typeof exports && "undefined" != typeof module ? module.exports = factory() : "function" == typeof define && define.amd ? define(factory) : (global = "undefined" != typeof globalThis ? globalThis : global || self).i18nextChainedBackend = factory();
+}(this, function() {
+    "use strict";
+    function _typeof(o) {
+        return (_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function(o) {
+            return typeof o;
+        } : function(o) {
+            return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o;
+        })(o);
+    }
+    function _toPropertyKey(key) {
+        key = function(input, res) {
+            if ("object" !== _typeof(input) || null === input) return input;
+            var prim = input[Symbol.toPrimitive];
+            if (void 0 === prim) return ("string" === res ? String : Number)(input);
+            if ("object" !== _typeof(res = prim.call(input, res || "default"))) return res;
+            throw new TypeError("@@toPrimitive must return a primitive value.");
+        }(key, "string");
+        return "symbol" === _typeof(key) ? key : String(key);
+    }
+    function _defineProperties(target, props) {
+        for (var i = 0; i < props.length; i++) {
+            var descriptor = props[i];
+            descriptor.enumerable = descriptor.enumerable || !1, descriptor.configurable = !0, 
+            "value" in descriptor && (descriptor.writable = !0), Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor);
+        }
+    }
+    var Backend = [], each = Backend.forEach, slice = Backend.slice;
+    function handleCorrectReadFunction(backend, language, namespace, resolver) {
+        var fc = backend.read.bind(backend);
+        if (2 !== fc.length) fc(language, namespace, resolver); else try {
+            var r = fc(language, namespace);
+            r && "function" == typeof r.then ? r.then(function(data) {
+                return resolver(null, data);
+            }).catch(resolver) : resolver(null, r);
+        } catch (err) {
+            resolver(err);
+        }
+    }
+    Backend = function() {
+        function Backend(services) {
+            var options = 1 < arguments.length && void 0 !== arguments[1] ? arguments[1] : {}, i18nextOptions = 2 < arguments.length && void 0 !== arguments[2] ? arguments[2] : {};
+            !function(instance) {
+                if (!(instance instanceof Backend)) throw new TypeError("Cannot call a class as a function");
+            }(this), this.backends = [], this.type = "backend", this.allOptions = i18nextOptions, 
+            this.init(services, options);
+        }
+        var Constructor, protoProps, staticProps;
+        return Constructor = Backend, (protoProps = [ {
+            key: "init",
+            value: function(services) {
+                var _this = this, options = 1 < arguments.length && void 0 !== arguments[1] ? arguments[1] : {}, i18nextOptions = 2 < arguments.length && void 0 !== arguments[2] ? arguments[2] : {};
+                this.services = services, this.options = function(obj) {
+                    return each.call(slice.call(arguments, 1), function(source) {
+                        if (source) for (var prop in source) void 0 === obj[prop] && (obj[prop] = source[prop]);
+                    }), obj;
+                }(options, this.options || {}, {
+                    handleEmptyResourcesAsFailed: !0,
+                    cacheHitMode: "none"
+                }), this.allOptions = i18nextOptions, this.options.backends && this.options.backends.forEach(function(ClassOrObject, i) {
+                    _this.backends[i] = _this.backends[i] || ((ClassOrObject = ClassOrObject) ? "function" == typeof ClassOrObject ? new ClassOrObject() : ClassOrObject : null), 
+                    _this.backends[i].init(services, _this.options.backendOptions && _this.options.backendOptions[i] || {}, i18nextOptions);
+                }), this.services && this.options.reloadInterval && setInterval(function() {
+                    return _this.reload();
+                }, this.options.reloadInterval);
+            }
+        }, {
+            key: "read",
+            value: function(language, namespace, callback) {
+                function loadPosition(pos) {
+                    if (bLen <= pos) return callback(new Error("non of the backend loaded data", !0));
+                    var isLastBackend = pos === bLen - 1, lengthCheckAmount = _this2.options.handleEmptyResourcesAsFailed && !isLastBackend ? 0 : -1, backend = _this2.backends[pos];
+                    backend.read ? handleCorrectReadFunction(backend, language, namespace, function(err, data, nextBackend) {
+                        !err && data && Object.keys(data).length > lengthCheckAmount ? (callback(null, data, pos), 
+                        savePosition(pos - 1, data), backend.save && _this2.options.cacheHitMode && -1 < [ "refresh", "refreshAndUpdateStore" ].indexOf(_this2.options.cacheHitMode) && (nextBackend && _this2.options.refreshExpirationTime && nextBackend + _this2.options.refreshExpirationTime > Date.now() || (nextBackend = _this2.backends[pos + 1]) && nextBackend.read && handleCorrectReadFunction(nextBackend, language, namespace, function(err, data) {
+                            err || data && (Object.keys(data).length <= lengthCheckAmount || (savePosition(pos, data), 
+                            "refreshAndUpdateStore" === _this2.options.cacheHitMode && _this2.services && _this2.services.resourceStore && _this2.services.resourceStore.addResourceBundle(language, namespace, data)));
+                        }))) : loadPosition(pos + 1);
+                    }) : loadPosition(pos + 1);
+                }
+                var _this2 = this, bLen = this.backends.length, savePosition = function savePosition(pos, data) {
+                    var backend;
+                    pos < 0 || ((backend = _this2.backends[pos]).save && backend.save(language, namespace, data), 
+                    savePosition(pos - 1, data));
+                };
+                loadPosition(0);
+            }
+        }, {
+            key: "create",
+            value: function(languages, namespace, key, fallbackValue) {
+                var clb = 4 < arguments.length && void 0 !== arguments[4] ? arguments[4] : function() {}, opts = 5 < arguments.length && void 0 !== arguments[5] ? arguments[5] : {};
+                this.backends.forEach(function(b) {
+                    if (b.create) {
+                        var fc = b.create.bind(b);
+                        if (fc.length < 6) try {
+                            var r = 5 === fc.length ? fc(languages, namespace, key, fallbackValue, opts) : fc(languages, namespace, key, fallbackValue);
+                            r && "function" == typeof r.then ? r.then(function(data) {
+                                return clb(null, data);
+                            }).catch(clb) : clb(null, r);
+                        } catch (err) {
+                            clb(err);
+                        } else fc(languages, namespace, key, fallbackValue, clb, opts);
+                    }
+                });
+            }
+        }, {
+            key: "reload",
+            value: function() {
+                var toLoad, _this3 = this, append = this.services, backendConnector = append.backendConnector, languageUtils = append.languageUtils, logger = append.logger, currentLanguage = backendConnector.language;
+                currentLanguage && "cimode" === currentLanguage.toLowerCase() || (toLoad = [], (append = function(lng) {
+                    languageUtils.toResolveHierarchy(lng).forEach(function(l) {
+                        toLoad.indexOf(l) < 0 && toLoad.push(l);
+                    });
+                })(currentLanguage), this.allOptions.preload && this.allOptions.preload.forEach(append), 
+                toLoad.forEach(function(lng) {
+                    _this3.allOptions.ns.forEach(function(ns) {
+                        backendConnector.read(lng, ns, "read", null, null, function(err, data) {
+                            err && logger.warn("loading namespace ".concat(ns, " for language ").concat(lng, " failed"), err), 
+                            !err && data && logger.log("loaded namespace ".concat(ns, " for language ").concat(lng), data), 
+                            backendConnector.loaded("".concat(lng, "|").concat(ns), err, data);
+                        });
+                    });
+                }));
+            }
+        } ]) && _defineProperties(Constructor.prototype, protoProps), staticProps && _defineProperties(Constructor, staticProps), 
+        Object.defineProperty(Constructor, "prototype", {
+            writable: !1
+        }), Backend;
+    }();
+    return Backend.type = "backend", Backend;
+}), function(global, factory) {
     "object" == typeof exports && "undefined" != typeof module ? module.exports = factory(require("angular")) : "function" == typeof define && define.amd ? define([ "angular" ], factory) : global.ngI18next = factory(global.angular);
 }(this, function(angular) {
     "use strict";
