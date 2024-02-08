@@ -1123,23 +1123,23 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
 } ]), angular.module("avUi").service("I18nOverride", [ "$i18next", "$rootScope", "$window", function($i18next, $rootScope, $window) {
     return function(overrides, force, languagesConf) {
         force = !!angular.isDefined(force) && force;
-        var performOverrides = !1;
-        (overrides = null === overrides ? $window.i18nOverride : overrides) && (performOverrides = force || JSON.stringify(overrides) !== JSON.stringify($window.i18nOverride), 
-        $window.i18nOverride = overrides), languagesConf && ($i18next.options.lng = languagesConf.force_default_language ? languagesConf.default_language : $window.i18n.lng(), 
-        $i18next.options.lngWhitelist = languagesConf.available_languages, $i18next.options.fallbackLng = [ languagesConf.default_language, "en" ]), 
-        performOverrides && _.map($window.i18nOverride, function(i18nOverride, language) {
-            $window.i18n.addResources(language, "translation", i18nOverride), _.each(_.keys(i18nOverride), function(i18nString) {
-                $i18next(i18nString, {});
-            });
-        }), $i18next.reInit();
+        null === overrides || !force && JSON.stringify(overrides) === JSON.stringify($window.i18nOverride) || ($window.i18nOverride = overrides), 
+        languagesConf && ($i18next.options.lng = languagesConf.force_default_language ? languagesConf.default_language : $window.i18next.resolvedLanguage, 
+        $i18next.options.lngWhitelist = languagesConf.available_languages, $i18next.options.preload = languagesConf.available_languages, 
+        $i18next.options.fallbackLng = [ languagesConf.default_language, "en" ]), console.log("calling $window.i18next.reloadResources().."), 
+        $window.i18next.reloadResources($i18next.options.preload).then(function() {
+            languagesConf && languagesConf.force_default_language && $window.i18next.changeAppLang ? (console.log("reloadResources: successful. force-changing default lang to=" + languagesConf.default_language), 
+            $window.i18next.changeAppLang(languagesConf.default_language)) : (console.log("reloadResources: successful. broadcast i18nextLanguageChange signal"), 
+            $rootScope.$broadcast("i18nextLanguageChange", $i18next.options.lng));
+        });
     };
-} ]), angular.module("avUi").directive("avChangeLang", [ "$i18next", "ipCookie", "angularLoad", "amMoment", "$rootScope", "ConfigService", "$window", "I18nOverride", "Authmethod", function($i18next, ipCookie, angularLoad, amMoment, $rootScope, ConfigService, $window, I18nOverride, Authmethod) {
+} ]), angular.module("avUi").directive("avChangeLang", [ "$i18next", "ipCookie", "angularLoad", "amMoment", "$rootScope", "ConfigService", "$window", "Authmethod", function($i18next, ipCookie, angularLoad, amMoment, $rootScope, ConfigService, $window, Authmethod) {
     return {
         restrict: "AE",
         scope: {},
         link: function(scope, element, attrs) {
-            scope.deflang = window.i18n.lng(), angular.element("#ng-app").attr("lang", scope.deflang), 
-            scope.langs = $i18next.options.lngWhitelist;
+            scope.deflang = $window.i18next.resolvedLanguage, angular.element("#ng-app").attr("lang", scope.deflang), 
+            scope.langs = $window.i18next.options.lngWhitelist;
             var isAdmin = Authmethod.isAdmin();
             element.on("click", function() {
                 setTimeout(function() {
@@ -1147,10 +1147,9 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 }, 0);
             }), $rootScope.$on("i18nextLanguageChange", function(event, languageCode) {
                 scope.deflang = languageCode, scope.langs = $i18next.options.lngWhitelist, scope.$apply();
-            }), scope.changeLang = function(lang) {
-                $i18next.options.lng = lang, isAdmin || ($i18next.options.useLocalStorage = !0), 
-                angular.isDefined($window.i18nOverride) && $window.i18n.preload([ lang ], function() {
-                    I18nOverride($window.i18nOverride, !0);
+            }), $window.i18next.changeAppLang = scope.changeLang = function(lang) {
+                $window.i18next.changeLanguage(lang).then(function() {
+                    console.log("changeLang: broadcast i18nextLanguageChange"), $rootScope.$broadcast("i18nextLanguageChange", $window.i18next.resolvedLanguage);
                 }), console.log("setting cookie");
                 ipCookie("lang", lang, _.extend({
                     expires: 360,
@@ -1718,23 +1717,13 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         templateUrl: "avUi/foot-directive/foot-directive.html"
     };
 } ]), angular.module("avUi").filter("customI18n", function() {
-    return function(data, key) {
-        var lang = window.i18n.lng(), value = "";
+    function customI18nFilter(data, key) {
+        var lang = window.i18next.resolvedLanguage, value = "";
         return value = _.isString(key) && _.isObject(data) && _.isString(lang) ? data[key + "_i18n"] && data[key + "_i18n"][lang] || data[key] || value : value;
-    };
+    }
+    return customI18nFilter.$stateful = !0, customI18nFilter;
 }), angular.module("common-ui", [ "ui.bootstrap", "ui.utils", "ui.router", "ngAnimate", "ngResource", "ngCookies", "ipCookie", "ngSanitize", "infinite-scroll", "angularMoment", "SequentConfig", "jm.i18next", "avRegistration", "avUi", "avTest", "angularFileUpload", "dndLists", "angularLoad", "ng-autofocus" ]), 
-angular.module("jm.i18next").config([ "$i18nextProvider", "ConfigServiceProvider", function($i18nextProvider, ConfigServiceProvider) {
-    $("#no-js").hide(), $i18nextProvider.options = _.extend({
-        useCookie: !0,
-        useLocalStorage: !1,
-        fallbackLng: "en",
-        cookieName: "lang",
-        detectLngQS: "lang",
-        lngWhitelist: [ "en", "es", "gl", "ca" ],
-        resGetPath: "/locales/__lng__.json",
-        defaultLoadingValue: ""
-    }, ConfigServiceProvider.i18nextInitOptions);
-} ]), angular.module("common-ui").run([ "$http", "$rootScope", function($http, $rootScope) {
+angular.module("common-ui").run([ "$http", "$rootScope", function($http, $rootScope) {
     $rootScope.safeApply = function(fn) {
         var phase = $rootScope.$$phase;
         "$apply" === phase || "$digest" === phase ? fn && "function" == typeof fn && fn() : this.$apply(fn);
