@@ -1128,7 +1128,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         $i18next.options.lngWhitelist = languagesConf.available_languages, $i18next.options.preload = languagesConf.available_languages, 
         $i18next.options.fallbackLng = [ languagesConf.default_language, "en" ]), console.log("calling $window.i18next.reloadResources().."), 
         $window.i18next.reloadResources($i18next.options.preload).then(function() {
-            languagesConf.force_default_language && $window.i18next.changeAppLang ? (console.log("reloadResources: successful. force-changing default lang to=" + languagesConf.default_language), 
+            languagesConf && languagesConf.force_default_language && $window.i18next.changeAppLang ? (console.log("reloadResources: successful. force-changing default lang to=" + languagesConf.default_language), 
             $window.i18next.changeAppLang(languagesConf.default_language)) : (console.log("reloadResources: successful. broadcast i18nextLanguageChange signal"), 
             $rootScope.$broadcast("i18nextLanguageChange", $i18next.options.lng));
         });

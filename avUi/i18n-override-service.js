@@ -70,8 +70,11 @@ angular
         $window.i18next
           .reloadResources($i18next.options.preload)
           .then(function () {
-            if (languagesConf.force_default_language && $window.i18next.changeAppLang)
-            {
+            if (
+              languagesConf &&
+              languagesConf.force_default_language &&
+              $window.i18next.changeAppLang
+            ) {
               console.log("reloadResources: successful. force-changing default lang to=" + languagesConf.default_language);
               $window.i18next.changeAppLang(languagesConf.default_language);
             } else {
