@@ -1106,7 +1106,10 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                         versionList += "<li><strong>" + repo.repoName + ":</strong> " + repo.repoVersion + "</li>";
                     });
                     var body = $sce.trustAsHtml($window.i18next.t("avCommon.showVersionModal.body", {
-                        versionList: versionList
+                        versionList: versionList,
+                        interpolation: {
+                            escapeValue: !1
+                        }
                     }));
                     return {
                         i18n: {

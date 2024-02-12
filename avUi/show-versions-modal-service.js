@@ -49,7 +49,8 @@ angular
               var body = $sce.trustAsHtml($window.i18next.t(
                 'avCommon.showVersionModal.body',
                 {
-                  versionList: versionList
+                  versionList: versionList,
+                  interpolation: { escapeValue: false }
                 }
               ));
               return {
