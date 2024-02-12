@@ -59,11 +59,10 @@ angular
 
           $i18next.options.lngWhitelist = languagesConf.available_languages;
           $i18next.options.preload = languagesConf.available_languages;
-          $i18next.options.fallbackLng = [languagesConf.default_language, 'en'];
         }
         console.log("calling $window.i18next.reloadResources()..");
         $window.i18next
-          .reloadResources($i18next.options.preload)
+          .reloadResources($i18next.options.preload, ['override'])
           .then(function () {
             if (
               languagesConf &&
