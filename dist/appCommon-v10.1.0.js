@@ -445,7 +445,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
     $scope.withCode = $stateParams.withCode, $scope.withAltMethod = $stateParams.withAltMethod, 
     $scope.selectedAltMethod = $stateParams.altmethod, $scope.isOtl = $stateParams.isOtl, 
     $scope.otlSecret = $stateParams.otlSecret;
-} ]), angular.module("avRegistration").directive("avLogin", [ "Authmethod", "StateDataService", "$state", "$location", "$cookies", "$i18next", "$window", "$timeout", "ConfigService", "Patterns", function(Authmethod, StateDataService, $state, $location, $cookies, $i18next, $window, $timeout, ConfigService, Patterns) {
+} ]), angular.module("avRegistration").directive("avLogin", [ "Authmethod", "StateDataService", "$state", "$location", "$cookies", "$window", "$timeout", "ConfigService", "Patterns", function(Authmethod, StateDataService, $state, $location, $cookies, $window, $timeout, ConfigService, Patterns) {
     return {
         restrict: "AE",
         scope: !0,
@@ -731,16 +731,16 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         },
         templateUrl: "avRegistration/login-directive/login-directive.html"
     };
-} ]), angular.module("avRegistration").controller("LogoutController", [ "$scope", "$stateParams", "$filter", "ConfigService", "$i18next", "$state", "$cookies", "Authmethod", function($scope, $stateParams, $filter, ConfigService, $i18next, $state, $cookies, postfix) {
+} ]), angular.module("avRegistration").controller("LogoutController", [ "$scope", "$stateParams", "$filter", "ConfigService", "$state", "$cookies", "Authmethod", function($scope, $stateParams, $filter, ConfigService, $state, $cookies, postfix) {
     ConfigService.freeAuthId;
     var authevent = postfix.getAuthevent(), postfix = "_authevent_" + authevent;
     $cookies.put("user" + postfix, ""), $cookies.put("auth" + postfix, ""), $cookies.put("authevent_" + authevent, ""), 
     $cookies.put("userid" + postfix, ""), $cookies.put("isAdmin" + postfix, !1), authevent !== ConfigService.freeAuthId + "" && authevent ? $state.go("registration.login", {
         id: $cookies.get("authevent_" + authevent)
     }) : $state.go("admin.login");
-} ]), angular.module("avRegistration").controller("RegisterController", [ "$scope", "$stateParams", "$filter", "ConfigService", "$i18next", function($scope, $stateParams, $filter, ConfigService, $i18next) {
+} ]), angular.module("avRegistration").controller("RegisterController", [ "$scope", "$stateParams", "$filter", "ConfigService", function($scope, $stateParams, $filter, ConfigService) {
     $scope.event_id = $stateParams.id, $scope.email = $stateParams.email;
-} ]), angular.module("avRegistration").directive("avRegister", [ "Authmethod", "StateDataService", "$parse", "$state", "ConfigService", "$cookies", "$i18next", "$sce", function(Authmethod, StateDataService, $parse, $state, ConfigService, $cookies, $i18next, $sce) {
+} ]), angular.module("avRegistration").directive("avRegister", [ "Authmethod", "StateDataService", "$parse", "$state", "ConfigService", "$cookies", "$window", "$sce", function(Authmethod, StateDataService, $parse, $state, ConfigService, $cookies, $window, $sce) {
     return {
         restrict: "AE",
         scope: !0,
@@ -771,12 +771,12 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 }), Authmethod.signup(data, autheventid).then(function(response) {
                     details = scope.getLoginDetails(autheventid), "ok" === response.data.status ? (scope.user = response.data.user, 
                     data.successfulRegistration = !0, StateDataService.go(details.path, details.data, data)) : (scope.sendingData = !1, 
-                    scope.status = "Not found"), scope.error = response.data.msg || $sce.trustAsHtml($i18next("avRegistration.invalidRegisterData", {
+                    scope.status = "Not found"), scope.error = response.data.msg || $sce.trustAsHtml($window.i18next.t("avRegistration.invalidRegisterData", {
                         url: $state.href(details.path, details.data)
                     }));
                 }, function(response) {
                     details = scope.getLoginDetails(autheventid), scope.sendingData = !1, scope.status = "Registration error: " + response.data.message, 
-                    response.data.error_codename && "invalid-dni" === response.data.error_codename ? scope.error = $sce.trustAsHtml($i18next("avRegistration.invalidRegisterDNI")) : (scope.error = response.data.msg || $sce.trustAsHtml($i18next("avRegistration.invalidRegisterData", {
+                    response.data.error_codename && "invalid-dni" === response.data.error_codename ? scope.error = $sce.trustAsHtml($window.i18next.t("avRegistration.invalidRegisterDNI")) : (scope.error = response.data.msg || $sce.trustAsHtml($window.i18next.t("avRegistration.invalidRegisterData", {
                         url: $state.href(details.path, details.data)
                     })), "Invalid captcha" === response.data.msg && Authmethod.newCaptcha());
                 }));
@@ -1093,7 +1093,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
     }, $scope.cancel = function() {
         $modalInstance.dismiss("cancel");
     };
-} ]), angular.module("avUi").service("ShowVersionsModalService", [ "ConfigService", "$modal", "$i18next", function(ConfigService, $modal, $i18next) {
+} ]), angular.module("avUi").service("ShowVersionsModalService", [ "ConfigService", "$modal", "$window", function(ConfigService, $modal, $window) {
     return function() {
         $modal.open({
             templateUrl: "avUi/confirm-modal-controller/confirm-modal-controller.html",
@@ -1101,18 +1101,18 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             size: "lg",
             resolve: {
                 data: function() {
-                    var versionList = "<li><strong>" + $i18next("avCommon.showVersionModal.mainVersion") + " (deployment-tool):</strong> " + ConfigService.mainVersion + "<br><br></li>";
+                    var versionList = "<li><strong>" + $window.i18next.t("avCommon.showVersionModal.mainVersion") + " (deployment-tool):</strong> " + ConfigService.mainVersion + "<br><br></li>";
                     _.each(ConfigService.repoVersions, function(repo) {
                         versionList += "<li><strong>" + repo.repoName + ":</strong> " + repo.repoVersion + "</li>";
                     });
-                    var body = $i18next("avCommon.showVersionModal.body", {
+                    var body = $window.i18next.t("avCommon.showVersionModal.body", {
                         versionList: versionList
                     });
                     return {
                         i18n: {
-                            header: $i18next("avCommon.showVersionModal.header"),
+                            header: $window.i18next.t("avCommon.showVersionModal.header"),
                             body: body,
-                            confirmButton: $i18next("avCommon.showVersionModal.confirmButton")
+                            confirmButton: $window.i18next.t("avCommon.showVersionModal.confirmButton")
                         },
                         hideCancelButton: !0
                     };
