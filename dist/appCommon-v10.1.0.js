@@ -1093,7 +1093,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
     }, $scope.cancel = function() {
         $modalInstance.dismiss("cancel");
     };
-} ]), angular.module("avUi").service("ShowVersionsModalService", [ "ConfigService", "$modal", "$window", function(ConfigService, $modal, $window) {
+} ]), angular.module("avUi").service("ShowVersionsModalService", [ "ConfigService", "$modal", "$sce", "$window", function(ConfigService, $modal, $sce, $window) {
     return function() {
         $modal.open({
             templateUrl: "avUi/confirm-modal-controller/confirm-modal-controller.html",
@@ -1105,9 +1105,9 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                     _.each(ConfigService.repoVersions, function(repo) {
                         versionList += "<li><strong>" + repo.repoName + ":</strong> " + repo.repoVersion + "</li>";
                     });
-                    var body = $window.i18next.t("avCommon.showVersionModal.body", {
+                    var body = $sce.trustAsHtml($window.i18next.t("avCommon.showVersionModal.body", {
                         versionList: versionList
-                    });
+                    }));
                     return {
                         i18n: {
                             header: $window.i18next.t("avCommon.showVersionModal.header"),

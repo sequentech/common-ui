@@ -19,7 +19,7 @@ angular
   .module('avUi')
   .service(
     'ShowVersionsModalService',
-    function(ConfigService, $modal, $window) {
+    function(ConfigService, $modal, $sce, $window) {
       return function () {
         $modal
         .open({
@@ -46,12 +46,12 @@ angular
                   );
                 }
               );
-              var body = $window.i18next.t(
+              var body = $sce.trustAsHtml($window.i18next.t(
                 'avCommon.showVersionModal.body',
                 {
                   versionList: versionList
                 }
-              );
+              ));
               return {
                 i18n: {
                   header: $window.i18next.t('avCommon.showVersionModal.header'),
