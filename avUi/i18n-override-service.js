@@ -54,11 +54,6 @@ angular
 
         if (languagesConf)
         {
-          // For some reason it seems that `$i18next.options.lng` gets desynced
-          // from `$window.i18next.resolvedLanguage`. This might result in an unexpected
-          // language change when the init() function from $i18next gets called
-          // later in this code. For this reason, we set the correct language in
-          // `$i18next.options.lng` to ensure that doesn't happen.
           $i18next.options.lng = (languagesConf.force_default_language) ?
             languagesConf.default_language : $window.i18next.resolvedLanguage;
 
