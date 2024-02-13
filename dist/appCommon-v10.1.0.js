@@ -445,7 +445,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
     $scope.withCode = $stateParams.withCode, $scope.withAltMethod = $stateParams.withAltMethod, 
     $scope.selectedAltMethod = $stateParams.altmethod, $scope.isOtl = $stateParams.isOtl, 
     $scope.otlSecret = $stateParams.otlSecret;
-} ]), angular.module("avRegistration").directive("avLogin", [ "Authmethod", "StateDataService", "$state", "$location", "$cookies", "$i18next", "$window", "$timeout", "ConfigService", "Patterns", function(Authmethod, StateDataService, $state, $location, $cookies, $i18next, $window, $timeout, ConfigService, Patterns) {
+} ]), angular.module("avRegistration").directive("avLogin", [ "Authmethod", "StateDataService", "$state", "$location", "$cookies", "$window", "$timeout", "ConfigService", "Patterns", function(Authmethod, StateDataService, $state, $location, $cookies, $window, $timeout, ConfigService, Patterns) {
     return {
         restrict: "AE",
         scope: !0,
@@ -731,16 +731,16 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         },
         templateUrl: "avRegistration/login-directive/login-directive.html"
     };
-} ]), angular.module("avRegistration").controller("LogoutController", [ "$scope", "$stateParams", "$filter", "ConfigService", "$i18next", "$state", "$cookies", "Authmethod", function($scope, $stateParams, $filter, ConfigService, $i18next, $state, $cookies, postfix) {
+} ]), angular.module("avRegistration").controller("LogoutController", [ "$scope", "$stateParams", "$filter", "ConfigService", "$state", "$cookies", "Authmethod", function($scope, $stateParams, $filter, ConfigService, $state, $cookies, postfix) {
     ConfigService.freeAuthId;
     var authevent = postfix.getAuthevent(), postfix = "_authevent_" + authevent;
     $cookies.put("user" + postfix, ""), $cookies.put("auth" + postfix, ""), $cookies.put("authevent_" + authevent, ""), 
     $cookies.put("userid" + postfix, ""), $cookies.put("isAdmin" + postfix, !1), authevent !== ConfigService.freeAuthId + "" && authevent ? $state.go("registration.login", {
         id: $cookies.get("authevent_" + authevent)
     }) : $state.go("admin.login");
-} ]), angular.module("avRegistration").controller("RegisterController", [ "$scope", "$stateParams", "$filter", "ConfigService", "$i18next", function($scope, $stateParams, $filter, ConfigService, $i18next) {
+} ]), angular.module("avRegistration").controller("RegisterController", [ "$scope", "$stateParams", "$filter", "ConfigService", function($scope, $stateParams, $filter, ConfigService) {
     $scope.event_id = $stateParams.id, $scope.email = $stateParams.email;
-} ]), angular.module("avRegistration").directive("avRegister", [ "Authmethod", "StateDataService", "$parse", "$state", "ConfigService", "$cookies", "$i18next", "$sce", function(Authmethod, StateDataService, $parse, $state, ConfigService, $cookies, $i18next, $sce) {
+} ]), angular.module("avRegistration").directive("avRegister", [ "Authmethod", "StateDataService", "$parse", "$state", "ConfigService", "$cookies", "$window", "$sce", function(Authmethod, StateDataService, $parse, $state, ConfigService, $cookies, $window, $sce) {
     return {
         restrict: "AE",
         scope: !0,
@@ -771,12 +771,12 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 }), Authmethod.signup(data, autheventid).then(function(response) {
                     details = scope.getLoginDetails(autheventid), "ok" === response.data.status ? (scope.user = response.data.user, 
                     data.successfulRegistration = !0, StateDataService.go(details.path, details.data, data)) : (scope.sendingData = !1, 
-                    scope.status = "Not found"), scope.error = response.data.msg || $sce.trustAsHtml($i18next("avRegistration.invalidRegisterData", {
+                    scope.status = "Not found"), scope.error = response.data.msg || $sce.trustAsHtml($window.i18next.t("avRegistration.invalidRegisterData", {
                         url: $state.href(details.path, details.data)
                     }));
                 }, function(response) {
                     details = scope.getLoginDetails(autheventid), scope.sendingData = !1, scope.status = "Registration error: " + response.data.message, 
-                    response.data.error_codename && "invalid-dni" === response.data.error_codename ? scope.error = $sce.trustAsHtml($i18next("avRegistration.invalidRegisterDNI")) : (scope.error = response.data.msg || $sce.trustAsHtml($i18next("avRegistration.invalidRegisterData", {
+                    response.data.error_codename && "invalid-dni" === response.data.error_codename ? scope.error = $sce.trustAsHtml($window.i18next.t("avRegistration.invalidRegisterDNI")) : (scope.error = response.data.msg || $sce.trustAsHtml($window.i18next.t("avRegistration.invalidRegisterData", {
                         url: $state.href(details.path, details.data)
                     })), "Invalid captcha" === response.data.msg && Authmethod.newCaptcha());
                 }));
@@ -1093,7 +1093,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
     }, $scope.cancel = function() {
         $modalInstance.dismiss("cancel");
     };
-} ]), angular.module("avUi").service("ShowVersionsModalService", [ "ConfigService", "$modal", "$i18next", function(ConfigService, $modal, $i18next) {
+} ]), angular.module("avUi").service("ShowVersionsModalService", [ "ConfigService", "$modal", "$sce", "$window", function(ConfigService, $modal, $sce, $window) {
     return function() {
         $modal.open({
             templateUrl: "avUi/confirm-modal-controller/confirm-modal-controller.html",
@@ -1101,18 +1101,21 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             size: "lg",
             resolve: {
                 data: function() {
-                    var versionList = "<li><strong>" + $i18next("avCommon.showVersionModal.mainVersion") + " (deployment-tool):</strong> " + ConfigService.mainVersion + "<br><br></li>";
+                    var versionList = "<li><strong>" + $window.i18next.t("avCommon.showVersionModal.mainVersion") + " (deployment-tool):</strong> " + ConfigService.mainVersion + "<br><br></li>";
                     _.each(ConfigService.repoVersions, function(repo) {
                         versionList += "<li><strong>" + repo.repoName + ":</strong> " + repo.repoVersion + "</li>";
                     });
-                    var body = $i18next("avCommon.showVersionModal.body", {
-                        versionList: versionList
-                    });
+                    var body = $sce.trustAsHtml($window.i18next.t("avCommon.showVersionModal.body", {
+                        versionList: versionList,
+                        interpolation: {
+                            escapeValue: !1
+                        }
+                    }));
                     return {
                         i18n: {
-                            header: $i18next("avCommon.showVersionModal.header"),
+                            header: $window.i18next.t("avCommon.showVersionModal.header"),
                             body: body,
-                            confirmButton: $i18next("avCommon.showVersionModal.confirmButton")
+                            confirmButton: $window.i18next.t("avCommon.showVersionModal.confirmButton")
                         },
                         hideCancelButton: !0
                     };
@@ -1123,23 +1126,22 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
 } ]), angular.module("avUi").service("I18nOverride", [ "$i18next", "$rootScope", "$window", function($i18next, $rootScope, $window) {
     return function(overrides, force, languagesConf) {
         force = !!angular.isDefined(force) && force;
-        var performOverrides = !1;
-        (overrides = null === overrides ? $window.i18nOverride : overrides) && (performOverrides = force || JSON.stringify(overrides) !== JSON.stringify($window.i18nOverride), 
-        $window.i18nOverride = overrides), languagesConf && ($i18next.options.lng = languagesConf.force_default_language ? languagesConf.default_language : $window.i18n.lng(), 
-        $i18next.options.lngWhitelist = languagesConf.available_languages, $i18next.options.fallbackLng = [ languagesConf.default_language, "en" ]), 
-        performOverrides && _.map($window.i18nOverride, function(i18nOverride, language) {
-            $window.i18n.addResources(language, "translation", i18nOverride), _.each(_.keys(i18nOverride), function(i18nString) {
-                $i18next(i18nString, {});
-            });
-        }), $i18next.reInit();
+        null === overrides || !force && JSON.stringify(overrides) === JSON.stringify($window.i18nOverride) || ($window.i18nOverride = overrides), 
+        languagesConf && ($i18next.options.lng = languagesConf.force_default_language ? languagesConf.default_language : $window.i18next.resolvedLanguage, 
+        $i18next.options.lngWhitelist = languagesConf.available_languages, $i18next.options.preload = languagesConf.available_languages), 
+        console.log("calling $window.i18next.reloadResources().."), $window.i18next.reloadResources($i18next.options.preload, [ "override" ]).then(function() {
+            languagesConf && languagesConf.force_default_language && $window.i18next.changeAppLang ? (console.log("reloadResources: successful. force-changing default lang to=" + languagesConf.default_language), 
+            $window.i18next.changeAppLang(languagesConf.default_language)) : (console.log("reloadResources: successful. broadcast i18nextLanguageChange signal"), 
+            $rootScope.$broadcast("i18nextLanguageChange", $i18next.options.lng));
+        });
     };
-} ]), angular.module("avUi").directive("avChangeLang", [ "$i18next", "ipCookie", "angularLoad", "amMoment", "$rootScope", "ConfigService", "$window", "I18nOverride", "Authmethod", function($i18next, ipCookie, angularLoad, amMoment, $rootScope, ConfigService, $window, I18nOverride, Authmethod) {
+} ]), angular.module("avUi").directive("avChangeLang", [ "$i18next", "ipCookie", "angularLoad", "amMoment", "$rootScope", "ConfigService", "$window", "Authmethod", function($i18next, ipCookie, angularLoad, amMoment, $rootScope, ConfigService, $window, Authmethod) {
     return {
         restrict: "AE",
         scope: {},
         link: function(scope, element, attrs) {
-            scope.deflang = window.i18n.lng(), angular.element("#ng-app").attr("lang", scope.deflang), 
-            scope.langs = $i18next.options.lngWhitelist;
+            scope.deflang = $window.i18next.resolvedLanguage, angular.element("#ng-app").attr("lang", scope.deflang), 
+            scope.langs = $window.i18next.options.lngWhitelist;
             var isAdmin = Authmethod.isAdmin();
             element.on("click", function() {
                 setTimeout(function() {
@@ -1147,10 +1149,9 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 }, 0);
             }), $rootScope.$on("i18nextLanguageChange", function(event, languageCode) {
                 scope.deflang = languageCode, scope.langs = $i18next.options.lngWhitelist, scope.$apply();
-            }), scope.changeLang = function(lang) {
-                $i18next.options.lng = lang, isAdmin || ($i18next.options.useLocalStorage = !0), 
-                angular.isDefined($window.i18nOverride) && $window.i18n.preload([ lang ], function() {
-                    I18nOverride($window.i18nOverride, !0);
+            }), $window.i18next.changeAppLang = scope.changeLang = function(lang) {
+                $window.i18next.changeLanguage(lang).then(function() {
+                    console.log("changeLang: broadcast i18nextLanguageChange"), $rootScope.$broadcast("i18nextLanguageChange", $window.i18next.resolvedLanguage);
                 }), console.log("setting cookie");
                 ipCookie("lang", lang, _.extend({
                     expires: 360,
@@ -1718,23 +1719,13 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         templateUrl: "avUi/foot-directive/foot-directive.html"
     };
 } ]), angular.module("avUi").filter("customI18n", function() {
-    return function(data, key) {
-        var lang = window.i18n.lng(), value = "";
+    function customI18nFilter(data, key) {
+        var lang = window.i18next.resolvedLanguage, value = "";
         return value = _.isString(key) && _.isObject(data) && _.isString(lang) ? data[key + "_i18n"] && data[key + "_i18n"][lang] || data[key] || value : value;
-    };
+    }
+    return customI18nFilter.$stateful = !0, customI18nFilter;
 }), angular.module("common-ui", [ "ui.bootstrap", "ui.utils", "ui.router", "ngAnimate", "ngResource", "ngCookies", "ipCookie", "ngSanitize", "infinite-scroll", "angularMoment", "SequentConfig", "jm.i18next", "avRegistration", "avUi", "avTest", "angularFileUpload", "dndLists", "angularLoad", "ng-autofocus" ]), 
-angular.module("jm.i18next").config([ "$i18nextProvider", "ConfigServiceProvider", function($i18nextProvider, ConfigServiceProvider) {
-    $("#no-js").hide(), $i18nextProvider.options = _.extend({
-        useCookie: !0,
-        useLocalStorage: !1,
-        fallbackLng: "en",
-        cookieName: "lang",
-        detectLngQS: "lang",
-        lngWhitelist: [ "en", "es", "gl", "ca" ],
-        resGetPath: "/locales/__lng__.json",
-        defaultLoadingValue: ""
-    }, ConfigServiceProvider.i18nextInitOptions);
-} ]), angular.module("common-ui").run([ "$http", "$rootScope", function($http, $rootScope) {
+angular.module("common-ui").run([ "$http", "$rootScope", function($http, $rootScope) {
     $rootScope.safeApply = function(fn) {
         var phase = $rootScope.$$phase;
         "$apply" === phase || "$digest" === phase ? fn && "function" == typeof fn && fn() : this.$apply(fn);

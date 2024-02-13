@@ -25,16 +25,18 @@ angular
     'customI18n',
     function()
     {
-      return function(data, key)
+      function customI18nFilter(data, key)
       {
         var suffix = "_i18n";
-        var lang = window.i18n.lng();
+        var lang = window.i18next.resolvedLanguage;
         var value = '';
         if (_.isString(key) && _.isObject(data) && _.isString(lang)) {
             value = data[key + suffix] && data[key + suffix][lang] || data[key] || value;
         }
         return value;
-      };
+      }
+      customI18nFilter.$stateful = true;
+      return customI18nFilter;
     }
   );
 
