@@ -177,3 +177,21 @@ a:hover, a:active {
   bottom: 0;
 }
 
+.skip-link {
+  position: absolute;
+  display: inline-block;
+  padding: .375rem .75rem;
+  line-height: 1;
+  font-size: 1.25rem;
+  background-color: rebeccapurple;
+  color: white;
+}
+
+.skip-link:not(:focus) {
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+  white-space: nowrap;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+}
