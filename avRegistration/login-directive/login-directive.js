@@ -24,7 +24,6 @@ angular.module('avRegistration')
       $state,
       $location,
       $cookies,
-      $i18next,
       $window,
       $timeout,
       ConfigService,

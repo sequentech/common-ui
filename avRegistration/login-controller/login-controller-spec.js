@@ -35,7 +35,6 @@ describe("Login Controler tests", function () {
         $scope: $scope,
         $stateParams: { id: 1, code: 'qwerty', email: 'test@sequentech.io', isOpenId: false },
         $filter: undefined,
-        $i18next: undefined,
         $cookies: undefined,
         $window: window,
         ConfigService: {},

@@ -16,7 +16,7 @@
 **/
 
 angular.module('avRegistration').controller('LogoutController',
-  function($scope, $stateParams, $filter, ConfigService, $i18next, $state, $cookies, Authmethod) {
+  function($scope, $stateParams, $filter, ConfigService, $state, $cookies, Authmethod) {
     var adminId = ConfigService.freeAuthId;
     var authevent = Authmethod.getAuthevent();
     var postfix = "_authevent_" + authevent;
