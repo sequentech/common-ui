@@ -77,7 +77,7 @@
     "rng-js": "~1.0.1",
     "underscore": "1.12.1",
     "ws": "7.4.6",
-    "yarn": "^1.22.0"
+    "yarn": "^1.22.19"
   },
   "dependencies": {
     "browser-update": "^3.3.44",
