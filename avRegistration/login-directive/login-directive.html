@@ -1,23 +1,27 @@
-<div class="container-login" ng-if="!isOpenId">
+<section class="container-login" ng-if="!isOpenId" aria-labelledby="login-header-text">
   <div class="row">
     <div class="col-sm-12 loginheader">
         <h3
           class="tex-center login-header-text"
+          id="login-header-text"
           ng-if="!isAdmin && !isOtl && !isCensusQuery"
           ng-i18next="[i18next]({name: orgName})avRegistration.loginHeader">
         </h3>
         <h3
           class="tex-center login-header-text"
+          id="login-header-text"
           ng-if="isAdmin && !isOtl"
           ng-i18next="[i18next]avRegistration.adminLoginHeader">
         </h3>
         <h3
           class="tex-center login-header-text"
+          id="login-header-text"
           ng-if="!!isCensusQuery"
           ng-i18next="avRegistration.censusQueryHeader">
         </h3>
         <h3
           class="tex-center login-header-text"
+          id="login-header-text"
           ng-if="isOtl"
           ng-i18next="avRegistration.otlHeader">
         </h3>
@@ -241,5 +245,5 @@
         </div>
     </div>
   </div>
-</div>
+</section>
 
