@@ -76,15 +76,15 @@
             </div>
 
           <div class="button-group">
-              <div class="input-error" ng-if="!isCensusQuery">
+              <section class="input-error" ng-if="!isCensusQuery" aria-label="{{ 'avRegistration.loginError.errorLabel' | i18next }}">
                 <div
                   class="error text-danger"
                   role="alert"
                   ng-if="error"
                   ng-i18next
                 >[html:i18next]({{errorData}}){{error}}</div>
-              </div>
-              <div class="input-warn">
+              </section>
+              <section class="input-warn" aria-label="{{ 'avRegistration.loginError.warningLabel' | i18next }}">
                 <div class="warn-box" ng-if="!form.$valid || sendingData" >
                   <span class="glyphicon glyphicon-warning-sign"></span>
                   <div
@@ -93,7 +93,7 @@
                     avRegistration.fillValidFormText
                   </div>
                 </div>
-              </div>
+              </section>
               <button
                 type="submit"
                 class="btn btn-block btn-lg btn-success-action"
