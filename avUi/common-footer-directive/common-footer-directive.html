@@ -1,14 +1,14 @@
 <div class="hidden" ng-cloak av-affix-bottom ng-if="!float" class="footer-wrapper">
-    <div class="container footer-container row">
+    <footer class="container footer-container row" role="navigation">
         <i ng-i18next="[html:i18next]({url: configService.organization.orgUrl, name: configService.organization.orgName})avCommon.poweredBy">
         </i>
-    </div>
+    </footer>
 </div>
 
 <div ng-if="!!float" class="footer-wrapper">
-    <div class="container footer-container row">
+    <footer class="container footer-container row" role="navigation">
         <i ng-i18next="[html:i18next]({url: configService.organization.orgUrl, name: configService.organization.orgName})avCommon.poweredBy">
         </i>
-    </div>
+    </footer>
 </div>
  

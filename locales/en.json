@@ -36,6 +36,8 @@
       "fail": "There was an error in the authentication. This could be for multiple causes and for security reasons we cannot reveal which one it is:<ul><li>The OTL might have been invalidated.</li><li>You might have provided incorrect data, please check.</li><li>The OTL authentication period might be finished or not started.</li><li>Other reasons</li></ul><p>Please try again later. If this continue to happen and you think it should not, please contact with election administrators.</p>"
     },
     "loginError": {
+      "errorLabel": "Login error",
+      "warningLabel": "Input warning",
       "email": {
         "unrecognizedServerResponse": "There was an error during authentication: <strong>Unrecognized Server Response</strong>.<p>Please try again later. If the problem persists, please contact support at __support__.</p>",
         "invalidServerResponse": "There was an error during authentication: <strong>Invalid Server Response</strong>.<p>Please try again later. If the problem persists, please contact support at __support__.</p>",
