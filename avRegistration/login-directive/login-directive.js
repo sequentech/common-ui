@@ -826,6 +826,11 @@ angular.module('avRegistration')
           var authevent = angular.copy(scope.base_authevent);
           if (altAuthMethod === null) {
             scope.current_alt_auth_method_id = null;
+            // isOpenId connect is only automatically set in the redirect view
+            // so we need to set it here
+            scope.isOpenId = (
+              scope.isOpenId || authevent.auth_method === 'openid-connect'
+            );
             scope.apply(authevent);
             return;
           }
@@ -1012,6 +1017,7 @@ angular.module('avRegistration')
             // if all fields all filled in and it's not OpenID Connect do
             // auto-login
             if (
+              !scope.isOpenId &&
               !scope.isOtl &&
               !scope.isCensusQuery &&
               !scope.withCode &&
