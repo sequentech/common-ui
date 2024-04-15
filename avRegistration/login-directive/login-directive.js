@@ -1107,7 +1107,7 @@ angular.module('avRegistration')
 
           // Craft the OpenID Connect auth URI
           var authURI = (provider.public_info.authorization_endpoint +
-            "?response_type=id_token" +
+            "?response_type=code" +
             "&client_id=" + encodeURIComponent(provider.public_info.client_id) +
             "&scope=" + encodeURIComponent(provider.public_info.scope) +
             "&redirect_uri=" + encodeURIComponent(
