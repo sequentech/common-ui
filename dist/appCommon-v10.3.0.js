@@ -517,7 +517,8 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                     return $cookies.remove("OIDC_CSRF"), !!csrf && angular.isObject(csrf) && angular.isString(csrf.randomState) && angular.isString(csrf.randomNonce) && angular.isString(csrf.providerId) && angular.isNumber(csrf.created) && angular.isDefined(csrf.altAuthMethodId) && getURIParameter("state", uri) === csrf.randomState && csrf.created - Date.now() < ConfigService.authTokenExpirationSeconds ? 1 : (setOIDCErrorCookie("invalidCsrf"), 
                     void redirectToLogin());
                 }()) return;
-                autheventid = scope.eventId = attrs.eventId = scope.csrf.eventId, scope.selectedAltMethod = scope.csrf.altAuthMethodId;
+                autheventid = scope.eventId = attrs.eventId = scope.csrf.eventId, scope.selectedAltMethod = scope.csrf.altAuthMethodId, 
+                scope.loginUser(!0);
             } else autheventid = scope.eventId = attrs.eventId;
             scope.orgName = ConfigService.organization.orgName;
             var autheventCookie = $cookies.get("authevent_" + adminId), authCookie = $cookies.get("auth_authevent_" + adminId);
@@ -591,13 +592,13 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                     var data = {};
                     if (scope.isOpenId) data = function() {
                         var data = {
-                            id_token: getURIParameter("id_token", "?" + $window.location.hash.substr(1)),
+                            token: getURIParameter("token", $window.location.search),
                             provider_id: scope.csrf.providerId,
                             nonce: scope.csrf.randomNonce
                         }, options = {};
                         ConfigService.authTokenExpirationSeconds && (options.expires = new Date(Date.now() + 1e3 * ConfigService.authTokenExpirationSeconds));
                         var postfix = "_authevent_" + scope.csrf.eventId;
-                        return $cookies.put("id_token_" + postfix, data.id_token, options), data;
+                        return $cookies.put("token_" + postfix, data.token, options), data;
                     }(); else {
                         if (!scope.withCode && (scope.hasOtpFieldsCode || _.contains([ "sms-otp", "email-otp" ], scope.method)) && 0 === scope.currentFormStep) return void scope.resendAuthCode();
                         data.captcha_code = Authmethod.captcha_code;

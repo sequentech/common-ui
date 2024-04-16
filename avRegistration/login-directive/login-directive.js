@@ -320,6 +320,7 @@ angular.module('avRegistration')
           }
           autheventid = scope.eventId = attrs.eventId = scope.csrf.eventId;
           scope.selectedAltMethod = scope.csrf.altAuthMethodId;
+          scope.loginUser(true);
         } else {
           autheventid = scope.eventId = attrs.eventId;
         }
@@ -375,11 +376,11 @@ angular.module('avRegistration')
         // obtain the openid login data
         function getOpenidLoginData()
         {
-          var uri = "?" + $window.location.hash.substr(1);
+          var uri = $window.location.search;
 
           // Auth data to send back to our backend
           var data = {
-            id_token: getURIParameter("id_token", uri),
+            token: getURIParameter("token", uri),
             provider_id: scope.csrf.providerId,
             nonce: scope.csrf.randomNonce
           };
@@ -392,7 +393,7 @@ angular.module('avRegistration')
           }
 
           var postfix = "_authevent_" + scope.csrf.eventId;
-          $cookies.put("id_token_" + postfix, data.id_token, options);
+          $cookies.put("token_" + postfix, data.token, options);
 
           return data;
         }
