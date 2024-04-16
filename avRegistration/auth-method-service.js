@@ -841,6 +841,11 @@ angular.module('avRegistration')
           return $http.post(url, {});
         };
 
+        authmethod.getTurnout = function (id) {
+          var url = backendUrl + 'auth-event/' + id + '/turnout/';
+          return $http.get(url);
+        };
+
         return authmethod;
     });
 
