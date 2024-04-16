@@ -513,7 +513,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 if (!function() {
                     if (!$cookies.get("OIDC_CSRF")) return setOIDCErrorCookie("unexpectedOIDCRedirect"), 
                     void redirectToLogin();
-                    var csrf = scope.csrf = angular.fromJson($cookies.get("OIDC_CSRF")), uri = "?" + $window.location.hash.substr(1);
+                    var csrf = scope.csrf = angular.fromJson($cookies.get("OIDC_CSRF")), uri = $window.location.search;
                     return $cookies.remove("OIDC_CSRF"), !!csrf && angular.isObject(csrf) && angular.isString(csrf.randomState) && angular.isString(csrf.randomNonce) && angular.isString(csrf.providerId) && angular.isNumber(csrf.created) && angular.isDefined(csrf.altAuthMethodId) && getURIParameter("state", uri) === csrf.randomState && csrf.created - Date.now() < ConfigService.authTokenExpirationSeconds ? 1 : (setOIDCErrorCookie("invalidCsrf"), 
                     void redirectToLogin());
                 }()) return;

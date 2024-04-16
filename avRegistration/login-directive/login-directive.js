@@ -272,7 +272,7 @@ angular.module('avRegistration')
 
           // validate csrf token format and data
           var csrf = scope.csrf = angular.fromJson($cookies.get(OIDC_CSRF_COOKIE));
-          var uri = "?" + $window.location.hash.substr(1);
+          var uri = $window.location.search;
 
           // NOTE: if you need to debug this callback, obtain the callback
           // URL, get the callback received in the server (to obtain the
