@@ -592,13 +592,13 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                     var data = {};
                     if (scope.isOpenId) data = function() {
                         var data = {
-                            token: getURIParameter("token", $window.location.search),
+                            code: getURIParameter("code", $window.location.search),
                             provider_id: scope.csrf.providerId,
                             nonce: scope.csrf.randomNonce
                         }, options = {};
                         ConfigService.authTokenExpirationSeconds && (options.expires = new Date(Date.now() + 1e3 * ConfigService.authTokenExpirationSeconds));
                         var postfix = "_authevent_" + scope.csrf.eventId;
-                        return $cookies.put("token_" + postfix, data.token, options), data;
+                        return $cookies.put("code_" + postfix, data.code, options), data;
                     }(); else {
                         if (!scope.withCode && (scope.hasOtpFieldsCode || _.contains([ "sms-otp", "email-otp" ], scope.method)) && 0 === scope.currentFormStep) return void scope.resendAuthCode();
                         data.captcha_code = Authmethod.captcha_code;

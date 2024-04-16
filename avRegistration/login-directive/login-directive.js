@@ -380,7 +380,7 @@ angular.module('avRegistration')
 
           // Auth data to send back to our backend
           var data = {
-            token: getURIParameter("token", uri),
+            code: getURIParameter("code", uri),
             provider_id: scope.csrf.providerId,
             nonce: scope.csrf.randomNonce
           };
@@ -393,7 +393,7 @@ angular.module('avRegistration')
           }
 
           var postfix = "_authevent_" + scope.csrf.eventId;
-          $cookies.put("token_" + postfix, data.token, options);
+          $cookies.put("code_" + postfix, data.code, options);
 
           return data;
         }
