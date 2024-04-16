@@ -436,6 +436,10 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         cancelTask: function(url) {
             url = backendUrl + "tasks/" + url + "/cancel/";
             return $http.post(url, {});
+        },
+        getTurnout: function(url) {
+            url = backendUrl + "auth-event/" + url + "/turnout/";
+            return $http.get(url);
         }
     };
     return authmethod;
