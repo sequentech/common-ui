@@ -320,7 +320,7 @@ angular.module('avRegistration')
           }
           autheventid = scope.eventId = attrs.eventId = scope.csrf.eventId;
           scope.selectedAltMethod = scope.csrf.altAuthMethodId;
-          scope.loginUser(true);
+          scope.setLoginOIDC = true;
         } else {
           autheventid = scope.eventId = attrs.eventId;
         }
@@ -1024,6 +1024,9 @@ angular.module('avRegistration')
               !scope.withCode &&
               !scope.oidcError
             ) {
+              scope.loginUser(true);
+            }
+            if (scope.setLoginOIDC) {
               scope.loginUser(true);
             }
         };

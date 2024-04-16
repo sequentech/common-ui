@@ -518,7 +518,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                     void redirectToLogin());
                 }()) return;
                 autheventid = scope.eventId = attrs.eventId = scope.csrf.eventId, scope.selectedAltMethod = scope.csrf.altAuthMethodId, 
-                scope.loginUser(!0);
+                scope.setLoginOIDC = !0;
             } else autheventid = scope.eventId = attrs.eventId;
             scope.orgName = ConfigService.organization.orgName;
             var autheventCookie = $cookies.get("authevent_" + adminId), authCookie = $cookies.get("auth_authevent_" + adminId);
@@ -700,7 +700,8 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 filledFields = _.filter(filledFields, function(el) {
                     return null !== el.value || "otp-code" === el.type;
                 });
-                !scope.isOpenId && filledFields.length !== scope.login_fields.length || scope.isOpenId || scope.isOtl || scope.isCensusQuery || scope.withCode || scope.oidcError || scope.loginUser(!0);
+                !scope.isOpenId && filledFields.length !== scope.login_fields.length || (scope.isOpenId || scope.isOtl || scope.isCensusQuery || scope.withCode || scope.oidcError || scope.loginUser(!0), 
+                scope.setLoginOIDC && scope.loginUser(!0));
             }, scope.view = function(id) {
                 Authmethod.viewEvent(id).then(function(altAuthMethod) {
                     "ok" === altAuthMethod.data.status ? (scope.base_authevent = angular.copy(altAuthMethod.data.events), 
