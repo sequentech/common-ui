@@ -272,7 +272,7 @@ angular.module('avRegistration')
 
           // validate csrf token format and data
           var csrf = scope.csrf = angular.fromJson($cookies.get(OIDC_CSRF_COOKIE));
-          var uri = "?" + $window.location.hash.substr(1);
+          var uri = $window.location.search;
 
           // NOTE: if you need to debug this callback, obtain the callback
           // URL, get the callback received in the server (to obtain the
@@ -320,6 +320,7 @@ angular.module('avRegistration')
           }
           autheventid = scope.eventId = attrs.eventId = scope.csrf.eventId;
           scope.selectedAltMethod = scope.csrf.altAuthMethodId;
+          scope.setLoginOIDC = true;
         } else {
           autheventid = scope.eventId = attrs.eventId;
         }
@@ -375,11 +376,11 @@ angular.module('avRegistration')
         // obtain the openid login data
         function getOpenidLoginData()
         {
-          var uri = "?" + $window.location.hash.substr(1);
+          var uri = $window.location.search;
 
           // Auth data to send back to our backend
           var data = {
-            id_token: getURIParameter("id_token", uri),
+            code: getURIParameter("code", uri),
             provider_id: scope.csrf.providerId,
             nonce: scope.csrf.randomNonce
           };
@@ -392,7 +393,7 @@ angular.module('avRegistration')
           }
 
           var postfix = "_authevent_" + scope.csrf.eventId;
-          $cookies.put("id_token_" + postfix, data.id_token, options);
+          $cookies.put("code_" + postfix, data.code, options);
 
           return data;
         }
@@ -1025,6 +1026,9 @@ angular.module('avRegistration')
             ) {
               scope.loginUser(true);
             }
+            if (scope.setLoginOIDC) {
+              scope.loginUser(true);
+            }
         };
 
         scope.view = function(id) {
@@ -1107,7 +1111,7 @@ angular.module('avRegistration')
 
           // Craft the OpenID Connect auth URI
           var authURI = (provider.public_info.authorization_endpoint +
-            "?response_type=id_token" +
+            "?response_type=code" +
             "&client_id=" + encodeURIComponent(provider.public_info.client_id) +
             "&scope=" + encodeURIComponent(provider.public_info.scope) +
             "&redirect_uri=" + encodeURIComponent(
