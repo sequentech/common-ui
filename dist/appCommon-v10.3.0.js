@@ -660,15 +660,15 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 var params = $window.location.href, paramName2 = paramName2.replace(/[\[\]]/g, "\\$&").replace(/ /g, "%20"), params = new RegExp("[?&]" + paramName2 + "(=([^&#]*)|&|#|$)").exec(params);
                 return params ? params[2] ? decodeURIComponent(params[2].replace(/\+/g, " ")) || void 0 : "" : null;
             }, scope.getAltAuthMethodName = function(altAuthMethod) {
-                var langCode = $window.i18n.lng();
+                var langCode = $window.i18next.resolvedLanguage;
                 return altAuthMethod.public_name_i18n && altAuthMethod.public_name_i18n[langCode] ? altAuthMethod.public_name_i18n[langCode] : altAuthMethod.public_name;
             }, scope.setCurrentAltAuthMethod = function(altAuthMethod) {
                 var authevent = angular.copy(scope.base_authevent);
                 if (null === altAuthMethod) return scope.current_alt_auth_method_id = null, scope.isOpenId = scope.isOpenId || "openid-connect" === authevent.auth_method, 
                 void scope.apply(authevent);
-                altAuthMethod.id !== scope.current_alt_auth_method_id && ("smart-link" !== scope.selectedAltMethod && "smart-link" === altAuthMethod.auth_method_name || (scope.current_alt_auth_method_id = altAuthMethod.id, 
+                altAuthMethod.id !== scope.current_alt_auth_method_id && (scope.current_alt_auth_method_id = altAuthMethod.id, 
                 authevent.extra_fields = altAuthMethod.extra_fields, authevent.auth_method_config = altAuthMethod.auth_method_config, 
-                authevent.auth_method = altAuthMethod.auth_method_name, scope.apply(authevent)));
+                authevent.auth_method = altAuthMethod.auth_method_name, scope.apply(authevent));
             }, scope.apply = function(authevent) {
                 scope.hasOtpFieldsCode = Authmethod.hasOtpCodeField(authevent), scope.method = authevent.auth_method, 
                 scope.oidc_providers = authevent.oidc_providers, scope.current_oidc_providers = getCurrentOidcProviders(authevent), 

@@ -808,7 +808,7 @@ angular.module('avRegistration')
          * @param {*} altAuthMethod altAuthMethod object
          */
         scope.getAltAuthMethodName = function(altAuthMethod) {
-          var langCode = $window.i18next.language;
+          var langCode = $window.i18next.resolvedLanguage;
           if (
             altAuthMethod.public_name_i18n &&
             altAuthMethod.public_name_i18n[langCode]
@@ -836,14 +836,6 @@ angular.module('avRegistration')
             return;
           }
           if (altAuthMethod.id === scope.current_alt_auth_method_id) {
-            return;
-          }
-
-          // smart link cannot be enabled if it doesn't come from the url
-          if (
-            scope.selectedAltMethod !== 'smart-link' &&
-            altAuthMethod.auth_method_name === 'smart-link'
-          ) {
             return;
           }
 
