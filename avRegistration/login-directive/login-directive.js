@@ -808,7 +808,7 @@ angular.module('avRegistration')
          * @param {*} altAuthMethod altAuthMethod object
          */
         scope.getAltAuthMethodName = function(altAuthMethod) {
-          var langCode = $window.i18n.lng();
+          var langCode = $window.i18next.language;
           if (
             altAuthMethod.public_name_i18n &&
             altAuthMethod.public_name_i18n[langCode]
