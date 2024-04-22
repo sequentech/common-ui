@@ -35,7 +35,7 @@
     
     <!-- Shows the alternative auth method tabs in case there's any -->
     <div class="col-sm-12 alternative-auth-methods-tabs" ng-if="alternative_auth_methods">
-      <ul class="nav nav-tabs">
+      <ul class="nav nav-tabs" ng-if="selectedAltMethod !== 'smart-link'">
         <li 
           class="default-auth-method"
           ng-class="{'active': current_alt_auth_method_id == null}"
@@ -53,7 +53,7 @@
           ng-repeat="alt_auth_method in alternative_auth_methods"
           ng-class="{'active': current_alt_auth_method_id == alt_auth_method.id, 'disabled': selectedAltMethod !== 'smart-link' && alt_auth_method.auth_method_name === 'smart-link'}"
         >
-          <a ng-click="setCurrentAltAuthMethod(alt_auth_method)">
+          <a ng-click="setCurrentAltAuthMethod(alt_auth_method, true)">
             <i
               ng-if="alt_auth_method.icon"
               class="{{alt_auth_method.icon}}"
