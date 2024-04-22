@@ -35,7 +35,7 @@
     
     <!-- Shows the alternative auth method tabs in case there's any -->
     <div class="col-sm-12 alternative-auth-methods-tabs" ng-if="alternative_auth_methods">
-      <ul class="nav nav-tabs" ng-if="selectedAltMethod !== 'smart-link'">
+      <ul class="nav nav-tabs" ng-if="method !== 'smart-link'">
         <li 
           class="default-auth-method"
           ng-class="{'active': current_alt_auth_method_id == null}"
@@ -97,7 +97,7 @@
               <button
                 type="submit"
                 class="btn btn-block btn-lg btn-success-action"
-                ng-if="!isCensusQuery && !isOtl"
+                ng-if="!isCensusQuery && !isOtl && method !== 'smart-link'"
                 ng-i18next="avRegistration.loginButton"
                 ng-click="loginUser(form.$valid)"
                 tabindex="0"

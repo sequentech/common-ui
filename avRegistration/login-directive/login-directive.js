@@ -252,7 +252,7 @@ angular.module('avRegistration')
         {
           scope.error = error;
           scope.errorData = angular.toJson({
-            support: '<a href="mailto:' + ConfigService.contact.email + '" target="_blank">' + ConfigService.contact.email + "</a>"
+            support: ConfigService.contact.email
           });
           if (scope.isOpenId) {
             setOIDCErrorCookie(errorCodename);
