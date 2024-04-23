@@ -252,7 +252,7 @@ angular.module('avRegistration')
         {
           scope.error = error;
           scope.errorData = angular.toJson({
-            support: '<a href="mailto:' + ConfigService.contact.email + '" target="_blank">' + ConfigService.contact.email + "</a>"
+            support: ConfigService.contact.email
           });
           if (scope.isOpenId) {
             setOIDCErrorCookie(errorCodename);
@@ -808,7 +808,7 @@ angular.module('avRegistration')
          * @param {*} altAuthMethod altAuthMethod object
          */
         scope.getAltAuthMethodName = function(altAuthMethod) {
-          var langCode = $window.i18n.lng();
+          var langCode = $window.i18next.resolvedLanguage;
           if (
             altAuthMethod.public_name_i18n &&
             altAuthMethod.public_name_i18n[langCode]
@@ -823,7 +823,7 @@ angular.module('avRegistration')
          * Sets the current alt auth method
          * @param {*} altAuthMethod altAuthMethod object
          */
-        scope.setCurrentAltAuthMethod = function(altAuthMethod) {
+        scope.setCurrentAltAuthMethod = function(altAuthMethod, isClick) {
           var authevent = angular.copy(scope.base_authevent);
           if (altAuthMethod === null) {
             scope.current_alt_auth_method_id = null;
@@ -841,6 +841,7 @@ angular.module('avRegistration')
 
           // smart link cannot be enabled if it doesn't come from the url
           if (
+            !!isClick &&
             scope.selectedAltMethod !== 'smart-link' &&
             altAuthMethod.auth_method_name === 'smart-link'
           ) {
