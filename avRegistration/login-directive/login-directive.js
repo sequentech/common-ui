@@ -848,6 +848,7 @@ angular.module('avRegistration')
             return;
           }
 
+          scope.isOpenId = altAuthMethod.auth_method === 'openid-connect';
           scope.current_alt_auth_method_id = altAuthMethod.id;
           authevent.extra_fields = altAuthMethod.extra_fields;
           authevent.auth_method_config = altAuthMethod.auth_method_config;
