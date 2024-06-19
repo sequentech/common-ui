@@ -54,6 +54,89 @@ angular.module('avRegistration')
           return authevent;
         };
 
+        // Function to update the last interaction time
+        function updateLastInteractionTime() {
+          if (typeof performance !== 'undefined' && typeof performance.now === 'function') {
+              lastInteractionTime = performance.now();
+              localStorage.setItem('lastInteractionTime', lastInteractionTime);
+          }
+        }
+
+        // Function to check if the Performance API is available
+        function isPerformanceApiAvailable() {
+          return typeof performance !== 'undefined' && typeof performance.now === 'function';
+        }
+
+        // Variable to store the last interaction time
+        let lastInteractionTime = isPerformanceApiAvailable() ? performance.now() : 0;
+
+        // Function to get the time since the last interaction in milliseconds
+        function getTimeSinceLastInteraction() {
+          return isPerformanceApiAvailable() ? (performance.now() - lastInteractionTime) : Infinity;
+        }
+
+        // Function to check if the last interaction was within the last X seconds
+        function wasInteractionWithinLastXSeconds(seconds, callback) {
+          const timeSinceLastInteraction = getTimeSinceLastInteraction();
+          if (timeSinceLastInteraction <= seconds * 1000) {
+              callback();
+          }
+        }
+
+        // Function to be called if the last interaction was within the last X seconds
+        function handleRecentInteraction() {
+          console.log('Recent interaction detected!');
+          // Your logic here
+        }
+
+        // Event listener for user interactions
+        function setupInteractionListeners() {
+          if (isPerformanceApiAvailable()) {
+              const events = ['click', 'keypress', 'mousemove', 'touchstart'];
+              events.forEach(event => {
+                  document.addEventListener(event, updateLastInteractionTime);
+              });
+          }
+        }
+  
+        authmethod.setAuth = function(auth, isAdmin, autheventid) {
+            authmethod.admin = isAdmin;
+            $http.defaults.headers.common.Authorization = auth;
+
+            // Initialize the interaction listeners
+            setupInteractionListeners();
+
+            setInterval(() => {
+                wasInteractionWithinLastXSeconds(5, handleRecentInteraction);
+            }, 1000);
+
+            if (!authmethod.pingTimeout) {
+                $interval.cancel(authmethod.pingTimeout);
+                authmethod.launchPingDaemon(autheventid);
+
+                // callback only every 1000ms, for efficiency
+                authmethod.pingTimeout = $interval(
+                  function() {
+                    // only call the callback if the last interaction was within
+                    // last 5 seconds
+                    wasInteractionWithinLastXSeconds(
+                      5,
+                      function () {
+                        // TODO: only renew token when 50% of the expiration
+                        // time
+                        if (ConfigService.authTokenExpirationSeconds * 500) {
+                          return;
+                        }
+                        authmethod.launchPingDaemon(autheventid);
+                      }
+                    );
+                  },
+                  1000
+                );
+            }
+            return false;
+        };
+
         authmethod.isAdmin = function() {
             return authmethod.isLoggedIn() && authmethod.admin;
         };
