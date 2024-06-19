@@ -62,14 +62,6 @@ angular.module('avRegistration')
         // Variable to store the last interaction time
         var lastInteractionTime = isPerformanceApiAvailable() ? performance.now() : 0;
 
-        // Function to update the last interaction time
-        function updateLastInteractionTime() {
-          if (typeof performance !== 'undefined' && typeof performance.now === 'function') {
-              lastInteractionTime = performance.now();
-              localStorage.setItem('lastInteractionTime', lastInteractionTime);
-          }
-        }
-
         // Function to get the time since the last interaction in milliseconds
         function getTimeSinceLastInteraction() {
           return isPerformanceApiAvailable() ? (performance.now() - lastInteractionTime) : Infinity;
@@ -80,16 +72,6 @@ angular.module('avRegistration')
           var timeSinceLastInteraction = getTimeSinceLastInteraction();
           if (timeSinceLastInteraction <= seconds * 1000) {
               callback();
-          }
-        }
-
-        // Event listener for user interactions
-        function setupInteractionListeners() {
-          if (isPerformanceApiAvailable()) {
-              var events = ['click', 'keypress', 'mousemove', 'touchstart'];
-              events.forEach(function (event) {
-                  document.addEventListener(event, updateLastInteractionTime);
-              });
           }
         }
         
@@ -106,9 +88,6 @@ angular.module('avRegistration')
             authmethod.lastAuthDate = new Date();
 
             if (!authmethod.pingTimeout) {
-                // Initialize the interaction listeners
-                setupInteractionListeners();
-
                 $interval.cancel(authmethod.pingTimeout);
                 authmethod.refreshAuthToken(autheventid);
 

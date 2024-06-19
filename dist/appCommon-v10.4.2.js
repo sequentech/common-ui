@@ -15,19 +15,13 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         authevent;
     };
     var lastInteractionTime = isPerformanceApiAvailable() ? performance.now() : 0;
-    function updateLastInteractionTime() {
-        "undefined" != typeof performance && "function" == typeof performance.now && (lastInteractionTime = performance.now(), 
-        localStorage.setItem("lastInteractionTime", lastInteractionTime));
-    }
     function wasInteractionWithinLastXSeconds(seconds, callback) {
         (isPerformanceApiAvailable() ? performance.now() - lastInteractionTime : 1 / 0) <= 1e3 * seconds && callback();
     }
     return authmethod.setAuth = function(auth, isAdmin, autheventid) {
         return authmethod.admin = isAdmin, $http.defaults.headers.common.Authorization = auth, 
-        authmethod.lastAuthDate = new Date(), authmethod.pingTimeout || (isPerformanceApiAvailable() && [ "click", "keypress", "mousemove", "touchstart" ].forEach(function(event) {
-            document.addEventListener(event, updateLastInteractionTime);
-        }), $interval.cancel(authmethod.pingTimeout), authmethod.refreshAuthToken(autheventid), 
-        authmethod.pingTimeout = $interval(function() {
+        authmethod.lastAuthDate = new Date(), authmethod.pingTimeout || ($interval.cancel(authmethod.pingTimeout), 
+        authmethod.refreshAuthToken(autheventid), authmethod.pingTimeout = $interval(function() {
             console.log("authmethod.pingTimeout.."), wasInteractionWithinLastXSeconds(5, function() {
                 var date1, date2;
                 console.log("wasInteractionWithinLastXSeconds.."), (date1 = authmethod.lastAuthDate, 
