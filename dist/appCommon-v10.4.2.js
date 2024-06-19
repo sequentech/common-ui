@@ -19,8 +19,8 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         (isPerformanceApiAvailable() ? performance.now() - lastInteractionTime : 1 / 0) <= 1e3 * seconds && callback();
     }
     return authmethod.setAuth = function(auth, isAdmin, autheventid) {
-        return authmethod.admin = isAdmin, $http.defaults.headers.common.Authorization = auth, 
-        authmethod.lastAuthDate = new Date(), authmethod.pingTimeout || ($interval.cancel(authmethod.pingTimeout), 
+        return console.log("setAuth"), authmethod.admin = isAdmin, $http.defaults.headers.common.Authorization = auth, 
+        authmethod.lastAuthDate = new Date(), $interval.cancel(authmethod.pingTimeout), 
         authmethod.refreshAuthToken(autheventid), authmethod.pingTimeout = $interval(function() {
             console.log("authmethod.pingTimeout.."), wasInteractionWithinLastXSeconds(5, function() {
                 var date1, date2;
@@ -28,7 +28,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 date2 = new Date(), Math.abs(date2 - date1) / 1e3) <= .5 * ConfigService.authTokenExpirationSeconds ? console.log("secsDiff <= halfLife, stopping..") : (console.log("secsDiff > halfLife, refreshing token.."), 
                 authmethod.refreshAuthToken(autheventid));
             });
-        }, 1e3)), !1;
+        }, 1e3), !1;
     }, authmethod.isAdmin = function() {
         return authmethod.isLoggedIn() && authmethod.admin;
     }, authmethod.isLoggedIn = function() {
@@ -261,12 +261,6 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         });
     }, authmethod.test = function() {
         return $http.get(backendUrl);
-    }, authmethod.setAuth = function(auth, isAdmin, autheventid) {
-        return authmethod.admin = isAdmin, $http.defaults.headers.common.Authorization = auth, 
-        authmethod.pingTimeout || ($interval.cancel(authmethod.pingTimeout), authmethod.refreshAuthToken(autheventid), 
-        authmethod.pingTimeout = $interval(function() {
-            authmethod.refreshAuthToken(autheventid);
-        }, 500 * ConfigService.authTokenExpirationSeconds)), !1;
     }, authmethod.electionsIds = function(page, queryIds, ids, page_size) {
         page = page || 1;
         var perms = "edit|view";

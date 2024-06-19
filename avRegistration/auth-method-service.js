@@ -83,42 +83,41 @@ angular.module('avRegistration')
         }
   
         authmethod.setAuth = function(auth, isAdmin, autheventid) {
+            console.log("setAuth");
             authmethod.admin = isAdmin;
             $http.defaults.headers.common.Authorization = auth;
             authmethod.lastAuthDate = new Date();
 
-            if (!authmethod.pingTimeout) {
-                $interval.cancel(authmethod.pingTimeout);
-                authmethod.refreshAuthToken(autheventid);
+            $interval.cancel(authmethod.pingTimeout);
+            authmethod.refreshAuthToken(autheventid);
 
-                // callback only every 1 second, for efficiency
-                authmethod.pingTimeout = $interval(
-                  function() {
-                    console.log("authmethod.pingTimeout..");
-                    // only call the callback if the last interaction was within
-                    // last 5 seconds
-                    wasInteractionWithinLastXSeconds(
-                      5 /* seconds */,
-                      function () {
-                        console.log("wasInteractionWithinLastXSeconds..");
-                        // Only try to renew token when it's older than 50% of
-                        // the expiration time
-                        var secsDiff = getSecondsDifference(
-                          authmethod.lastAuthDate, new Date()
-                        );
-                        var halfLife = ConfigService.authTokenExpirationSeconds * 0.5;
-                        if (secsDiff <= halfLife) {
-                          console.log("secsDiff <= halfLife, stopping..");
-                          return;
-                        }
-                        console.log("secsDiff > halfLife, refreshing token..");
-                        authmethod.refreshAuthToken(autheventid);
-                      }
+            // callback only every 1 second, for efficiency
+            authmethod.pingTimeout = $interval(
+              function() {
+                console.log("authmethod.pingTimeout..");
+                // only call the callback if the last interaction was within
+                // last 5 seconds
+                wasInteractionWithinLastXSeconds(
+                  5 /* seconds */,
+                  function () {
+                    console.log("wasInteractionWithinLastXSeconds..");
+                    // Only try to renew token when it's older than 50% of
+                    // the expiration time
+                    var secsDiff = getSecondsDifference(
+                      authmethod.lastAuthDate, new Date()
                     );
-                  },
-                  1000
+                    var halfLife = ConfigService.authTokenExpirationSeconds * 0.5;
+                    if (secsDiff <= halfLife) {
+                      console.log("secsDiff <= halfLife, stopping..");
+                      return;
+                    }
+                    console.log("secsDiff > halfLife, refreshing token..");
+                    authmethod.refreshAuthToken(autheventid);
+                  }
                 );
-            }
+              },
+              1000
+            );
             return false;
         };
 
@@ -629,20 +628,6 @@ angular.module('avRegistration')
         // TEST
         authmethod.test = function() {
             return $http.get(backendUrl);
-        };
-
-        authmethod.setAuth = function(auth, isAdmin, autheventid) {
-            authmethod.admin = isAdmin;
-            $http.defaults.headers.common.Authorization = auth;
-            if (!authmethod.pingTimeout) {
-                $interval.cancel(authmethod.pingTimeout);
-                authmethod.refreshAuthToken(autheventid);
-                authmethod.pingTimeout = $interval(
-                        function() { authmethod.refreshAuthToken(autheventid); },
-                        ConfigService.authTokenExpirationSeconds*500 // renew token when 50% of the expiration time has passed
-                );
-            }
-            return false;
         };
 
         authmethod.electionsIds = function(page, listType, ids, page_size) {
