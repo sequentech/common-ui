@@ -12,13 +12,12 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         authevent;
     }, authmethod.setAuth = function(auth, isAdmin, autheventid) {
         var callback;
-        if (console.log("setAuth"), authmethod.admin = isAdmin, $http.defaults.headers.common.Authorization = auth, 
+        if (authmethod.admin = isAdmin, $http.defaults.headers.common.Authorization = auth, 
         authmethod.lastAuthDate = new Date(), !authmethod.iddleDetectionSetup) return authmethod.iddleDetectionSetup = !0, 
         callback = function() {
-            console.log("newInteractionCallback..");
             var date1, date2, now = new Date();
-            (date1 = authmethod.lastAuthDate, date2 = now, Math.abs(date2 - date1) / 1e3) <= .5 * ConfigService.authTokenExpirationSeconds ? console.log("secsDiff <= halfLife, stopping..") : (authmethod.lastAuthDate = now, 
-            console.log("secsDiff > halfLife, refreshing token.."), authmethod.refreshAuthToken(autheventid));
+            (date1 = authmethod.lastAuthDate, date2 = now, Math.abs(date2 - date1) / 1e3) <= .5 * ConfigService.authTokenExpirationSeconds || (authmethod.lastAuthDate = now, 
+            authmethod.refreshAuthToken(autheventid));
         }, [ "click", "keypress", "mousemove", "mousedown", "touchstart", "touchmove" ].forEach(function(event) {
             document.addEventListener(event, callback);
         }), !1;

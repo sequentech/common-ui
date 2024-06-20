@@ -78,7 +78,6 @@ angular.module('avRegistration')
         }
   
         authmethod.setAuth = function(auth, isAdmin, autheventid) {
-            console.log("setAuth");
             authmethod.admin = isAdmin;
             $http.defaults.headers.common.Authorization = auth;
             authmethod.lastAuthDate = new Date();
@@ -89,18 +88,15 @@ angular.module('avRegistration')
 
             function newInteractionCallback()
             {
-              console.log("newInteractionCallback..");
               // Only try to renew token when it's older than 50% of
               // the expiration time
               var now = new Date();
               var secsDiff = getSecondsDifference(authmethod.lastAuthDate, now);
               var halfLife = ConfigService.authTokenExpirationSeconds * 0.5;
               if (secsDiff <= halfLife) {
-                console.log("secsDiff <= halfLife, stopping..");
                 return;
               }
               authmethod.lastAuthDate = now;
-              console.log("secsDiff > halfLife, refreshing token..");
               authmethod.refreshAuthToken(autheventid);
             }
 
