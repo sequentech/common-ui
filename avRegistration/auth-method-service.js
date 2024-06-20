@@ -83,7 +83,7 @@ angular.module('avRegistration')
             $http.defaults.headers.common.Authorization = auth;
             authmethod.lastAuthDate = new Date();
 
-            if (!authmethod.iddleDetectionSetup) {
+            if (authmethod.iddleDetectionSetup) {
               return;
             }
 

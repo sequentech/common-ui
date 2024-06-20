@@ -13,7 +13,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
     }, authmethod.setAuth = function(auth, isAdmin, autheventid) {
         var callback;
         if (console.log("setAuth"), authmethod.admin = isAdmin, $http.defaults.headers.common.Authorization = auth, 
-        authmethod.lastAuthDate = new Date(), authmethod.iddleDetectionSetup) return authmethod.iddleDetectionSetup = !0, 
+        authmethod.lastAuthDate = new Date(), !authmethod.iddleDetectionSetup) return authmethod.iddleDetectionSetup = !0, 
         callback = function() {
             console.log("newInteractionCallback..");
             var date1, date2, now = new Date();
