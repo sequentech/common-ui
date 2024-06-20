@@ -34,6 +34,7 @@ angular.module('avRegistration')
         authmethod.captcha_image_url = "";
         authmethod.captcha_status = "";
         authmethod.admin = false;
+        authmethod.timer = null;
 
         authmethod.getAuthevent = function() {
           var adminId = ConfigService.freeAuthId + '';
@@ -54,27 +55,21 @@ angular.module('avRegistration')
           return authevent;
         };
 
-        // Function to check if the Performance API is available
-        function isPerformanceApiAvailable() {
-          return typeof performance !== 'undefined' && typeof performance.now === 'function';
+        function setupIdleDetection(callback)
+        {
+          var events = [
+            'click',
+            'keypress',
+            'mousemove',
+            'mousedown',
+            'touchstart',
+            'touchmove'
+          ];
+          events.forEach(function (event) {
+              document.addEventListener(event, callback);
+          });
         }
 
-        // Variable to store the last interaction time
-        var lastInteractionTime = isPerformanceApiAvailable() ? performance.now() : 0;
-
-        // Function to get the time since the last interaction in milliseconds
-        function getTimeSinceLastInteraction() {
-          return isPerformanceApiAvailable() ? (performance.now() - lastInteractionTime) : Infinity;
-        }
-
-        // Function to check if the last interaction was within the last X seconds
-        function wasInteractionWithinLastXSeconds(seconds, callback) {
-          var timeSinceLastInteraction = getTimeSinceLastInteraction();
-          if (timeSinceLastInteraction <= seconds * 1000) {
-              callback();
-          }
-        }
-        
         // Function to get the difference in seconds between two Date objects
         function getSecondsDifference(date1, date2) {
           var millisecondsDifference = Math.abs(date2 - date1);
@@ -88,36 +83,29 @@ angular.module('avRegistration')
             $http.defaults.headers.common.Authorization = auth;
             authmethod.lastAuthDate = new Date();
 
-            $interval.cancel(authmethod.pingTimeout);
-            authmethod.refreshAuthToken(autheventid);
+            if (!authmethod.iddleDetectionSetup) {
+              return;
+            }
 
-            // callback only every 1 second, for efficiency
-            authmethod.pingTimeout = $interval(
-              function() {
-                console.log("authmethod.pingTimeout..");
-                // only call the callback if the last interaction was within
-                // last 5 seconds
-                wasInteractionWithinLastXSeconds(
-                  5 /* seconds */,
-                  function () {
-                    console.log("wasInteractionWithinLastXSeconds..");
-                    // Only try to renew token when it's older than 50% of
-                    // the expiration time
-                    var secsDiff = getSecondsDifference(
-                      authmethod.lastAuthDate, new Date()
-                    );
-                    var halfLife = ConfigService.authTokenExpirationSeconds * 0.5;
-                    if (secsDiff <= halfLife) {
-                      console.log("secsDiff <= halfLife, stopping..");
-                      return;
-                    }
-                    console.log("secsDiff > halfLife, refreshing token..");
-                    authmethod.refreshAuthToken(autheventid);
-                  }
-                );
-              },
-              1000
-            );
+            function newInteractionCallback()
+            {
+              console.log("newInteractionCallback..");
+              // Only try to renew token when it's older than 50% of
+              // the expiration time
+              var now = new Date();
+              var secsDiff = getSecondsDifference(authmethod.lastAuthDate, now);
+              var halfLife = ConfigService.authTokenExpirationSeconds * 0.5;
+              if (secsDiff <= halfLife) {
+                console.log("secsDiff <= halfLife, stopping..");
+                return;
+              }
+              authmethod.lastAuthDate = now;
+              console.log("secsDiff > halfLife, refreshing token..");
+              authmethod.refreshAuthToken(autheventid);
+            }
+
+            authmethod.iddleDetectionSetup = true;
+            setupIdleDetection(newInteractionCallback);
             return false;
         };
 

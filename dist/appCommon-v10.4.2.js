@@ -5,30 +5,23 @@ function $buo_f() {
 if (angular.module("avRegistration", [ "ui.bootstrap", "ui.utils", "ui.router" ]), 
 angular.module("avRegistration").config(function() {}), angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "ConfigService", "$interval", "$state", "$location", "$document", "$q", function($http, $cookies, ConfigService, $interval, $state, $location, $document, $q) {
     var backendUrl = ConfigService.authAPI, authId = ConfigService.freeAuthId, authmethod = {};
-    function isPerformanceApiAvailable() {
-        return "undefined" != typeof performance && "function" == typeof performance.now;
-    }
-    authmethod.captcha_code = null, authmethod.captcha_image_url = "", authmethod.captcha_status = "", 
-    authmethod.admin = !1, authmethod.getAuthevent = function() {
+    return authmethod.captcha_code = null, authmethod.captcha_image_url = "", authmethod.captcha_status = "", 
+    authmethod.admin = !1, authmethod.timer = null, authmethod.getAuthevent = function() {
         var adminId = ConfigService.freeAuthId + "", electionsMatch = $location.path(), authevent = "", adminMatch = electionsMatch.match(/^\/admin\//), boothMatch = electionsMatch.match(/^\/booth\/([0-9]+)\//), electionsMatch = electionsMatch.match(/^\/(elections|election)\/([0-9]+)\//);
         return _.isArray(adminMatch) ? authevent = adminId : _.isArray(boothMatch) && 2 === boothMatch.length ? authevent = boothMatch[1] : _.isArray(electionsMatch) && 3 === electionsMatch.length && (authevent = electionsMatch[2]), 
         authevent;
-    };
-    var lastInteractionTime = isPerformanceApiAvailable() ? performance.now() : 0;
-    function wasInteractionWithinLastXSeconds(seconds, callback) {
-        (isPerformanceApiAvailable() ? performance.now() - lastInteractionTime : 1 / 0) <= 1e3 * seconds && callback();
-    }
-    return authmethod.setAuth = function(auth, isAdmin, autheventid) {
-        return console.log("setAuth"), authmethod.admin = isAdmin, $http.defaults.headers.common.Authorization = auth, 
-        authmethod.lastAuthDate = new Date(), $interval.cancel(authmethod.pingTimeout), 
-        authmethod.refreshAuthToken(autheventid), authmethod.pingTimeout = $interval(function() {
-            console.log("authmethod.pingTimeout.."), wasInteractionWithinLastXSeconds(5, function() {
-                var date1, date2;
-                console.log("wasInteractionWithinLastXSeconds.."), (date1 = authmethod.lastAuthDate, 
-                date2 = new Date(), Math.abs(date2 - date1) / 1e3) <= .5 * ConfigService.authTokenExpirationSeconds ? console.log("secsDiff <= halfLife, stopping..") : (console.log("secsDiff > halfLife, refreshing token.."), 
-                authmethod.refreshAuthToken(autheventid));
-            });
-        }, 1e3), !1;
+    }, authmethod.setAuth = function(auth, isAdmin, autheventid) {
+        var callback;
+        if (console.log("setAuth"), authmethod.admin = isAdmin, $http.defaults.headers.common.Authorization = auth, 
+        authmethod.lastAuthDate = new Date(), authmethod.iddleDetectionSetup) return authmethod.iddleDetectionSetup = !0, 
+        callback = function() {
+            console.log("newInteractionCallback..");
+            var date1, date2, now = new Date();
+            (date1 = authmethod.lastAuthDate, date2 = now, Math.abs(date2 - date1) / 1e3) <= .5 * ConfigService.authTokenExpirationSeconds ? console.log("secsDiff <= halfLife, stopping..") : (authmethod.lastAuthDate = now, 
+            console.log("secsDiff > halfLife, refreshing token.."), authmethod.refreshAuthToken(autheventid));
+        }, [ "click", "keypress", "mousemove", "mousedown", "touchstart", "touchmove" ].forEach(function(event) {
+            document.addEventListener(event, callback);
+        }), !1;
     }, authmethod.isAdmin = function() {
         return authmethod.isLoggedIn() && authmethod.admin;
     }, authmethod.isLoggedIn = function() {
