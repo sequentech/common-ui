@@ -25,6 +25,13 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             eid = eid || authId;
             return $http.post(backendUrl + "auth-event/" + eid + "/register/", data);
         },
+        createLivePreview: function(data) {
+            return $http.post(backendUrl + "auth-event/live-preview/", data);
+        },
+        getLivePreview: function(url) {
+            url = backendUrl + "auth-event/" + url + "/live-preview/";
+            return $http.get(url);
+        },
         getUserInfoExtra: function() {
             if (authmethod.isLoggedIn()) return $http.get(backendUrl + "user/extra/", {});
             var data = {
