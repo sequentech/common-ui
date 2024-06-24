@@ -769,8 +769,11 @@ angular.module('avRegistration')
 
           // ping daemon is not active for normal users
           if (!authmethod.admin) {
-            deferred.reject("not an admin");
-            return deferred.promise;
+            var hasGracefulPeriod = window.sessionStorage.getItem('hasGracefulPeriod');
+            if (hasGracefulPeriod !== "true") {
+              deferred.reject("not an admin");
+              return deferred.promise;
+            }
           }
           // if document is hidden, then do not update the cookie, and redirect
           // to admin logout if cookie expired
