@@ -130,8 +130,8 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             }
         };
         return data;
-    }, authmethod.ping = function() {
-        if (authmethod.isLoggedIn()) return $http.get(backendUrl + "auth-event/" + authId + "/ping/");
+    }, authmethod.ping = function(pingId) {
+        if (authmethod.isLoggedIn()) return $http.get(backendUrl + "auth-event/" + pingId + "/ping/");
         var data = {
             then: function(onSuccess, onError) {
                 return setTimeout(function() {
@@ -324,7 +324,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         if ("hidden" === document.visibilityState) return $cookies.get("auth" + postfix) || $state.go("admin.logout"), 
         deferred.reject("tab not focused"), deferred.promise;
         var now = Date.now();
-        return authmethod.ping().then(function(response) {
+        return authmethod.ping(autheventid).then(function(response) {
             var options = {};
             ConfigService.authTokenExpirationSeconds && (options.expires = new Date(now + 1e3 * ConfigService.authTokenExpirationSeconds)), 
             $cookies.put("auth" + postfix, response.data["auth-token"], options), $cookies.put("isAdmin" + postfix, $cookies.get("isAdmin" + postfix), options), 

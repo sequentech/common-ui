@@ -371,7 +371,7 @@ angular.module('avRegistration')
             }
         };
 
-        authmethod.ping = function() {
+        authmethod.ping = function(pingId) {
             if (!authmethod.isLoggedIn()) {
               var data = {
                 then: function (onSuccess, onError) {
@@ -383,7 +383,7 @@ angular.module('avRegistration')
               };
               return data;
             }
-            return $http.get(backendUrl + 'auth-event/'+authId+'/ping/');
+            return $http.get(backendUrl + 'auth-event/'+pingId+'/ping/');
         };
 
         authmethod.getImage = function(ev, uid) {
@@ -786,7 +786,7 @@ angular.module('avRegistration')
             return deferred.promise;
           }
           var now = Date.now();
-          return authmethod.ping()
+          return authmethod.ping(autheventid)
             .then(function(response) {
                 var options = {};
                 if (ConfigService.authTokenExpirationSeconds) {
