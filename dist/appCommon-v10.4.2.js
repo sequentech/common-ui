@@ -15,6 +15,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         if (authmethod.admin = isAdmin, $http.defaults.headers.common.Authorization = auth, 
         authmethod.lastAuthDate = new Date(), !authmethod.iddleDetectionSetup) return authmethod.iddleDetectionSetup = !0, 
         callback = function() {
+            console.log("FF test");
             var date1, date2, now = new Date();
             (date1 = authmethod.lastAuthDate, date2 = now, Math.abs(date2 - date1) / 1e3) <= .5 * ConfigService.authTokenExpirationSeconds || (authmethod.lastAuthDate = now, 
             authmethod.refreshAuthToken(autheventid));
