@@ -15,9 +15,9 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         if (authmethod.admin = isAdmin, $http.defaults.headers.common.Authorization = auth, 
         authmethod.lastAuthDate = new Date(), !authmethod.iddleDetectionSetup) return authmethod.iddleDetectionSetup = !0, 
         callback = function() {
-            console.log("FF test");
-            var date1, date2, now = new Date();
-            (date1 = authmethod.lastAuthDate, date2 = now, Math.abs(date2 - date1) / 1e3) <= .5 * ConfigService.authTokenExpirationSeconds || (authmethod.lastAuthDate = now, 
+            var now = new Date(), secsDiff = (halfLife = authmethod.lastAuthDate, secsDiff = now, 
+            Math.abs(secsDiff - halfLife) / 1e3), halfLife = .5 * ConfigService.authTokenExpirationSeconds;
+            console.log("FF secs diff " + secsDiff + " half life" + halfLife), secsDiff <= halfLife || (authmethod.lastAuthDate = now, 
             authmethod.refreshAuthToken(autheventid));
         }, [ "click", "keypress", "mousemove", "mousedown", "touchstart", "touchmove" ].forEach(function(event) {
             document.addEventListener(event, callback);

@@ -90,10 +90,10 @@ angular.module('avRegistration')
             {
               // Only try to renew token when it's older than 50% of
               // the expiration time
-              console.log("FF test");
               var now = new Date();
               var secsDiff = getSecondsDifference(authmethod.lastAuthDate, now);
               var halfLife = ConfigService.authTokenExpirationSeconds * 0.5;
+              console.log("FF secs diff " + secsDiff + " half life" + halfLife);
               if (secsDiff <= halfLife) {
                 return;
               }
