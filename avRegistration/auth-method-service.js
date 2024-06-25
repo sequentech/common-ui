@@ -94,7 +94,6 @@ angular.module('avRegistration')
               var now = new Date();
               var secsDiff = getSecondsDifference(authmethod.lastAuthDate, now);
               var halfLife = ConfigService.authTokenExpirationSeconds * 0.5;
-              console.log("FF secs diff " + secsDiff + " half life" + halfLife);
               if (secsDiff <= halfLife) {
                 return;
               }
