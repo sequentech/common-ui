@@ -29,6 +29,11 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
     }, authmethod.signup = function(data, eid) {
         eid = eid || authId;
         return $http.post(backendUrl + "auth-event/" + eid + "/register/", data);
+    }, authmethod.createLivePreview = function(data) {
+        return $http.post(backendUrl + "auth-event/live-preview/", data);
+    }, authmethod.getLivePreview = function(url) {
+        url = backendUrl + "auth-event/" + url + "/live-preview/";
+        return $http.get(url);
     }, authmethod.getUserInfoExtra = function() {
         if (authmethod.isLoggedIn()) return $http.get(backendUrl + "user/extra/", {});
         var data = {
@@ -620,9 +625,10 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 var authevent = angular.copy(scope.base_authevent);
                 if (null === altAuthMethod) return scope.current_alt_auth_method_id = null, scope.isOpenId = scope.isOpenId || "openid-connect" === authevent.auth_method, 
                 void scope.apply(authevent);
-                altAuthMethod.id !== scope.current_alt_auth_method_id && (isClick && "smart-link" !== scope.selectedAltMethod && "smart-link" === altAuthMethod.auth_method_name || (scope.current_alt_auth_method_id = altAuthMethod.id, 
-                authevent.extra_fields = altAuthMethod.extra_fields, authevent.auth_method_config = altAuthMethod.auth_method_config, 
-                authevent.auth_method = altAuthMethod.auth_method_name, scope.apply(authevent)));
+                altAuthMethod.id !== scope.current_alt_auth_method_id && (isClick && "smart-link" !== scope.selectedAltMethod && "smart-link" === altAuthMethod.auth_method_name || (scope.isOpenId = "openid-connect" === altAuthMethod.auth_method, 
+                scope.current_alt_auth_method_id = altAuthMethod.id, authevent.extra_fields = altAuthMethod.extra_fields, 
+                authevent.auth_method_config = altAuthMethod.auth_method_config, authevent.auth_method = altAuthMethod.auth_method_name, 
+                scope.apply(authevent)));
             }, scope.apply = function(authevent) {
                 scope.hasOtpFieldsCode = Authmethod.hasOtpCodeField(authevent), scope.method = authevent.auth_method, 
                 scope.oidc_providers = authevent.oidc_providers, scope.current_oidc_providers = getCurrentOidcProviders(authevent), 

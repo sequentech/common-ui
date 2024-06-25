@@ -118,6 +118,15 @@ angular.module('avRegistration')
             var eid = authevent || authId;
             return $http.post(backendUrl + 'auth-event/'+eid+'/register/', data);
         };
+        
+        authmethod.createLivePreview = function(data) {
+          return $http.post(backendUrl + 'auth-event/live-preview/', data);
+        };
+        
+        authmethod.getLivePreview = function(id) {
+          var url = backendUrl + 'auth-event/'+ id + '/live-preview/';
+          return $http.get(url);
+        };
 
         authmethod.getUserInfoExtra = function() {
             if (!authmethod.isLoggedIn()) {
