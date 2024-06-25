@@ -775,7 +775,7 @@ angular.module('avRegistration')
           // ping daemon is not active for normal users
           if (!authmethod.admin) {
             var hasGracefulPeriod = window.sessionStorage.getItem('hasGracefulPeriod');
-            if (hasGracefulPeriod !== "true") {
+            if (hasGracefulPeriod === "true") {
               deferred.reject("not an admin");
               return deferred.promise;
             }
