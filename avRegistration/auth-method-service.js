@@ -20,6 +20,7 @@ angular.module('avRegistration')
     .factory('Authmethod', function(
       $http,
       $cookies,
+      $window,
       ConfigService,
       $interval,
       $state,
@@ -789,6 +790,7 @@ angular.module('avRegistration')
             return deferred.promise;
           }
           var now = Date.now();
+          var sessionStartedAtMs = now;
           return authmethod.ping(autheventid)
             .then(function(response) {
                 var options = {};
@@ -826,6 +828,48 @@ angular.module('avRegistration')
                   $cookies.get("isAdmin" + postfix),
                   autheventid
                 );
+
+                // if it's an election with no children elections
+                if (angular.isDefined(response.data['vote-permission-token']))
+                  {
+                    $window.sessionStorage.setItem(
+                      "vote_permission_tokens", 
+                      JSON.stringify([{
+                        electionId: autheventid,
+                        token: response.data['vote-permission-token'],
+                        isFirst: true,
+                        sessionStartedAtMs: sessionStartedAtMs
+                      }])
+                    );
+                    $window.sessionStorage.setItem(
+                      "show-pdf",
+                      !!response.data['show-pdf']
+                    );
+                  }
+                  // if it's an election with children elections then show access to them
+                  else if (angular.isDefined(response.data['vote-children-info']))
+                  {
+                    // assumes the iam response has the same children 
+                    var tokens = _
+                      .chain(response.data['vote-children-info'])
+                      .map(function (child, index) {
+                        return {
+                          electionId: child['auth-event-id'],
+                          token: child['vote-permission-token'] || null,
+                          skipped: false,
+                          voted: false,
+                          numSuccessfulLoginsAllowed: child['num-successful-logins-allowed'],
+                          numSuccessfulLogins: child['num-successful-logins'],
+                          isFirst: index === 0,
+                          sessionStartedAtMs: sessionStartedAtMs
+                        };
+                      })
+                      .value();
+                    $window.sessionStorage.setItem(
+                      "vote_permission_tokens", 
+                      JSON.stringify(tokens)
+                    );
+                  }
             });
         };
 

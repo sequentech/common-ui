@@ -3,7 +3,7 @@ function $buo_f() {
 }
 
 if (angular.module("avRegistration", [ "ui.bootstrap", "ui.utils", "ui.router" ]), 
-angular.module("avRegistration").config(function() {}), angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "ConfigService", "$interval", "$state", "$location", "$document", "$q", function($http, $cookies, ConfigService, $interval, $state, $location, $document, $q) {
+angular.module("avRegistration").config(function() {}), angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "$window", "ConfigService", "$interval", "$state", "$location", "$document", "$q", function($http, $cookies, $window, ConfigService, $interval, $state, $location, $document, $q) {
     var backendUrl = ConfigService.authAPI, authId = ConfigService.freeAuthId, authmethod = {};
     return authmethod.captcha_code = null, authmethod.captcha_image_url = "", authmethod.captcha_status = "", 
     authmethod.admin = !1, authmethod.timer = null, authmethod.getAuthevent = function() {
@@ -323,13 +323,30 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         deferred.promise;
         if ("hidden" === document.visibilityState) return $cookies.get("auth" + postfix) || $state.go("admin.logout"), 
         deferred.reject("tab not focused"), deferred.promise;
-        var now = Date.now();
-        return authmethod.ping(autheventid).then(function(response) {
+        var now = Date.now(), sessionStartedAtMs = now;
+        return authmethod.ping(autheventid).then(function(tokens) {
             var options = {};
             ConfigService.authTokenExpirationSeconds && (options.expires = new Date(now + 1e3 * ConfigService.authTokenExpirationSeconds)), 
-            $cookies.put("auth" + postfix, response.data["auth-token"], options), $cookies.put("isAdmin" + postfix, $cookies.get("isAdmin" + postfix), options), 
+            $cookies.put("auth" + postfix, tokens.data["auth-token"], options), $cookies.put("isAdmin" + postfix, $cookies.get("isAdmin" + postfix), options), 
             $cookies.put("userid" + postfix, $cookies.get("userid" + postfix), options), $cookies.put("userid" + postfix, $cookies.get("userid" + postfix), options), 
-            $cookies.put("user" + postfix, $cookies.get("user" + postfix), options), authmethod.setAuth($cookies.get("auth" + postfix), $cookies.get("isAdmin" + postfix), autheventid);
+            $cookies.put("user" + postfix, $cookies.get("user" + postfix), options), authmethod.setAuth($cookies.get("auth" + postfix), $cookies.get("isAdmin" + postfix), autheventid), 
+            angular.isDefined(tokens.data["vote-permission-token"]) ? ($window.sessionStorage.setItem("vote_permission_tokens", JSON.stringify([ {
+                electionId: autheventid,
+                token: tokens.data["vote-permission-token"],
+                isFirst: !0,
+                sessionStartedAtMs: sessionStartedAtMs
+            } ])), $window.sessionStorage.setItem("show-pdf", !!tokens.data["show-pdf"])) : angular.isDefined(tokens.data["vote-children-info"]) && (tokens = _.chain(tokens.data["vote-children-info"]).map(function(child, index) {
+                return {
+                    electionId: child["auth-event-id"],
+                    token: child["vote-permission-token"] || null,
+                    skipped: !1,
+                    voted: !1,
+                    numSuccessfulLoginsAllowed: child["num-successful-logins-allowed"],
+                    numSuccessfulLogins: child["num-successful-logins"],
+                    isFirst: 0 === index,
+                    sessionStartedAtMs: sessionStartedAtMs
+                };
+            }).value(), $window.sessionStorage.setItem("vote_permission_tokens", JSON.stringify(tokens)));
         });
     }, authmethod.getUserDraft = function() {
         if (authmethod.isLoggedIn()) return $http.get(backendUrl + "user/draft/", {});
