@@ -6,7 +6,7 @@ if (angular.module("avRegistration", [ "ui.bootstrap", "ui.utils", "ui.router" ]
 angular.module("avRegistration").config(function() {}), angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "$window", "ConfigService", "$interval", "$state", "$location", "$document", "$q", function($http, $cookies, $window, ConfigService, $interval, $state, $location, $document, $q) {
     var backendUrl = ConfigService.authAPI, authId = ConfigService.freeAuthId, authmethod = {};
     return authmethod.captcha_code = null, authmethod.captcha_image_url = "", authmethod.captcha_status = "", 
-    authmethod.admin = !1, authmethod.timer = null, authmethod.getAuthevent = function() {
+    authmethod.admin = !1, authmethod.getAuthevent = function() {
         var adminId = ConfigService.freeAuthId + "", electionsMatch = $location.path(), authevent = "", adminMatch = electionsMatch.match(/^\/admin\//), boothMatch = electionsMatch.match(/^\/booth\/([0-9]+)\//), electionsMatch = electionsMatch.match(/^\/(elections|election)\/([0-9]+)\//);
         return _.isArray(adminMatch) ? authevent = adminId : _.isArray(boothMatch) && 2 === boothMatch.length ? authevent = boothMatch[1] : _.isArray(electionsMatch) && 3 === electionsMatch.length && (authevent = electionsMatch[2]), 
         authevent;

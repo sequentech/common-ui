@@ -35,7 +35,6 @@ angular.module('avRegistration')
         authmethod.captcha_image_url = "";
         authmethod.captcha_status = "";
         authmethod.admin = false;
-        authmethod.timer = null;
 
         authmethod.getAuthevent = function() {
           var adminId = ConfigService.freeAuthId + '';
