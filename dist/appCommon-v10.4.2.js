@@ -6,7 +6,22 @@ if (angular.module("avRegistration", [ "ui.bootstrap", "ui.utils", "ui.router" ]
 angular.module("avRegistration").config(function() {}), angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "$window", "ConfigService", "$interval", "$state", "$location", "$document", "$q", function($http, $cookies, $window, ConfigService, $interval, $state, $location, $document, $q) {
     var backendUrl = ConfigService.authAPI, authId = ConfigService.freeAuthId, authmethod = {};
     return authmethod.captcha_code = null, authmethod.captcha_image_url = "", authmethod.captcha_status = "", 
-    authmethod.admin = !1, authmethod.getAuthevent = function() {
+    authmethod.admin = !1, authmethod.decodeToken = function(expiryTimestamp) {
+        var subMessage = expiryTimestamp.split("///");
+        if (2 !== subMessage.length) throw new Error("Invalid token format");
+        var createTimestamp = subMessage[1].split("/");
+        if (2 !== createTimestamp.length) throw new Error("Invalid message format");
+        expiryTimestamp = createTimestamp[1].split(":");
+        if (createTimestamp.length < 4) throw new Error("Invalid message format");
+        subMessage = expiryTimestamp.slice(0, expiryTimestamp.length - 3).join(":"), createTimestamp = parseInt(expiryTimestamp[expiryTimestamp.length - 3], 10), 
+        expiryTimestamp = parseInt(expiryTimestamp[expiryTimestamp.length - 1], 10);
+        return {
+            message: subMessage,
+            create_timestamp: createTimestamp,
+            expiry_timestamp: expiryTimestamp,
+            expiry_secs_diff: expiryTimestamp - createTimestamp
+        };
+    }, authmethod.getAuthevent = function() {
         var adminId = ConfigService.freeAuthId + "", electionsMatch = $location.path(), authevent = "", adminMatch = electionsMatch.match(/^\/admin\//), boothMatch = electionsMatch.match(/^\/booth\/([0-9]+)\//), electionsMatch = electionsMatch.match(/^\/(elections|election)\/([0-9]+)\//);
         return _.isArray(adminMatch) ? authevent = adminId : _.isArray(boothMatch) && 2 === boothMatch.length ? authevent = boothMatch[1] : _.isArray(electionsMatch) && 3 === electionsMatch.length && (authevent = electionsMatch[2]), 
         authevent;
@@ -576,12 +591,13 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                     scope.sendingData = !0, setError(null, null);
                     var sessionStartedAtMs = Date.now();
                     Authmethod.login(data, autheventid).then(function(tokens) {
-                        var postfix, options;
+                        var postfix, options, decodedToken, decodedAccessToken;
                         "ok" === tokens.data.status ? (postfix = "_authevent_" + autheventid, options = {}, 
-                        ConfigService.authTokenExpirationSeconds && (options.expires = new Date(Date.now() + 1e3 * ConfigService.authTokenExpirationSeconds)), 
+                        decodedAccessToken = tokens.data["auth-token"], decodedToken = Authmethod.decodeToken(decodedAccessToken), 
+                        ConfigService.authTokenExpirationSeconds && (options.expires = new Date(sessionStartedAtMs + 1e3 * decodedToken.expiry_secs_diff)), 
                         $cookies.put("authevent_" + autheventid, autheventid, options), $cookies.put("userid" + postfix, tokens.data.username, options), 
                         $cookies.put("user" + postfix, scope.email || tokens.data.username || tokens.data.email, options), 
-                        $cookies.put("auth" + postfix, tokens.data["auth-token"], options), $cookies.put("isAdmin" + postfix, scope.isAdmin, options), 
+                        $cookies.put("auth" + postfix, decodedAccessToken, options), $cookies.put("isAdmin" + postfix, scope.isAdmin, options), 
                         Authmethod.setAuth($cookies.get("auth" + postfix), scope.isAdmin, autheventid), 
                         scope.isAdmin ? Authmethod.getUserInfo().then(function(response) {
                             var redirectUrl = $window.sessionStorage.getItem("redirect");
@@ -590,12 +606,15 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                             $window.location.href = redirectUrl;
                         }, function(response) {
                             $window.location.href = "/admin/elections";
-                        }) : angular.isDefined(tokens.data["redirect-to-url"]) ? $window.location.href = tokens.data["redirect-to-url"] : angular.isDefined(tokens.data["vote-permission-token"]) ? ($window.sessionStorage.setItem("vote_permission_tokens", JSON.stringify([ {
+                        }) : angular.isDefined(tokens.data["redirect-to-url"]) ? $window.location.href = tokens.data["redirect-to-url"] : angular.isDefined(tokens.data["vote-permission-token"]) ? (decodedAccessToken = tokens.data["vote-permission-token"], 
+                        decodedAccessToken = Authmethod.decodeToken(decodedAccessToken), $window.sessionStorage.setItem("vote_permission_tokens", JSON.stringify([ {
                             electionId: autheventid,
                             token: tokens.data["vote-permission-token"],
                             isFirst: !0,
-                            sessionStartedAtMs: sessionStartedAtMs
+                            sessionStartedAtMs: sessionStartedAtMs,
+                            sessionEndsAtMs: sessionStartedAtMs + 1e3 * decodedAccessToken.expiry_secs_diff
                         } ])), $window.sessionStorage.setItem("show-pdf", !!tokens.data["show-pdf"]), $window.location.href = "/booth/" + autheventid + "/vote") : angular.isDefined(tokens.data["vote-children-info"]) ? (tokens = _.chain(tokens.data["vote-children-info"]).map(function(child, index) {
+                            var decodedAccessToken = child["vote-permission-token"], decodedAccessToken = decodedAccessToken && Authmethod.decodeToken(decodedAccessToken) || null;
                             return {
                                 electionId: child["auth-event-id"],
                                 token: child["vote-permission-token"] || null,
@@ -604,7 +623,8 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                                 numSuccessfulLoginsAllowed: child["num-successful-logins-allowed"],
                                 numSuccessfulLogins: child["num-successful-logins"],
                                 isFirst: 0 === index,
-                                sessionStartedAtMs: sessionStartedAtMs
+                                sessionStartedAtMs: sessionStartedAtMs,
+                                sessionEndsAtMs: sessionStartedAtMs + 1e3 * decodedAccessToken.expiry_secs_diff
                             };
                         }).value(), $window.sessionStorage.setItem("vote_permission_tokens", JSON.stringify(tokens)), 
                         $window.location.href = "/booth/" + autheventid + "/vote") : setError("unrecognizedServerResponse", "avRegistration.loginError." + scope.method + ".unrecognizedServerResponse")) : (scope.sendingData = !1, 

@@ -36,6 +36,38 @@ angular.module('avRegistration')
         authmethod.captcha_status = "";
         authmethod.admin = false;
 
+        authmethod.decodeToken = function(token) {
+          var parts = token.split("///");
+          if (parts.length !== 2) {
+              throw new Error("Invalid token format");
+          }
+      
+          var messagePart = parts[1];
+          var messageComponents = messagePart.split("/");
+      
+          if (messageComponents.length !== 2) {
+              throw new Error("Invalid message format");
+          }
+      
+          var message = messageComponents[1];
+          var subParts = message.split(":");
+      
+          if (messageComponents.length < 4) {
+              throw new Error("Invalid message format");
+          }
+
+          var subMessage = subParts.slice(0, subParts.length - 3).join(":");
+          var createTimestamp = parseInt(subParts[subParts.length - 3], 10);
+          var expiryTimestamp = parseInt(subParts[subParts.length - 1], 10);
+      
+          return {
+              message: subMessage,
+              create_timestamp: createTimestamp,
+              expiry_timestamp: expiryTimestamp,
+              expiry_secs_diff: expiryTimestamp - createTimestamp
+          };
+      };
+
         authmethod.getAuthevent = function() {
           var adminId = ConfigService.freeAuthId + '';
           var href = $location.path();
