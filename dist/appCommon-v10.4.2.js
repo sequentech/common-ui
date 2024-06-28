@@ -6,15 +6,15 @@ if (angular.module("avRegistration", [ "ui.bootstrap", "ui.utils", "ui.router" ]
 angular.module("avRegistration").config(function() {}), angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "$window", "ConfigService", "$interval", "$state", "$location", "$document", "$q", function($http, $cookies, $window, ConfigService, $interval, $state, $location, $document, $q) {
     var backendUrl = ConfigService.authAPI, authId = ConfigService.freeAuthId, authmethod = {};
     return authmethod.captcha_code = null, authmethod.captcha_image_url = "", authmethod.captcha_status = "", 
-    authmethod.admin = !1, authmethod.decodeToken = function(expiryTimestamp) {
-        var subMessage = expiryTimestamp.split("///");
+    authmethod.admin = !1, authmethod.decodeToken = function(createTimestamp) {
+        var subMessage = createTimestamp.split("///");
         if (2 !== subMessage.length) throw new Error("Invalid token format");
-        var createTimestamp = subMessage[1].split("/");
-        if (2 !== createTimestamp.length) throw new Error("Invalid message format");
-        expiryTimestamp = createTimestamp[1].split(":");
-        if (expiryTimestamp.length < 4) throw new Error("Invalid message format");
-        subMessage = expiryTimestamp.slice(0, expiryTimestamp.length - 3).join(":"), createTimestamp = parseInt(expiryTimestamp[expiryTimestamp.length - 3], 10), 
-        expiryTimestamp = parseInt(expiryTimestamp[expiryTimestamp.length - 1], 10);
+        var expiryTimestamp = subMessage[1].split("/");
+        if (2 !== expiryTimestamp.length) throw new Error("Invalid message format");
+        createTimestamp = expiryTimestamp[1].split(":");
+        if (createTimestamp.length < 4) throw new Error("Invalid message format");
+        subMessage = createTimestamp.slice(0, createTimestamp.length - 3).join(":"), expiryTimestamp = parseInt(createTimestamp[createTimestamp.length - 3], 10), 
+        createTimestamp = parseInt(createTimestamp[createTimestamp.length - 1], 10);
         return {
             message: subMessage,
             create_timestamp: createTimestamp,
@@ -604,8 +604,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                         $cookies.put("authevent_" + autheventid, autheventid, options), $cookies.put("userid" + postfix, tokens.data.username, options), 
                         $cookies.put("user" + postfix, scope.email || tokens.data.username || tokens.data.email, options), 
                         $cookies.put("auth" + postfix, decodedAccessToken, options), $cookies.put("isAdmin" + postfix, scope.isAdmin, options), 
-                        Authmethod.setAuth($cookies.get("auth" + postfix), scope.isAdmin, autheventid), 
-                        scope.isAdmin ? Authmethod.getUserInfo().then(function(response) {
+                        Authmethod.setAuth(decodedAccessToken, scope.isAdmin, autheventid), scope.isAdmin ? Authmethod.getUserInfo().then(function(response) {
                             var redirectUrl = $window.sessionStorage.getItem("redirect");
                             redirectUrl ? $window.sessionStorage.removeItem("redirect") : redirectUrl = "/admin/elections", 
                             $cookies.put("user" + postfix, response.data.email || scope.email || response.data.username, options), 

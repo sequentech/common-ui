@@ -57,8 +57,8 @@ angular.module('avRegistration')
           }
 
           var subMessage = subParts.slice(0, subParts.length - 3).join(":");
-          var createTimestamp = parseInt(subParts[subParts.length - 3], 10);
-          var expiryTimestamp = parseInt(subParts[subParts.length - 1], 10);
+          var expiryTimestamp = parseInt(subParts[subParts.length - 3], 10);
+          var createTimestamp = parseInt(subParts[subParts.length - 1], 10);
       
           return {
               message: subMessage,

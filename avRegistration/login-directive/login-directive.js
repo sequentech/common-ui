@@ -689,7 +689,7 @@ angular.module('avRegistration')
                   $cookies.put("user" + postfix, scope.email || response.data.username || response.data.email, options);
                   $cookies.put("auth" + postfix, authToken, options);
                   $cookies.put("isAdmin" + postfix, scope.isAdmin, options);
-                  Authmethod.setAuth($cookies.get("auth" + postfix), scope.isAdmin, autheventid);
+                  Authmethod.setAuth(authToken, scope.isAdmin, autheventid);
                   if (scope.isAdmin)
                   {
                     Authmethod.getUserInfo()
