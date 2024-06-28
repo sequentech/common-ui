@@ -344,17 +344,22 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         deferred.reject("tab not focused"), deferred.promise;
         var now = Date.now(), sessionStartedAtMs = now;
         return authmethod.ping(autheventid).then(function(tokens) {
-            var options = {};
-            ConfigService.authTokenExpirationSeconds && (options.expires = new Date(now + 1e3 * ConfigService.authTokenExpirationSeconds)), 
-            $cookies.put("auth" + postfix, tokens.data["auth-token"], options), $cookies.put("isAdmin" + postfix, $cookies.get("isAdmin" + postfix), options), 
-            $cookies.put("userid" + postfix, $cookies.get("userid" + postfix), options), $cookies.put("userid" + postfix, $cookies.get("userid" + postfix), options), 
-            $cookies.put("user" + postfix, $cookies.get("user" + postfix), options), authmethod.setAuth($cookies.get("auth" + postfix), $cookies.get("isAdmin" + postfix), autheventid), 
-            angular.isDefined(tokens.data["vote-permission-token"]) ? ($window.sessionStorage.setItem("vote_permission_tokens", JSON.stringify([ {
+            var decodedAccessToken = {}, decodedToken = tokens.data["auth-token"], decodedToken = authmethod.decodeToken(decodedToken);
+            decodedAccessToken.expires = new Date(now + 1e3 * decodedToken.expiry_secs_diffs), 
+            $cookies.put("auth" + postfix, tokens.data["auth-token"], decodedAccessToken), $cookies.put("isAdmin" + postfix, $cookies.get("isAdmin" + postfix), decodedAccessToken), 
+            $cookies.put("userid" + postfix, $cookies.get("userid" + postfix), decodedAccessToken), 
+            $cookies.put("userid" + postfix, $cookies.get("userid" + postfix), decodedAccessToken), 
+            $cookies.put("user" + postfix, $cookies.get("user" + postfix), decodedAccessToken), 
+            authmethod.setAuth($cookies.get("auth" + postfix), $cookies.get("isAdmin" + postfix), autheventid), 
+            angular.isDefined(tokens.data["vote-permission-token"]) ? (decodedAccessToken = tokens.data["vote-permission-token"], 
+            decodedAccessToken = authmethod.decodeToken(decodedAccessToken), $window.sessionStorage.setItem("vote_permission_tokens", JSON.stringify([ {
                 electionId: autheventid,
                 token: tokens.data["vote-permission-token"],
                 isFirst: !0,
-                sessionStartedAtMs: sessionStartedAtMs
+                sessionStartedAtMs: sessionStartedAtMs,
+                sessionEndsAtMs: sessionStartedAtMs + 1e3 * decodedAccessToken.expiry_secs_diff
             } ])), $window.sessionStorage.setItem("show-pdf", !!tokens.data["show-pdf"])) : angular.isDefined(tokens.data["vote-children-info"]) && (tokens = _.chain(tokens.data["vote-children-info"]).map(function(child, index) {
+                var decodedAccessToken = child["vote-permission-token"], decodedAccessToken = decodedAccessToken && authmethod.decodeToken(decodedAccessToken) || null;
                 return {
                     electionId: child["auth-event-id"],
                     token: child["vote-permission-token"] || null,
@@ -363,7 +368,8 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                     numSuccessfulLoginsAllowed: child["num-successful-logins-allowed"],
                     numSuccessfulLogins: child["num-successful-logins"],
                     isFirst: 0 === index,
-                    sessionStartedAtMs: sessionStartedAtMs
+                    sessionStartedAtMs: sessionStartedAtMs,
+                    sessionEndsAtMs: sessionStartedAtMs + 1e3 * (decodedAccessToken && decodedAccessToken.expiry_secs_diff || null)
                 };
             }).value(), $window.sessionStorage.setItem("vote_permission_tokens", JSON.stringify(tokens)));
         });
@@ -594,7 +600,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                         var postfix, options, decodedToken, decodedAccessToken;
                         "ok" === tokens.data.status ? (postfix = "_authevent_" + autheventid, options = {}, 
                         decodedAccessToken = tokens.data["auth-token"], decodedToken = Authmethod.decodeToken(decodedAccessToken), 
-                        ConfigService.authTokenExpirationSeconds && (options.expires = new Date(sessionStartedAtMs + 1e3 * decodedToken.expiry_secs_diff)), 
+                        options.expires = new Date(sessionStartedAtMs + 1e3 * decodedToken.expiry_secs_diff), 
                         $cookies.put("authevent_" + autheventid, autheventid, options), $cookies.put("userid" + postfix, tokens.data.username, options), 
                         $cookies.put("user" + postfix, scope.email || tokens.data.username || tokens.data.email, options), 
                         $cookies.put("auth" + postfix, decodedAccessToken, options), $cookies.put("isAdmin" + postfix, scope.isAdmin, options), 
@@ -624,7 +630,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                                 numSuccessfulLogins: child["num-successful-logins"],
                                 isFirst: 0 === index,
                                 sessionStartedAtMs: sessionStartedAtMs,
-                                sessionEndsAtMs: sessionStartedAtMs + 1e3 * decodedAccessToken.expiry_secs_diff
+                                sessionEndsAtMs: sessionStartedAtMs + 1e3 * (decodedAccessToken && decodedAccessToken.expiry_secs_diff || null)
                             };
                         }).value(), $window.sessionStorage.setItem("vote_permission_tokens", JSON.stringify(tokens)), 
                         $window.location.href = "/booth/" + autheventid + "/vote") : setError("unrecognizedServerResponse", "avRegistration.loginError." + scope.method + ".unrecognizedServerResponse")) : (scope.sendingData = !1, 
