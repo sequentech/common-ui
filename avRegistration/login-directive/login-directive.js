@@ -681,11 +681,9 @@ angular.module('avRegistration')
                   var options = {};
                   var authToken = response.data['auth-token'];
                   var decodedToken = Authmethod.decodeToken(authToken);
-                  if (ConfigService.authTokenExpirationSeconds) {
-                    options.expires = new Date(
-                      sessionStartedAtMs + 1000 * decodedToken.expiry_secs_diff
-                    );
-                  }
+                  options.expires = new Date(
+                    sessionStartedAtMs + 1000 * decodedToken.expiry_secs_diff
+                  );
                   $cookies.put("authevent_" + autheventid, autheventid, options);
                   $cookies.put("userid" + postfix, response.data.username, options);
                   $cookies.put("user" + postfix, scope.email || response.data.username || response.data.email, options);
@@ -754,7 +752,7 @@ angular.module('avRegistration')
                           numSuccessfulLogins: child['num-successful-logins'],
                           isFirst: index === 0,
                           sessionStartedAtMs: sessionStartedAtMs,
-                          sessionEndsAtMs: sessionStartedAtMs + 1000 * decodedAccessToken.expiry_secs_diff
+                          sessionEndsAtMs: sessionStartedAtMs + 1000 * (decodedAccessToken && decodedAccessToken.expiry_secs_diff || null)
                         };
                       })
                       .value();
