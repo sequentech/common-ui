@@ -12,7 +12,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         var createTimestamp = subMessage[1].split("/");
         if (2 !== createTimestamp.length) throw new Error("Invalid message format");
         expiryTimestamp = createTimestamp[1].split(":");
-        if (createTimestamp.length < 4) throw new Error("Invalid message format");
+        if (expiryTimestamp.length < 4) throw new Error("Invalid message format");
         subMessage = expiryTimestamp.slice(0, expiryTimestamp.length - 3).join(":"), createTimestamp = parseInt(expiryTimestamp[expiryTimestamp.length - 3], 10), 
         expiryTimestamp = parseInt(expiryTimestamp[expiryTimestamp.length - 1], 10);
         return {

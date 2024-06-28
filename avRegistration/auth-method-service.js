@@ -52,7 +52,7 @@ angular.module('avRegistration')
           var message = messageComponents[1];
           var subParts = message.split(":");
       
-          if (messageComponents.length < 4) {
+          if (subParts.length < 4) {
               throw new Error("Invalid message format");
           }
 
