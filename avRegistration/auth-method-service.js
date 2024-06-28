@@ -20,6 +20,7 @@ angular.module('avRegistration')
     .factory('Authmethod', function(
       $http,
       $cookies,
+      $window,
       ConfigService,
       $interval,
       $state,
@@ -84,6 +85,56 @@ angular.module('avRegistration')
             authevent = electionsMatch[2];
           }
           return authevent;
+        };
+
+        function setupIdleDetection(callback)
+        {
+          var events = [
+            'click',
+            'keypress',
+            'mousemove',
+            'mousedown',
+            'touchstart',
+            'touchmove'
+          ];
+          events.forEach(function (event) {
+              document.addEventListener(event, callback);
+          });
+        }
+
+        // Function to get the difference in seconds between two Date objects
+        function getSecondsDifference(date1, date2) {
+          var millisecondsDifference = Math.abs(date2 - date1);
+          var secondsDifference = millisecondsDifference / 1000.0;
+          return secondsDifference;
+        }
+  
+        authmethod.setAuth = function(auth, isAdmin, autheventid) {
+            authmethod.admin = isAdmin;
+            $http.defaults.headers.common.Authorization = auth;
+            authmethod.lastAuthDate = new Date();
+
+            if (authmethod.iddleDetectionSetup) {
+              return;
+            }
+
+            function newInteractionCallback()
+            {
+              // Only try to renew token when it's older than 50% of
+              // the expiration time
+              var now = new Date();
+              var secsDiff = getSecondsDifference(authmethod.lastAuthDate, now);
+              var halfLife = ConfigService.authTokenExpirationSeconds * 0.5;
+              if (secsDiff <= halfLife) {
+                return;
+              }
+              authmethod.lastAuthDate = now;
+              authmethod.refreshAuthToken(autheventid);
+            }
+
+            authmethod.iddleDetectionSetup = true;
+            setupIdleDetection(newInteractionCallback);
+            return false;
         };
 
         authmethod.isAdmin = function() {
@@ -360,7 +411,10 @@ angular.module('avRegistration')
             }
         };
 
-        authmethod.ping = function() {
+        authmethod.ping = function(pingId) {
+            if (!pingId) {
+              pingId = authId;
+            }
             if (!authmethod.isLoggedIn()) {
               var data = {
                 then: function (onSuccess, onError) {
@@ -372,7 +426,7 @@ angular.module('avRegistration')
               };
               return data;
             }
-            return $http.get(backendUrl + 'auth-event/'+authId+'/ping/');
+            return $http.get(backendUrl + 'auth-event/'+pingId+'/ping/');
         };
 
         authmethod.getImage = function(ev, uid) {
@@ -604,20 +658,6 @@ angular.module('avRegistration')
             return $http.get(backendUrl);
         };
 
-        authmethod.setAuth = function(auth, isAdmin, autheventid) {
-            authmethod.admin = isAdmin;
-            $http.defaults.headers.common.Authorization = auth;
-            if (!authmethod.pingTimeout) {
-                $interval.cancel(authmethod.pingTimeout);
-                authmethod.launchPingDaemon(autheventid);
-                authmethod.pingTimeout = $interval(
-                        function() { authmethod.launchPingDaemon(autheventid); },
-                        ConfigService.authTokenExpirationSeconds*500 // renew token when 50% of the expiration time has passed
-                );
-            }
-            return false;
-        };
-
         authmethod.electionsIds = function(page, listType, ids, page_size) {
             if (!page) {
                 page = 1;
@@ -767,14 +807,17 @@ angular.module('avRegistration')
             return $http.post(url, data);
         };
 
-        authmethod.launchPingDaemon = function(autheventid) {
+        authmethod.refreshAuthToken = function(autheventid) {
           var deferred = $q.defer();
           var postfix = "_authevent_" + autheventid;
 
           // ping daemon is not active for normal users
           if (!authmethod.admin) {
-            deferred.reject("not an admin");
-            return deferred.promise;
+            var hasGracefulPeriod = window.sessionStorage.getItem('hasGracefulPeriod');
+            if (hasGracefulPeriod === "true") {
+              deferred.reject("not an admin");
+              return deferred.promise;
+            }
           }
           // if document is hidden, then do not update the cookie, and redirect
           // to admin logout if cookie expired
@@ -786,7 +829,8 @@ angular.module('avRegistration')
             return deferred.promise;
           }
           var now = Date.now();
-          return authmethod.ping()
+          var sessionStartedAtMs = now;
+          return authmethod.ping(autheventid)
             .then(function(response) {
                 var options = {};
                 if (ConfigService.authTokenExpirationSeconds) {
@@ -823,6 +867,48 @@ angular.module('avRegistration')
                   $cookies.get("isAdmin" + postfix),
                   autheventid
                 );
+
+                // if it's an election with no children elections
+                if (angular.isDefined(response.data['vote-permission-token']))
+                  {
+                    $window.sessionStorage.setItem(
+                      "vote_permission_tokens", 
+                      JSON.stringify([{
+                        electionId: autheventid,
+                        token: response.data['vote-permission-token'],
+                        isFirst: true,
+                        sessionStartedAtMs: sessionStartedAtMs
+                      }])
+                    );
+                    $window.sessionStorage.setItem(
+                      "show-pdf",
+                      !!response.data['show-pdf']
+                    );
+                  }
+                  // if it's an election with children elections then show access to them
+                  else if (angular.isDefined(response.data['vote-children-info']))
+                  {
+                    // assumes the iam response has the same children 
+                    var tokens = _
+                      .chain(response.data['vote-children-info'])
+                      .map(function (child, index) {
+                        return {
+                          electionId: child['auth-event-id'],
+                          token: child['vote-permission-token'] || null,
+                          skipped: false,
+                          voted: false,
+                          numSuccessfulLoginsAllowed: child['num-successful-logins-allowed'],
+                          numSuccessfulLogins: child['num-successful-logins'],
+                          isFirst: index === 0,
+                          sessionStartedAtMs: sessionStartedAtMs
+                        };
+                      })
+                      .value();
+                    $window.sessionStorage.setItem(
+                      "vote_permission_tokens", 
+                      JSON.stringify(tokens)
+                    );
+                  }
             });
         };
 

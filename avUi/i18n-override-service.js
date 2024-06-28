@@ -75,7 +75,7 @@ angular
               console.log("reloadResources: successful. broadcast i18nextLanguageChange signal");
               $rootScope.$broadcast('i18nextLanguageChange', $i18next.options.lng);
             }
-	  });
+          });
       };
     }
   );
