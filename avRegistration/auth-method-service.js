@@ -126,6 +126,7 @@ angular.module('avRegistration')
               var decodedToken = authmethod.decodeToken($http.defaults.headers.common.Authorization);
               var secsDiff = getSecondsDifference(authmethod.lastAuthDate, now);
               var halfLife = decodedToken.expiry_secs_diff * 0.5;
+              console.log("secsDiff " + secsDiff + " halfLife " + halfLife);
               if (secsDiff <= halfLife) {
                 return;
               }
