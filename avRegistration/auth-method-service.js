@@ -836,39 +836,41 @@ angular.module('avRegistration')
             .then(function(response) {
                 var options = {};
                 var authToken = response.data['auth-token'];
-                var decodedToken = authmethod.decodeToken(authToken);
-                options.expires = new Date(now + 1000 * decodedToken.expiry_secs_diffs);
-                // update cookies expiration
-                $cookies.put(
-                  "auth" + postfix,
-                  response.data['auth-token'],
-                  options
-                );
-                $cookies.put(
-                  "isAdmin" + postfix,
-                  $cookies.get("isAdmin" + postfix),
-                  options
-                );
-                $cookies.put(
-                  "userid" + postfix,
-                  $cookies.get("userid" + postfix),
-                  options
-                );
-                $cookies.put(
-                  "userid" + postfix,
-                  $cookies.get("userid" + postfix),
-                  options
-                );
-                $cookies.put(
-                  "user" + postfix,
-                  $cookies.get("user" + postfix),
-                  options
-                );
-                authmethod.setAuth(
-                  $cookies.get("auth" + postfix),
-                  $cookies.get("isAdmin" + postfix),
-                  autheventid
-                );
+                if (authToken) {
+                  var decodedToken = authmethod.decodeToken(authToken);
+                  options.expires = new Date(now + 1000 * decodedToken.expiry_secs_diffs);
+                  // update cookies expiration
+                  $cookies.put(
+                    "auth" + postfix,
+                    response.data['auth-token'],
+                    options
+                  );
+                  $cookies.put(
+                    "isAdmin" + postfix,
+                    $cookies.get("isAdmin" + postfix),
+                    options
+                  );
+                  $cookies.put(
+                    "userid" + postfix,
+                    $cookies.get("userid" + postfix),
+                    options
+                  );
+                  $cookies.put(
+                    "userid" + postfix,
+                    $cookies.get("userid" + postfix),
+                    options
+                  );
+                  $cookies.put(
+                    "user" + postfix,
+                    $cookies.get("user" + postfix),
+                    options
+                  );
+                  authmethod.setAuth(
+                    $cookies.get("auth" + postfix),
+                    $cookies.get("isAdmin" + postfix),
+                    autheventid
+                  );
+                }
 
                 // if it's an election with no children elections
                 if (angular.isDefined(response.data['vote-permission-token']))
