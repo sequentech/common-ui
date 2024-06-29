@@ -145,7 +145,7 @@ angular.module('avRegistration')
               // Only try to renew token when it's older than 50% of
               // the expiration time
               var now = new Date();
-              if (!hasPassedHalfLifeExpiry(now)) {
+              if (!hasPassedHalfLifeExpiry(now.getTime())) {
                 return;
               }
               authmethod.lastAuthDate = now;
