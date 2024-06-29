@@ -19,7 +19,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             decodedToken = authmethod.decodeToken(decodedToken);
             return 1e3 * (decodedToken.expiry_timestamp + decodedToken.create_timestamp) / 2;
         });
-        return now < Math.min.apply(null, halfLifes);
+        return Math.min.apply(null, halfLifes) < now;
     }
     return authmethod.captcha_code = null, authmethod.captcha_image_url = "", authmethod.captcha_status = "", 
     authmethod.admin = !1, authmethod.decodeToken = function(createTimestamp) {
