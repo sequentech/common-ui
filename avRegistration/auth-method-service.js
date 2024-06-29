@@ -108,7 +108,29 @@ angular.module('avRegistration')
           var secondsDifference = millisecondsDifference / 1000.0;
           return secondsDifference;
         }
+
+        function getAllTokens() {
+          var credentialsStr = $window.sessionStorage.getItem("vote_permission_tokens");
+          if (credentialsStr) {
+            var credentials = JSON.parse(credentialsStr);
+            var tokens = credentials.map(function (credential) { return credential.token; });
+            tokens.push($http.defaults.headers.common.Authorization);
+            return tokens;
+          } else {
+            return [$http.defaults.headers.common.Authorization];
+          }
+        }
   
+        function hasPassedHalfLifeExpiry(now) {
+          var tokens = getAllTokens();
+          var halfLifes = tokens.map(function (token) {
+            var decodedToken = authmethod.decodeToken(token);
+            return 1000 * (decodedToken.expiry_timestamp + decodedToken.create_timestamp)/2;
+          });
+          var minHalfLife = Math.min.apply(null, halfLifes);
+          return minHalfLife > now;
+        }
+
         authmethod.setAuth = function(auth, isAdmin, autheventid) {
             authmethod.admin = isAdmin;
             $http.defaults.headers.common.Authorization = auth;
@@ -123,11 +145,7 @@ angular.module('avRegistration')
               // Only try to renew token when it's older than 50% of
               // the expiration time
               var now = new Date();
-              var decodedToken = authmethod.decodeToken($http.defaults.headers.common.Authorization);
-              var secsDiff = getSecondsDifference(authmethod.lastAuthDate, now);
-              var halfLife = decodedToken.expiry_secs_diff * 0.5;
-              console.log("secsDiff " + secsDiff + " halfLife " + halfLife);
-              if (secsDiff <= halfLife) {
+              if (!hasPassedHalfLifeExpiry(now)) {
                 return;
               }
               authmethod.lastAuthDate = now;
