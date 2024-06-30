@@ -5,21 +5,20 @@ function $buo_f() {
 if (angular.module("avRegistration", [ "ui.bootstrap", "ui.utils", "ui.router" ]), 
 angular.module("avRegistration").config(function() {}), angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "$window", "ConfigService", "$interval", "$state", "$location", "$document", "$q", function($http, $cookies, $window, ConfigService, $interval, $state, $location, $document, $q) {
     var backendUrl = ConfigService.authAPI, authId = ConfigService.freeAuthId, authmethod = {};
-    function hasPassedHalfLifeExpiry(now) {
-        var halfLifes = function() {
-            var tokens = $window.sessionStorage.getItem("vote_permission_tokens");
-            if (tokens) {
-                tokens = JSON.parse(tokens).map(function(credential) {
-                    return credential.token;
-                });
-                return tokens.push($http.defaults.headers.common.Authorization), tokens;
-            }
-            return [ $http.defaults.headers.common.Authorization ];
-        }().map(function(decodedToken) {
-            decodedToken = authmethod.decodeToken(decodedToken);
-            return 1e3 * (decodedToken.expiry_timestamp + decodedToken.create_timestamp) / 2;
-        });
-        return Math.min.apply(null, halfLifes) < now;
+    function hasPassedHalfLifeExpiry(now, halfLifes) {
+        halfLifes = function(isAdmin) {
+            var credentialsStr = $window.sessionStorage.getItem("vote_permission_tokens"), tokens = [];
+            return credentialsStr ? JSON.parse(credentialsStr).map(function(credential) {
+                return credential.token;
+            }) : (isAdmin && tokens.push($http.defaults.headers.common.Authorization), tokens);
+        }(halfLifes);
+        if (0 !== halfLifes.length) {
+            halfLifes = halfLifes.map(function(decodedToken) {
+                decodedToken = authmethod.decodeToken(decodedToken);
+                return 1e3 * (decodedToken.expiry_timestamp + decodedToken.create_timestamp) / 2;
+            });
+            return Math.min.apply(null, halfLifes) < now;
+        }
     }
     return authmethod.captcha_code = null, authmethod.captcha_image_url = "", authmethod.captcha_status = "", 
     authmethod.admin = !1, authmethod.decodeToken = function(createTimestamp) {
@@ -47,7 +46,8 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         authmethod.lastAuthDate = new Date(), !authmethod.iddleDetectionSetup) return authmethod.iddleDetectionSetup = !0, 
         callback = function() {
             var now = new Date();
-            hasPassedHalfLifeExpiry(now.getTime()) && (authmethod.lastAuthDate = now, authmethod.refreshAuthToken(autheventid));
+            hasPassedHalfLifeExpiry(now.getTime(), isAdmin) && (authmethod.lastAuthDate = now, 
+            authmethod.refreshAuthToken(autheventid));
         }, [ "click", "keypress", "mousemove", "mousedown", "touchstart", "touchmove" ].forEach(function(event) {
             document.addEventListener(event, callback);
         }), !1;
@@ -353,8 +353,6 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         return $http.post(url, data);
     }, authmethod.refreshAuthToken = function(autheventid) {
         var deferred = $q.defer(), postfix = "_authevent_" + autheventid;
-        if (!authmethod.admin && "true" === window.sessionStorage.getItem("hasGracefulPeriod")) return deferred.reject("not an admin"), 
-        deferred.promise;
         if ("hidden" === document.visibilityState) return $cookies.get("auth" + postfix) || $state.go("admin.logout"), 
         deferred.reject("tab not focused"), deferred.promise;
         var now = Date.now(), sessionStartedAtMs = now;

@@ -109,20 +109,25 @@ angular.module('avRegistration')
           return secondsDifference;
         }
 
-        function getAllTokens() {
+        function getAllTokens(isAdmin) {
           var credentialsStr = $window.sessionStorage.getItem("vote_permission_tokens");
+          var tokens = [];
           if (credentialsStr) {
             var credentials = JSON.parse(credentialsStr);
-            var tokens = credentials.map(function (credential) { return credential.token; });
-            tokens.push($http.defaults.headers.common.Authorization);
+            tokens = credentials.map(function (credential) { return credential.token; });
             return tokens;
-          } else {
-            return [$http.defaults.headers.common.Authorization];
           }
+          if (isAdmin) {
+            tokens.push($http.defaults.headers.common.Authorization);
+          }
+          return tokens;
         }
   
-        function hasPassedHalfLifeExpiry(now) {
-          var tokens = getAllTokens();
+        function hasPassedHalfLifeExpiry(now, isAdmin) {
+          var tokens = getAllTokens(isAdmin);
+          if (0 === tokens.length) {
+            return false;
+          }
           var halfLifes = tokens.map(function (token) {
             var decodedToken = authmethod.decodeToken(token);
             return 1000 * (decodedToken.expiry_timestamp + decodedToken.create_timestamp)/2;
@@ -145,7 +150,7 @@ angular.module('avRegistration')
               // Only try to renew token when it's older than 50% of
               // the expiration time
               var now = new Date();
-              if (!hasPassedHalfLifeExpiry(now.getTime())) {
+              if (!hasPassedHalfLifeExpiry(now.getTime(), isAdmin)) {
                 return;
               }
               authmethod.lastAuthDate = now;
@@ -832,6 +837,7 @@ angular.module('avRegistration')
           var postfix = "_authevent_" + autheventid;
 
           // ping daemon is not active for normal users
+          /*
           if (!authmethod.admin) {
             var hasGracefulPeriod = window.sessionStorage.getItem('hasGracefulPeriod');
             if (hasGracefulPeriod === "true") {
@@ -839,6 +845,7 @@ angular.module('avRegistration')
               return deferred.promise;
             }
           }
+          */
           // if document is hidden, then do not update the cookie, and redirect
           // to admin logout if cookie expired
           if (document.visibilityState === 'hidden') {
