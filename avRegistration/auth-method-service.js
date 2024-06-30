@@ -102,13 +102,6 @@ angular.module('avRegistration')
           });
         }
 
-        // Function to get the difference in seconds between two Date objects
-        function getSecondsDifference(date1, date2) {
-          var millisecondsDifference = Math.abs(date2 - date1);
-          var secondsDifference = millisecondsDifference / 1000.0;
-          return secondsDifference;
-        }
-
         function getAllTokens(isAdmin) {
           var credentialsStr = $window.sessionStorage.getItem("vote_permission_tokens");
           var tokens = [];
@@ -117,7 +110,7 @@ angular.module('avRegistration')
             tokens = credentials.map(function (credential) { return credential.token; });
             return tokens;
           }
-          if (isAdmin) {
+          if (isAdmin && $http.defaults.headers.common.Authorization) {
             tokens.push($http.defaults.headers.common.Authorization);
           }
           return tokens;
@@ -835,17 +828,15 @@ angular.module('avRegistration')
         authmethod.refreshAuthToken = function(autheventid) {
           var deferred = $q.defer();
           var postfix = "_authevent_" + autheventid;
-
           // ping daemon is not active for normal users
-          /*
+
           if (!authmethod.admin) {
-            var hasGracefulPeriod = window.sessionStorage.getItem('hasGracefulPeriod');
-            if (hasGracefulPeriod === "true") {
+            //var hasGracefulPeriod = window.sessionStorage.getItem('hasGracefulPeriod');
+            //if (hasGracefulPeriod === "true") {
               deferred.reject("not an admin");
               return deferred.promise;
-            }
+            //}
           }
-          */
           // if document is hidden, then do not update the cookie, and redirect
           // to admin logout if cookie expired
           if (document.visibilityState === 'hidden') {

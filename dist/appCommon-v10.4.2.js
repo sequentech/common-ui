@@ -10,7 +10,8 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             var credentialsStr = $window.sessionStorage.getItem("vote_permission_tokens"), tokens = [];
             return credentialsStr ? JSON.parse(credentialsStr).map(function(credential) {
                 return credential.token;
-            }) : (isAdmin && tokens.push($http.defaults.headers.common.Authorization), tokens);
+            }) : (isAdmin && $http.defaults.headers.common.Authorization && tokens.push($http.defaults.headers.common.Authorization), 
+            tokens);
         }(halfLifes);
         if (0 !== halfLifes.length) {
             halfLifes = halfLifes.map(function(decodedToken) {
@@ -353,6 +354,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         return $http.post(url, data);
     }, authmethod.refreshAuthToken = function(autheventid) {
         var deferred = $q.defer(), postfix = "_authevent_" + autheventid;
+        if (!authmethod.admin) return deferred.reject("not an admin"), deferred.promise;
         if ("hidden" === document.visibilityState) return $cookies.get("auth" + postfix) || $state.go("admin.logout"), 
         deferred.reject("tab not focused"), deferred.promise;
         var now = Date.now(), sessionStartedAtMs = now;
