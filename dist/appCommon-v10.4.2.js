@@ -354,7 +354,6 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         return $http.post(url, data);
     }, authmethod.refreshAuthToken = function(autheventid) {
         var deferred = $q.defer(), postfix = "_authevent_" + autheventid;
-        if (!authmethod.admin) return deferred.reject("not an admin"), deferred.promise;
         if ("hidden" === document.visibilityState) return $cookies.get("auth" + postfix) || $state.go("admin.logout"), 
         deferred.reject("tab not focused"), deferred.promise;
         var now = Date.now(), sessionStartedAtMs = now;
