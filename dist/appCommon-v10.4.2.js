@@ -1197,6 +1197,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 element && element.style.setProperty("width", percent);
             }
             function updateTimedown() {
+                scope.$parent.getSessionEndTime && (scope.logoutTimeMs = scope.$parent.getSessionEndTime()), 
                 scope.showCountdown = !0;
                 var targetMins, targetNextTime, now = Date.now();
                 scope.countdownSecs = Math.round((scope.logoutTimeMs - now) / 1e3), scope.countdownMins = Math.round((scope.logoutTimeMs - now) / 6e4), 
@@ -1217,7 +1218,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 ConfigService.authTokenExpirationSeconds && election && election.presentation && _.isNumber(election.presentation.booth_log_out__countdown_seconds) && (scope.showCountdown = !1, 
                 scope.countdownSecs = 0, scope.countdownMins = 0, initialTimeMs = scope.$parent.getSessionStartTime && scope.$parent.getSessionStartTime() || Date.now(), 
                 scope.elapsedCountdownMs = 1e3 * (0 < election.presentation.booth_log_out__countdown_seconds ? election.presentation.booth_log_out__countdown_seconds : ConfigService.authTokenExpirationSeconds), 
-                scope.logoutTimeMs = initialTimeMs + 1e3 * ConfigService.authTokenExpirationSeconds, 
+                scope.$parent.getSessionEndTime ? scope.logoutTimeMs = scope.$parent.getSessionEndTime() : scope.logoutTimeMs = initialTimeMs + 1e3 * ConfigService.authTokenExpirationSeconds, 
                 scope.countdownStartTimeMs = scope.logoutTimeMs - scope.elapsedCountdownMs, scope.countdownPercent = calculateCountdownPercent(), 
                 updateProgressBar(scope.countdownPercent), scope.isDemo || scope.isPreview || setTimeout(updateTimedown, 0 < election.presentation.booth_log_out__countdown_seconds ? scope.countdownStartTimeMs - Date.now() : 0)));
             }, 0);
