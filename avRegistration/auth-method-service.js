@@ -825,8 +825,16 @@ angular.module('avRegistration')
             return $http.post(url, data);
         };
 
+        var lastRefreshMs = 0;
         authmethod.refreshAuthToken = function(autheventid) {
           var deferred = $q.defer();
+          var jnow = Date.now();
+          if (jnow - lastRefreshMs < 1000) {
+            deferred.reject("ongoing refresh");
+            return deferred.promise;
+          } else {
+            lastRefreshMs = jnow;
+          }
           var postfix = "_authevent_" + autheventid;
           // ping daemon is not active for normal users
 

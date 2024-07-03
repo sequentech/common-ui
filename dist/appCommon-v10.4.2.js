@@ -21,7 +21,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             return Math.min.apply(null, halfLifes) < now;
         }
     }
-    return authmethod.captcha_code = null, authmethod.captcha_image_url = "", authmethod.captcha_status = "", 
+    authmethod.captcha_code = null, authmethod.captcha_image_url = "", authmethod.captcha_status = "", 
     authmethod.admin = !1, authmethod.decodeToken = function(createTimestamp) {
         var subMessage = createTimestamp.split("///");
         if (2 !== subMessage.length) throw new Error("Invalid token format");
@@ -352,8 +352,13 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             mode: data
         };
         return $http.post(url, data);
-    }, authmethod.refreshAuthToken = function(autheventid) {
-        var deferred = $q.defer(), postfix = "_authevent_" + autheventid;
+    };
+    var lastRefreshMs = 0;
+    return authmethod.refreshAuthToken = function(autheventid) {
+        var deferred = $q.defer(), jnow = Date.now();
+        if (jnow - lastRefreshMs < 1e3) return deferred.reject("ongoing refresh"), deferred.promise;
+        lastRefreshMs = jnow;
+        var postfix = "_authevent_" + autheventid;
         if ("hidden" === document.visibilityState) return $cookies.get("auth" + postfix) || $state.go("admin.logout"), 
         deferred.reject("tab not focused"), deferred.promise;
         var now = Date.now(), sessionStartedAtMs = now;
