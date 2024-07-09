@@ -35,6 +35,7 @@ angular.module('avRegistration')
       function link(scope, element, attrs)
       {
         scope.isCensusQuery = attrs.isCensusQuery;
+        scope.isQuery = "true" === $location.search()['query'];
         scope.withCode = attrs.withCode;
         scope.username = attrs.username;
         scope.isOtl = attrs.isOtl;
@@ -690,6 +691,7 @@ angular.module('avRegistration')
                   $cookies.put("auth" + postfix, response.data['auth-token'], options);
                   $cookies.put("isAdmin" + postfix, scope.isAdmin, options);
                   Authmethod.setAuth($cookies.get("auth" + postfix), scope.isAdmin, autheventid);
+                  var votingScreenPath = scope.isQuery ? '/eligibility' : '/vote';
                   if (scope.isAdmin)
                   {
                     Authmethod.getUserInfo()
@@ -729,7 +731,7 @@ angular.module('avRegistration')
                       "show-pdf",
                       !!response.data['show-pdf']
                     );
-                    $window.location.href = '/booth/' + autheventid + '/vote';
+                    $window.location.href = '/booth/' + autheventid + votingScreenPath;
                   }
                   // if it's an election with children elections then show access to them
                   else if (angular.isDefined(response.data['vote-children-info']))
@@ -755,7 +757,7 @@ angular.module('avRegistration')
                       JSON.stringify(tokens)
                     );
 
-                    $window.location.href = '/booth/' + autheventid + '/vote';
+                    $window.location.href = '/booth/' + autheventid + votingScreenPath;
                   } else {
                     setError(
                       "unrecognizedServerResponse",
