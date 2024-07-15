@@ -67,6 +67,10 @@ angular
 
         // helper function for enableLogoutCountdown()
         function updateTimedown() {
+          if (scope.$parent.getSessionEndTime) {
+            scope.logoutTimeMs = scope.$parent.getSessionEndTime();
+          }
+
           scope.showCountdown = true;
           var now = Date.now();
           scope.countdownSecs = Math.round((scope.logoutTimeMs - now) / 1000);
@@ -118,7 +122,11 @@ angular
               election.presentation.booth_log_out__countdown_seconds :
               ConfigService.authTokenExpirationSeconds
             ) * 1000;
-            scope.logoutTimeMs = initialTimeMs + ConfigService.authTokenExpirationSeconds * 1000;
+            if (scope.$parent.getSessionEndTime) {
+              scope.logoutTimeMs = scope.$parent.getSessionEndTime();
+            } else {
+              scope.logoutTimeMs = initialTimeMs + ConfigService.authTokenExpirationSeconds * 1000;
+            }
             scope.countdownStartTimeMs = scope.logoutTimeMs - scope.elapsedCountdownMs;
             scope.countdownPercent = calculateCountdownPercent();
             updateProgressBar(scope.countdownPercent);

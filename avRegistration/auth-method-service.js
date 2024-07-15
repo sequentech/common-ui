@@ -36,6 +36,38 @@ angular.module('avRegistration')
         authmethod.captcha_status = "";
         authmethod.admin = false;
 
+        authmethod.decodeToken = function(token) {
+          var parts = token.split("///");
+          if (parts.length !== 2) {
+              throw new Error("Invalid token format");
+          }
+      
+          var messagePart = parts[1];
+          var messageComponents = messagePart.split("/");
+      
+          if (messageComponents.length !== 2) {
+              throw new Error("Invalid message format");
+          }
+      
+          var message = messageComponents[1];
+          var subParts = message.split(":");
+      
+          if (subParts.length < 4) {
+              throw new Error("Invalid message format");
+          }
+
+          var subMessage = subParts.slice(0, subParts.length - 3).join(":");
+          var expiryTimestamp = parseInt(subParts[subParts.length - 3], 10);
+          var createTimestamp = parseInt(subParts[subParts.length - 1], 10);
+      
+          return {
+              message: subMessage,
+              create_timestamp: createTimestamp,
+              expiry_timestamp: expiryTimestamp,
+              expiry_secs_diff: expiryTimestamp - createTimestamp
+          };
+      };
+
         authmethod.getAuthevent = function() {
           var adminId = ConfigService.freeAuthId + '';
           var href = $location.path();
@@ -70,13 +102,33 @@ angular.module('avRegistration')
           });
         }
 
-        // Function to get the difference in seconds between two Date objects
-        function getSecondsDifference(date1, date2) {
-          var millisecondsDifference = Math.abs(date2 - date1);
-          var secondsDifference = millisecondsDifference / 1000.0;
-          return secondsDifference;
+        function getAllTokens(isAdmin) {
+          var credentialsStr = $window.sessionStorage.getItem("vote_permission_tokens");
+          var tokens = [];
+          if (credentialsStr) {
+            var credentials = JSON.parse(credentialsStr);
+            tokens = credentials.map(function (credential) { return credential.token; });
+            return tokens;
+          }
+          if (isAdmin && $http.defaults.headers.common.Authorization) {
+            tokens.push($http.defaults.headers.common.Authorization);
+          }
+          return tokens;
         }
   
+        function hasPassedHalfLifeExpiry(now, isAdmin) {
+          var tokens = getAllTokens(isAdmin);
+          if (0 === tokens.length) {
+            return false;
+          }
+          var halfLifes = tokens.map(function (token) {
+            var decodedToken = authmethod.decodeToken(token);
+            return 1000 * (decodedToken.expiry_timestamp + decodedToken.create_timestamp)/2;
+          });
+          var minHalfLife = Math.min.apply(null, halfLifes);
+          return minHalfLife < now;
+        }
+
         authmethod.setAuth = function(auth, isAdmin, autheventid) {
             authmethod.admin = isAdmin;
             $http.defaults.headers.common.Authorization = auth;
@@ -91,9 +143,7 @@ angular.module('avRegistration')
               // Only try to renew token when it's older than 50% of
               // the expiration time
               var now = new Date();
-              var secsDiff = getSecondsDifference(authmethod.lastAuthDate, now);
-              var halfLife = ConfigService.authTokenExpirationSeconds * 0.5;
-              if (secsDiff <= halfLife) {
+              if (!hasPassedHalfLifeExpiry(now.getTime(), isAdmin)) {
                 return;
               }
               authmethod.lastAuthDate = now;
@@ -775,18 +825,26 @@ angular.module('avRegistration')
             return $http.post(url, data);
         };
 
+        var lastRefreshMs = 0;
         authmethod.refreshAuthToken = function(autheventid) {
           var deferred = $q.defer();
+          var jnow = Date.now();
+          if (jnow - lastRefreshMs < 1000) {
+            deferred.reject("ongoing refresh");
+            return deferred.promise;
+          } else {
+            lastRefreshMs = jnow;
+          }
           var postfix = "_authevent_" + autheventid;
-
           // ping daemon is not active for normal users
-          if (!authmethod.admin) {
+
+          /*if (!authmethod.admin) {
             var hasGracefulPeriod = window.sessionStorage.getItem('hasGracefulPeriod');
             if (hasGracefulPeriod === "true") {
               deferred.reject("not an admin");
               return deferred.promise;
             }
-          }
+          }*/
           // if document is hidden, then do not update the cookie, and redirect
           // to admin logout if cookie expired
           if (document.visibilityState === 'hidden') {
@@ -801,51 +859,56 @@ angular.module('avRegistration')
           return authmethod.ping(autheventid)
             .then(function(response) {
                 var options = {};
-                if (ConfigService.authTokenExpirationSeconds) {
-                  options.expires = new Date(now + 1000 * ConfigService.authTokenExpirationSeconds);
+                var authToken = response.data['auth-token'];
+                if (authToken) {
+                  var decodedToken = authmethod.decodeToken(authToken);
+                  options.expires = new Date(now + 1000 * decodedToken.expiry_secs_diffs);
+                  // update cookies expiration
+                  $cookies.put(
+                    "auth" + postfix,
+                    response.data['auth-token'],
+                    options
+                  );
+                  $cookies.put(
+                    "isAdmin" + postfix,
+                    $cookies.get("isAdmin" + postfix),
+                    options
+                  );
+                  $cookies.put(
+                    "userid" + postfix,
+                    $cookies.get("userid" + postfix),
+                    options
+                  );
+                  $cookies.put(
+                    "userid" + postfix,
+                    $cookies.get("userid" + postfix),
+                    options
+                  );
+                  $cookies.put(
+                    "user" + postfix,
+                    $cookies.get("user" + postfix),
+                    options
+                  );
+                  authmethod.setAuth(
+                    $cookies.get("auth" + postfix),
+                    $cookies.get("isAdmin" + postfix),
+                    autheventid
+                  );
                 }
-                // update cookies expiration
-                $cookies.put(
-                  "auth" + postfix,
-                  response.data['auth-token'],
-                  options
-                );
-                $cookies.put(
-                  "isAdmin" + postfix,
-                  $cookies.get("isAdmin" + postfix),
-                  options
-                );
-                $cookies.put(
-                  "userid" + postfix,
-                  $cookies.get("userid" + postfix),
-                  options
-                );
-                $cookies.put(
-                  "userid" + postfix,
-                  $cookies.get("userid" + postfix),
-                  options
-                );
-                $cookies.put(
-                  "user" + postfix,
-                  $cookies.get("user" + postfix),
-                  options
-                );
-                authmethod.setAuth(
-                  $cookies.get("auth" + postfix),
-                  $cookies.get("isAdmin" + postfix),
-                  autheventid
-                );
 
                 // if it's an election with no children elections
                 if (angular.isDefined(response.data['vote-permission-token']))
                   {
+                    var accessToken = response.data['vote-permission-token'];
+                    var decodedAccessToken = authmethod.decodeToken(accessToken);
                     $window.sessionStorage.setItem(
                       "vote_permission_tokens", 
                       JSON.stringify([{
                         electionId: autheventid,
                         token: response.data['vote-permission-token'],
                         isFirst: true,
-                        sessionStartedAtMs: sessionStartedAtMs
+                        sessionStartedAtMs: sessionStartedAtMs,
+                        sessionEndsAtMs: sessionStartedAtMs + 1000 * decodedAccessToken.expiry_secs_diff
                       }])
                     );
                     $window.sessionStorage.setItem(
@@ -860,6 +923,8 @@ angular.module('avRegistration')
                     var tokens = _
                       .chain(response.data['vote-children-info'])
                       .map(function (child, index) {
+                        var accessToken = child['vote-permission-token'];
+                        var decodedAccessToken = accessToken && authmethod.decodeToken(accessToken) || null;
                         return {
                           electionId: child['auth-event-id'],
                           token: child['vote-permission-token'] || null,
@@ -868,7 +933,8 @@ angular.module('avRegistration')
                           numSuccessfulLoginsAllowed: child['num-successful-logins-allowed'],
                           numSuccessfulLogins: child['num-successful-logins'],
                           isFirst: index === 0,
-                          sessionStartedAtMs: sessionStartedAtMs
+                          sessionStartedAtMs: sessionStartedAtMs,
+                          sessionEndsAtMs: sessionStartedAtMs + 1000 * (decodedAccessToken && decodedAccessToken.expiry_secs_diff || null)
                         };
                       })
                       .value();
