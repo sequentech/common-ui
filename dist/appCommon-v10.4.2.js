@@ -453,10 +453,11 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         restrict: "AE",
         scope: !0,
         link: function(scope, element, attrs) {
-            scope.isCensusQuery = attrs.isCensusQuery, scope.withCode = attrs.withCode, scope.username = attrs.username, 
-            scope.isOtl = attrs.isOtl, scope.isOpenId = attrs.isOpenId, scope.otlSecret = attrs.otlSecret, 
-            scope.error = null, scope.errorData = null, scope.current_alt_auth_method_id = void 0, 
-            scope.alternative_auth_methods = null, scope.csrf = null, attrs.withAltMethod && attrs.selectedAltMethod ? scope.selectedAltMethod = attrs.selectedAltMethod : scope.selectedAltMethod = null, 
+            scope.isCensusQuery = attrs.isCensusQuery, scope.isQuery = "true" === $location.search().query, 
+            scope.withCode = attrs.withCode, scope.username = attrs.username, scope.isOtl = attrs.isOtl, 
+            scope.isOpenId = attrs.isOpenId, scope.otlSecret = attrs.otlSecret, scope.error = null, 
+            scope.errorData = null, scope.current_alt_auth_method_id = void 0, scope.alternative_auth_methods = null, 
+            scope.csrf = null, attrs.withAltMethod && attrs.selectedAltMethod ? scope.selectedAltMethod = attrs.selectedAltMethod : scope.selectedAltMethod = null, 
             scope.hide_default_login_lookup_field = !1;
             var adminId = ConfigService.freeAuthId + "", autheventid = null;
             function simpleRedirectToLogin() {
@@ -616,14 +617,15 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                     scope.sendingData = !0, setError(null, null);
                     var sessionStartedAtMs = Date.now();
                     Authmethod.login(data, autheventid).then(function(tokens) {
-                        var postfix, options, decodedToken, decodedAccessToken;
+                        var postfix, options, votingScreenPath, decodedAccessToken;
                         "ok" === tokens.data.status ? (postfix = "_authevent_" + autheventid, options = {}, 
-                        decodedAccessToken = tokens.data["auth-token"], decodedToken = Authmethod.decodeToken(decodedAccessToken), 
-                        options.expires = new Date(sessionStartedAtMs + 1e3 * decodedToken.expiry_secs_diff), 
+                        decodedAccessToken = tokens.data["auth-token"], votingScreenPath = Authmethod.decodeToken(decodedAccessToken), 
+                        options.expires = new Date(sessionStartedAtMs + 1e3 * votingScreenPath.expiry_secs_diff), 
                         $cookies.put("authevent_" + autheventid, autheventid, options), $cookies.put("userid" + postfix, tokens.data.username, options), 
                         $cookies.put("user" + postfix, scope.email || tokens.data.username || tokens.data.email, options), 
                         $cookies.put("auth" + postfix, decodedAccessToken, options), $cookies.put("isAdmin" + postfix, scope.isAdmin, options), 
-                        Authmethod.setAuth(decodedAccessToken, scope.isAdmin, autheventid), scope.isAdmin ? Authmethod.getUserInfo().then(function(response) {
+                        Authmethod.setAuth(decodedAccessToken, scope.isAdmin, autheventid), votingScreenPath = scope.isQuery ? "/eligibility" : "/vote", 
+                        scope.isAdmin ? Authmethod.getUserInfo().then(function(response) {
                             var redirectUrl = $window.sessionStorage.getItem("redirect");
                             redirectUrl ? $window.sessionStorage.removeItem("redirect") : redirectUrl = "/admin/elections", 
                             $cookies.put("user" + postfix, response.data.email || scope.email || response.data.username, options), 
@@ -637,7 +639,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                             isFirst: !0,
                             sessionStartedAtMs: sessionStartedAtMs,
                             sessionEndsAtMs: sessionStartedAtMs + 1e3 * decodedAccessToken.expiry_secs_diff
-                        } ])), $window.sessionStorage.setItem("show-pdf", !!tokens.data["show-pdf"]), $window.location.href = "/booth/" + autheventid + "/vote") : angular.isDefined(tokens.data["vote-children-info"]) ? (tokens = _.chain(tokens.data["vote-children-info"]).map(function(child, index) {
+                        } ])), $window.sessionStorage.setItem("show-pdf", !!tokens.data["show-pdf"]), $window.location.href = "/booth/" + autheventid + votingScreenPath) : angular.isDefined(tokens.data["vote-children-info"]) ? (tokens = _.chain(tokens.data["vote-children-info"]).map(function(child, index) {
                             var decodedAccessToken = child["vote-permission-token"], decodedAccessToken = decodedAccessToken && Authmethod.decodeToken(decodedAccessToken) || null;
                             return {
                                 electionId: child["auth-event-id"],
@@ -651,7 +653,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                                 sessionEndsAtMs: sessionStartedAtMs + 1e3 * (decodedAccessToken && decodedAccessToken.expiry_secs_diff || null)
                             };
                         }).value(), $window.sessionStorage.setItem("vote_permission_tokens", JSON.stringify(tokens)), 
-                        $window.location.href = "/booth/" + autheventid + "/vote") : setError("unrecognizedServerResponse", "avRegistration.loginError." + scope.method + ".unrecognizedServerResponse")) : (scope.sendingData = !1, 
+                        $window.location.href = "/booth/" + autheventid + votingScreenPath) : setError("unrecognizedServerResponse", "avRegistration.loginError." + scope.method + ".unrecognizedServerResponse")) : (scope.sendingData = !1, 
                         setError("invalidServerResponse", "avRegistration.loginError." + scope.method + ".invalidServerResponse"));
                     }, function(codename) {
                         scope.sendingData = !1;
