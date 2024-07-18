@@ -50,7 +50,7 @@ angular
 
         scope.showVersionsModal = ShowVersionsModalService;
 
-        function calculateCountdownPercent() {
+        function calculateCountdownPercent() {
           var ratio = (scope.logoutTimeMs - Date.now())/(scope.logoutTimeMs - scope.countdownStartTimeMs);
           return Math.min(100, Math.round(10000*ratio)/100) + '%';
         }
@@ -85,12 +85,9 @@ angular
           if (scope.countdownSecs <= 1) {
             return;
           }
-          var targetMins = Math.floor((scope.logoutTimeMs - now) / (60 * 1000));
-          var targetNextTime = scope.logoutTimeMs - targetMins * 60 * 1000;
-          var targetElapsedTime = targetNextTime - now;
           setTimeout(
             updateTimedown,
-            targetMins > 1?  targetElapsedTime : 1000
+            1000
           );
         }
       

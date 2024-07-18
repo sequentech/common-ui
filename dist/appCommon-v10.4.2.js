@@ -1205,11 +1205,10 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 scope.$parent.getSessionEndTime && (scope.logoutTimeMs = scope.$parent.getSessionEndTime()), 
                 scope.$parent.getSessionStartTime && (scope.countdownStartTimeMs = scope.$parent.getSessionStartTime(!1)), 
                 scope.showCountdown = !0;
-                var targetMins, targetNextTime, now = Date.now();
+                var now = Date.now();
                 scope.countdownSecs = Math.round((scope.logoutTimeMs - now) / 1e3), scope.countdownMins = Math.round((scope.logoutTimeMs - now) / 6e4), 
                 scope.countdownPercent = calculateCountdownPercent(), updateProgressBar(scope.countdownPercent), 
-                scope.$apply(), scope.countdownSecs <= 1 || (targetMins = Math.floor((scope.logoutTimeMs - now) / 6e4), 
-                targetNextTime = scope.logoutTimeMs - 60 * targetMins * 1e3, setTimeout(updateTimedown, 1 < targetMins ? targetNextTime - now : 1e3));
+                scope.$apply(), scope.countdownSecs <= 1 || setTimeout(updateTimedown, 1e3);
             }
             scope.parentElection = scope.$parent.parentElection, scope.election = scope.$parent.election, 
             scope.confirmLogoutModal = scope.$parent.confirmLogoutModal, scope.configService = ConfigService, 
