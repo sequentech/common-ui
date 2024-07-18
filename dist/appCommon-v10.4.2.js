@@ -47,7 +47,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
         authmethod.lastAuthDate = new Date(), !authmethod.iddleDetectionSetup) return authmethod.iddleDetectionSetup = !0, 
         callback = function() {
             var now = new Date();
-            hasPassedHalfLifeExpiry(now.getTime(), isAdmin) && (authmethod.lastAuthDate = now, 
+            console.log("an interaction happened!"), hasPassedHalfLifeExpiry(now.getTime(), isAdmin) && (authmethod.lastAuthDate = now, 
             authmethod.refreshAuthToken(autheventid));
         }, [ "click", "keypress", "mousemove", "mousedown", "touchstart", "touchmove" ].forEach(function(event) {
             document.addEventListener(event, callback);
