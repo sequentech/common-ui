@@ -680,17 +680,17 @@ angular.module('avRegistration')
                 if (response.data.status === "ok") {
                   var postfix = "_authevent_" + autheventid;
                   var options = {};
-                  if (ConfigService.authTokenExpirationSeconds) {
-                    options.expires = new Date(
-                      Date.now() + 1000 * ConfigService.authTokenExpirationSeconds
-                    );
-                  }
+                  var authToken = response.data['auth-token'];
+                  var decodedToken = Authmethod.decodeToken(authToken);
+                  options.expires = new Date(
+                    sessionStartedAtMs + 1000 * decodedToken.expiry_secs_diff
+                  );
                   $cookies.put("authevent_" + autheventid, autheventid, options);
                   $cookies.put("userid" + postfix, response.data.username, options);
                   $cookies.put("user" + postfix, scope.email || response.data.username || response.data.email, options);
-                  $cookies.put("auth" + postfix, response.data['auth-token'], options);
+                  $cookies.put("auth" + postfix, authToken, options);
                   $cookies.put("isAdmin" + postfix, scope.isAdmin, options);
-                  Authmethod.setAuth($cookies.get("auth" + postfix), scope.isAdmin, autheventid);
+                  Authmethod.setAuth(authToken, scope.isAdmin, autheventid);
                   var votingScreenPath = scope.isQuery ? '/eligibility' : '/vote';
                   if (scope.isAdmin)
                   {
@@ -718,13 +718,16 @@ angular.module('avRegistration')
                   // if it's an election with no children elections
                   else if (angular.isDefined(response.data['vote-permission-token']))
                   {
+                    var accessToken = response.data['vote-permission-token'];
+                    var decodedAccessToken = Authmethod.decodeToken(accessToken);
                     $window.sessionStorage.setItem(
                       "vote_permission_tokens", 
                       JSON.stringify([{
                         electionId: autheventid,
                         token: response.data['vote-permission-token'],
                         isFirst: true,
-                        sessionStartedAtMs: sessionStartedAtMs
+                        sessionStartedAtMs: sessionStartedAtMs,
+                        sessionEndsAtMs: sessionStartedAtMs + 1000 * decodedAccessToken.expiry_secs_diff
                       }])
                     );
                     $window.sessionStorage.setItem(
@@ -736,10 +739,12 @@ angular.module('avRegistration')
                   // if it's an election with children elections then show access to them
                   else if (angular.isDefined(response.data['vote-children-info']))
                   {
-                    // assumes the iam response has the same children 
+                    // assumes the iam response has the same children
                     var tokens = _
                       .chain(response.data['vote-children-info'])
                       .map(function (child, index) {
+                        var accessToken = child['vote-permission-token'];
+                        var decodedAccessToken = accessToken && Authmethod.decodeToken(accessToken) || null;
                         return {
                           electionId: child['auth-event-id'],
                           token: child['vote-permission-token'] || null,
@@ -748,7 +753,8 @@ angular.module('avRegistration')
                           numSuccessfulLoginsAllowed: child['num-successful-logins-allowed'],
                           numSuccessfulLogins: child['num-successful-logins'],
                           isFirst: index === 0,
-                          sessionStartedAtMs: sessionStartedAtMs
+                          sessionStartedAtMs: sessionStartedAtMs,
+                          sessionEndsAtMs: sessionStartedAtMs + 1000 * (decodedAccessToken && decodedAccessToken.expiry_secs_diff || null)
                         };
                       })
                       .value();
