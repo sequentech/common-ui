@@ -71,6 +71,10 @@ angular
             scope.logoutTimeMs = scope.$parent.getSessionEndTime();
           }
 
+          if (scope.$parent.getSessionStartTime) {
+            scope.countdownStartTimeMs = scope.$parent.getSessionStartTime(false);
+          }
+
           scope.showCountdown = true;
           var now = Date.now();
           scope.countdownSecs = Math.round((scope.logoutTimeMs - now) / 1000);
@@ -86,7 +90,7 @@ angular
           var targetElapsedTime = targetNextTime - now;
           setTimeout(
             updateTimedown,
-            targetMins > 0?  targetElapsedTime : 1000
+            targetMins > 1?  targetElapsedTime : 1000
           );
         }
       
@@ -116,7 +120,7 @@ angular
             scope.countdownSecs = 0;
             scope.countdownMins = 0;
 
-            var initialTimeMs = scope.$parent.getSessionStartTime && scope.$parent.getSessionStartTime() || Date.now();
+            var initialTimeMs = scope.$parent.getSessionStartTime && scope.$parent.getSessionStartTime(true) || Date.now();
             scope.elapsedCountdownMs = (
               election.presentation.booth_log_out__countdown_seconds > 0?
               election.presentation.booth_log_out__countdown_seconds :
