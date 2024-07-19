@@ -356,7 +356,8 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
     var lastRefreshMs = 0;
     return authmethod.refreshAuthToken = function(autheventid) {
         var deferred = $q.defer(), jnow = Date.now();
-        if (jnow - lastRefreshMs < 1e3) return deferred.reject("ongoing refresh"), deferred.promise;
+        if (jnow - lastRefreshMs < 1e3) return console.log("ongoing refresh"), deferred.reject("ongoing refresh"), 
+        deferred.promise;
         lastRefreshMs = jnow;
         var postfix = "_authevent_" + autheventid;
         if ("hidden" === document.visibilityState) return $cookies.get("auth" + postfix) || $state.go("admin.logout"), 
