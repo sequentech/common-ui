@@ -126,7 +126,6 @@ angular.module('avRegistration')
             return 1000 * (decodedToken.expiry_timestamp + decodedToken.create_timestamp)/2;
           });
           var minHalfLife = Math.min.apply(null, halfLifes);
-          console.log('minHalfLife ' + minHalfLife + ' now ' + now);
           return minHalfLife < now;
         }
 
@@ -144,7 +143,6 @@ angular.module('avRegistration')
               // Only try to renew token when it's older than 50% of
               // the expiration time
               var now = new Date();
-              console.log("an interaction happened!");
               if (!hasPassedHalfLifeExpiry(now.getTime(), isAdmin)) {
                 return;
               }
@@ -832,7 +830,6 @@ angular.module('avRegistration')
           var deferred = $q.defer();
           var jnow = Date.now();
           if (jnow - lastRefreshMs < 1000) {
-            console.log("ongoing refresh");
             deferred.reject("ongoing refresh");
             return deferred.promise;
           } else {
