@@ -1203,12 +1203,12 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             }
             function updateTimedown() {
                 scope.$parent.getSessionEndTime && (scope.logoutTimeMs = scope.$parent.getSessionEndTime()), 
+                scope.$parent.getSessionStartTime && (scope.countdownStartTimeMs = scope.$parent.getSessionStartTime(!1)), 
                 scope.showCountdown = !0;
-                var targetMins, targetNextTime, now = Date.now();
+                var now = Date.now();
                 scope.countdownSecs = Math.round((scope.logoutTimeMs - now) / 1e3), scope.countdownMins = Math.round((scope.logoutTimeMs - now) / 6e4), 
                 scope.countdownPercent = calculateCountdownPercent(), updateProgressBar(scope.countdownPercent), 
-                scope.$apply(), scope.countdownSecs <= 1 || (targetMins = Math.floor((scope.logoutTimeMs - now) / 6e4), 
-                targetNextTime = scope.logoutTimeMs - 60 * targetMins * 1e3, setTimeout(updateTimedown, 0 < targetMins ? targetNextTime - now : 1e3));
+                scope.$apply(), scope.countdownSecs <= 1 || setTimeout(updateTimedown, 1e3);
             }
             scope.parentElection = scope.$parent.parentElection, scope.election = scope.$parent.election, 
             scope.confirmLogoutModal = scope.$parent.confirmLogoutModal, scope.configService = ConfigService, 
@@ -1221,7 +1221,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 var election, initialTimeMs;
                 scope.showCountdown = !1, scope.$parent.isStateCompatibleWithCountdown && !scope.$parent.isStateCompatibleWithCountdown() || (election = scope.parentElection || scope.election, 
                 ConfigService.authTokenExpirationSeconds && election && election.presentation && _.isNumber(election.presentation.booth_log_out__countdown_seconds) && (scope.showCountdown = !1, 
-                scope.countdownSecs = 0, scope.countdownMins = 0, initialTimeMs = scope.$parent.getSessionStartTime && scope.$parent.getSessionStartTime() || Date.now(), 
+                scope.countdownSecs = 0, scope.countdownMins = 0, initialTimeMs = scope.$parent.getSessionStartTime && scope.$parent.getSessionStartTime(!0) || Date.now(), 
                 scope.elapsedCountdownMs = 1e3 * (0 < election.presentation.booth_log_out__countdown_seconds ? election.presentation.booth_log_out__countdown_seconds : ConfigService.authTokenExpirationSeconds), 
                 scope.$parent.getSessionEndTime ? scope.logoutTimeMs = scope.$parent.getSessionEndTime() : scope.logoutTimeMs = initialTimeMs + 1e3 * ConfigService.authTokenExpirationSeconds, 
                 scope.countdownStartTimeMs = scope.logoutTimeMs - scope.elapsedCountdownMs, scope.countdownPercent = calculateCountdownPercent(), 
