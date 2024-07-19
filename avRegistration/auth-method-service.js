@@ -831,6 +831,7 @@ angular.module('avRegistration')
           var deferred = $q.defer();
           var jnow = Date.now();
           if (jnow - lastRefreshMs < 1000) {
+            console.log("ongoing refresh");
             deferred.reject("ongoing refresh");
             return deferred.promise;
           } else {
