@@ -126,6 +126,7 @@ angular.module('avRegistration')
             return 1000 * (decodedToken.expiry_timestamp + decodedToken.create_timestamp)/2;
           });
           var minHalfLife = Math.min.apply(null, halfLifes);
+          console.log('minHalfLife ' + minHalfLife + ' now ' + now);
           return minHalfLife < now;
         }
 

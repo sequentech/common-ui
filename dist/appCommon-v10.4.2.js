@@ -5,20 +5,20 @@ function $buo_f() {
 if (angular.module("avRegistration", [ "ui.bootstrap", "ui.utils", "ui.router" ]), 
 angular.module("avRegistration").config(function() {}), angular.module("avRegistration").factory("Authmethod", [ "$http", "$cookies", "$window", "ConfigService", "$interval", "$state", "$location", "$document", "$q", function($http, $cookies, $window, ConfigService, $interval, $state, $location, $document, $q) {
     var backendUrl = ConfigService.authAPI, authId = ConfigService.freeAuthId, authmethod = {};
-    function hasPassedHalfLifeExpiry(now, halfLifes) {
-        halfLifes = function(isAdmin) {
+    function hasPassedHalfLifeExpiry(now, minHalfLife) {
+        minHalfLife = function(isAdmin) {
             var credentialsStr = $window.sessionStorage.getItem("vote_permission_tokens"), tokens = [];
             return credentialsStr ? JSON.parse(credentialsStr).map(function(credential) {
                 return credential.token;
             }) : (isAdmin && $http.defaults.headers.common.Authorization && tokens.push($http.defaults.headers.common.Authorization), 
             tokens);
-        }(halfLifes);
-        if (0 !== halfLifes.length) {
-            halfLifes = halfLifes.map(function(decodedToken) {
+        }(minHalfLife);
+        if (0 !== minHalfLife.length) {
+            minHalfLife = minHalfLife.map(function(decodedToken) {
                 decodedToken = authmethod.decodeToken(decodedToken);
                 return 1e3 * (decodedToken.expiry_timestamp + decodedToken.create_timestamp) / 2;
-            });
-            return Math.min.apply(null, halfLifes) < now;
+            }), minHalfLife = Math.min.apply(null, minHalfLife);
+            return console.log("minHalfLife " + minHalfLife + " now " + now), minHalfLife < now;
         }
     }
     authmethod.captcha_code = null, authmethod.captcha_image_url = "", authmethod.captcha_status = "", 
