@@ -624,7 +624,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                         $cookies.put("authevent_" + autheventid, autheventid, options), $cookies.put("userid" + postfix, tokens.data.username, options), 
                         $cookies.put("user" + postfix, scope.email || tokens.data.username || tokens.data.email, options), 
                         $cookies.put("auth" + postfix, decodedAccessToken, options), $cookies.put("isAdmin" + postfix, scope.isAdmin, options), 
-                        Authmethod.setAuth(decodedAccessToken, scope.isAdmin, autheventid), votingScreenPath = scope.isQuery || scope.base_auth.force_census_query ? "/eligibility" : "/vote", 
+                        Authmethod.setAuth(decodedAccessToken, scope.isAdmin, autheventid), votingScreenPath = scope.isQuery || scope.base_authevent && scope.base_authevent.force_census_query ? "/eligibility" : "/vote", 
                         scope.isAdmin ? Authmethod.getUserInfo().then(function(response) {
                             var redirectUrl = $window.sessionStorage.getItem("redirect");
                             redirectUrl ? $window.sessionStorage.removeItem("redirect") : redirectUrl = "/admin/elections", 
