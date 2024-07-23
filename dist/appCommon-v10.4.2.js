@@ -624,7 +624,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                         $cookies.put("authevent_" + autheventid, autheventid, options), $cookies.put("userid" + postfix, tokens.data.username, options), 
                         $cookies.put("user" + postfix, scope.email || tokens.data.username || tokens.data.email, options), 
                         $cookies.put("auth" + postfix, decodedAccessToken, options), $cookies.put("isAdmin" + postfix, scope.isAdmin, options), 
-                        Authmethod.setAuth(decodedAccessToken, scope.isAdmin, autheventid), votingScreenPath = scope.isQuery ? "/eligibility" : "/vote", 
+                        Authmethod.setAuth(decodedAccessToken, scope.isAdmin, autheventid), votingScreenPath = scope.isQuery || scope.base_authevent && scope.base_authevent.force_census_query ? "/eligibility" : "/vote", 
                         scope.isAdmin ? Authmethod.getUserInfo().then(function(response) {
                             var redirectUrl = $window.sessionStorage.getItem("redirect");
                             redirectUrl ? $window.sessionStorage.removeItem("redirect") : redirectUrl = "/admin/elections", 
@@ -1571,6 +1571,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
                 num_successful_logins_allowed: el.num_successful_logins_allowed,
                 scheduled_events: el.scheduled_events || null,
                 allow_public_census_query: el.allow_public_census_query,
+                force_census_query: el.force_census_query || !1,
                 hide_default_login_lookup_field: el.hide_default_login_lookup_field,
                 parent_id: el.parent_id || null,
                 children_election_info: el.children_election_info || null,
