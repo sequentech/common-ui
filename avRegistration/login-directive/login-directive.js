@@ -691,7 +691,7 @@ angular.module('avRegistration')
                   $cookies.put("auth" + postfix, authToken, options);
                   $cookies.put("isAdmin" + postfix, scope.isAdmin, options);
                   Authmethod.setAuth(authToken, scope.isAdmin, autheventid);
-                  var votingScreenPath = scope.isQuery ? '/eligibility' : '/vote';
+                  var votingScreenPath = (scope.isQuery || (scope.base_authevent && scope.base_authevent.force_census_query)) ? '/eligibility' : '/vote';
                   if (scope.isAdmin)
                   {
                     Authmethod.getUserInfo()

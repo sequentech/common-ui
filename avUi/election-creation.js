@@ -44,6 +44,7 @@ angular.module('avUi')
                 num_successful_logins_allowed: el.num_successful_logins_allowed,
                 scheduled_events: el.scheduled_events || null,
                 allow_public_census_query: el.allow_public_census_query,
+                force_census_query: el.force_census_query || false,
                 hide_default_login_lookup_field: el.hide_default_login_lookup_field,
                 parent_id: el.parent_id || null,
                 children_election_info: el.children_election_info || null,
