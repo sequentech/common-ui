@@ -50,7 +50,7 @@ angular
 
         scope.showVersionsModal = ShowVersionsModalService;
 
-        function calculateCountdownPercent() {
+        function calculateCountdownPercent() {
           var ratio = (scope.logoutTimeMs - Date.now())/(scope.logoutTimeMs - scope.countdownStartTimeMs);
           return Math.min(100, Math.round(10000*ratio)/100) + '%';
         }
@@ -67,6 +67,14 @@ angular
 
         // helper function for enableLogoutCountdown()
         function updateTimedown() {
+          if (scope.$parent.getSessionEndTime) {
+            scope.logoutTimeMs = scope.$parent.getSessionEndTime();
+          }
+
+          if (scope.$parent.getSessionStartTime) {
+            scope.countdownStartTimeMs = scope.$parent.getSessionStartTime(false);
+          }
+
           scope.showCountdown = true;
           var now = Date.now();
           scope.countdownSecs = Math.round((scope.logoutTimeMs - now) / 1000);
@@ -77,12 +85,9 @@ angular
           if (scope.countdownSecs <= 1) {
             return;
           }
-          var targetMins = Math.floor((scope.logoutTimeMs - now) / (60 * 1000));
-          var targetNextTime = scope.logoutTimeMs - targetMins * 60 * 1000;
-          var targetElapsedTime = targetNextTime - now;
           setTimeout(
             updateTimedown,
-            targetMins > 0?  targetElapsedTime : 1000
+            1000
           );
         }
       
@@ -112,13 +117,17 @@ angular
             scope.countdownSecs = 0;
             scope.countdownMins = 0;
 
-            var initialTimeMs = scope.$parent.getSessionStartTime && scope.$parent.getSessionStartTime() || Date.now();
+            var initialTimeMs = scope.$parent.getSessionStartTime && scope.$parent.getSessionStartTime(true) || Date.now();
             scope.elapsedCountdownMs = (
               election.presentation.booth_log_out__countdown_seconds > 0?
               election.presentation.booth_log_out__countdown_seconds :
               ConfigService.authTokenExpirationSeconds
             ) * 1000;
-            scope.logoutTimeMs = initialTimeMs + ConfigService.authTokenExpirationSeconds * 1000;
+            if (scope.$parent.getSessionEndTime) {
+              scope.logoutTimeMs = scope.$parent.getSessionEndTime();
+            } else {
+              scope.logoutTimeMs = initialTimeMs + ConfigService.authTokenExpirationSeconds * 1000;
+            }
             scope.countdownStartTimeMs = scope.logoutTimeMs - scope.elapsedCountdownMs;
             scope.countdownPercent = calculateCountdownPercent();
             updateProgressBar(scope.countdownPercent);
