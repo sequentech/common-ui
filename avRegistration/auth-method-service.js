@@ -107,7 +107,9 @@ angular.module('avRegistration')
           var tokens = [];
           if (credentialsStr) {
             var credentials = JSON.parse(credentialsStr);
-            tokens = credentials.map(function (credential) { return credential.token; });
+            tokens = credentials
+              .map(function (credential) { return credential.token; })
+              .filter(function (token) { return !!token;});
             return tokens;
           }
           if (isAdmin && $http.defaults.headers.common.Authorization) {
