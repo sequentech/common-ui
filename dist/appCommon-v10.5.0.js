@@ -10,6 +10,8 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             var credentialsStr = $window.sessionStorage.getItem("vote_permission_tokens"), tokens = [];
             return credentialsStr ? JSON.parse(credentialsStr).map(function(credential) {
                 return credential.token;
+            }).filter(function(token) {
+                return !!token;
             }) : (isAdmin && $http.defaults.headers.common.Authorization && tokens.push($http.defaults.headers.common.Authorization), 
             tokens);
         }(halfLifes);
