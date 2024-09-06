@@ -1207,7 +1207,7 @@ angular.module("avRegistration").config(function() {}), angular.module("avRegist
             }
             function updateTimedown() {
                 scope.$parent.getSessionEndTime && (scope.logoutTimeMs = scope.$parent.getSessionEndTime()), 
-                scope.$parent.getSessionStartTime && (scope.countdownStartTimeMs = scope.$parent.getSessionStartTime(!1)), 
+                scope.$parent.getSessionStartTime && (scope.countdownStartTimeMs = scope.$parent.getSessionStartTime(!0)), 
                 scope.showCountdown = !0;
                 var now = Date.now();
                 scope.countdownSecs = Math.round((scope.logoutTimeMs - now) / 1e3), scope.countdownMins = Math.round((scope.logoutTimeMs - now) / 6e4), 
