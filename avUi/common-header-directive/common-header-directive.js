@@ -72,7 +72,7 @@ angular
           }
 
           if (scope.$parent.getSessionStartTime) {
-            scope.countdownStartTimeMs = scope.$parent.getSessionStartTime(false);
+            scope.countdownStartTimeMs = scope.$parent.getSessionStartTime(true);
           }
 
           scope.showCountdown = true;
