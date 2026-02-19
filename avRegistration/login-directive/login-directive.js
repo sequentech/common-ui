@@ -690,6 +690,9 @@ angular.module('avRegistration')
                   $cookies.put("user" + postfix, scope.email || response.data.username || response.data.email, options);
                   $cookies.put("auth" + postfix, authToken, options);
                   $cookies.put("isAdmin" + postfix, scope.isAdmin, options);
+                  if (scope.isOpenId && response.data['id-token']) {
+                    $cookies.put("id_token_" + postfix, response.data['id-token'], options);
+                  }
                   Authmethod.setAuth(authToken, scope.isAdmin, autheventid);
                   var votingScreenPath = (scope.isQuery || (scope.base_authevent && scope.base_authevent.force_census_query)) ? '/eligibility' : '/vote';
                   if (scope.isAdmin)
