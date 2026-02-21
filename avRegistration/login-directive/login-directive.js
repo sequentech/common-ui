@@ -144,11 +144,11 @@ angular.module('avRegistration')
             }
           );
 
-          if (!oidcProvider || !oidcProvider.logout_uri) {
+          if (!oidcProvider || !oidcProvider.public_info.logout_uri) {
             return redirectUri;
           }
 
-          redirectUri = oidcProvider.logout_uri;
+          redirectUri = oidcProvider.public_info.logout_uri;
           redirectUri = redirectUri.replace("__EVENT_ID__", "" + eventId);
 
           var postfix = "_authevent_" + eventId;
