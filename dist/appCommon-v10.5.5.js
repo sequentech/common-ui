@@ -919,6 +919,9 @@ angular.module('avRegistration')
                     $cookies.get("user" + postfix),
                     options
                   );
+                  if (scope.isOpenId && response.data['id-token']) {
+                    $cookies.put("id_token_" + postfix, response.data['id-token'], options);
+                  }
                   authmethod.setAuth(
                     $cookies.get("auth" + postfix),
                     $cookies.get("isAdmin" + postfix),
@@ -1278,11 +1281,11 @@ angular.module('avRegistration')
             }
           );
 
-          if (!oidcProvider || !oidcProvider.logout_uri) {
+          if (!oidcProvider || !oidcProvider.public_info.logout_uri) {
             return redirectUri;
           }
 
-          redirectUri = oidcProvider.logout_uri;
+          redirectUri = oidcProvider.public_info.logout_uri;
           redirectUri = redirectUri.replace("__EVENT_ID__", "" + eventId);
 
           var postfix = "_authevent_" + eventId;
@@ -1824,6 +1827,9 @@ angular.module('avRegistration')
                   $cookies.put("user" + postfix, scope.email || response.data.username || response.data.email, options);
                   $cookies.put("auth" + postfix, authToken, options);
                   $cookies.put("isAdmin" + postfix, scope.isAdmin, options);
+                  if (scope.isOpenId && response.data['id-token']) {
+                    $cookies.put("id_token_" + postfix, response.data['id-token'], options);
+                  }
                   Authmethod.setAuth(authToken, scope.isAdmin, autheventid);
                   var votingScreenPath = (scope.isQuery || (scope.base_authevent && scope.base_authevent.force_census_query)) ? '/eligibility' : '/vote';
                   if (scope.isAdmin)
