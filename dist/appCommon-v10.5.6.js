@@ -919,9 +919,6 @@ angular.module('avRegistration')
                     $cookies.get("user" + postfix),
                     options
                   );
-                  if (scope.isOpenId && response.data['id-token']) {
-                    $cookies.put("id_token_" + postfix, response.data['id-token'], options);
-                  }
                   authmethod.setAuth(
                     $cookies.get("auth" + postfix),
                     $cookies.get("isAdmin" + postfix),
